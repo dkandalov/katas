@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 public class Perm0
 {
     @Test
-    public void aaa()
+    public void shouldFindAllPermutations()
     {
         assertThat(perm(Collections.<Integer>emptyList()), equalTo(asList(Arrays.<Integer>asList())));
         assertThat(perm(asList(1)), equalTo(asList(asList(1))));
@@ -26,29 +26,31 @@ public class Perm0
                 asList(1, 2, 3), asList(1, 3, 2), asList(3, 1, 2),
                 asList(2, 1, 3), asList(2, 3, 1), asList(3, 2, 1)
         )));
+
+        assertThat(perm(asList("a", "b")), equalTo(asList(asList("a", "b"), asList("b", "a"))));
     }
 
-    private List<List<Integer>> perm(List<Integer> values)
+    private static <T> List<List<T>> perm(List<T> values)
     {
-        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        List<List<T>> result = new ArrayList<List<T>>();
         if (values.isEmpty()) {
-            result.add(new ArrayList<Integer>());
+            result.add(new ArrayList<T>());
             return result;
         }
 
-        values = new ArrayList<Integer>(values);
+        values = new ArrayList<T>(values);
 
         int index = values.size() - 1;
 
         int steps = factorial(values.size());
         for (int i = 0; i < steps; i++) {
-            result.add(new ArrayList<Integer>(values));
+            result.add(new ArrayList<T>(values));
 
             if (index < 0) index = values.size() - 1;
             int leftIndex = index - 1;
             if (leftIndex < 0) leftIndex = values.size() - 1;
 
-            int tmp = values.get(index);
+            T tmp = values.get(index);
             values.set(index, values.get(leftIndex));
             values.set(leftIndex, tmp);
 
@@ -58,7 +60,7 @@ public class Perm0
         return result;
     }
 
-    private int factorial(int i)
+    private static int factorial(int i)
     {
         if (i == 0) return 0;
         if (i == 1) return 1;
