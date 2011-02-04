@@ -1,4 +1,4 @@
-package ru;
+package ru.josephus;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import static junit.framework.Assert.assertEquals;
 /**
  * User: DKandalov
  */
-public class josephus
+public class Josephus0
 {
     @Test
     public void shouldFindTheLeader()
