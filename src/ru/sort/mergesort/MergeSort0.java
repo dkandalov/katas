@@ -1,4 +1,4 @@
-package ru.mergesort;
+package ru.sort.mergesort;
 
 import org.junit.Test;
 
