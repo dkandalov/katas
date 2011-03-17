@@ -1,12 +1,16 @@
 package ru.josephus
 
+import org.scalatest.junit.AssertionsForJUnit
+import org.junit.Test
+
 /**
  * User: DKandalov
  */
 
-object Josephus1
+class Josephus1 extends AssertionsForJUnit
 {
-  def main(args: Array[String])
+  @Test
+  def shouldFindLeader()
   {
     assert(findLeader(1, 1) == 1)
     assert(findLeader(1, 2) == 1)
@@ -27,11 +31,22 @@ object Josephus1
 
   def findLeader(size: Int, step: Int): Int =
   {
-//    var list: List[Int] = List()
-//    size.to(1).foreach((i:Int) =>
-//      list = i :: list
-//    )
-//    println list
-    1
+    var list: List[Int] = List()
+    1.to(size).foreach((i: Int) => list = i :: list)
+    list = list.reverse
+
+    findLeader(list, step)
+  }
+
+  def findLeader(list: List[Int], step: Int): Int =
+  {
+    list match {
+      case List(x) => x
+      case List(x, _*) =>
+        val actualStep = (step - 1) % list.size
+        val tuple = list.splitAt(actualStep)
+        val part2 = if (tuple._2.isEmpty) List() else tuple._2.tail
+        findLeader(part2 ::: tuple._1, step) // "tail" doesn't work on empty lists
+    }
   }
 }
