@@ -15,17 +15,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/lib/junit-4.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="scala-library-2.8.1" level="application" />
     <orderEntry type="library" name="scalatest-1.2" level="application" />
+    <orderEntry type="library" name="groovy-1.7.6" level="application" />
   </component>
 </module>
 

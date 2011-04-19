@@ -22,7 +22,7 @@ class MergeSort3 extends AssertionsForJUnit {
 
   def sort(list: List[Int]): List[Int] =
   {
-    if (list.size <= 1) return list // forgot to terminate for lists with size == 1, cause stack overflow
+    if (list.size <= 1) return list // forgot to terminate for lists with size == 1, caused stack overflow
     val (left, right) = list.splitAt(list.length / 2)
     merge(sort(left), sort(right))
   }
