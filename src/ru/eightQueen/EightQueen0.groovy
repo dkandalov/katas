@@ -5,23 +5,27 @@ import org.junit.Test
 /**
  * User: DKandalov
  */
-class EightQueen0 { // TODO finish
+class EightQueen0 {
   @Test
   public void shouldSolve8QueenProblem() {
-    asData(solve(5), 5).each{ it.each {println it}; println "" } // TODO produces empty result
+//    println solve(2)
+    asData(solve(2), 2).each{ it.each {println it}; println "" }
+    asData(solve(5), 5).each{ it.each {println it}; println "" }
   }
 
-  def solve(int size, int startRow = 0, def solution = []) {
+  def solve(int size, int row = 0, def solution = []) {
+    if (row >= size && isValid(solution)) {
+      return [solution]
+    }
     def solutions = []
 
-    for (int row = startRow; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        if (isValid(solution + [[row, column]])) {
-          solutions += solve(size, row + 1, deepCopy(solution + [[row, column]]))
-        } else {
-          println solution + [[row, column]]
-          break
-        }
+    // used to have outer loop for rows which cause incorrect results.. recursion is the way to go in this case
+    for (int column = 0; column < size; column++) {
+      def newSolution = deepCopy(solution + [[row, column]])
+      if (isValid(newSolution)) {
+        solutions += solve(size, (int) row + 1, newSolution)
+      } else {
+//        println " - " + newSolution
       }
 //      if (row == size - 1)
     }
