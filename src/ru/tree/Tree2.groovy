@@ -24,10 +24,12 @@ class Tree2 {
     assert traversePostOrder(tree) == [11, 12, 1, 21, 22, 2, 0]
 
     assert traversePreOrder_nr(tree) == [0, 1, 11, 12, 2, 21, 22]
-    assert traverse(tree) == [0, 1, 2, 11, 12, 21, 22]
+    assert traverseBreadthFirst(tree) == [0, 1, 2, 11, 12, 21, 22]
+
+    assert traverseInOrder_weird(tree) == [11, 1, 12, 0, 21, 2, 22]
   }
 
-  static def traverse(Node node) {
+  static def traverseBreadthFirst(Node node) {
     def result = []
     def queue = [node]
 
@@ -56,19 +58,28 @@ class Tree2 {
     result
   }
 
+  static def traverseInOrder_weird(Node node, List result = []) {
+    if (node != null) {
+      traverseInOrder_weird(node.left, result)
+      result << node.value
+      traverseInOrder_weird(node.right, result)
+    }
+    result
+  }
+
   static def traverseInOrder(Node node) {
     if (node == null) return []
-    [] + traverseInOrder(node.left) + [node.value] + traverseInOrder(node.right)
+    traverseInOrder(node.left) + [node.value] + traverseInOrder(node.right)
   }
 
   static def traversePreOrder(Node node) {
     if (node == null) return []
-    [] + [node.value] + traversePreOrder(node.left) + traversePreOrder(node.right)
+    [node.value] + traversePreOrder(node.left) + traversePreOrder(node.right)
   }
 
   static def traversePostOrder(Node node) {
     if (node == null) return []
-    [] + traversePostOrder(node.left) + traversePostOrder(node.right) + [node.value]
+    traversePostOrder(node.left) + traversePostOrder(node.right) + [node.value]
   }
 
   def node(def value, def left = null, def right = null) {
