@@ -21,11 +21,11 @@ class OEMSort0 {
 //    assert sort([2, 3, 1]) == [1, 2, 3]
     assert sort([4, 2, 3, 1]) == [1, 2, 3, 4]
 //    assert sort([5, 4, 2, 3, 1]) == [1, 2, 3, 4, 5]
-//    assert sort([5, 4, 6, 2, 3, 1]) == [1, 2, 3, 4, 5, 6]
+    assert sort([5, 4, 6, 8, 7, 2, 3, 1]) == [1, 2, 3, 4, 5, 6, 7, 8]
   }
 
   List sort(List list) {
-    if (list.size() < 2) return list
+    if (list.size() <= 1) return list
 
     def midPos = list.size() / 2
     merge(sort(list[0..midPos - 1]), sort(list[midPos..-1]))
@@ -69,13 +69,14 @@ class OEMSort0 {
   public void shouldShuffleLists() {
     assert shuffle([1], [2]) == [1, 2]
     assert shuffle([1, 2], [3, 4]) == [1, 3, 2, 4]
+    assert shuffle([2, 4], [1, 3]) == [2, 1, 4, 3]
     assert shuffle([1, 2, 3], [4, 5, 6]) == [1, 4, 2, 5, 3, 6]
   }
 
   @Test
   public void shouldUnShuffleLists() { // forgot to change shuffle() to unshuffle()
-    assert unshuffle([1], [2]) == [1, 2]
-    assert unshuffle([1, 3], [2, 4]) == [1, 2, 3, 4] // had wrong test
-    assert unshuffle([1, 4, 2], [5, 3, 6]) == [1, 2, 3, 4, 5, 6]
+    assert unshuffle([1], [2]).flatten() == [1, 2]
+    assert unshuffle([1, 3], [2, 4]).flatten() == [1, 2, 3, 4] // had wrong test
+    assert unshuffle([1, 4, 2], [5, 3, 6]).flatten() == [1, 2, 3, 4, 5, 6]
   }
 }
