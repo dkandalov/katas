@@ -48,6 +48,6 @@ class MergeSort4 {
 
   static def split(List list) {
     def middle = list.size() / 2
-    [list[0..list.size() / 2 - 1], list[middle..-1]]
+    [list[0..middle - 1], list[middle..-1]]
   }
 }
