@@ -1,4 +1,4 @@
-package ru.add
+package ru.misc
 
 import org.junit.Test
 
