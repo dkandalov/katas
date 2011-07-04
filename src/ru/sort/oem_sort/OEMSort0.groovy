@@ -36,7 +36,7 @@ class OEMSort0 {
       return (list1[0] > list2[0]) ? [list2[0], list1[0]] : [list1[0], list2[0]]
     }
 
-//    unshuffle(list1, list2)
+//    split(list1, list2)
     def list1Mid = list1.size() / 2
     def list2Mid = list2.size() / 2
     list1 = merge(unshuffle(list1[0..list1Mid - 1], list1[list1Mid..-1]))
@@ -74,7 +74,7 @@ class OEMSort0 {
   }
 
   @Test
-  public void shouldUnShuffleLists() { // forgot to change shuffle() to unshuffle()
+  public void shouldUnShuffleLists() { // forgot to change split() to split()
     assert unshuffle([1], [2]).flatten() == [1, 2]
     assert unshuffle([1, 3], [2, 4]).flatten() == [1, 2, 3, 4] // had wrong test
     assert unshuffle([1, 4, 2], [5, 3, 6]).flatten() == [1, 2, 3, 4, 5, 6]
