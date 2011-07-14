@@ -59,7 +59,16 @@
 ;(f1-11-- 22) ;60726899
 
 ; Exercise 1.12
-(print "TODO 1.12")
+;    0 1 0
+;   0 1 1 0
+;  0 1 2 1 0
+; 0 1 3 3 1 0
+define (pascal row pos)
+  (cond ((< pos 1) 0)
+        ((> pos row) 0)
+        ((= row 1) 1)
+        (else (+ (pascal (- row 1) pos) (pascal (- row 1) (- pos 1))))
+))
 
 ; Exercise 2.20
 (define (odd n) ; used this because (= #t #t) doesn't work
