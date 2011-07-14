@@ -23,7 +23,14 @@
         )
   )
 ; Fibonacci number (iterative)
-; TODO
+(define (fib_ n)
+  (define (f c prev1 prev2)
+    (if (= c n) (+ prev1 prev2)
+        (f (+ c 1) (+ prev1 prev2) prev1)))
+  
+  (cond ((= n 0) 1)
+        ((= n 1) 1)
+        (else (f 2 1 1))))
 
 ; Exercise 1.11
 (define (f1-11-- n)
