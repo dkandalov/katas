@@ -22,14 +22,37 @@
                  (fib (- n 2))))
         )
   )
+; Fibonacci number (iterative)
+; TODO
 
 ; Exercise 1.11
-(define (f1_11 n)
-  (cond ((< n 3) n)
-        (else (+ (f1_11 (- n 1))
-                 (f1_11 (- n 2))
-                 (f1_11 (- n 3))))))
+(define (f1-11-- n)
+  (define (f c prev1 prev2 prev3)
+    (if (= c n) (+ prev1 (* 2 prev2) (* 3 prev3))
+        (f (+ c 1) (+ prev1 (* 2 prev2) (* 3 prev3)) prev1 prev2)))
+  
+   (cond ((< n 3) n)
+         ((= n 3) 4)
+         ((= n 4) 11)
+         ((= n 5) 25)
+         (else (f 6 25 11 4))
+))
 
+(define (f1-11-rec n)
+  (cond ((< n 3) n)
+        (else (+ (f1-11-rec (- n 1))
+                 (* (f1-11-rec (- n 2)) 2)
+                 (* (f1-11-rec (- n 3)) 3)))
+))
+;(f1-11-rec 3) ;4
+;(f1-11-rec 4) ;11
+;(f1-11-rec 5) ;25
+;(f1-11-rec 6) ;59
+;(f1-11-rec 14) ;60104
+;(f1-11-- 22) ;60726899
+
+; Exercise 1.12
+(print "TODO 1.12")
 
 ; Exercise 2.20
 (define (odd n) ; used this because (= #t #t) doesn't work
