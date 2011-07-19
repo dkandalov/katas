@@ -63,12 +63,43 @@
 ;   0 1 1 0
 ;  0 1 2 1 0
 ; 0 1 3 3 1 0
-define (pascal row pos)
+(define (pascal row pos)
   (cond ((< pos 1) 0)
         ((> pos row) 0)
         ((= row 1) 1)
         (else (+ (pascal (- row 1) pos) (pascal (- row 1) (- pos 1))))
 ))
+
+; Exercise 1.15
+(define (exercise-1-15)
+  (define (cube x) (* x x x))
+  (define (p x) (and (print 'p) (- (* 3 x) (* 4 (cube x)))))
+  (define (sine angle)
+    (and (print (list angle))
+    (if (not (> (abs angle) 0.1))
+       angle
+       (p (sine (/ angle 3.0))))
+    ))
+  
+  (sine 12.15)
+  ; a - (p) will be called 5 times; 
+  ;  12.15 / 3**n < 0.1
+  ;  3**n > 121.5
+  ;  log-base-3(121.5) = log(121.5) / log(3) = 4.366
+  ;  n = 5
+  ; b TODO
+)
+
+(define (expt_ b n)
+  (if (= n 0) 1
+      (* b (expt_ b (- n 1)))
+      ))
+(define (expt_iter b n)
+  (define (f n r)
+    (if (= n 0) r
+        (f (- n 1) (* r b))))
+  (f n 1))
+
 
 ; Exercise 2.20
 (define (odd n) ; used this because (= #t #t) doesn't work
