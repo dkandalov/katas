@@ -33,30 +33,33 @@
         (else (f 2 1 1))))
 
 ; Exercise 1.11
-(define (f1-11-- n)
-  (define (f c prev1 prev2 prev3)
-    (if (= c n) (+ prev1 (* 2 prev2) (* 3 prev3))
-        (f (+ c 1) (+ prev1 (* 2 prev2) (* 3 prev3)) prev1 prev2)))
-  
-   (cond ((< n 3) n)
-         ((= n 3) 4)
-         ((= n 4) 11)
-         ((= n 5) 25)
-         (else (f 6 25 11 4))
-))
+(define (exercise-1-11)
+  (define (f1-11-- n)
+    (define (f c prev1 prev2 prev3)
+      (if (= c n) (+ prev1 (* 2 prev2) (* 3 prev3))
+          (f (+ c 1) (+ prev1 (* 2 prev2) (* 3 prev3)) prev1 prev2)))
+    
+    (cond ((< n 3) n)
+          ((= n 3) 4)
+          ((= n 4) 11)
+          ((= n 5) 25)
+          (else (f 6 25 11 4))
+          ))
 
-(define (f1-11-rec n)
-  (cond ((< n 3) n)
-        (else (+ (f1-11-rec (- n 1))
-                 (* (f1-11-rec (- n 2)) 2)
-                 (* (f1-11-rec (- n 3)) 3)))
-))
-;(f1-11-rec 3) ;4
-;(f1-11-rec 4) ;11
-;(f1-11-rec 5) ;25
-;(f1-11-rec 6) ;59
-;(f1-11-rec 14) ;60104
-;(f1-11-- 22) ;60726899
+  (define (f1-11-rec n)
+    (cond ((< n 3) n)
+          (else (+ (f1-11-rec (- n 1))
+                   (* (f1-11-rec (- n 2)) 2)
+                   (* (f1-11-rec (- n 3)) 3)))
+          ))
+  ;(f1-11-rec 3) ;4
+  ;(f1-11-rec 4) ;11
+  ;(f1-11-rec 5) ;25
+  ;(f1-11-rec 6) ;59
+  ;(f1-11-rec 14) ;60104
+  ;(f1-11-- 22) ;60726899
+  (print (f1-11-rec 3)) ;4
+)
 
 ; Exercise 1.12
 ;    0 1 0
@@ -138,11 +141,57 @@
           ))
 )
 
+
 (define (exercise-1-18) ; will be the same as (fast-expt-it)
   (print 0))
 
+
 (define (exercise-1-19)
-  (print `TODO)
+  (define (fib n)
+    (cond ((= n 0) 1)
+          ((= n 1) 1)
+          (else (+ (fib (- n 1)) (fib (- n 2))))))
+  
+  (define (fib-iter n)
+    (define (f c prev1 prev2)
+      (cond ((< c 2) prev1)
+            (else (f (- c 1) (+ prev1 prev2) prev1))
+      ))
+    (f n 1 1))
+  
+  (define (fast-fib n)
+    (define (f c prev1 prev2 p q)
+      (cond ((= c 2) prev1)
+            ((even? c) (f (/ c 2) prev1 prev2 (+ p (/ c 2)) (+ q (/ c 2)))) 
+            (else (f (- c 1) (+ (* prev1 q) (* prev1 p) (* prev2 q)) (+ (* prev1 q) (* prev2 p)) p q))
+            ))
+    (f n 1 1 0 1))
+  
+  (define (fib_ n)
+    (define (fib-iter a b p q count)
+      (cond ((= count 0) b)
+            ((even? count)
+             (fib-iter a
+                       b
+                       (+ (fib (- (/ count 2) 1)))  ; compute p'
+                       (+ (fib (/ count 2)))  ; compute q'
+                       (/ count 2)))
+            (else (fib-iter (+ (* b q) (* a q) (* a p))
+                            (+ (* b p) (* a q))
+                            p
+                            q
+                            (- count 1)))))
+    (fib-iter 1 1 0 1 n))
+  
+  (print (list
+          (fib 0) (fib-iter 0) (fib_ 0)
+          (fib 1) (fib-iter 1) (fib_ 1)
+          (fib 2) (fib-iter 2) (fib_ 2)
+          (fib 3) (fib-iter 3) (fib_ 3)
+          (fib 4) (fib-iter 4) (fib_ 4)
+          (fib 6) (fib-iter 6) (fib_ 6)
+          (fib 12) (fib-iter 12) (fib_ 12)
+          ))
 )
 
 ; Exercise 2.20
