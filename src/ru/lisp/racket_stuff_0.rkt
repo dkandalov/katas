@@ -166,30 +166,34 @@
             (else (f (- c 1) (+ (* prev1 q) (* prev1 p) (* prev2 q)) (+ (* prev1 q) (* prev2 p)) p q))
             ))
     (f n 1 1 0 1))
-  
-  (define (fib_ n)
-    (define (fib-iter a b p q count)
+
+      (define (fib-iter- a b p q count)
       (cond ((= count 0) b)
             ((even? count)
-             (fib-iter a
+             (fib-iter- a
                        b
-                       (+ (fib (- (/ count 2) 1)))  ; compute p'
-                       (+ (fib (/ count 2)))  ; compute q'
+                       (fib-iter- q p 0 1 1)  ; compute p'
+                       (fib-iter- q p 1 2 1)  ; compute q'
                        (/ count 2)))
-            (else (fib-iter (+ (* b q) (* a q) (* a p))
+            (else (fib-iter- (+ (* b q) (* a q) (* a p))
                             (+ (* b p) (* a q))
                             p
                             q
                             (- count 1)))))
-    (fib-iter 1 1 0 1 n))
+  (define (fib_ n)
+    (fib-iter- 1 1 0 1 n))
   
   (print (list
-          (fib 0) (fib-iter 0) (fib_ 0)
-          (fib 1) (fib-iter 1) (fib_ 1)
-          (fib 2) (fib-iter 2) (fib_ 2)
-          (fib 3) (fib-iter 3) (fib_ 3)
-          (fib 4) (fib-iter 4) (fib_ 4)
-          (fib 6) (fib-iter 6) (fib_ 6)
+          (fib-iter- 1 1 2 3 1) '---
+          (fib-iter- 1 1 1 1 2) '---
+          (fib-iter- 1 1 0 1 4) '---
+          (fib 0) (fib-iter 0) (fib_ 0) '-
+          (fib 1) (fib-iter 1) (fib_ 1) '-
+          (fib 2) (fib-iter 2) (fib_ 2) '-
+          (fib 3) (fib-iter 3) (fib_ 3) '-
+          (fib 4) (fib-iter 4) (fib_ 4) '-
+          (fib 5) (fib-iter 5) (fib_ 5) '-
+          (fib 6) (fib-iter 6) (fib_ 6) '-
           (fib 12) (fib-iter 12) (fib_ 12)
           ))
 )
