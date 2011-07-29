@@ -6,7 +6,6 @@ import org.junit.Test
 /**
  * @author DKandalov
  */
-
 class InsertSort5 extends AssertionsForJUnit {
 
   @Test def shouldSortList() {
@@ -18,12 +17,11 @@ class InsertSort5 extends AssertionsForJUnit {
     assert(sort(List(1, 2, 3)) === List(1, 2, 3))
   }
 
-  private def sort(list: List[Int], sortedPart: List[Int] = List()): List[Int] = {
+  private def sort(list: List[Int], sortedPart: List[Int] = List()): List[Int] =
     list match {
       case List() => sortedPart.reverse // forgot to reverse
       case x :: xs => sort(xs, insert(x, sortedPart)) // got this part wrong the first time
     }
-  }
 
   def insert(value: Int, list: List[Int]): List[Int] =
     list match {

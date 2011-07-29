@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 public class InsertionSort3 {
     @Test
     public void shouldSortListUsingInsertionSort() {
+        //noinspection unchecked
         assertThat(sort(Arrays.<Integer>asList()), equalTo(Arrays.<Integer>asList()));
         assertThat(sort(asList(1)), equalTo(asList(1)));
         assertThat(sort(asList(1, 1)), equalTo(asList(1, 1)));
