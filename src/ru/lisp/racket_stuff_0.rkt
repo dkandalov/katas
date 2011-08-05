@@ -1,7 +1,7 @@
-(define (assert-true value)
-  (if (value) (= 1 1) (error "AAA")))
-(define (assert-true value)
-  (if (value) (= 1 1) (error "AAA")))
+(define (assert l expected)
+  (if (not (equal? (l) expected)) (error "Assertion failed. Was:" (l) "Expected:" expected "@" l)))
+; example of assertion
+;(assert (lambda ()(+ 1 2)) 3)
 
 ; Ackermann's function
 (define (ackermann x y)
@@ -119,8 +119,8 @@
             (else (f b (- n 1) (* b r)))))
     (f b n 2))
 
-  ;(print (fast-expt 2 8))
-  (print (fast-expt-it 2 32))
+  (assert (lambda()(fast-expt 2 8)) 256)
+  (assert (lambda()(fast-expt 2 32)) 4294967296)
 )
 
 (define (exercise-1-17)
@@ -134,16 +134,17 @@
           ((even? b) (double (fast-mult a (halve b))))
           (else (+ a (fast-mult a (- b 1))))))
 
-  (print (list 
-          (mult 11 10) 
-          (fast-mult 11 10) 
-          (fast-mult 11 1001) 
-          ))
+  (assert (lambda()(list 
+          (mult 11 10)
+          (fast-mult 11 10)
+          (fast-mult 11 1001)))
+          (list 110 110 11011))
 )
 
 
 (define (exercise-1-18) ; will be the same as (fast-expt-it)
   (print 0))
+
 
 
 (define (exercise-1-19)
@@ -167,13 +168,13 @@
             ))
     (f n 1 1 0 1))
 
-      (define (fib-iter- a b p q count)
+  (define (fib-iter- a b p q count)
       (cond ((= count 0) b)
             ((even? count)
              (fib-iter- a
                        b
-                       (fib-iter- q p 0 1 1)  ; compute p'
-                       (fib-iter- q p 1 2 1)  ; compute q'
+                       (fib-iter- q p 0 1 (- (/ count 2) 1))  ; compute p'
+                       (fib-iter- q p 0 1 (+ 0 (/ count 2)))  ; compute q'
                        (/ count 2)))
             (else (fib-iter- (+ (* b q) (* a q) (* a p))
                             (+ (* b p) (* a q))
@@ -181,12 +182,19 @@
                             q
                             (- count 1)))))
   (define (fib_ n)
-    (fib-iter- 1 1 0 1 n))
+    (fib-iter- 1 0 0 1 n))
   
   (print (list
-          (fib-iter- 1 1 2 3 1) '---
-          (fib-iter- 1 1 1 1 2) '---
-          (fib-iter- 1 1 0 1 4) '---
+          (fib-iter- 1 0 0 1 1) '---
+          (fib-iter- 1 0 0 1 2) '---
+          (fib-iter- 1 1 0 1 1) '---
+          (fib-iter- 1 1 0 1 2) '---
+
+          ;(fib-iter- 1 1 3 5 1) '---
+          ;(fib-iter- 1 1 2 3 2) '---
+          ;(fib-iter- 1 1 1 1 3) '---
+          ;(fib-iter- 1 1 0 1 4) '---
+          ;(fib-iter- 1 0 0 1 5) '---
           (fib 0) (fib-iter 0) (fib_ 0) '-
           (fib 1) (fib-iter 1) (fib_ 1) '-
           (fib 2) (fib-iter 2) (fib_ 2) '-
@@ -208,5 +216,4 @@
           (else (filter (cdr l)))))
   (cons n (filter a_list)))
 
-;(assert-true (lambda () ((list= eq? (same-parity 1 2 3 4 7 12) (list 1 3 7))))) TODO
-        
+
