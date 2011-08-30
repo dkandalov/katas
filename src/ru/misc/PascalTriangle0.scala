@@ -7,7 +7,6 @@ import collection.immutable.List
 /**
  * User: DKandalov
  */
-
 class PascalTriangle0 extends AssertionsForJUnit {
   @Test def aaa() {
     assert(triangle(5) === List(

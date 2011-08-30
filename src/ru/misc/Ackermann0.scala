@@ -22,12 +22,12 @@ class Ackermann0 extends AssertionsForJUnit {
     assert(f(1, 10) === pow(2, 10))
 
     assert(f(2, 1) === pow(2, pow(2, 0)))
-    assert(f(2, 2) === pow(2, pow(2, 1)))
-    assert(f(2, 3) === pow(2, pow(2, 2)))
-    assert(f(2, 4) === pow(2, pow(2, 4)))
+    assert(f(2, 2) === pow(2, pow(2, pow(2, 0))))
+    assert(f(2, 3) === pow(2, pow(2, pow(2, pow(2, 0)))))
+    assert(f(2, 4) === pow(2, f(2, 3).toDouble))
 //    assert(f(2, 5) === 0) // never finishes, is it pow(2, pow(2, 8)) ?
 
-    assert(f(3, 3) === 65536)
+//    assert(f(3, 3) === 65536))
   }
 
   private def f(x: BigDecimal, y: BigDecimal): BigDecimal = {
