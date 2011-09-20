@@ -16,6 +16,7 @@ import static org.junit.Assert.assertThat;
  */
 public class Perm0
 {
+    @SuppressWarnings({"unchecked"})
     @Test
     public void shouldFindAllPermutations()
     {
@@ -30,7 +31,7 @@ public class Perm0
         assertThat(perm(asList("a", "b")), equalTo(asList(asList("a", "b"), asList("b", "a"))));
     }
 
-    private static <T> List<List<T>> perm(List<T> values)
+    public static <T> List<List<T>> perm(List<T> values)
     {
         List<List<T>> result = new ArrayList<List<T>>();
         if (values.isEmpty()) {
