@@ -15,9 +15,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="scala-compiler-2.8.1" level="application" />
     <orderEntry type="library" name="scala-library-2.8.1" level="application" />
     <orderEntry type="library" name="scalatest-1.2" level="application" />
     <orderEntry type="library" name="groovy-1.7.6" level="application" />
+    <orderEntry type="library" name="clojure" level="application" />
   </component>
 </module>
 
