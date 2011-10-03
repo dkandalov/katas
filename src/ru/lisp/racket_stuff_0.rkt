@@ -216,4 +216,23 @@
           (else (filter (cdr l)))))
   (cons n (filter a_list)))
 
+(define (exercise-1-17)
+  (define (mult a b)
+    (if (= b 0)
+        0
+        (+ a (mult a (- b 1)))))
 
+  (define (double n) (* n 2))
+  (define (half n) (/ n 2))
+  (define (fast-mult a b)
+    (cond ((= b 0) 0)
+          ((even? b) (fast-mult (double a) (half b)))
+          (else (+ a (fast-mult a (- b 1))))))
+  ; 3 * 6
+  ; 3*2 + 3 * 3
+  ; 3*2
+  
+  (displayln (list (mult 12 23) "==" (* 12 23)))
+  (displayln (list (fast-mult 5 7) "==" (* 5 7)))
+  (displayln (list (fast-mult 12 23) "==" (* 12 23)))
+)
