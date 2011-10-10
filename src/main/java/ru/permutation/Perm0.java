@@ -14,57 +14,47 @@ import static org.junit.Assert.assertThat;
 /**
  * User: DKandalov
  */
-public class Perm0
-{
+public class Perm0 {
     @SuppressWarnings({"unchecked"})
     @Test
-    public void shouldFindAllPermutations()
-    {
-        assertThat(perm(Collections.<Integer>emptyList()), equalTo(asList(Arrays.<Integer>asList())));
+    public void shouldFindAllPermutations() {
+        assertThat(perm(Collections.<Integer>emptyList()), equalTo(Arrays.<List<Integer>>asList()));
         assertThat(perm(asList(1)), equalTo(asList(asList(1))));
         assertThat(perm(asList(1, 2)), equalTo(asList(asList(1, 2), asList(2, 1))));
         assertThat(perm(asList(1, 2, 3)), equalTo(asList(
-                asList(1, 2, 3), asList(1, 3, 2), asList(3, 1, 2),
-                asList(2, 1, 3), asList(2, 3, 1), asList(3, 2, 1)
+                asList(1, 2, 3), asList(1, 3, 2),
+                asList(2, 1, 3), asList(2, 3, 1),
+                asList(3, 1, 2), asList(3, 2, 1)
+        )));
+        assertThat(perm(asList(1, 2, 3, 4)), equalTo(asList(
+                asList(1, 2, 3, 4), asList(1, 2, 4, 3), asList(1, 3, 2, 4), asList(1, 3, 4, 2), asList(1, 4, 2, 3), asList(1, 4, 3, 2), // mistake/typo in test
+                asList(2, 1, 3, 4), asList(2, 1, 4, 3), asList(2, 3, 1, 4), asList(2, 3, 4, 1), asList(2, 4, 1, 3), asList(2, 4, 3, 1),
+                asList(3, 1, 2, 4), asList(3, 1, 4, 2), asList(3, 2, 1, 4), asList(3, 2, 4, 1), asList(3, 4, 1, 2), asList(3, 4, 2, 1),
+                asList(4, 1, 2, 3), asList(4, 1, 3, 2), asList(4, 2, 1, 3), asList(4, 2, 3, 1), asList(4, 3, 1, 2), asList(4, 3, 2, 1)
         )));
 
         assertThat(perm(asList("a", "b")), equalTo(asList(asList("a", "b"), asList("b", "a"))));
     }
 
-    public static <T> List<List<T>> perm(List<T> values)
-    {
+    public static <T> List<List<T>> perm(List<T> values) {
+        if (values.isEmpty()) return new ArrayList<List<T>>();
+
         List<List<T>> result = new ArrayList<List<T>>();
-        if (values.isEmpty()) {
-            result.add(new ArrayList<T>());
+        if (values.size() == 1) {
+            result.add(values);
             return result;
         }
 
-        values = new ArrayList<T>(values);
+        for (int i = 0; i < values.size(); i++) {
+            ArrayList<T> subValues = new ArrayList<T>(values);
+            T value = subValues.remove(i);
 
-        int index = values.size() - 1;
-
-        int steps = factorial(values.size());
-        for (int i = 0; i < steps; i++) {
-            result.add(new ArrayList<T>(values));
-
-            if (index < 0) index = values.size() - 1;
-            int leftIndex = index - 1;
-            if (leftIndex < 0) leftIndex = values.size() - 1;
-
-            T tmp = values.get(index);
-            values.set(index, values.get(leftIndex));
-            values.set(leftIndex, tmp);
-
-            index--;
+            List<List<T>> subResult = perm(subValues);
+            for (List<T> list : subResult) {
+                list.add(0, value);
+                result.add(list);
+            }
         }
-
         return result;
-    }
-
-    private static int factorial(int i)
-    {
-        if (i == 0) return 0;
-        if (i == 1) return 1;
-        return factorial(i - 1) * i;
     }
 }
