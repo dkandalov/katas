@@ -2,7 +2,7 @@ package ru.permutation
 
 import org.junit.Test
 
- /**
+/**
  * User: DKandalov
  */
 class Perm2 {

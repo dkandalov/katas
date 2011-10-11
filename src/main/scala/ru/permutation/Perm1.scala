@@ -1,10 +1,8 @@
 package ru.permutation
 
 import collection.mutable.ListBuffer
-import org.junit.Assert._
-import org.scalatest.junit.{JUnitSuite, AssertionsForJUnit, ShouldMatchersForJUnit}
-import org.junit.{Ignore, Test, Before}
-import collection.Seq
+import org.scalatest.junit.{JUnitSuite, ShouldMatchersForJUnit}
+import org.junit.Test
 
 /**
  * User: DKandalov
