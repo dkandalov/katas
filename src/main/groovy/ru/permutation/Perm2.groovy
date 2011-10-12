@@ -23,6 +23,11 @@ class Perm2 {
             ]
   }
 
+  @Test
+  public void performance() {
+    perm((1..9).toList())
+  }
+
   static List<List> perm(List list) {
     if (list.size() == 0) return []
     if (list.size() == 1) return [list]
