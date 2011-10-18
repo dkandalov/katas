@@ -1,4 +1,4 @@
-package bsearchtree
+package ru.bsearchtree
 
 import org.junit.Test
 

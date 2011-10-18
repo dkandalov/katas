@@ -3,8 +3,8 @@ package ru.sort.mergesort
 import org.junit.Test
 import org.scalatest.matchers.ShouldMatchers
 import collection.Seq
-import ru.permutation.Perm1
 import collection.mutable.ListBuffer
+import ru.permutation.{Perm1_, Perm1}
 
 /**
  * @author DKandalov

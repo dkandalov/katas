@@ -2,8 +2,8 @@ package ru.sort.mergesort
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
-import ru.permutation.Perm1
 import collection.mutable.ListBuffer
+import ru.permutation.{Perm1_, Perm1}
 
 class MergeSort3_ extends AssertionsForJUnit {
   @Test

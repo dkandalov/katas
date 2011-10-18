@@ -1,4 +1,4 @@
-package path.path1
+package ru.path.path1
 /**
  * User: dima
  * Date: May 15, 2008

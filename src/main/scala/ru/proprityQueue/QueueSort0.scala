@@ -3,8 +3,7 @@ package ru.proprityQueue
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import collection.mutable.ListBuffer
-import java.util.Arrays
-import ru.permutation.Perm1
+import ru.permutation.{Perm1_, Perm1}
 
 // Ugly and very procedural
 class QueueSort0 extends AssertionsForJUnit {

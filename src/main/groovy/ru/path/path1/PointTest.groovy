@@ -1,7 +1,7 @@
-package path.path1
+package ru.path.path1
 
 import junit.framework.TestCase
-import static path.path1.Utils.*
+import static ru.path.path1.Utils.*
 
 /**
  * User: dima
