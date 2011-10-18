@@ -1,6 +1,7 @@
 class QFind
   def initialize size
     @data = Array.new(size) { |i| i }
+    p @data
   end
 
   def << input
@@ -36,5 +37,5 @@ class QFind
   end
 end
 
-QFind.new(4) << %w{ 0-2 1-4 2-5 3-6 0-4 6-0 1-3 }
-#QFind.new(0) << %w{ 3-4 4-9 8-0 2-3 5-6 2-9 5-9 7-3 4-8 5-6 0-2 6-1 }
+#QFind.new(4) << %w{ 0-2 1-4 2-5 3-6 0-4 6-0 1-3 }
+QFind.new(0) << %w{ 3-4 4-9 8-0 2-3 5-6 2-9 5-9 7-3 4-8 5-6 0-2 6-1 }
