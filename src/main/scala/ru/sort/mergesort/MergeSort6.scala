@@ -14,7 +14,7 @@ class MergeSort6 extends ShouldMatchers {
   def permutate(seq: Seq[Int]): Seq[Seq[Int]] = {
     val listBuffer = ListBuffer[Int]()
     listBuffer.insertAll(0, seq)
-    new Perm1().permutation(listBuffer)
+    new Perm1_().permutation(listBuffer)
   }
 
   @Test def shouldSortSequence() {

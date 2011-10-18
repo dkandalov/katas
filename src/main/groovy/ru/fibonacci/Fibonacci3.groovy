@@ -3,56 +3,43 @@ package ru.fibonacci
 import org.junit.Test
 
 /**
- * User: DKandalov
+ * User: dima
+ * Date: 29/1/11
  */
 class Fibonacci3 {
   @Test
-  public void shouldCalculateFibonacciNumber() {
-      [this.&f, this.&f__, this.&f_, this.&f_nr1, this.&f_nr2].each { fib ->
-        assert (0..8).toList().collect{ fib(it) } == [0, 1, 1, 2, 3, 5, 8, 13, 21]
-      }
+  public void shouldCalculateFibonacciNumbers() {
+    def result = (-1..7).collect {[it, fib(it)]}
+    assert result == [
+            [-1, -1],
+            [0, 0],
+            [1, 1],
+            [2, 1],
+            [3, 2],
+            [4, 3],
+            [5, 5],
+            [6, 8],
+            [7, 13]
+    ]
   }
 
-  // recursive process
-  private static def f(n) {
-    if (n == 0) return 0
-    if (n == 1) return 1
-    f(n - 1) + f(n - 2)
-  }
+  static def fib(int value) {
+    if (value < 0) return -1
+    if (value == 0) return 0
 
-  // iterative process (recursive procedure)
-  private static def f__(lastValue = 1, value = 0, n) {
-//    println "$lastValue $value $n"
-    if (n == 0) return value
-    f__(value, value + lastValue, n - 1)
-  }
-
-  // iterative process (recursive procedure)
-  private static def f_(value = 0, nextValue = 1, n) {
-//    println "$value $nextValue $n"
-    if (n == 0) return value
-    f_(nextValue, value + nextValue, n - 1)
-  }
-
-  // iterative process (iterative procedure)
-  private static def f_nr1(n) {
-    def (value, nextValue) = [0, 1]
-    n.times {
-      int tmp = nextValue
-      nextValue = value + nextValue
-      value = tmp
+    int result = 0
+    int lastValue = 1
+    (1..value).each {
+      int tmp = result
+      result = result + lastValue
+      lastValue = tmp
     }
-    value
+    result
   }
 
-  // iterative process (iterative procedure)
-  private static def f_nr2(n) {
-    def (prevValue, value) = [1, 0]
-    n.times {
-      int tmp = value
-      value += prevValue
-      prevValue = tmp
-    }
-    value
+  static def fib_recursive(int i) {
+    if (i < 0) return -1
+    if (i < 2) return i
+    return fib(i - 2) + fib(i - 1)
   }
 }
