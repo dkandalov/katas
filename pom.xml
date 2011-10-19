@@ -34,7 +34,7 @@
     </repositories>
 
     <dependencies>
-
+<!-- tmp comment -->
         <dependency>
             <groupId>com.cmcmarkets</groupId>
             <artifactId>gbeans</artifactId>
