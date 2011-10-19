@@ -3,8 +3,8 @@ package ru.sort.mergesort
 import org.junit.Test
 import org.scalatest.matchers.ShouldMatchers
 import collection.Seq
-import ru.permutation.Perm1
 import collection.mutable.ListBuffer
+import ru.permutation.{Perm1_, Perm1}
 
 /**
  * @author DKandalov
@@ -14,7 +14,7 @@ class MergeSort6 extends ShouldMatchers {
   def permutate(seq: Seq[Int]): Seq[Seq[Int]] = {
     val listBuffer = ListBuffer[Int]()
     listBuffer.insertAll(0, seq)
-    new Perm1().permutation(listBuffer)
+    new Perm1_().permutation(listBuffer)
   }
 
   @Test def shouldSortSequence() {

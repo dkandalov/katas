@@ -3,8 +3,7 @@ package ru.proprityQueue
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import collection.mutable.ListBuffer
-import java.util.Arrays
-import ru.permutation.Perm1
+import ru.permutation.{Perm1_, Perm1}
 
 // Ugly and very procedural
 class QueueSort0 extends AssertionsForJUnit {
@@ -18,7 +17,7 @@ class QueueSort0 extends AssertionsForJUnit {
     assert(sort(List(4, 2, 3, 1)) === List(1, 2, 3, 4))
     assert(sort(List(4, 2, 5, 3, 1)) === List(1, 2, 3, 4, 5))
 
-    new Perm1().permutation(ListBuffer(1, 2, 3, 4, 5)).foreach {
+    new Perm1_().permutation(ListBuffer(1, 2, 3, 4, 5)).foreach {
       listBuffer => assert(sort(listBuffer.toList) == List(1, 2, 3, 4, 5))
     }
   }

@@ -3,51 +3,43 @@ package ru.sort.mergesort
 import org.junit.Test
 
 /**
- * User: DKandalov
+ * User: dima
+ * Date: 5/2/11
  */
 class MergeSort4 {
   @Test
   public void shouldSortList() {
-    assert sort([]) == []
-    assert sort([1]) == [1]
-    assert sort([1, 1]) == [1, 1]
-    assert sort([1, 2]) == [1, 2]
-    assert sort([2, 1]) == [1, 2]
-    assert sort([2, 3, 1]) == [1, 2, 3]
-    assert sort([2, 4, 3, 1]) == [1, 2, 3, 4]
-    assert sort([2, 5, 4, 3, 1]) == [1, 2, 3, 4, 5]
+    assert mergeSort([]) == []
 
-    [1, 2, 3, 4, 5, 6].permutations().each { list ->
-      assert sort(list) == [1, 2, 3, 4, 5, 6]
+    (2..8).asList().inject([1]) { acc, i ->
+      acc.permutations().each { assert mergeSort(it) == acc }
+      acc + i
     }
   }
 
-  static List sort(List list) {
-    if (list.size() <= 1) return list
-    def (l1, l2) = split(list)
-    merge(sort(l1), sort(l2))
+  List mergeSort(List list) {
+    if (list.size() <= 1) return new ArrayList(list)
+
+    int mid = list.size() / 2
+    def left = mergeSort(list.subList(0, mid))
+    def right = mergeSort(list.subList(mid, list.size()))
+
+    merge(left, right)
   }
 
-  static List merge(List list1, List list2) {
+  List merge(List left, List right) {
     def result = []
-
-    int i1 = 0
-    int i2 = 0
-    while (i1 < list1.size() && i2 < list2.size()) {
-      if (list1[i1] < list2[i2]) {
-        result << list1[i1++]
+    int i = 0
+    int j = 0
+    while (i < left.size() || j < right.size()) {
+      if (i == left.size()) {
+        result << right[j++]
+      } else if (j == right.size()) {
+        result << left[i++]
       } else {
-        result << list2[i2++]
+        result << (left[i] < right[j] ? left[i++] : right[j++])
       }
     }
-    while (i1 < list1.size()) { result << list1[i1++] }
-    while (i2 < list2.size()) { result << list2[i2++] }
-
     result
-  }
-
-  static def split(List list) {
-    def middle = list.size() / 2
-    [list[0..middle - 1], list[middle..-1]]
   }
 }

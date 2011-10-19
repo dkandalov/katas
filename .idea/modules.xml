@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/katas.iml" filepath="$PROJECT_DIR$/katas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/ruby/ruby.iml" filepath="$PROJECT_DIR$/src/main/ruby/ruby.iml" />
     </modules>
   </component>
 </project>
