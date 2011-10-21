@@ -6,6 +6,19 @@ import org.junit.Test
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 /**
+ * Design:
+ *  - class that observes external behavior shouldn't know about watcher;
+ *  it can be abstracted by using duck typing (just "setValue()" method) or
+ *  using Queue.
+ *  - it would be nice to have syntax for watcher in the form of
+ *  Watcher.watch(appIsRunning) { ... }. But this means that watcher has to know about
+ *  observing classes. If observer also knows about watcher and both use duck types,
+ *  it's in a way is a circle dependency.
+ *
+ *  OTOH:
+ *  - watchers might need a lot of context from observers for more meaningful notification.
+ *  Therefore, it can be more practical to pass external observer and notifier as method/function.
+ *
  * User: dima
  * Date: 21/10/2011
  */
@@ -25,7 +38,7 @@ class ChangeWatcherTest {
     assert result == ["good", "bad 2", "bad 3", "good"]
   }
 
-  class ChangeWatcher {
+  private static class ChangeWatcher {
 
     private final Thread thread
     private final BlockingQueue queue = new LinkedBlockingQueue() // bound it?
