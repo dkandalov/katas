@@ -2,6 +2,7 @@ package ru.network.actors
 
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
+import static com.cmcmarkets.Util.runSafely
 
 /**
  * User: dima
@@ -13,13 +14,20 @@ class Bus {
 
   @ActiveMethod
   def publish(message) {
-    for (def listener: listeners) {
-      listener.onMessage(message)
+    doPublish(message)
+  }
+
+  private def doPublish(message) {
+    runSafely {
+      for (def listener: listeners) {
+        listener.onMessage(message)
+      }
     }
   }
 
   @ActiveMethod(blocking = true)
   def addListener(listener) {
     listeners << listener
+//    println "added ${listener}"
   }
 }
