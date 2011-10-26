@@ -1,4 +1,4 @@
-package ru.proprityQueue
+package ru.priorityQueue
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
