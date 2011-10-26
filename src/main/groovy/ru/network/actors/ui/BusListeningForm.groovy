@@ -4,30 +4,33 @@ import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
 import javax.swing.DefaultListModel
 import javax.swing.JPanel
-import javax.swing.SwingUtilities
 import ru.network.actors.Bus
 import static com.cmcmarkets.Util.runSafely
+import static javax.swing.SwingUtilities.invokeLater
 
 /**
  * User: dima
  * Date: 24/10/2011
  */
 @ActiveObject
-class TradeFormActor {
+class BusListeningForm {
   private final DefaultListModel listModel
+  private final Closure acceptMessage
 
-  static JPanel createForm(Bus bus) {
-    def tradeForm = new TradeForm()
+  static JPanel createForm(String title, Bus bus, Closure acceptMessage = {true}) {
+    def form = new MessagesForm()
+    form.root.border.title = title
     def model = new DefaultListModel()
-    tradeForm.list.model = model
-    new TradeFormActor(bus, model)
+    form.list.model = model
 
-    tradeForm.root
+    bus.addListener(new BusListeningForm(model, acceptMessage))
+
+    form.root
   }
 
-  TradeFormActor(Bus bus, DefaultListModel listModel) {
+  BusListeningForm(DefaultListModel listModel, Closure acceptMessage) {
     this.listModel = listModel
-    bus.addListener(this)
+    this.acceptMessage = acceptMessage
   }
 
   @ActiveMethod
@@ -37,8 +40,8 @@ class TradeFormActor {
 
   private def handle(message) {
     runSafely {
-      println message
-      SwingUtilities.invokeLater {
+      if (!acceptMessage(message)) return
+      invokeLater {
         listModel.addElement(message)
       }
     }
