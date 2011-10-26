@@ -1,7 +1,7 @@
 package ru.network.actors
 
-import com.cmcmarkets.storage.Storage
 import groovyx.gpars.activeobject.ActiveObject
+import ru.network.actors.util.StoredValue
 import static groovyx.gpars.actor.Actors.actor
 
 /**
@@ -13,13 +13,13 @@ class DataFeed {
 
   private static final Random random = new Random()
   private final Bus bus
-  private Long tradeId
+  private final StoredValue<Integer> lastTradeId
   private String id
 
   DataFeed(Bus bus, String id = "", int frequency = 1000) {
     this.bus = bus
     this.id = id
-    this.tradeId = Storage.cached("${id}-tradeId") { 0 }
+    this.lastTradeId = StoredValue.with("${id}-tradeId") { -1 }
 
     def fakeUpstreamSource = actor {
       loop {
@@ -42,13 +42,11 @@ class DataFeed {
     bus.publish(createNextTrade())
   }
 
-  def createNextTrade() {
+  private def createNextTrade() {
     new Trade(nextTradeId(), id, "", random.nextDouble() * 100, random.nextDouble() * 100)
   }
 
   private def nextTradeId() {
-    tradeId += 1
-    Storage.save("${id}-tradeId", tradeId)
-    tradeId.toString()
+    lastTradeId.save { it + 1 }.toString()
   }
 }
