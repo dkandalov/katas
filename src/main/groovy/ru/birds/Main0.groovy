@@ -5,6 +5,8 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.event.MouseEvent
 import java.awt.event.MouseMotionAdapter
+import java.awt.geom.AffineTransform
+import java.awt.geom.Point2D
 import javax.swing.JFrame
 import javax.swing.JPanel
 import org.junit.Test
@@ -35,6 +37,7 @@ class Main0 {
 }
 
 class Bird {
+
   static List<Bird> createFlock() {
     def leader = new Bird(300, 300, 90, 10)
     [leader] + createFollowersFor(leader, 10)
@@ -51,6 +54,8 @@ class Bird {
   double x, y
   private double direction
   double speed
+  double leaderXDiff
+  double leaderYDiff
 
   Bird(double x, double y, double direction, double speed, Bird leader = null) {
     this.x = x
@@ -58,15 +63,33 @@ class Bird {
     setDirection(direction)
     this.speed = speed
     this.leader = leader
+
+    if (leader != null) {
+      def transform = AffineTransform.getRotateInstance(toRadians(leader.direction), 0, 0)
+      def result = new Point2D.Double()
+      transform.transform(new Point2D.Double(x - leader.x, y - leader.y), result)
+      this.leaderXDiff = result.x
+      this.leaderYDiff = result.y
+    }
   }
 
   def update() {
     if (leader != null) {
+/*
       if (abs(leader.direction - direction) < 180) {
         direction = (leader.direction + direction) / 2
       } else {
         direction = normalized((leader.direction + direction + 360) / 2)
       }
+*/
+      def transform = new AffineTransform()
+      transform.rotate(toRadians(-leader.direction), leader.x, leader.y)
+//      transform.translate(leader.x, leader.y)
+      def result = new Point2D.Double()
+      transform.transform(new Point2D.Double(leaderXDiff + leader.x, leaderYDiff + leader.y), result)
+      moveTowards(result.x, result.y)
+//      x = result.x
+//      y = result.y
     }
     x += sin(toRadians(direction)) * speed
     y += cos(toRadians(direction)) * speed
@@ -75,13 +98,13 @@ class Bird {
   def moveTowards(double targetX, double targetY) {
     def xDiff = (targetX - x)
     def yDiff = (targetY - y)
-    if (xDiff > 0 && yDiff < 0) {
-      setDirection(toDegrees(atan(xDiff / -yDiff)) + 90)
+    if (xDiff >= 0 && yDiff < 0) {
+      setDirection(180 - toDegrees(atan(xDiff / -yDiff)))
     } else if (xDiff < 0 && yDiff < 0) {
-      setDirection(toDegrees(atan(-xDiff / -yDiff)) + 180)
-    } else if (xDiff < 0 && yDiff > 0) {
-      setDirection(toDegrees(atan(-xDiff / yDiff)) + 270)
-    } else {
+      setDirection(180 + toDegrees(atan(-xDiff / -yDiff)))
+    } else if (xDiff < 0 && yDiff >= 0) {
+      setDirection(360 - toDegrees(atan(-xDiff / yDiff)))
+    } else if (xDiff >= 0 && yDiff >= 0) {
       setDirection(toDegrees(atan(xDiff / yDiff)))
     }
   }
@@ -100,20 +123,29 @@ class Bird {
 }
 
 class BirdTest {
-  @Test public void shouldMoveTowards() {
+  @Test public void shouldMoveTowardsWithCorrectDirection() {
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 0, 10, 0)
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 10, 10, 45)
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 10, 0, 90)
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 10, -10, 135)
-//    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 0, -10, 180)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 0, -10, 180)
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, -10, 225)
-//    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, 0, 270)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, 0, 270)
     assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, 10, 315)
+
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 5, 10, 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 10, 5, 90 - 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 10, -5, 90 + 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), 5, -10, 180 - 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -5, -10, 180 + 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, -5, 270 - 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -10, 5, 270 + 26.56)
+    assertMovesTowardsPoint(new Bird(0, 0, 0, 10), -5, 10, 360 - 26.56)
   }
 
   static assertMovesTowardsPoint(Bird bird, double x, double y, double angle) {
     bird.moveTowards(x, y)
-    assertEquals("", angle, bird.direction)
+    assertEquals("", angle, bird.direction, 0.01)
   }
 
   @Test public void shouldGetCloserToLeader() {
@@ -170,7 +202,7 @@ class MyPanel extends JPanel {
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       void mouseMoved(MouseEvent e) {
-//        birds[0].with { moveTowards(e.x, e.y) }
+        birds[0].with { moveTowards(e.x, e.y) }
       }
     })
   }
@@ -179,7 +211,7 @@ class MyPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     def g2 = (Graphics2D) g
     birds[0].with {
-      direction += direction * 0.05 + 15
+//      direction += direction * 0.05 + 15
     }
     birds.each {
       it.update()
