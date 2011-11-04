@@ -28,6 +28,7 @@ class Main0 {
     frame.visible = true
 
     new Thread({
+      //noinspection GroovyInfiniteLoopStatement
       while (true) {
         frame.repaint()
         Thread.sleep(100)
