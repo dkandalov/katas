@@ -27,9 +27,9 @@ class HeapSort4 extends ShouldMatchers {
     collectMaxValuesFrom(list.foldRight[AHeap](EmptyHeap()) { (i, heap) => heap.add(i) })
   }
 
-  private def collectMaxValuesFrom(heap: AHeap): List[Int] = {
-    if (heap == null || heap == EmptyHeap()) List()
-    else collectMaxValuesFrom(heap.removeMax()._2) ::: List(heap.value())
+  private def collectMaxValuesFrom(heap: AHeap): List[Int] = heap match {
+    case EmptyHeap() => List()
+    case default => collectMaxValuesFrom(heap.removeMax()._2) ::: List(heap.value())
   }
 
   @Test def shouldAddElementsToNone() {

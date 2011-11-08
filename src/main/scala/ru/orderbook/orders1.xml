@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+	<add order-id="1" symbol="MSFT.L" type="buy" price="5" quantity="200" />
+	<add order-id="2" symbol="VOD.L" type="buy" price="15" quantity="100" />
+	<add order-id="3" symbol="MSFT.L" type="sell" price="5" quantity="300" />
+	<add order-id="4" symbol="MSFT.L" type="buy" price="7" quantity="150" />
+	<edit order-id="1" price="7" quantity="200" />
+	<remove order-id="4" />
+	<add order-id="5" symbol="VOD.L" type="sell" price="17" quantity="300" />
+	<add order-id="6" symbol="VOD.L" type="buy" price="12" quantity="150" />
+	<edit order-id="3" price="7" quantity="200" />
+	<add order-id="7" symbol="VOD.L" type="sell" price="16" quantity="100" />
+	<add order-id="8" symbol="VOD.L" type="sell" price="19" quantity="100" />
+	<add order-id="9" symbol="VOD.L" type="sell" price="21" quantity="112" />
+	<remove order-id="5" />
+</commands>
