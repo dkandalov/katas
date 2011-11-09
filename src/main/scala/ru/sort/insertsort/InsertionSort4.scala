@@ -1,4 +1,4 @@
-package sort.insertion
+package ru.sort.insertsort
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test

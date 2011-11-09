@@ -18,7 +18,7 @@ class BusListeningForm {
   private final Closure acceptMessage
 
   static JPanel createForm(String title, Bus bus, Closure acceptMessage = {true}) {
-    def form = new MessagesForm()
+    def form = new MessagesForm_()
     form.root.border.title = title
     def model = new DefaultListModel()
     form.list.model = model

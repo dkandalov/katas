@@ -1,7 +1,7 @@
 package ru.network
 
-import actors.Actor
-import actors.Actor._
+import scala.actors.Actor
+import scala.actors.Actor._
 
 /**
  * @author DKandalov

@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 26/10/2011
  */
 
-class GCD1 extends ShouldMatchers {
+class GCD2 extends ShouldMatchers {
   @Test def shouldFindGreatestCommonDivider() {
     gcd(1, 1) should equal(1)
     gcd(1, 2) should equal(1)
