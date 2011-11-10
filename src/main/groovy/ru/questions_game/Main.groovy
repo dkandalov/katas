@@ -3,12 +3,19 @@ package ru.questions_game
 import groovy.xml.MarkupBuilder
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.junit.Test
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
 import static java.net.URLDecoder.decode
+import static ru.questions_game.Player.newPlayer
+import java.util.concurrent.ArrayBlockingQueue
+import static java.net.URLEncoder.encode
 
 /**
  * User: dima
@@ -155,6 +162,111 @@ class Game {
   }
 }
 
+class TestPlayer {
+  Player info
+  Server server
+  BlockingQueue queue = new ArrayBlockingQueue(10)
+
+  TestPlayer(String url, String name) {
+    info = newPlayer(url, name)
+  }
+
+  def start() {
+    def port = info.url.split(":")[1].toInteger()
+    server = new Server(port)
+    server.addHandler(new AbstractHandler() {
+      @Override
+      void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) {
+        queue.add(request.parameterMap["question"][0])
+      }
+    })
+    server.start()
+    this
+  }
+
+  def stop() {
+    server.stop()
+    this
+  }
+
+  def receivedQuestionIn(int timeoutMillis, Closure closure) {
+    closure(queue.poll(timeoutMillis, TimeUnit.MILLISECONDS))
+  }
+}
+
+class QuestionSenderTest {
+  @Test public void shouldAskPlayerAQuestion() {
+    def player = new TestPlayer("localhost:1234", "testPlayer").start()
+    def questionSender = new QuestionSender(new PlayersStore([player.info]), 100)
+
+    player.receivedQuestionIn(1000) {
+      assert it == "What is a question?"
+    }
+  }
+}
+
+@ActiveObject
+class QuestionSender {
+  private ScheduledExecutorService executor = Executors.newScheduledThreadPool(10)
+  private PlayersStore playersStore
+  private int intervalMillis
+
+  QuestionSender(PlayersStore playersStore, int intervalMillis = 1000) {
+    this.playersStore = playersStore
+    this.intervalMillis = intervalMillis
+    playersStore.players.each { onPlayerAdded(it) }
+  }
+
+  @ActiveMethod
+  def onPlayerAdded(Player player) {
+    scheduleTaskFor(player)
+  }
+
+  private def scheduleTaskFor(Player player) {
+    executor.schedule(new Runnable() {
+      @Override
+      void run() { catchingAllExceptions {
+        def question = chooseQuestionFor(player)
+        def answer = ask(player, question)
+        if (question.matches(answer)) {
+          player = new Player(player.url, player.name, player.score + 1)
+          playersStore.update(player)
+        }
+        scheduleTaskFor(player)
+      }}
+    }, intervalMillis, TimeUnit.MILLISECONDS)
+  }
+
+  static def catchingAllExceptions(Closure closure) {
+    try {
+      closure.call()
+    } catch (Exception e) {
+      e.printStackTrace()
+    }
+  }
+
+  private String ask(Player player, Question question) {
+    def url = "http://${player.url}/game?question=${encode(question.text)}".toURL()
+    url.text
+  }
+
+  private Question chooseQuestionFor(Player player) {
+    new Question("aaa")
+  }
+}
+
+class Question {
+  String text
+
+  Question(String text) {
+    this.text = text
+  }
+
+  def matches(String answer) {
+    true // TODO
+  }
+}
+
 @ActiveObject
 class PlayersStore {
   private List<Player> players
@@ -169,13 +281,18 @@ class PlayersStore {
   }
 
   @ActiveMethod
-  def add(Player player) {
-    if (notValid(player)) return
-    players.add(player)
+  def add(Player newPlayer) {
+    if (notValid(newPlayer)) return
+    players.add(newPlayer)
   }
 
   private boolean notValid(Player player) {
-    players.any {it.url == player.url} || player.url == ""
+    player.url == "" || players.any {it.url == player.url}
+  }
+
+  @ActiveMethod
+  def update(Player player) {
+    // TODO
   }
 }
 
@@ -185,6 +302,9 @@ final class Player {
   String name
   Integer score
 
+  static Player newPlayer(String url, String name, Integer score = 0) {
+    new Player(url, name, score)
+  }
 
   String toString() {
     "Player{" +
