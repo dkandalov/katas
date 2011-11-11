@@ -1,5 +1,8 @@
 package ru.questions_game
 
+import static ru.questions_game.Player.newPlayer
+import static ru.questions_game.Util.catchingAllExceptions
+
 import groovy.xml.MarkupBuilder
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
@@ -10,12 +13,12 @@ import org.junit.Test
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
 import ru.network.actors.util.StoredValue
+import static java.lang.Math.min
 import static java.net.URLDecoder.decode
 import static java.net.URLEncoder.encode
 import java.util.concurrent.*
-import static ru.questions_game.Player.newPlayer
-import static ru.questions_game.Util.catchingAllExceptions
-import static java.lang.Math.min
+import static ru.questions_game.MathQuestions.fibonacci
+import static ru.questions_game.MathQuestions.factorial
 
 /**
  * User: dima
@@ -292,7 +295,18 @@ class RandomQuestionSource implements QuestionSource {
 class FactQuestions implements QuestionSource {
   private static Random random = new Random()
   private static questions = [
-          new Question("What is the name of the company?", { it.toUpperCase().contains("CMC") })
+          new Question("What is the color of banana?", { it.toUpperCase().contains("YELLOW") }),
+          new Question("What is the color of orange?", { it.toUpperCase().contains("ORANGE") }),
+          new Question("What is Toby's surname?", { it.toUpperCase().contains("WILLIAMSON") }),
+          new Question("What is the name of the company?", { it.toUpperCase().contains("CMC") }),
+          new Question("Who is the owner of the company?", { it.toUpperCase().contains("PETER") && it.toUpperCase().contains("CRUDDAS") }),
+          new Question("How old is Peter Cruddas?", { it.toUpperCase().contains("58") }),
+          new Question("How many milliliteres in one pint?", { it.contains("568") }),
+          new Question("How many pints in one litre?", { it.contains("1.75") }),
+          new Question("How much time is one light year?", { it.contains("1") && it.contains("YEAR") }),
+          new Question("What is the last thing you watched on TV?", { true }),
+          new Question("What color is your bedroom carpet?", { true }),
+          new Question("Do you carry a donor card?", { true }),
   ]
 
   @Override
@@ -301,12 +315,35 @@ class FactQuestions implements QuestionSource {
   }
 }
 
+class MathQuestionsTest {
+  @Test public void shouldCalculateFibonacciNumber() {
+    assert fibonacci(0) == 0
+    assert fibonacci(1) == 1
+    assert fibonacci(2) == 1
+    assert fibonacci(3) == 2
+    assert fibonacci(4) == 3
+    assert fibonacci(5) == 5
+    assert fibonacci(6) == 8
+    assert fibonacci(7) == 13
+    assert fibonacci(500) == 139423224561697880139724382870407283950070256587697307264108962948325571622863290691557658876222521294125
+  }
+
+  @Test public void shouldCalculateFactorial() {
+    assert factorial(0) == 0
+    assert factorial(1) == 1
+    assert factorial(2) == 2
+    assert factorial(3) == 6
+    assert factorial(4) == 24
+    assert factorial(50) == 30414093201713378043612608166064768844377641568960512000000000000
+  }
+}
+
 class MathQuestions implements QuestionSource {
   private static Random random = new Random()
 
   @Override
   Question questionFor(Player player) {
-    def typeOfQuestion = random.nextInt(4)
+    def typeOfQuestion = random.nextInt(5)
     if (typeOfQuestion == 0) {
       int a1 = random.nextInt(1000)
       int a2 = random.nextInt(1000)
@@ -325,9 +362,35 @@ class MathQuestions implements QuestionSource {
       def answer = (a1 / a2).toString()
       def approximateAnswer = answer[0..min(answer.size(), 10) - 1]
       new Question("${a1} / ${a2} = ?", { it.contains(approximateAnswer) })
+    } else if (typeOfQuestion == 4) {
+      def n = random.nextInt(1000)
+      new Question("What is fibonacci number of ${n}?", { it == fibonacci(n) })
+    } else if (typeOfQuestion == 4) {
+      def n = random.nextInt(100)
+      new Question("What is factorail of ${n}?", { it == factorial(n) })
     } else {
       throw new IllegalStateException()
     }
+  }
+
+  static BigDecimal fibonacci(BigDecimal value) {
+    BigDecimal result = 0
+    BigDecimal prevValue = 1
+    for (BigDecimal i = 0; i < value; i++) {
+      BigDecimal tmp = result
+      result += prevValue
+      prevValue = tmp
+    }
+    result
+  }
+
+  static BigDecimal factorial(BigDecimal value) {
+    if (value == 0) return 0
+    BigDecimal result = 1
+    for (BigDecimal i = 2; i <= value; i++) {
+      result = i * result
+    }
+    result
   }
 }
 

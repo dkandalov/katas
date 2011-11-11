@@ -20,7 +20,6 @@ class SamplePlayer {
         catchingAllExceptions {
           if (request.pathInfo.endsWith("game")) {
             def question = request.parameterMap["question"][0]
-            request.handled = true
 
             if (question.contains("+")) {
               (question =~ /(\d+)\s\+\s(\d+).*/).with {
@@ -57,9 +56,10 @@ class SamplePlayer {
             } else if (question.contains("company")) {
               response.writer.print("cmc")
             } else {
-              request.handled = false
+              response.writer.print("I don't know")
             }
 
+            request.handled = true
           } else {
             println "Unknown request path ${request.pathInfo}"
           }
