@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Test
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
+import ru.network.actors.util.StoredValue
 import static java.net.URLDecoder.decode
 import static java.net.URLEncoder.encode
 import java.util.concurrent.*
@@ -130,16 +131,18 @@ class Game {
         this.request = request
         this.response = response
 
-        if (request.pathInfo.endsWith("stats")) {
-          onStatsPage()
-        } else if (request.pathInfo.endsWith("addPlayer")) {
-          onAddPlayer()
-        } else if (request.pathInfo.endsWith("removePlayer")) {
-          onRemovePlayer()
-        } else {
-          response.writer.print("Unknown request: ${request.pathInfo}")
+        catchingAllExceptions {
+          if (request.pathInfo.endsWith("stats")) {
+            onStatsPage()
+          } else if (request.pathInfo.endsWith("addPlayer")) {
+            onAddPlayer()
+          } else if (request.pathInfo.endsWith("removePlayer")) {
+            onRemovePlayer()
+          } else {
+            response.writer.print("Unknown request: ${request.pathInfo}")
+          }
+          request.handled = true
         }
-        request.handled = true
       }
     })
     server.start()
@@ -393,42 +396,54 @@ class Question {
 
 @ActiveObject
 class PlayersStore {
-  private List<Player> players
+  private StoredValue<List<Player>> players
 
-  PlayersStore(List<Player> players = []) {
-    this.players = players
+  PlayersStore(List<Player> players = null) {
+    this.players = StoredValue.with("players", {[]}, players)
   }
 
   @ActiveMethod(blocking = true)
   def getPlayers() {
-    players.clone()
+    players.value.clone()
   }
 
   @ActiveMethod
   def add(Player newPlayer) {
+    onAdd(newPlayer)
+  }
+
+  private def onAdd(Player newPlayer) {
     if (notValid(newPlayer)) return
-    players.add(newPlayer)
+    players.save { it.add(newPlayer); it }
   }
 
   private boolean notValid(Player player) {
-    player.url == "" || players.any {it.url == player.url}
+    player.url == "" || players.value.any {it.url == player.url}
   }
 
   @ActiveMethod
   def update(Player player) {
+    onUpdate(player)
+  }
+
+  private def onUpdate(Player player) {
     Player existingPlayer = find(player)
     if (existingPlayer == null) return
-    players.set(players.indexOf(existingPlayer), player)
+    players.save { it.set(players.value.indexOf(existingPlayer), player); it }
   }
 
   @ActiveMethod
   def remove(Player player) {
+    onRemove(player)
+  }
+
+  private def onRemove(Player player) {
     Player existingPlayer = find(player)
-    players.remove(existingPlayer)
+    players.save { it.remove(existingPlayer); it }
   }
 
   private Player find(Player player) {
-    players.find { it.url == player.url }
+    players.value.find { it.url == player.url }
   }
 }
 
@@ -471,6 +486,6 @@ final class Player {
             "name='" + name + '\'' +
             ", url='" + url + '\'' +
             ", score=" + score +
-            '}';
+            '}'
   }
 }
