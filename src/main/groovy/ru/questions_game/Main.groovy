@@ -15,6 +15,7 @@ import static java.net.URLEncoder.encode
 import java.util.concurrent.*
 import static ru.questions_game.Player.newPlayer
 import static ru.questions_game.Util.catchingAllExceptions
+import static java.lang.Math.min
 
 /**
  * User: dima
@@ -22,8 +23,7 @@ import static ru.questions_game.Util.catchingAllExceptions
  */
 class Main {
   public static void main(String[] args) {
-    def playersStore = new PlayersStore([new Player("localhost:1234", "me1", 1), new Player("localhost:5678", "me2", 2)])
-    new Game(playersStore).start()
+    new Game().start()
   }
 }
 
@@ -161,7 +161,9 @@ class Game {
 
   private def onAddPlayer() {
     def player = createPlayerFrom(request)
-    playersStore.add(player)
+    if (playersStore.add(player)) {
+      questionSender.onPlayerAdded(player)
+    }
     response.sendRedirect("stats")
   }
 
@@ -308,19 +310,21 @@ class MathQuestions implements QuestionSource {
     if (typeOfQuestion == 0) {
       int a1 = random.nextInt(1000)
       int a2 = random.nextInt(1000)
-      new Question("${a1} + ${a2} = ?", { it == a1 + a2 })
+      new Question("${a1} + ${a2} = ?", { it == (a1 + a2).toString() })
     } else if (typeOfQuestion == 1) {
       int a1 = random.nextInt(1000)
       int a2 = random.nextInt(1000)
-      new Question("${a1} - ${a2} = ?", { it == a1 - a2 })
+      new Question("${a1} - ${a2} = ?", { it == (a1 - a2).toString() })
     } else if (typeOfQuestion == 2) {
       int a1 = random.nextInt(1000)
       int a2 = random.nextInt(1000)
-      new Question("${a1} * ${a2} = ?", { it == a1 * a2 })
+      new Question("${a1} * ${a2} = ?", { it == (a1 * a2).toString() })
     } else if (typeOfQuestion == 3) {
       int a1 = random.nextInt(1000)
       int a2 = random.nextInt(1000) + 1
-      new Question("${a1} / ${a2} = ?", { it == a1 / a2 })
+      def answer = (a1 / a2).toString()
+      def approximateAnswer = answer[0..min(answer.size(), 10) - 1]
+      new Question("${a1} / ${a2} = ?", { it.contains(approximateAnswer) })
     } else {
       throw new IllegalStateException()
     }
@@ -357,6 +361,11 @@ class QuestionSender {
             if (question.matches(answer)) {
               player = new Player(player.url, player.name, player.score + 1)
               playersStore.update(player)
+            }
+            if (question.matches(answer)) {
+              Log.gotCorrectAnswer(player, question, answer)
+            } else {
+              Log.gotIncorrectAnswer(player, question, answer)
             }
           } catch (ConnectException e) {
             Log.playerIsOffline(player)
@@ -396,7 +405,7 @@ class Question {
 
 @ActiveObject
 class PlayersStore {
-  private StoredValue<List<Player>> players
+  private final StoredValue<List<Player>> players
 
   PlayersStore(List<Player> players = null) {
     this.players = StoredValue.with("players", {[]}, players)
@@ -407,14 +416,15 @@ class PlayersStore {
     players.value.clone()
   }
 
-  @ActiveMethod
+  @ActiveMethod(blocking = true)
   def add(Player newPlayer) {
     onAdd(newPlayer)
   }
 
   private def onAdd(Player newPlayer) {
-    if (notValid(newPlayer)) return
+    if (notValid(newPlayer)) return false
     players.save { it.add(newPlayer); it }
+    true
   }
 
   private boolean notValid(Player player) {
@@ -426,10 +436,12 @@ class PlayersStore {
     onUpdate(player)
   }
 
-  private def onUpdate(Player player) {
-    Player existingPlayer = find(player)
+  private def onUpdate(Player updatedPlayer) {
+    Player existingPlayer = find(updatedPlayer)
     if (existingPlayer == null) return
-    players.save { it.set(players.value.indexOf(existingPlayer), player); it }
+    int existingPlayerIndex = players.value.indexOf(existingPlayer)
+    if (existingPlayerIndex == -1) return
+    players.save { it.set(existingPlayerIndex, updatedPlayer); it }
   }
 
   @ActiveMethod
@@ -468,6 +480,14 @@ class Log {
 
   static playerIsNotResponding(Player player) {
     println "Player is not responding ${player}"
+  }
+
+  static def gotCorrectAnswer(Player player, Question question, String answer) {
+    println "${player.name}: correct answer '${question.text}' == '${answer}'"
+  }
+
+  static def gotIncorrectAnswer(Player player, Question question, String answer) {
+    println "${player.name}: wrong answer '${question.text}' != '${answer}'"
   }
 }
 

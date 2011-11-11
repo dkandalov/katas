@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
+import static ru.questions_game.Util.catchingAllExceptions
 
 /**
  * User: dima
@@ -11,15 +12,57 @@ import org.mortbay.jetty.handler.AbstractHandler
  */
 class SamplePlayer {
   public static void main(String[] args) {
+
     def server = new Server(1234)
     server.addHandler(new AbstractHandler() {
       @Override
       void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) {
-        if (request.pathInfo.endsWith("game")) {
-          println request.parameterMap
-          request.handled = true
-        } else {
-          println "Unknown request path ${request.pathInfo}"
+        catchingAllExceptions {
+          if (request.pathInfo.endsWith("game")) {
+            def question = request.parameterMap["question"][0]
+            request.handled = true
+
+            if (question.contains("+")) {
+              (question =~ /(\d+)\s\+\s(\d+).*/).with {
+                if (it.matches()) {
+                  response.writer.print(it.group(1).toInteger() + it.group(2).toInteger())
+                } else {
+                  println "contains + but doesn't match: ${question}"
+                }
+              }
+            } else if (question.contains("-")) {
+              (question =~ /(\d+)\s\-\s(\d+).*/).with {
+                if (it.matches()) {
+                  response.writer.print(it.group(1).toInteger() - it.group(2).toInteger())
+                } else {
+                  println "contains - but doesn't match: ${question}"
+                }
+              }
+            } else if (question.contains("*")) {
+              (question =~ /(\d+)\s\*\s(\d+).*/).with {
+                if (it.matches()) {
+                  response.writer.print(it.group(1).toInteger() * it.group(2).toInteger())
+                } else {
+                  println "contains * but doesn't match: ${question}"
+                }
+              }
+            } else if (question.contains("/")) {
+              (question =~ /(\d+)\s\/\s(\d+).*/).with {
+                if (it.matches()) {
+                  response.writer.print(it.group(1).toInteger() / it.group(2).toInteger())
+                } else {
+                  println "contains / but doesn't match: ${question}"
+                }
+              }
+            } else if (question.contains("company")) {
+              response.writer.print("cmc")
+            } else {
+              request.handled = false
+            }
+
+          } else {
+            println "Unknown request path ${request.pathInfo}"
+          }
         }
       }
     })
