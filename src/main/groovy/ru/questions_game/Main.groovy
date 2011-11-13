@@ -176,6 +176,7 @@ class Game {
     new Player(url, name, 0)
   }
 
+  // TODO bigger, better font
   private def onStatsPage() {
     new MarkupBuilder(response.writer).html { body {
       table(border: 1) {
@@ -275,16 +276,16 @@ class QuestionSourcesTest {
   }
 }
 
+// TODO questions according to score
+// TODO delay after incorrect answer
+// TODO question value?
 interface QuestionSource {
   Question questionFor(Player player)
 }
 
 class RandomQuestionSource implements QuestionSource {
   private static Random random = new Random()
-  private static questionSources = [
-          new MathQuestions(),
-          new FactQuestions()
-  ]
+  private static questionSources = [new MathQuestions(), new FactQuestions()]
 
   @Override
   Question questionFor(Player player) {
@@ -364,10 +365,10 @@ class MathQuestions implements QuestionSource {
       new Question("${a1} / ${a2} = ?", { it.contains(approximateAnswer) })
     } else if (typeOfQuestion == 4) {
       def n = random.nextInt(1000)
-      new Question("What is fibonacci number of ${n}?", { it == fibonacci(n) })
+      new Question("What is fibonacci number of ${n}?", { it == fibonacci(n).toString() })
     } else if (typeOfQuestion == 4) {
       def n = random.nextInt(100)
-      new Question("What is factorail of ${n}?", { it == factorial(n) })
+      new Question("What is factorial of ${n}?", { it == factorial(n).toString() })
     } else {
       throw new IllegalStateException()
     }
