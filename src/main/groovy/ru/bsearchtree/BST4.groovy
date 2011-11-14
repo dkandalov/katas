@@ -62,6 +62,16 @@ class BST4 {
              node(6)
            )
   }
+
+  @Test public void shouldDoRootInsertion() {
+    assert node().addToRoot(node(1)) == node(1)
+    assert node(1).addToRoot(node(2)) == node(2, node(1))
+    assert node(1).addToRoot(node(0)) == node(0, null, node(1))
+    assert node(2, node(1), node(3)).addToRoot(node(0)) == node(0, null, node(2, node(1), node(3)))
+    assert node(2, node(1), node(3)).addToRoot(node(4)) == node(4, node(2, node(1), node(3)))
+    assert node(2, node(0), node(4)).addToRoot(node(1)) == node(1, node(0), node(2, null, node(4)))
+    assert node(2, node(0), node(4)).addToRoot(node(3)) == node(3, node(2, node(0)), node(4))
+  }
 }
 
 @Immutable
@@ -98,9 +108,18 @@ final class Node4 {
     node(right.value, node(this.value, this.left, right.left), right.right)
   }
 
-  // inserts node into the root by using rotation
-  Node4 addR(Node4 nodeToAdd) {
-    null // TODO
+  // inserts node into the root of BST by using rotation
+  Node4 addToRoot(Node4 node) {
+    if (node.value == NO_VALUE) return this
+    else if (this.value == NO_VALUE) return node
+    addToRoot(this, node)
+  }
+
+  private Node4 addToRoot(Node4 thisNode, Node4 nodeToAdd) {
+    if (thisNode == null) nodeToAdd
+    else if (nodeToAdd.value <= thisNode.value) node(thisNode.value, addToRoot(thisNode.left, nodeToAdd), thisNode.right).rotateRight() // rotated wrong way; used recursion with add() instead of addToRoot()
+    else if (nodeToAdd.value > thisNode.value) node(thisNode.value, thisNode.left, addToRoot(thisNode.right, nodeToAdd)).rotateLeft()
+    else throw new IllegalStateException()
   }
 
   List traverseInOrder() {
