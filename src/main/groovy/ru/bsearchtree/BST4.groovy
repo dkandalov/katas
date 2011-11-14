@@ -34,6 +34,34 @@ class BST4 {
   def sort(List list) {
     list.inject(node()) { Node4 bst, int value -> bst.add(node(value)) }.traverseInOrder()
   }
+
+  @Test public void shouldRotateBST() {
+    assert node(1).rotateRight() == node(1)
+    assert node(2, null, node(3)).rotateRight() == node(2, null, node(3))
+    assert node(2, node(1)).rotateRight() == node(1, null, node(2))
+    assert node(2, node(1), node(3)).rotateRight() == node(1, null, node(2, null, node(3)))
+    assert node(3,
+             node(1, node(0), node(2)),
+             node(5, node(4), node(6))).rotateRight() ==
+           node(1,
+             node(0),
+             node(3, node(2),
+               node(5, node(4), node(6))))
+
+    assert node(1).rotateLeft() == node(1)
+    assert node(2, node(1)).rotateLeft() == node(2, node(1))
+    assert node(2, null, node(3)).rotateLeft() == node(3, node(2))
+    assert node(2, node(1), node(3)).rotateLeft() == node(3, node(2, node(1)))
+    assert node(3,
+             node(1, node(0), node(2)),
+             node(5, node(4), node(6))).rotateLeft() ==
+           node(5,
+             node(3,
+               node(1, node(0), node(2)),
+               node(4)),
+             node(6)
+           )
+  }
 }
 
 @Immutable
@@ -60,6 +88,21 @@ final class Node4 {
     else throw new IllegalStateException()
   }
 
+  Node4 rotateRight() {
+    if (left == null) return this
+    node(left.value, left.left, node(this.value, left.right, this.right))
+  }
+
+  Node4 rotateLeft() {
+    if (right == null) return this
+    node(right.value, node(this.value, this.left, right.left), right.right)
+  }
+
+  // inserts node into the root by using rotation
+  Node4 addR(Node4 nodeToAdd) {
+    null // TODO
+  }
+
   List traverseInOrder() {
     if (this.value == NO_VALUE) return []
     else traverseInOrder(this)
@@ -72,6 +115,6 @@ final class Node4 {
 
   @Override
   String toString() {
-    "Node(${value}${left != null ? ', ' + left.toString() : ''}${right != null ? ', ' + right.toString() : ''})"
+    "Node(${value},${left != null ? left.toString() : ''},${right != null ? right.toString() : ''})"
   }
 }
