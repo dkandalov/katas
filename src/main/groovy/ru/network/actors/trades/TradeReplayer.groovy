@@ -1,8 +1,9 @@
-package ru.network.actors
+package ru.network.actors.trades
 
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
 import ru.network.actors.util.StoredValue
+import ru.network.actors.Bus
 
 /**
  * User: dima

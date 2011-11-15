@@ -1,8 +1,9 @@
-package ru.network.actors
+package ru.network.actors.trades
 
 import java.awt.GridLayout
 import javax.swing.JFrame
-import ru.network.actors.ui.BusListeningForm
+import ru.network.actors.trades.ui.BusListeningForm
+import ru.network.actors.Bus
 
 /**
  * User: dima

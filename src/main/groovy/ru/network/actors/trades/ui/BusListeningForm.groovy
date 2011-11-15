@@ -1,4 +1,4 @@
-package ru.network.actors.ui
+package ru.network.actors.trades.ui
 
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject

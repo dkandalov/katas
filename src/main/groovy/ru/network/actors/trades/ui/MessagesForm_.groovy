@@ -1,4 +1,4 @@
-package ru.network.actors.ui
+package ru.network.actors.trades.ui
 
 import javax.swing.JList
 import javax.swing.JPanel

@@ -1,4 +1,4 @@
-package ru.network.actors
+package ru.network.actors.trades
 
 /**
  * User: dima
