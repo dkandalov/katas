@@ -312,8 +312,6 @@ class QuestionSourcesTest {
   }
 }
 
-// TODO delay after incorrect answer
-// TODO question value?
 interface QuestionSource {
   Question questionFor(Player player)
 }
@@ -372,7 +370,7 @@ class FactQuestions implements QuestionSource {
 
   private int questionIndex() {
     int n = questions.size().intdiv(5) * gameLevel + 2
-    random.nextInt(n)
+    random.nextInt(min(n, questions.size()))
   }
 }
 
@@ -523,34 +521,47 @@ class QuestionSender {
 
   @ActiveMethod
   def onPlayerAdded(Player player) {
-    scheduleTaskFor(player)
+    scheduleTaskFor(player, intervalMillis)
   }
 
-  private def scheduleTaskFor(Player player) {
+  private def scheduleTaskFor(Player player, int intervalMillis) {
     executor.schedule(new Runnable() {
       @Override
       void run() {
-        catchingAllExceptions {
-          try {
-            def question = questionSource.questionFor(player)
-            def answer = ask(player, question)
-            if (question.matches(answer)) {
-              player = new Player(player.url, player.name, player.score + 1)
-              playersStore.update(player)
-            }
-            if (question.matches(answer)) {
-              Log.gotCorrectAnswer(player, question, answer)
-            } else {
-              Log.gotIncorrectAnswer(player, question, answer)
-            }
-          } catch (ConnectException e) {
-            Log.playerIsOffline(player)
-          } catch (FileNotFoundException e) {
-            Log.playerIsNotResponding(player)
+        try {
+          def question = questionSource.questionFor(player)
+          def answer = ask(player, question)
+          if (question.matches(answer)) {
+            player = new Player(player.url, player.name, player.score + 1)
+            playersStore.update(player)
           }
+          if (question.matches(answer)) {
+            Log.gotCorrectAnswer(player, question, answer)
+            scheduleTaskFor(player, shorterDelay())
+          } else {
+            Log.gotIncorrectAnswer(player, question, answer)
+            scheduleTaskFor(player, longerDelay())
+          }
+        } catch (ConnectException e) {
+          Log.playerIsOffline(player)
+          scheduleTaskFor(player, longerDelay())
+        } catch (FileNotFoundException e) {
+          Log.playerIsNotResponding(player)
+          scheduleTaskFor(player, longerDelay())
+        } catch (Exception e) {
+          Log.exception(e)
+          scheduleTaskFor(player, longerDelay())
         }
-        scheduleTaskFor(player)
       }
+
+      int shorterDelay() {
+        intervalMillis >= 300 ? intervalMillis - 100 : intervalMillis
+      }
+
+      int longerDelay() {
+        intervalMillis < 5000 ? intervalMillis + 300 : intervalMillis
+      }
+
     }, intervalMillis, TimeUnit.MILLISECONDS)
   }
 
