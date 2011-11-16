@@ -212,9 +212,12 @@ class Game {
     new Player(url, name, 0)
   }
 
-  // TODO bigger, better font
   private def onStatsPage() {
     new MarkupBuilder(response.writer).html { body {
+      head { style(type: "text/css") {
+        mkp.yield("body { font-size: 20px; font-family: verdana,monospace; }")
+        mkp.yield("table { font-size: 20px; font-family: verdana,monospace; }")
+      }}
       table(border: 1) {
         mkp.yield("Players:")
         tr{ th("URL"); th("Name"); th("Score") }
@@ -231,7 +234,7 @@ class Game {
       form(action: "addPlayer", method: "get") {
         mkp.yield("URL:"); input(type: "text", name: "url")
         mkp.yield("Name:"); input(type: "text", name: "name")
-        input(type: "submit", name: "Add")
+        input(type: "submit", value: "Add")
       }
     }}
   }
