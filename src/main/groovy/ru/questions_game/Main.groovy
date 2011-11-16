@@ -19,6 +19,8 @@ import static java.net.URLEncoder.encode
 import java.util.concurrent.*
 import static ru.questions_game.MathQuestions.fibonacci
 import static ru.questions_game.MathQuestions.factorial
+import java.util.concurrent.atomic.AtomicInteger
+import static ru.questions_game.GameLevel.getGameLevel
 
 /**
  * User: dima
@@ -113,7 +115,28 @@ class GameTools {
   }
 }
 
+class GameLevel {
+  private static level = new AtomicInteger(0)
+
+  static getGameLevel() {
+    level.get()
+  }
+
+  static next() {
+    level.incrementAndGet()
+  }
+
+  static prev() {
+    level.decrementAndGet()
+  }
+
+  static reset() {
+    level.set(0)
+  }
+}
+
 class Game {
+
   def server
   PlayersStore playersStore
   QuestionSender questionSender
@@ -141,12 +164,17 @@ class Game {
             onAddPlayer()
           } else if (request.pathInfo.endsWith("removePlayer")) {
             onRemovePlayer()
+          } else if (request.pathInfo.endsWith("nextLevel")) {
+            onNextLevel()
+          } else if (request.pathInfo.endsWith("prevLevel")) {
+            onPrevLevel()
           } else {
             response.writer.print("Unknown request: ${request.pathInfo}")
           }
           request.handled = true
         }
       }
+
     })
     server.start()
     this
@@ -168,6 +196,14 @@ class Game {
       questionSender.onPlayerAdded(player)
     }
     response.sendRedirect("stats")
+  }
+
+  private def onNextLevel() {
+    response.writer.print(GameLevel.next())
+  }
+
+  private def onPrevLevel() {
+    response.writer.print(GameLevel.prev())
   }
 
   private static def createPlayerFrom(HttpServletRequest request) {
@@ -276,7 +312,6 @@ class QuestionSourcesTest {
   }
 }
 
-// TODO questions according to score
 // TODO delay after incorrect answer
 // TODO question value?
 interface QuestionSource {
@@ -293,6 +328,26 @@ class RandomQuestionSource implements QuestionSource {
   }
 }
 
+class FactQuestionsTest {
+  @Test public void shouldAskQuestionsAccordingToGameLevel() {
+    def player = null
+    def questions = new FactQuestions()
+
+    GameLevel.reset()
+    (0..99).each {
+      questions.questionFor(player).text.with {
+        assert contains("banana") || contains("orange")
+      }
+    }
+    GameLevel.next()
+    (0..99).each {
+      questions.questionFor(player).text.with {
+        assert contains("banana") || contains("orange")|| contains("Toby")|| contains("name of")
+      }
+    }
+  }
+}
+
 class FactQuestions implements QuestionSource {
   private static Random random = new Random()
   private static questions = [
@@ -306,13 +361,18 @@ class FactQuestions implements QuestionSource {
           new Question("How many pints in one litre?", { it.contains("1.75") }),
           new Question("How much time is one light year?", { it.contains("1") && it.contains("YEAR") }),
           new Question("What is the last thing you watched on TV?", { true }),
-          new Question("What color is your bedroom carpet?", { true }),
           new Question("Do you carry a donor card?", { true }),
+          new Question("What color is your bedroom carpet?", { true }),
   ]
 
   @Override
   Question questionFor(Player player) {
-    questions[random.nextInt(questions.size())]
+    questions[questionIndex()]
+  }
+
+  private int questionIndex() {
+    int n = questions.size().intdiv(5) * gameLevel + 2
+    random.nextInt(n)
   }
 }
 
@@ -337,6 +397,43 @@ class MathQuestionsTest {
     assert factorial(4) == 24
     assert factorial(50) == 30414093201713378043612608166064768844377641568960512000000000000
   }
+
+  @Test public void shouldAskQuestionsAccordingToGameLevel() {
+    def player = null
+    def questions = new MathQuestions()
+
+    GameLevel.reset()
+    (0..99).collect {
+      assert questions.questionFor(player).text.contains("+")
+    }
+    GameLevel.next()
+    (0..99).collect {
+      def question = questions.questionFor(player)
+      assert question.text.contains("+") || question.text.contains("-")
+    }
+    GameLevel.next()
+    (0..99).collect {
+      def question = questions.questionFor(player)
+      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*")
+    }
+    GameLevel.next()
+    (0..99).collect {
+      def question = questions.questionFor(player)
+      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") || question.text.contains("/")
+    }
+    GameLevel.next()
+    (0..99).collect {
+      def question = questions.questionFor(player)
+      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") ||
+              question.text.contains("/") || question.text.contains("factorial")
+    }
+    GameLevel.next()
+    (0..99).collect {
+      def question = questions.questionFor(player)
+      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") ||
+              question.text.contains("/") || question.text.contains("factorial") || question.text.contains("fibonacci")
+    }
+  }
 }
 
 class MathQuestions implements QuestionSource {
@@ -344,33 +441,48 @@ class MathQuestions implements QuestionSource {
 
   @Override
   Question questionFor(Player player) {
-    def typeOfQuestion = random.nextInt(5)
+    def typeOfQuestion = getTypeOfQuestions()
     if (typeOfQuestion == 0) {
-      int a1 = random.nextInt(1000)
-      int a2 = random.nextInt(1000)
+      int a1 = operand()
+      int a2 = operand()
       new Question("${a1} + ${a2} = ?", { it == (a1 + a2).toString() })
     } else if (typeOfQuestion == 1) {
-      int a1 = random.nextInt(1000)
-      int a2 = random.nextInt(1000)
+      int a1 = operand()
+      int a2 = operand()
       new Question("${a1} - ${a2} = ?", { it == (a1 - a2).toString() })
     } else if (typeOfQuestion == 2) {
-      int a1 = random.nextInt(1000)
-      int a2 = random.nextInt(1000)
+      int a1 = operand()
+      int a2 = operand()
       new Question("${a1} * ${a2} = ?", { it == (a1 * a2).toString() })
     } else if (typeOfQuestion == 3) {
-      int a1 = random.nextInt(1000)
-      int a2 = random.nextInt(1000) + 1
+      int a1 = operand()
+      int a2 = operand() + 1
       def answer = (a1 / a2).toString()
       def approximateAnswer = answer[0..min(answer.size(), 10) - 1]
       new Question("${a1} / ${a2} = ?", { it.contains(approximateAnswer) })
     } else if (typeOfQuestion == 4) {
-      def n = random.nextInt(1000)
-      new Question("What is fibonacci number of ${n}?", { it == fibonacci(n).toString() })
-    } else if (typeOfQuestion == 4) {
-      def n = random.nextInt(100)
+      def n = operand().intdiv(10).toBigDecimal()
       new Question("What is factorial of ${n}?", { it == factorial(n).toString() })
+    } else if (typeOfQuestion == 5) {
+      def n = operand()
+      new Question("What is fibonacci number of ${n}?", { it == fibonacci(n).toString() })
     } else {
       throw new IllegalStateException()
+    }
+  }
+
+  def getTypeOfQuestions() {
+    random.nextInt(gameLevel <= 3 ? gameLevel + 1: 5)
+  }
+
+  def operand() {
+    switch (gameLevel) {
+      case 0: return random.nextInt(10)
+      case 1: return random.nextInt(100)
+      case 2: return random.nextInt(200)
+      case 3: return random.nextInt(1000)
+      default:
+        return random.nextInt(10000)
     }
   }
 
@@ -379,7 +491,7 @@ class MathQuestions implements QuestionSource {
     BigDecimal prevValue = 1
     for (BigDecimal i = 0; i < value; i++) {
       BigDecimal tmp = result
-      result += prevValue
+      result = result.add(prevValue)
       prevValue = tmp
     }
     result
@@ -389,7 +501,7 @@ class MathQuestions implements QuestionSource {
     if (value == 0) return 0
     BigDecimal result = 1
     for (BigDecimal i = 2; i <= value; i++) {
-      result = i * result
+      result = result.multiply(i)// result * i // was broken may be in new groovy
     }
     result
   }
