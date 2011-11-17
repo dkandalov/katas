@@ -174,7 +174,6 @@ class Game {
           request.handled = true
         }
       }
-
     })
     server.start()
     this
@@ -510,7 +509,7 @@ class MathQuestions implements QuestionSource {
 
 @ActiveObject
 class QuestionSender {
-  private ScheduledExecutorService executor = Executors.newScheduledThreadPool(10)
+  private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1000)
   private PlayersStore playersStore
   private int intervalMillis
   private QuestionSource questionSource
@@ -613,6 +612,7 @@ class PlayersStore {
 
   private def onAdd(Player newPlayer) {
     if (notValid(newPlayer)) return false
+    if (players.value.size() >= 500) return false
     players.save { it.add(newPlayer); it }
     true
   }

@@ -12,8 +12,13 @@ import static ru.questions_game.Util.catchingAllExceptions
  */
 class SamplePlayer {
   public static void main(String[] args) {
-    new APlayer().start(1234, "me")
-    new APlayer().start(1235, "me2")
+    (2..5).each {
+      try {
+        new APlayer().start(1234 + it, "me${it}")
+      } catch (Exception e) {
+        e.printStackTrace()
+      }
+    }
   }
 
   private static class APlayer {
@@ -26,7 +31,10 @@ class SamplePlayer {
             if (request.pathInfo.endsWith("game")) {
               def question = request.parameterMap["question"][0]
 
-              if (question.contains("+")) {
+              if (new Random().nextInt(10) >= 8) {
+                response.writer.print("my-wrong-answer")
+
+              } else if (question.contains("+")) {
                 (question =~ /(\d+)\s\+\s(\d+).*/).with {
                   if (it.matches()) {
                     response.writer.print(it.group(1).toInteger() + it.group(2).toInteger())
