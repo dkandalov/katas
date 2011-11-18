@@ -12,7 +12,7 @@ import static ru.questions_game.Util.catchingAllExceptions
  */
 class SamplePlayer {
   public static void main(String[] args) {
-    (2..5).each {
+    (2..400).each {
       try {
         new APlayer().start(1234 + it, "me${it}")
       } catch (Exception e) {
@@ -37,7 +37,7 @@ class SamplePlayer {
               } else if (question.contains("+")) {
                 (question =~ /(\d+)\s\+\s(\d+).*/).with {
                   if (it.matches()) {
-                    response.writer.print(it.group(1).toInteger() + it.group(2).toInteger())
+                    response.writer.print(it.group(1).toBigDecimal() + it.group(2).toBigDecimal())
                   } else {
                     println "contains + but doesn't match: ${question}"
                   }
@@ -45,7 +45,7 @@ class SamplePlayer {
               } else if (question.contains("-")) {
                 (question =~ /(\d+)\s\-\s(\d+).*/).with {
                   if (it.matches()) {
-                    response.writer.print(it.group(1).toInteger() - it.group(2).toInteger())
+                    response.writer.print(it.group(1).toBigDecimal() - it.group(2).toBigDecimal())
                   } else {
                     println "contains - but doesn't match: ${question}"
                   }
@@ -53,7 +53,7 @@ class SamplePlayer {
               } else if (question.contains("*")) {
                 (question =~ /(\d+)\s\*\s(\d+).*/).with {
                   if (it.matches()) {
-                    response.writer.print(it.group(1).toInteger() * it.group(2).toInteger())
+                    response.writer.print(it.group(1).toBigDecimal() * it.group(2).toBigDecimal())
                   } else {
                     println "contains * but doesn't match: ${question}"
                   }
@@ -61,7 +61,7 @@ class SamplePlayer {
               } else if (question.contains("/")) {
                 (question =~ /(\d+)\s\/\s(\d+).*/).with {
                   if (it.matches()) {
-                    response.writer.print(it.group(1).toInteger() / it.group(2).toInteger())
+                    response.writer.print(it.group(1).toBigDecimal() / it.group(2).toBigDecimal())
                   } else {
                     println "contains / but doesn't match: ${question}"
                   }
@@ -106,7 +106,7 @@ class SamplePlayer {
       server.start()
 
       new GameTools().with {
-        addPlayer("localhost:${port}", name)
+        addPlayer("127.0.0.1:${port}", name)
       }
     }
   }

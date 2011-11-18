@@ -12,23 +12,29 @@ class StoredValue<T> {
 
   private final String id
   private T value
+  private valueChanged = false
 
-  static StoredValue<T> with(String id, Closure defaultValue, def value = null) {
-    new StoredValue(id, defaultValue, value)
+  static StoredValue<T> with(String id, def defaultValue, def overrideValue = null) {
+    new StoredValue(id, {defaultValue}, overrideValue)
   }
 
-  private StoredValue(String id, Closure defaultValue, def value = null) {
+  static StoredValue<T> with(String id, Closure defaultValue, def overrideValue = null) {
+    new StoredValue(id, defaultValue, overrideValue)
+  }
+
+  private StoredValue(String id, Closure defaultValue, def overrideValue = null) {
     this.id = id
-    this.value = (value != null ? value : Storage.cached(id, defaultValue))
+    this.value = (overrideValue != null ? overrideValue : Storage.cached(id, defaultValue))
 
     Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
       @Override
       void run() {
         synchronized (StoredValue.this) {
           Storage.save(id, StoredValue.this.value)
+          valueChanged = false
         }
       }
-    }, 1, 1, TimeUnit.SECONDS)
+    }, 5, 5, TimeUnit.SECONDS)
   }
 
   synchronized T getValue() {
@@ -41,6 +47,7 @@ class StoredValue<T> {
 
   synchronized def save(Closure calcNewValue) {
     def newValue = calcNewValue(value)
+    valueChanged = true
     value = newValue
   }
 }

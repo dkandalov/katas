@@ -1,8 +1,5 @@
 package ru.questions_game
 
-import static ru.questions_game.Player.newPlayer
-import static ru.questions_game.Util.catchingAllExceptions
-
 import groovy.xml.MarkupBuilder
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
@@ -17,10 +14,11 @@ import static java.lang.Math.min
 import static java.net.URLDecoder.decode
 import static java.net.URLEncoder.encode
 import java.util.concurrent.*
-import static ru.questions_game.MathQuestions.fibonacci
-import static ru.questions_game.MathQuestions.factorial
-import java.util.concurrent.atomic.AtomicInteger
 import static ru.questions_game.GameLevel.getGameLevel
+import static ru.questions_game.MathQuestions.factorial
+import static ru.questions_game.MathQuestions.fibonacci
+import static ru.questions_game.Player.newPlayer
+import static ru.questions_game.Util.catchingAllExceptions
 
 /**
  * User: dima
@@ -37,13 +35,13 @@ class GameTest {
   GameTools gameTools = new GameTools()
 
   @Test public void shouldDisplayPlayersStats() {
-    def playersStore = new PlayersStore([new Player("localhost:1234", "me1", 1), new Player("localhost:5678", "me2", 2)])
+    def playersStore = new PlayersStore([new Player("127.0.0.1:1234", "me1", 1), new Player("127.0.0.1:5678", "me2", 2)])
     game = new Game(playersStore).start()
 
     gameTools.with {
       assert amountOfPlayers() == 2
-      assert hasPlayer("localhost:1234", "me1")
-      assert hasPlayer("localhost:5678", "me2")
+      assert hasPlayer("127.0.0.1:1234", "me1")
+      assert hasPlayer("127.0.0.1:5678", "me2")
     }
   }
 
@@ -52,21 +50,21 @@ class GameTest {
 
     gameTools.with {
       assert amountOfPlayers() == 0
-      assert !hasPlayer("localhost:1234", "me")
-      addPlayer("localhost:1234", "me")
+      assert !hasPlayer("127.0.0.1:1234", "me")
+      addPlayer("127.0.0.1:1234", "me")
       assert amountOfPlayers() == 1
-      assert hasPlayer("localhost:1234", "me")
+      assert hasPlayer("127.0.0.1:1234", "me")
     }
   }
 
   @Test public void shouldNotAddPlayersWithDuplicateOrEmptyURLs() {
-    game = new Game(new PlayersStore([new Player("localhost:1234", "me1", 1)])).start()
+    game = new Game(new PlayersStore([new Player("127.0.0.1:1234", "me1", 1)])).start()
 
     gameTools.with {
       assert amountOfPlayers() == 1
-      assert hasPlayer("localhost:1234", "me1")
+      assert hasPlayer("127.0.0.1:1234", "me1")
 
-      addPlayer("localhost:1234", "me2")
+      addPlayer("127.0.0.1:1234", "me2")
       assert amountOfPlayers() == 1
       addPlayer("", "me")
       assert amountOfPlayers() == 1
@@ -74,12 +72,12 @@ class GameTest {
   }
 
   @Test public void shouldRemovePlayer() {
-    game = new Game(new PlayersStore([new Player("localhost:1234", "me1", 1)])).start()
+    game = new Game(new PlayersStore([new Player("127.0.0.1:1234", "me1", 1)])).start()
 
     gameTools.with {
       assert amountOfPlayers() == 1
-      assert hasPlayer("localhost:1234", "me1")
-      removePlayer("localhost:1234")
+      assert hasPlayer("127.0.0.1:1234", "me1")
+      removePlayer("127.0.0.1:1234")
       assert amountOfPlayers() == 0
     }
   }
@@ -113,25 +111,33 @@ class GameTools {
   def removePlayer(String playerUrl) {
     "http://${url}/removePlayer?url=${playerUrl}&name=".toURL().text
   }
+
+  def nextLevel() {
+    "http://${url}/nextLevel".toURL().text
+  }
+
+  def previousLevel() {
+    "http://${url}/prevLevel".toURL().text
+  }
 }
 
 class GameLevel {
-  private static level = new AtomicInteger(0)
+  private static level = StoredValue.with("gameLevel", 0)
 
   static getGameLevel() {
-    level.get()
+    level.value
   }
 
   static next() {
-    level.incrementAndGet()
+    level.save{it + 1}
   }
 
   static prev() {
-    level.decrementAndGet()
+    level.save{it - 1}
   }
 
   static reset() {
-    level.set(0)
+    level.save(0)
   }
 }
 
@@ -141,8 +147,8 @@ class Game {
   PlayersStore playersStore
   QuestionSender questionSender
 
-  HttpServletRequest request
-  HttpServletResponse response
+  ThreadLocal<HttpServletRequest> request = new ThreadLocal<HttpServletRequest>()
+  ThreadLocal<HttpServletResponse> response = new ThreadLocal<HttpServletResponse>()
 
   Game(playersStore = new PlayersStore()) {
     this.playersStore = playersStore
@@ -154,8 +160,8 @@ class Game {
     server.addHandler(new AbstractHandler() {
       @Override
       void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) {
-        this.request = request
-        this.response = response
+        this.request.set(request)
+        this.response.set(response)
 
         catchingAllExceptions {
           if (request.pathInfo.endsWith("stats")) {
@@ -173,6 +179,9 @@ class Game {
           }
           request.handled = true
         }
+
+        this.request.remove()
+        this.response.remove()
       }
     })
     server.start()
@@ -180,29 +189,30 @@ class Game {
   }
 
   def stop() {
+    questionSender.stop()
     server.stop()
   }
 
   private def onRemovePlayer() {
-    def player = createPlayerFrom(request)
+    def player = createPlayerFrom(request.get())
     playersStore.remove(player)
-    response.sendRedirect("stats")
+    response.get().sendRedirect("stats")
   }
 
   private def onAddPlayer() {
-    def player = createPlayerFrom(request)
+    def player = createPlayerFrom(request.get())
     if (playersStore.add(player)) {
       questionSender.onPlayerAdded(player)
     }
-    response.sendRedirect("stats")
+    response.get().sendRedirect("stats")
   }
 
   private def onNextLevel() {
-    response.writer.print(GameLevel.next())
+    response.get().writer.print(GameLevel.next())
   }
 
   private def onPrevLevel() {
-    response.writer.print(GameLevel.prev())
+    response.get().writer.print(GameLevel.prev())
   }
 
   private static def createPlayerFrom(HttpServletRequest request) {
@@ -212,13 +222,13 @@ class Game {
   }
 
   private def onStatsPage() {
-    new MarkupBuilder(response.writer).html { body {
+    new MarkupBuilder(response.get().writer).html { body {
       head { style(type: "text/css") {
         mkp.yield("body { font-size: 20px; font-family: verdana,monospace; }")
         mkp.yield("table { font-size: 20px; font-family: verdana,monospace; }")
       }}
       table(border: 1) {
-        mkp.yield("Players:")
+        mkp.yield("Players")
         tr{ th("URL"); th("Name"); th("Score") }
         playersStore.players.each { player ->
           tr {
@@ -273,15 +283,15 @@ class TestPlayer {
 
 class QuestionSenderTest {
   @Test public void shouldAskPlayerPredefinedQuestion() {
-    def player = new TestPlayer("localhost:1234", "testPlayer").start()
-    def questionSource = predefinedQuestion(new Question("What is a question?", {}))
+    def player = new TestPlayer("127.0.0.1:1234", "testPlayer").start()
+    def questionSource = predefinedQuestionSource(new Question("What is a question?", {}))
     //noinspection GroovyResultOfObjectAllocationIgnored
     new QuestionSender(new PlayersStore([player.info]), questionSource, 100)
 
     player.receivedQuestionIn(1000) { assert it == "What is a question?" }
   }
 
-  private static QuestionSource predefinedQuestion(Question question) {
+  private static QuestionSource predefinedQuestionSource(Question question) {
     new QuestionSource() {
       @Override
       Question questionFor(Player player) {
@@ -292,18 +302,6 @@ class QuestionSenderTest {
 }
 
 class QuestionSourcesTest {
-  @Test public void shouldAskAllKindsOfMathQuestions() {
-    def player = newPlayer("doesn't matter", "me", 0)
-    new MathQuestions().with { mathQuestions ->
-      (1..100).collect { mathQuestions.questionFor(player) }.with { questions ->
-        assert questions.any { it.text.contains("+") }
-        assert questions.any { it.text.contains("-") }
-        assert questions.any { it.text.contains("*") }
-        assert questions.any { it.text.contains("/") }
-      }
-    }
-  }
-
   @Test public void shouldAskFactQuestions() {
     def player = newPlayer("doesn't matter", "me", 0)
     new FactQuestions().with { factQuestions ->
@@ -324,7 +322,9 @@ class RandomQuestionSource implements QuestionSource {
 
   @Override
   Question questionFor(Player player) {
-    questionSources[random.nextInt(questionSources.size())].questionFor(player)
+    def n = random.nextInt(4)
+    if (n < 3) n = 0 else n = 1
+    questionSources[n].questionFor(player)
   }
 }
 
@@ -357,7 +357,7 @@ class FactQuestions implements QuestionSource {
           new Question("What is the name of the company?", { it.toUpperCase().contains("CMC") }),
           new Question("Who is the owner of the company?", { it.toUpperCase().contains("PETER") && it.toUpperCase().contains("CRUDDAS") }),
           new Question("How old is Peter Cruddas?", { it.toUpperCase().contains("58") }),
-          new Question("How many milliliteres in one pint?", { it.contains("568") }),
+          new Question("How many millilitres in one pint?", { it.contains("568") }),
           new Question("How many pints in one litre?", { it.contains("1.75") }),
           new Question("How much time is one light year?", { it.contains("1") && it.contains("YEAR") }),
           new Question("What is the last thing you watched on TV?", { true }),
@@ -387,6 +387,7 @@ class MathQuestionsTest {
     assert fibonacci(6) == 8
     assert fibonacci(7) == 13
     assert fibonacci(500) == 139423224561697880139724382870407283950070256587697307264108962948325571622863290691557658876222521294125
+    assert fibonacci(100000) > 0
   }
 
   @Test public void shouldCalculateFactorial() {
@@ -396,43 +397,7 @@ class MathQuestionsTest {
     assert factorial(3) == 6
     assert factorial(4) == 24
     assert factorial(50) == 30414093201713378043612608166064768844377641568960512000000000000
-  }
-
-  @Test public void shouldAskQuestionsAccordingToGameLevel() {
-    def player = null
-    def questions = new MathQuestions()
-
-    GameLevel.reset()
-    (0..99).collect {
-      assert questions.questionFor(player).text.contains("+")
-    }
-    GameLevel.next()
-    (0..99).collect {
-      def question = questions.questionFor(player)
-      assert question.text.contains("+") || question.text.contains("-")
-    }
-    GameLevel.next()
-    (0..99).collect {
-      def question = questions.questionFor(player)
-      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*")
-    }
-    GameLevel.next()
-    (0..99).collect {
-      def question = questions.questionFor(player)
-      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") || question.text.contains("/")
-    }
-    GameLevel.next()
-    (0..99).collect {
-      def question = questions.questionFor(player)
-      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") ||
-              question.text.contains("/") || question.text.contains("factorial")
-    }
-    GameLevel.next()
-    (0..99).collect {
-      def question = questions.questionFor(player)
-      assert question.text.contains("+") || question.text.contains("-") || question.text.contains("*") ||
-              question.text.contains("/") || question.text.contains("factorial") || question.text.contains("fibonacci")
-    }
+    assert factorial(100) > 0
   }
 }
 
@@ -443,28 +408,28 @@ class MathQuestions implements QuestionSource {
   Question questionFor(Player player) {
     def typeOfQuestion = getTypeOfQuestions()
     if (typeOfQuestion == 0) {
-      int a1 = operand()
-      int a2 = operand()
+      def a1 = operand()
+      def a2 = operand()
       new Question("${a1} + ${a2} = ?", { it == (a1 + a2).toString() })
     } else if (typeOfQuestion == 1) {
-      int a1 = operand()
-      int a2 = operand()
+      def a1 = operand()
+      def a2 = operand()
       new Question("${a1} - ${a2} = ?", { it == (a1 - a2).toString() })
     } else if (typeOfQuestion == 2) {
-      int a1 = operand()
-      int a2 = operand()
+      def a1 = operand()
+      def a2 = operand()
       new Question("${a1} * ${a2} = ?", { it == (a1 * a2).toString() })
     } else if (typeOfQuestion == 3) {
-      int a1 = operand()
-      int a2 = operand() + 1
+      def a1 = operand() * operand().divideToIntegralValue(10)
+      def a2 = operand() + 1
       def answer = (a1 / a2).toString()
       def approximateAnswer = answer[0..min(answer.size(), 10) - 1]
       new Question("${a1} / ${a2} = ?", { it.contains(approximateAnswer) })
     } else if (typeOfQuestion == 4) {
-      def n = operand().intdiv(10).toBigDecimal()
+      def n = factOperand()
       new Question("What is factorial of ${n}?", { it == factorial(n).toString() })
     } else if (typeOfQuestion == 5) {
-      def n = operand()
+      def n = fibOperand()
       new Question("What is fibonacci number of ${n}?", { it == fibonacci(n).toString() })
     } else {
       throw new IllegalStateException()
@@ -472,17 +437,40 @@ class MathQuestions implements QuestionSource {
   }
 
   def getTypeOfQuestions() {
-    random.nextInt(gameLevel <= 3 ? gameLevel + 1: 5)
+    if (gameLevel >= 6) return random.nextInt(6)
+
+    def shift = 0
+    if (gameLevel > 2) shift = gameLevel - 2
+    random.nextInt(3) + shift
+  }
+
+  def factOperand() {
+    if (gameLevel <= 4) {
+      random.nextInt(10).toBigDecimal() + 10
+    } else {
+      random.nextInt(100).toBigDecimal()
+    }
+  }
+
+  def fibOperand() {
+    if (gameLevel <= 5) {
+      random.nextInt(1000).toBigDecimal()
+    } else {
+      random.nextInt(100000).toBigDecimal()
+    }
   }
 
   def operand() {
     switch (gameLevel) {
-      case 0: return random.nextInt(10)
-      case 1: return random.nextInt(100)
-      case 2: return random.nextInt(200)
-      case 3: return random.nextInt(1000)
+      case 0: return random.nextInt(10).toBigDecimal()
+      case 1: return random.nextInt(100).toBigDecimal()
+      case 2: return random.nextInt(1000).toBigDecimal()
+      case 3: return random.nextInt(100000).toBigDecimal()
+      case 4: return random.nextInt(10000000).toBigDecimal()
+      case 5: return random.nextInt(1000000000).toBigDecimal()
       default:
-        return random.nextInt(10000)
+        return random.nextInt(1000000000).toBigDecimal() * random.nextInt(1000000000).toBigDecimal() *
+               random.nextInt(1000000000).toBigDecimal() * random.nextInt(1000000000).toBigDecimal()
     }
   }
 
@@ -509,7 +497,7 @@ class MathQuestions implements QuestionSource {
 
 @ActiveObject
 class QuestionSender {
-  private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1000)
+  private ScheduledExecutorService executor = Executors.newScheduledThreadPool(500)
   private PlayersStore playersStore
   private int intervalMillis
   private QuestionSource questionSource
@@ -531,6 +519,7 @@ class QuestionSender {
       @Override
       void run() {
         try {
+
           def question = questionSource.questionFor(player)
           def answer = ask(player, question)
           if (question.matches(answer)) {
@@ -544,14 +533,17 @@ class QuestionSender {
             Log.gotIncorrectAnswer(player, question, answer)
             scheduleTaskFor(player, longerDelay())
           }
-        } catch (ConnectException e) {
-          Log.playerIsOffline(player)
-          scheduleTaskFor(player, longerDelay())
-        } catch (FileNotFoundException e) {
-          Log.playerIsNotResponding(player)
-          scheduleTaskFor(player, longerDelay())
+
         } catch (Exception e) {
-          Log.exception(e)
+          if (e instanceof NoRouteToHostException) {
+            Log.incorrectIpAddress(player)
+          } else if (e instanceof ConnectException) {
+            Log.playerIsOffline(player)
+          } else if (e instanceof IOException) {
+            Log.playerIsNotResponding(player)
+          } else {
+            Log.exception(e)
+          }
           scheduleTaskFor(player, longerDelay())
         }
       }
@@ -570,6 +562,10 @@ class QuestionSender {
   private String ask(Player player, Question question) {
     def url = "http://${player.url}/game?question=${encode(question.text)}".toURL()
     url.text
+  }
+
+  def stop() {
+    executor.shutdownNow()
   }
 }
 
@@ -618,7 +614,7 @@ class PlayersStore {
   }
 
   private boolean notValid(Player player) {
-    player.url == "" || players.value.any {it.url == player.url}
+    player.url == "" || !player.url.matches(/\d+.\d+.\d+.\d+:\d+/) || players.value.any {it.url == player.url}
   }
 
   @ActiveMethod
@@ -660,24 +656,60 @@ class Util {
 }
 
 class Log {
+  static logFolder = "log"
+
+  static {
+    if (!new File(logFolder).exists()) {
+      new File(logFolder).mkdir()
+    }
+  }
+
   static def exception(Exception e) {
+    try {
+      new File("${logFolder}/errors.txt").append(new Date().toGMTString() + ": " + exceptionToString(e) + "\n")
+    } catch (Exception e2) {
+      e2.printStackTrace()
+    }
     e.printStackTrace()
   }
 
   static playerIsOffline(Player player) {
-    println "Player is offline ${player}"
+    log(player, "Player is offline ${player}")
   }
 
   static playerIsNotResponding(Player player) {
-    println "Player is not responding ${player}"
+    log(player, "Player is not responding ${player}")
   }
 
   static def gotCorrectAnswer(Player player, Question question, String answer) {
-    println "${player.name}: correct answer '${question.text}' == '${answer}'"
+    log(player, "${player.name}: correct answer '${question.text}' == '${answer}'")
   }
 
   static def gotIncorrectAnswer(Player player, Question question, String answer) {
-    println "${player.name}: wrong answer '${question.text}' != '${answer}'"
+    log(player, "${player.name}: wrong answer '${question.text}' != '${answer}'")
+  }
+
+  static def incorrectIpAddress(Player player) {
+    log(player, "${player.name}: incorrect ip address ${player.url}")
+  }
+
+  private static log(Player player, String message) {
+    try {
+//      println message
+      new File("${logFolder}/${fileNameFor(player)}").append(new Date().toGMTString() + ": " + message + "\n")
+    } catch (Exception e) {
+      e.printStackTrace()
+    }
+  }
+
+  private static fileNameFor(Player player) {
+    player.name.replaceAll(/[\\/%.><]/, "") + "--" + player.url.replaceAll(/[.]/, "-") + ".txt"
+  }
+
+  private static String exceptionToString(Exception e) {
+    def writer = new StringWriter()
+    e.printStackTrace(new PrintWriter(writer))
+    writer.buffer.toString()
   }
 }
 
