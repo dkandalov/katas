@@ -10,7 +10,10 @@ import static ru.network.actors.util.Util.executeEvery
  */
 @ActiveObject
 class RawPriceFeed {
+  int intervalMillis
+
   RawPriceFeed(Bus bus, long intervalMillis = 500) {
+    this.intervalMillis = intervalMillis
     executeEvery(intervalMillis, {
       bus.publish(rawPriceSnapshotFor("AAA"))
       bus.publish(rawPriceSnapshotFor("BBB"))
@@ -21,7 +24,8 @@ class RawPriceFeed {
     new RawPriceSnapshot(new PriceSnapshot(
             symbol,
             new Price(new Random().nextDouble(), new Random().nextDouble()),
-            new Price(new Random().nextDouble(), new Random().nextDouble())
+            new Price(new Random().nextDouble(), new Random().nextDouble()),
+            intervalMillis
     ))
   }
 }

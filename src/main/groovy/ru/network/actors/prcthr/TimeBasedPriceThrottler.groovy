@@ -4,8 +4,6 @@ import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
 import ru.network.actors.Bus
 import static ru.network.actors.util.Util.executeEvery
-import static java.lang.StrictMath.max
-import static java.lang.Math.min
 
 /**
  * User: dima
@@ -15,34 +13,33 @@ import static java.lang.Math.min
 class TimeBasedPriceThrottler {
   private final Map<String, PriceSnapshot> snapshotMap = [:]
   private final Bus bus
+  private final int throttleInterval
 
-  TimeBasedPriceThrottler(Bus bus, int interval) {
+  TimeBasedPriceThrottler(Bus bus, int throttleInterval) {
     this.bus = bus
+    this.throttleInterval = throttleInterval
     bus.addListener(this)
-    executeEvery(interval) { publishThrottledPrices() }
+    executeEvery(throttleInterval) { publishThrottledPrices() }
   }
 
   @ActiveMethod
   def publishThrottledPrices() {
+    bus.publish(new StartOfSnapshots())
     snapshotMap.values().each { bus.publish(it) }
     snapshotMap.clear()
+    bus.publish(new EndOfSnapshots())
   }
 
   @ActiveMethod
   def onMessage(message) {
     if (!(message instanceof RawPriceSnapshot)) return
 
-    message.priceSnapshot.with {
+    ((PriceSnapshot) message.priceSnapshot).with {
       def oldSnapshot = snapshotMap.get(symbol)
       if (oldSnapshot == null) {
-        snapshotMap.put(symbol, it)
+        snapshotMap.put(symbol, withInterval(throttleInterval))
       } else {
-        snapshotMap.put(symbol,
-                new PriceSnapshot(symbol,
-                        new Price(max(oldSnapshot.ask.high, ask.high), min(oldSnapshot.ask.low, ask.low)),
-                        new Price(max(oldSnapshot.bid.high, bid.high), min(oldSnapshot.bid.low, bid.low))
-                )
-        )
+        snapshotMap.put(symbol, mergeWith(oldSnapshot))
       }
     }
   }
