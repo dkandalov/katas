@@ -1,4 +1,4 @@
-package xpday.questions
+package ru.xpday.questions
 
 println Math.sqrt(100)
 println Math.sqrt(100)

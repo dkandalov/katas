@@ -1,4 +1,4 @@
-package xpday.questions
+package ru.xpday.questions
 
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
