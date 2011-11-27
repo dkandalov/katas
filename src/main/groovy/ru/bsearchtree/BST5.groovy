@@ -10,7 +10,7 @@ import static ru.bsearchtree.BST5.Node.node
  * Date: 22/11/2011
  */
 class BST5 {
-  @Test public void should_add_elements_keeping_its_structure() {
+  @Test void should_add_elements_keeping_its_structure() {
     assert emptyNode() == emptyNode()
     assert emptyNode().add(1) == node(1)
 
@@ -21,7 +21,7 @@ class BST5 {
     assert node(1).add(2).add(0) == node(1, node(0), node(2))
   }
 
-  @Test public void should_determine_if_it_contains_an_element() {
+  @Test void should_determine_if_it_contains_an_element() {
     assert emptyNode().contains(0) == false
 
     def tree = node(1, node(0), node(2))
@@ -46,7 +46,7 @@ class BST5 {
     )
   }
 
-  @Test public void should_perform_left_rotation_of_node() {
+  @Test void should_perform_left_rotation_of_node() {
     assert emptyNode().rotateLeft() == emptyNode()
 
     assert node(1).rotateLeft() == node(1)
@@ -63,9 +63,16 @@ class BST5 {
     )
   }
 
-  @Test public void should_remove_elements_keeping_structure() {
+  @Test void should_find_the_smallest_element() {
+    assert emptyNode().findSmallest() == emptyNode()
+  }
+
+  @Test void should_remove_elements_keeping_structure() {
     assert emptyNode().remove(1) == emptyNode()
     assert node(1).remove(1) == emptyNode()
+    assert node(1, node(0), node(2)).remove(0) == node(1, null, node(2))
+    assert node(1, node(0), node(2)).remove(2) == node(1, node(0))
+    assert node(1, node(0), node(2)).remove(1) == node(2, node(1))
   }
 
   @Immutable
@@ -113,7 +120,15 @@ class BST5 {
 
     def remove(int value) {
       if (this == EMPTY_NODE) this
-      else this
+      else {
+        def newRoot = smallestToRoot(this)
+        node(newRoot.value, left, newRoot.right)
+      }
+    }
+
+    def smallestToRoot(Node node) {
+      if (node.left == null && node.right == null) this
+      else rotateRight()
     }
 
     private static Node addTo(Node thisNode, Node nodeToAdd) {
