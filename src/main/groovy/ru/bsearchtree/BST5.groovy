@@ -1,9 +1,9 @@
 package ru.bsearchtree
 
 import groovy.transform.Immutable
+import org.junit.Ignore
 import org.junit.Test
-import static ru.bsearchtree.BST5.Node.emptyNode
-import static ru.bsearchtree.BST5.Node.node
+import static ru.bsearchtree.BST5.Node.*
 
 /**
  * User: dima
@@ -63,8 +63,16 @@ class BST5 {
     )
   }
 
+  @Ignore
   @Test void should_find_the_smallest_element() {
     assert emptyNode().findSmallest() == emptyNode()
+  }
+
+  @Test void should_move_the_smallest_element_to_root() {
+    assert moveSmallestToRoot(node(1)) == node(1)
+    assert moveSmallestToRoot(node(1, node(0))) == node(0, null, node(1))
+    assert moveSmallestToRoot(node(1, node(0), node(2))) == node(0, null, node(1, null, node(2)))
+    assert moveSmallestToRoot(node(3, node(1, node(0), node(2)))) == node(0)
   }
 
   @Test void should_remove_elements_keeping_structure() {
@@ -72,7 +80,9 @@ class BST5 {
     assert node(1).remove(1) == emptyNode()
     assert node(1, node(0), node(2)).remove(0) == node(1, null, node(2))
     assert node(1, node(0), node(2)).remove(2) == node(1, node(0))
-    assert node(1, node(0), node(2)).remove(1) == node(2, node(1))
+    assert node(1, node(0), node(2)).remove(1) == node(2, node(0))
+
+    assert node(1, node(0), node(2)).remove(1) == node(2, node(0)) // TODO
   }
 
   @Immutable
@@ -103,32 +113,57 @@ class BST5 {
       }
     }
 
-    def add(int value) {
+    Node add(int value) {
       if (this == EMPTY_NODE) node(value)
       else addTo(this, node(value))
     }
 
-    def rotateRight() {
+    Node rotateRight() {
       if (this == EMPTY_NODE || left == null) this
       else node(left.value, left.left, node(value, left.right, right))
     }
 
-    def rotateLeft() {
+    Node rotateLeft() {
       if (this == EMPTY_NODE || right == null) this
       else node(right.value, node(value, left, right.left), right.right)
     }
 
-    def remove(int value) {
-      if (this == EMPTY_NODE) this
-      else {
-        def newRoot = smallestToRoot(this)
-        node(newRoot.value, left, newRoot.right)
+    Node remove(int valueToRemove) {
+      if (this == EMPTY_NODE) {
+        this
+      } else {
+        def result = removeFrom(this, valueToRemove)
+        result == null ? EMPTY_NODE : result
       }
     }
 
-    def smallestToRoot(Node node) {
-      if (node.left == null && node.right == null) this
-      else rotateRight()
+    static Node removeFrom(Node aNode, int valueToRemove) {
+      if (valueToRemove == aNode.value) {
+        removeRootOf(aNode)
+      } else if (valueToRemove < aNode.value) {
+        aNode.left == null ? aNode : node(aNode.value, removeFrom(aNode.left, valueToRemove), aNode.right)
+      } else {
+        aNode.right == null ? aNode : node(aNode.value, aNode.left, removeFrom(aNode.right, valueToRemove))
+      }
+    }
+
+    Node removeRoot() {
+      if (this == EMPTY_NODE) this
+      else if (right == null && left == null) EMPTY_NODE
+      else removeRootOf(this)
+    }
+
+    static Node removeRootOf(Node aNode) {
+      if (aNode.right == null) aNode.left
+      else {
+        def newRoot = moveSmallestToRoot(aNode.right)
+        node(newRoot.value, aNode.left, newRoot.right)
+      }
+    }
+
+    static Node moveSmallestToRoot(Node node) {
+      if (node.left == null && node.right == null) node
+      else node.rotateRight()
     }
 
     private static Node addTo(Node thisNode, Node nodeToAdd) {
