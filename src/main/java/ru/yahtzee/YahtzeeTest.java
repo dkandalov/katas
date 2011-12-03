@@ -41,7 +41,7 @@ public class YahtzeeTest {
 
     {
         assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,1,2 }), 0);
-        assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,1,5 }), 5);
+        assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,1,5 }), 5);;
         assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,5,5 }), 10);
 
     }
@@ -74,16 +74,34 @@ public class YahtzeeTest {
     }
 
     @Test
-    public void shouldCalculateRollScore() {
-
+    public void scoreForThreeOfKind()
+    {
         assertThat(new Yahtzee(3, 3, 3, 4, 5).threeOfAKind(), equalTo(9));
+    }
+
+    @Test
+    public void scoreForFourOfKind()
+    {
         assertThat(new Yahtzee(2, 2, 2, 2, 5).fourOfAKind(), equalTo(8));
-        assertThat(new Yahtzee(1, 2, 3, 4, 5).smallStraight(), equalTo(15));
-        assertThat(new Yahtzee(2, 3, 4, 5, 6).largeStraight(), equalTo(20));
-        assertThat(new Yahtzee(1, 1, 2, 2, 2).fullHouse(), equalTo(8));
-        assertThat(new Yahtzee(4, 4, 4, 4, 4).fullHouse(), equalTo(0));
-        assertThat(new Yahtzee(4, 4, 4, 4, 4).yahtzee(), equalTo(50));
-        assertThat(new Yahtzee(1, 2, 3, 4, 5).chance(), equalTo(15));
+    }
+
+
+    @Test
+    public void scoreForStraights()
+    {
+
+        assertThat(new Yahtzee().smallStraight(5, 1, 2, 3, 4), equalTo(15));
+        assertThat(new Yahtzee().largeStraight(2, 3, 4, 5, 6), equalTo(20));
+
+    }
+
+    @Test
+    public void testYahtzee() {
+
+        assertThat(new Yahtzee().fullHouse(1, 1, 2, 2, 2), equalTo(8));
+        assertThat(new Yahtzee().fullHouse(4, 4, 4, 4, 4), equalTo(0));
+        assertThat(new Yahtzee().yahtzee(4, 4, 4, 4, 4), equalTo(50));
+        assertThat(new Yahtzee().chance(1, 2, 3, 4, 5), equalTo(15));
     }
 
 }

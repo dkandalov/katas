@@ -5,16 +5,11 @@ import java.util.LinkedList;
 
 class Yahtzee {
 
-    private final int[] dices;
-    private final int[] count;
+    private int[] dices;
+    protected int[] count = new int[6];
 
     public Yahtzee(int... dices) {
         this.dices = dices;
-
-        count = new int[6];
-        for (int dice : dices) {
-            count[dice - 1] += 1;
-        }
     }
 
     public int one() {
@@ -27,10 +22,6 @@ class Yahtzee {
             sum = sum + dice;
         }
         return sum;
-    }
-
-    public int sumOf(int n) {
-        return count[n - 1] * n;
     }
 
     public int pair(int... dices) {
@@ -65,7 +56,7 @@ class Yahtzee {
         int amountOfPairs = 0;
         for (int i = 0; i < count.length; i++) {
             if (count[i] == 2) {
-                sum += count[i] * i;
+                sum += count[i] * (i + 1);
                 amountOfPairs++;
             }
         }
@@ -81,40 +72,47 @@ class Yahtzee {
     }
 
     public int threeOfAKind() {
-        for (int i = 0; i < count.length; i++) {
-            if (count[i] == 3) return sumOf(i + 1);
+        for (int n = 6; n >= 1; n--)
+        {
+            int count = 0;
+            for (int dice : dices)
+            {
+                if (dice == n) {
+                    count++;
+                }
+            }
+            if (count == 3) return n * 3;
         }
         return 0;
     }
 
     public int fourOfAKind() {
-        for (int i = 0; i < count.length; i++) {
-            if (count[i] == 4) return sumOf(i + 1);
+        for (int n = 6; n >= 1; n--)
+        {
+            int count = 0;
+            for (int dice : dices)
+            {
+                if (dice == n) {
+                    count++;
+                }
+            }
+            if (count == 4) return n * 4;
         }
         return 0;
     }
 
-    public int smallStraight() {
-        for (int i = 0; i < 5; i++) {
-            if (count[i] != 1) return 0;
-        }
-        return 15;
+    public int sumOf(int n) {
+        return count[n - 1] * n;
     }
 
-    public int largeStraight() {
-        for (int i = 1; i < 6; i++) {
-            if (count[i] != 1) return 0;
-        }
-        return 20;
+    public static int smallStraight(int... dices) {
+        Arrays.sort(dices);
+        return dices[0] == 1 && dices[1] == 2 && dices[2] == 3 && dices[3] == 4 && dices[4] == 5 ? 15 : 0;
     }
 
-    public int fullHouse() {
-        int pair = pair(dices);
-        int threeOfAKind = threeOfAKind();
-        if (pair == 0 || threeOfAKind == 0)
-            return 0;
-        else
-            return pair + threeOfAKind;
+    public int fullHouse(int... dices) {
+        this.dices = dices;
+        return pair(dices) != 0 && threeOfAKind() != 0 ? pair(dices) + threeOfAKind() : 0;
     }
 
     public int fours() {
@@ -127,17 +125,27 @@ class Yahtzee {
         return list.size() * 4;
     }
 
-    public int yahtzee() {
+    public static int largeStraight(int... dices) {
+        Arrays.sort(dices);
+        int[] ints = {2, 3, 4, 5, 6};
+        return Arrays.equals(dices, ints) ? 20 : 0;
+    }
+
+    public int yahtzee(int... dices) {
+        int count[] = new int[6];
+        for (int dice : dices) {
+            count[dice - 1] += 1;
+        }
         for (int i = 1; i < count.length; i++) {
             if (count[i] == 5) return 50;
         }
         return 0;
     }
 
-    public int chance() {
+    public int chance(int... dices) {
         int sum = 0;
-        for (int dice : dices) {
-            sum += dice;
+        for (int n : dices) {
+            sum += n;
         }
         return sum;
     }
