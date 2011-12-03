@@ -1,7 +1,8 @@
 package ru.yahtzee;
 
+import java.util.LinkedList;
+
 class Yahtzee {
-    private static final int MAX_DICE_VALUE = 6;
 
     private final int[] dices;
     private final int[] count;
@@ -9,18 +10,26 @@ class Yahtzee {
     public Yahtzee(int... dices) {
         this.dices = dices;
 
-        count = new int[MAX_DICE_VALUE];
+        count = new int[6];
         for (int dice : dices) {
             count[dice - 1] += 1;
         }
     }
 
-    public int sumOf(int n) {
+    public int one() {
         int sum = 0;
-        for (int dice : dices) {
-            if (dice == n) sum += dice;
+        for (int i = 0, dicesLength = dices.length; i < dicesLength; i++) {
+            int dice = dices[i];
+            if (dice != 1) {
+                continue;
+            }
+            sum = sum + dice;
         }
         return sum;
+    }
+
+    public int sumOf(int n) {
+        return count[n - 1] * n;
     }
 
     public int pair() {
@@ -44,6 +53,14 @@ class Yahtzee {
             }
         }
         return amountOfPairs == 2 ? sum : 0;
+    }
+
+    static int two(int[] arr) {
+        int sumOfTwos = 0;
+        for (int position = 0; position < arr.length; position++) {
+            if (arr[position] == 2) sumOfTwos += arr[position];
+        }
+        return sumOfTwos;
     }
 
     public int threeOfAKind() {
@@ -83,6 +100,16 @@ class Yahtzee {
             return pair + threeOfAKind;
     }
 
+    public int fours() {
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        for (int dice : dices) {
+            if (dice == 4) {
+                list.addLast(dice);
+            }
+        }
+        return list.size() * 4;
+    }
+
     public int yahtzee() {
         for (int i = 1; i < count.length; i++) {
             if (count[i] == 5) return 50;
@@ -96,5 +123,18 @@ class Yahtzee {
             sum += dice;
         }
         return sum;
+    }
+
+    public static int threes(int[] ints) {
+        int i, result;
+        i = -1; result = 0;
+        while (i < ints.length - 1) if (ints[++i] == 3) result += ints[i];
+        return (int) result;
+    }
+
+    public long fives(int ints[]) {
+        int i = ints.length, c = 0;
+        while (--i > 0) if (ints[i] == 5) c++;
+        return c * 5;
     }
 }

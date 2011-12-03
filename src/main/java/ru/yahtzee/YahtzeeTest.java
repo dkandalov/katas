@@ -3,17 +3,51 @@ package ru.yahtzee;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class YahtzeeTest {
+
+    @Test
+    public void testOnes() {
+        Yahtzee yahtzee = new Yahtzee(1, 1, 2, 4, 4);
+        assertThat(yahtzee.one(), equalTo(2));
+        yahtzee = new Yahtzee(1, 1, 2, 1, 4);
+        assertThat(yahtzee.one(), equalTo(3));
+        yahtzee = new Yahtzee(2, 5, 4, 6, 2);
+        assertThat(yahtzee.one(), equalTo(0));;
+    }
+
+    @Test public void shouldCalculateScoreForTwos()
+    {
+        Yahtzee yahtzee = new Yahtzee();
+        assertEquals(yahtzee.two(new int[]{5, 4, 2, 1, 2}), 4);
+        assertEquals(yahtzee.two(new int[]{2, 4, 2, 1, 2}), 6);
+    }
+
+
+    @Test public void shouldCalculateScoreForThrees() {
+        assertEquals(new Yahtzee().threes(new int[]{3, 3, 3, 1, 2}), 9);
+    }
+
+    @Test
+    public void WHEN_rollContainsFours_THEN_shouldCalculateSum()
+    {
+        assertThat(new Yahtzee(1, 1, 2, 4, 4).fours(), equalTo(8));
+    }
+
+    @Test
+    public void testFives()
+
+    {
+        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 1, 2}), 0);
+        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 1, 5}), 5);
+        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 5, 5}), 10);
+
+    }
+
     @Test
     public void shouldCalculateRollScore() {
-        Yahtzee yahtzee = new Yahtzee(1, 1, 2, 4, 4);
-
-        assertThat(yahtzee.sumOf(1), equalTo(2));
-        assertThat(yahtzee.sumOf(2), equalTo(2));
-        assertThat(yahtzee.sumOf(3), equalTo(0));
-        assertThat(yahtzee.sumOf(4), equalTo(8));
 
         assertThat(new Yahtzee(2, 3, 3, 4, 4).pair(), equalTo(8));
         assertThat(new Yahtzee(3, 3, 4, 4, 4).pair(), equalTo(6));
