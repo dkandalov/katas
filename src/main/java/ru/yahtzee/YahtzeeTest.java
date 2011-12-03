@@ -21,13 +21,13 @@ public class YahtzeeTest {
     @Test public void shouldCalculateScoreForTwos()
     {
         Yahtzee yahtzee = new Yahtzee();
-        assertEquals(yahtzee.two(new int[]{5, 4, 2, 1, 2}), 4);
-        assertEquals(yahtzee.two(new int[]{2, 4, 2, 1, 2}), 6);
+        assertEquals(4, yahtzee.two(new int[] {5, 4, 2, 1, 2} ));
+        assertEquals(6, yahtzee.two(new int[]{2, 4, 2, 1, 2}));
     }
 
 
     @Test public void shouldCalculateScoreForThrees() {
-        assertEquals(new Yahtzee().threes(new int[]{3, 3, 3, 1, 2}), 9);
+        assertEquals(9, new Yahtzee().threes(new int[]{3, 3, 3, 1, 2}));
     }
 
     @Test
@@ -37,23 +37,44 @@ public class YahtzeeTest {
     }
 
     @Test
-    public void testFives()
+    public void testSumOfFives()
 
     {
-        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 1, 2}), 0);
-        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 1, 5}), 5);
-        assertEquals(new Yahtzee().fives(new int[]{3, 3, 3, 5, 5}), 10);
+        assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,1,2 }), 0);
+        assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,1,5 }), 5);
+        assertEquals(new Yahtzee().fives(new int[]{ 3,3,3,5,5 }), 10);
+
+    }
+
+    @Test
+    public void testSumOfSixes ()
+    {
+        assertEquals( new Yahtzee().sixes(new int[]{3, 3, 3, 1, 2}),0);
+
+        assertEquals(new Yahtzee().sixes(new int[]{3, 3, 6, 1, 5}),6);
+        assertEquals(new Yahtzee().sixes(new int[]{6, 3, 3, 5, 6}),12);
+    }
+
+    @Test
+    public void scoreForPairs()
+    {
+
+        assertThat(new Yahtzee().pair(2, 3, 3, 4, 4), equalTo(14));
+        assertThat(new Yahtzee().pair(3, 3, 4, 4, 6), equalTo(14));
+        assertThat(new Yahtzee().pair(3, 3, 3, 4, 4), equalTo(0));
+
+    }
+
+    @Test
+    public void scoreForTwoPairs() {
+
+        assertThat(new Yahtzee(1, 1, 2, 3, 3).twoPairs(), equalTo(8));
+        assertThat(new Yahtzee(3, 3, 4, 4, 4).twoPairs(), equalTo(0));
 
     }
 
     @Test
     public void shouldCalculateRollScore() {
-
-        assertThat(new Yahtzee(2, 3, 3, 4, 4).pair(), equalTo(8));
-        assertThat(new Yahtzee(3, 3, 4, 4, 4).pair(), equalTo(6));
-
-        assertThat(new Yahtzee(1, 1, 2, 3, 3).twoPairs(), equalTo(8));
-        assertThat(new Yahtzee(3, 3, 4, 4, 4).twoPairs(), equalTo(0));
 
         assertThat(new Yahtzee(3, 3, 3, 4, 5).threeOfAKind(), equalTo(9));
         assertThat(new Yahtzee(2, 2, 2, 2, 5).fourOfAKind(), equalTo(8));

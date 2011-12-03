@@ -1,5 +1,6 @@
 package ru.yahtzee;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 class Yahtzee {
@@ -32,23 +33,39 @@ class Yahtzee {
         return count[n - 1] * n;
     }
 
-    public int pair() {
-        int maxSum = 0;
-        for (int i = 0; i < count.length; i++) {
-            if (count[i] == 2) {
-                int sum = sumOf(i + 1);
-                if (sum > maxSum) maxSum = sum;
+    public int pair(int... dices) {
+        Arrays.sort(dices);
+        int i=dices.length-1, j = 0, k = 0, l = 0;
+        for (; i > 0; i = i-1)
+        {
+            if (dices[i-1] == dices[i])
+            {
+                ++j;
+            }
+            else
+            {
+                if (j==1) {
+                    l+=dices[ i ] * 2;
+                    ++k;
+                }
+                if (k==2) {
+                    return l;
+                }
+                j = 0;
             }
         }
-        return maxSum;
+        return j==1 ? dices[i]*2 + l : 0;
     }
 
     public int twoPairs() {
+        int count[] = new int[6];
+        for (int dice : dices) count[dice - 1] += 1;
+
         int sum = 0;
         int amountOfPairs = 0;
         for (int i = 0; i < count.length; i++) {
             if (count[i] == 2) {
-                sum += sumOf(i + 1);
+                sum += count[i] * i;
                 amountOfPairs++;
             }
         }
@@ -92,7 +109,7 @@ class Yahtzee {
     }
 
     public int fullHouse() {
-        int pair = pair();
+        int pair = pair(dices);
         int threeOfAKind = threeOfAKind();
         if (pair == 0 || threeOfAKind == 0)
             return 0;
@@ -132,9 +149,15 @@ class Yahtzee {
         return (int) result;
     }
 
-    public long fives(int ints[]) {
+    public static long fives(int ints[]) {
         int i = ints.length, c = 0;
         while (--i > 0) if (ints[i] == 5) c++;
         return c * 5;
+    }
+
+    public static long sixes(int[] ints) {
+        int i = ints.length, c = 0;
+        while (--i >= 0) if (ints[i] == 6) c++;
+        return c * 6;
     }
 }
