@@ -1,0 +1,6 @@
+ - should remove orders from all-orders-storage when order is removed
+ - consider handling incorrect input
+    - adding existing orderId
+    - editing not-existing orderId
+    - removing not-existing orderId
+    - negative prices, quantities; empty symbols
