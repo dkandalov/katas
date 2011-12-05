@@ -27,10 +27,10 @@
         </repository>
 
         <repository>
-           <id>thirdparty-uploads</id>
-           <name>JBoss Thirdparty Uploads</name>
-           <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads</url>
-         </repository>
+            <id>thirdparty-uploads</id>
+            <name>JBoss Thirdparty Uploads</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -64,17 +64,12 @@
             <version>2.2.4</version>
         </dependency>
 
-
-       <!-- <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>1.3.6</version>
-        </dependency>
         <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-java-sdk</artifactId>
-            <version>1.3.6</version>
-        </dependency>-->
+            <groupId>jfreechart</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
