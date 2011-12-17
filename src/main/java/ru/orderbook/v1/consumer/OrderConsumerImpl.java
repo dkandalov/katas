@@ -1,7 +1,7 @@
-package cmc.cmc1.orderbook.consumer;
+package ru.orderbook.v1.consumer;
 
 
-import cmc.cmc1.orderbook.iface.*;
+import ru.orderbook.v1.iface.*;
 
 import java.util.HashMap;
 import java.util.Map;

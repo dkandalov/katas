@@ -1,4 +1,4 @@
-package cmc.cmc1.orderbook.iface;
+package ru.orderbook.v1.iface;
 
 /**
  * A Data transfer object used by {@link AppEnvironment} to send data used.

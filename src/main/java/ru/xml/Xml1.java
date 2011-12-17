@@ -1,4 +1,4 @@
-package xml;
+package ru.xml;
 
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
  * Date: 17/4/11
  */
 public class Xml1 {
-	private static final String FILENAME = "/Users/dima/IdeaProjects/katas_new/java/src/cmc/template/resources/orders2.xml";
+	private static final String FILENAME = "orders2.xml";
 
 	@Test public void shouldCreateSetOfSymbols() throws Exception {
 		Set<String> symbols = readSymbols_SAX(FILENAME);

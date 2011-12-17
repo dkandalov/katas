@@ -1,6 +1,6 @@
-package cmc.cmc1.orderbook.consumer;
+package ru.orderbook.v1.consumer;
 
-import cmc.cmc1.orderbook.iface.Order;
+import ru.orderbook.v1.iface.Order;
 
 import java.util.Collections;
 import java.util.Map;

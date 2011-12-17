@@ -1,4 +1,4 @@
-package xml;
+package ru.xml;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class Xml0 {
 
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
-		Document document = documentBuilder.parse("/Users/dima/IdeaProjects/katas_new/java/src/cmc/template/resources/orders2.xml");
+		Document document = documentBuilder.parse("orders2.xml");
 
 		Node commandsNode = document.getChildNodes().item(0);
 		if (!commandsNode.getNodeName().equals("commands")) throw new IllegalStateException();

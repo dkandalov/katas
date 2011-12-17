@@ -1,9 +1,9 @@
-package cmc.cmc1.orderbook;
+package ru.orderbook.v1;
 
-import cmc.cmc1.orderbook.app.AppEnvironmentImpl;
-import cmc.cmc1.orderbook.consumer.OrderConsumerImpl;
-import cmc.cmc1.orderbook.iface.AppEnvironment;
-import cmc.cmc1.orderbook.iface.LogLevel;
+import ru.orderbook.v1.app.AppEnvironmentImpl;
+import ru.orderbook.v1.consumer.OrderConsumerImpl;
+import ru.orderbook.v1.iface.AppEnvironment;
+import ru.orderbook.v1.iface.LogLevel;
 
 public class AppRunner {
 

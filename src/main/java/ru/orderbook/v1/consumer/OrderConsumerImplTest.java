@@ -1,11 +1,11 @@
-package cmc.cmc1.orderbook.consumer;
+package ru.orderbook.v1.consumer;
 
-import cmc.cmc1.orderbook.iface.Order;
 import org.junit.Test;
+import ru.orderbook.v1.iface.Order;
 
-import static cmc.cmc1.orderbook.iface.Action.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static ru.orderbook.v1.iface.Action.*;
 
 /**
  * User: dima
