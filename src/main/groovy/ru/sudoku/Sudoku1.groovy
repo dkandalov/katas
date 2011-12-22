@@ -10,7 +10,6 @@ import ru.util.Mess
 @Mess
 class Sudoku1 {
   @Test public void aaa() {
-/*
     def sudoku = new Sudoku([
              0, 0, 6,  8, 0, 0,  3, 9, 0,
              0, 2, 0,  0, 5, 0,  0, 4, 6,
@@ -24,8 +23,8 @@ class Sudoku1 {
              2, 6, 0,  0, 9, 0,  0, 1, 0,
              0, 1, 5,  0, 0, 8,  7, 0, 0
     ])
-*/
     // TODO http://www.sudokukingdom.com/ <-- sudoku below is taken from here, cannot solve it
+/*
     def sudoku = new Sudoku([
              0, 2, 5,  0, 0, 0,  0, 0, 0,
              0, 0, 0,  2, 8, 0,  3, 5, 0,
@@ -39,17 +38,8 @@ class Sudoku1 {
              0, 0, 0,  0, 0, 0,  9, 6, 1,
              0, 0, 0,  0, 7, 2,  0, 0, 0,
     ])
-
-    while (!sudoku.isSolved()) {
-      println sudoku.boardAsString()
-      println "========================="
-      if (!sudoku.makeStep()) {
-        println sudoku.boardAsString()
-        println "========================="
-        println "Couldn't find any steps"
-        return
-      }
-    }
+*/
+    sudoku.solve()
   }
 
   private static class Sudoku {
@@ -59,53 +49,105 @@ class Sudoku1 {
       this.board = board
     }
 
-    def makeStep() {
-      for (int row = 0; row < 9; row++) {
-        for (int col = 0; col < 9; col++) {
-          if (board[row * 9 + col] != 0) continue
+    def solve(int depth = 0) {
+//      println "solving:"
+//      println boardAsString()
+      println "empty cells: ${board.findAll {it == 0}.size()}"
 
-          def values = (findMissingInRow(row) + findMissingInCol(col) + findMissingInSquare(row, col)).
-                  unique().findAll { value -> canBeUsedIn(row, col, value) }
-          if (values.size() == 1) {
-            board[row * 9 + col] = values[0]
-            println "${row} ; ${col} = ${values[0]}"
-            return true
-          }
-        }
+      def boards = []
+      def steps = []
+
+      while (!isSolved() && (steps.empty || (steps.last() != [-1, -1] && steps.last() != [-2, -2]))) {
+        boards << boardAsString()
+
+        def step = makeStep()
+        steps << step
       }
 
+//      steps.eachWithIndex { step, i ->
+//        println step
+//        println "========================="
+//        println boards[i]
+//        println "========================="
+//        if (step == [-1, -1]) {
+//          println boards[i]
+//        }
+//      }
+
+      if (steps.last() == [-2, -2]) {
+//        println "No solutions"
+        return false
+      } else if (steps.last() == [-1, -1]) {
+//        println "Couldn't find next step"
+
+        def guesses = []
+        for (int row = 0; row < 9; row++) {
+          for (int col = 0; col < 9; col++) {
+            if (board[row * 9 + col] != 0) continue
+            def values = (findMissingInRow(row) + findMissingInCol(col) + findMissingInSquare(row, col)).
+                    unique().findAll { value -> canBeUsedIn(row, col, value) }
+            guesses << [values.size(), values, row, col]
+          }
+        }
+        guesses = guesses.sort {it[0]}
+
+        for (def guess: guesses) {
+          for (def value: guess[1]) {
+            def newBoard = board.clone()
+//              println "guessing ${value} at $row : $col"
+            def row = guess[2]
+            def col = guess[3]
+            newBoard[row * 9 + col] = value
+            if (new Sudoku(newBoard).solve()) {
+              return true
+            }
+          }
+        }
+        println "couldn't guess :("
+        return false
+      } else {
+        println "solved!!"
+        return true
+      }
+    }
+
+    def makeStep() {
       for (int row = 0; row < 9; row++) {
-        for (def value : findMissingInRow(row)) {
-          def positions = []
+        outer: for (def value : findMissingInRow(row)) {
+          def position = null
 
           for (int col = 0; col < 9; col++) {
             if (board[row * 9 + col] != 0) continue
-            if (canBeUsedIn(row, col, value)) positions << [row, col]
+            if (canBeUsedIn(row, col, value)) {
+              if (position != null) break outer
+              position = [row, col]
+            }
           }
 
-          if (positions.size() == 1) {
-            def col = positions[0][1]
+          if (position != null) {
+            def col = position[1]
             board[row * 9 + col] = value
-            println "${row} ; ${col} = ${value}"
-            return true
+            return [row, col]
           }
         }
       }
 
       for (int col = 0; col < 9; col++) {
-        for (def value : findMissingInCol(col)) {
-          def positions = []
+        outer2: for (def value : findMissingInCol(col)) {
+          def position = null
 
           for (int row = 0; row < 9; row++) {
             if (board[row * 9 + col] != 0) continue
-            if (canBeUsedIn(row, col, value)) positions << [row, col]
+            if (canBeUsedIn(row, col, value)) {
+              if (position != null) break outer2
+              position = [row, col]
+            }
           }
 
-          if (positions.size() == 1) {
-            def row = positions[0][0]
+          if (position != null) {
+            def row = position[0]
             board[row * 9 + col] = value
-            println "${row} ; ${col} = ${value}"
-            return true
+            return [row, col]
           }
         }
       }
@@ -131,15 +173,30 @@ class Sudoku1 {
               def row = positions[0][0]
               def col = positions[0][1]
               board[row * 9 + col] = value
-              println "${row} ; ${col} = ${value}"
-              return true
+//              println "${row} ; ${col} = ${value}"
+              return [row, col]
             }
           }
-
         }
       }
 
-      false
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (board[row * 9 + col] != 0) continue
+
+          def values = (findMissingInRow(row) + findMissingInCol(col) + findMissingInSquare(row, col)).
+                  unique().findAll { value -> canBeUsedIn(row, col, value) }
+          if (values.size() == 1) {
+            board[row * 9 + col] = values[0]
+//            println "${row} ; ${col} = ${values[0]}"
+            return [row, col]
+          } else if (values.size() == 0) {
+            return [-2, -2]
+          }
+        }
+      }
+
+      [-1, -1]
     }
 
     def findMissingInSquare(int row, int col) {
@@ -158,18 +215,20 @@ class Sudoku1 {
       (1..9).toList() - (0..8).collect { board[row * 9 + it] }
     }
 
-    def canBeUsedIn(int row, int col, def value) {
-      def inRow = (0..8).any { board[row * 9 + it] == value}
-      def inCol = (0..8).any { board[it * 9 + col] == value}
+    boolean canBeUsedIn(int row, int col, def value) {
+      for (int i = 0; i < 9; i++) {
+        if (board[row * 9 + i] == value) return false
+        if (board[i * 9 + col] == value) return false
+      }
 
       def fromRow = row.intdiv(3) * 3
       def fromCol = col.intdiv(3) * 3
-      def inSquare = (fromRow..fromRow + 2).any { eachRow ->
-        (fromCol..fromCol + 2).any { eachCol ->
-          board[eachRow * 9 + eachCol] == value
+      for (int i = fromRow; i <= fromRow + 2; i++) {
+        for (int j = fromCol; j <= fromCol + 2; j++) {
+          if (board[i * 9 + j] == value) return false
         }
       }
-      !inRow && !inCol && !inSquare
+      true
     }
 
     def isSolved() {
