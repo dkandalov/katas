@@ -25,7 +25,8 @@ class Sudoku1 {
              0, 1, 5,  0, 0, 8,  7, 0, 0
     ])
 */
-    // TODO http://www.sudokukingdom.com/ <-- sudoku below is taken from here, cannot solve it
+    // http://www.sudokukingdom.com/ <-- sudoku below is taken from here, cannot solve in finite time :(
+/*
     def sudoku = new Sudoku([
              0, 2, 5,  0, 0, 0,  0, 0, 0,
              0, 0, 0,  2, 8, 0,  3, 5, 0,
@@ -39,6 +40,20 @@ class Sudoku1 {
              0, 0, 0,  0, 0, 0,  9, 6, 1,
              0, 0, 0,  0, 7, 2,  0, 0, 0,
     ])
+*/
+    def sudoku = new Sudoku([
+             0, 8, 0,  0, 0, 0,  3, 0, 0,
+             2, 0, 0,  0, 0, 0,  6, 0, 0,
+             9, 0, 0,  0, 1, 0,  0, 0, 2,
+
+             0, 6, 0,  0, 8, 0,  0, 4, 0,
+             0, 0, 0,  0, 0, 0,  0, 0, 5,
+             0, 0, 0,  7, 2, 9,  0, 6, 0,
+
+             0, 0, 5,  0, 0, 2,  1, 7, 0,
+             7, 4, 0,  0, 0, 0,  0, 0, 0,
+             0, 0, 8,  0, 3, 0,  0, 0, 9,
+    ])
 
     println "result: ${sudoku.solve()}"
   }
@@ -51,7 +66,8 @@ class Sudoku1 {
       this.board = board
     }
 
-    def solve(int depth = 0) {
+    def solve(int guessDepth = 0) {
+      if (guessDepth >= 5) return false // ignore too deep guesses
 //      println "solving:"
 //      println boardAsString()
 //      println "empty cells: ${board.findAll {it == 0}.size()}"
@@ -91,24 +107,69 @@ class Sudoku1 {
             guesses << [values.size(), values, row, col]
           }
         }
-        guesses = guesses.sort {it[0]}
+        Map valueGuessFrequencies = guesses.inject([:]) { Map acc, def guess ->
+          guess[1].each { value ->
+            if (!acc.containsKey(value)) {
+              acc[value] = 1
+            } else {
+              acc[value] = acc[value] + 1
+            }
+          }
+          acc
+        }.sort {it.value}
 
-        for (def guess : guesses) {
-          for (def value : guess[1]) {
+        def map = new HashMap().withDefault {0}
+        Map valueFrequencies = board.inject(map) { Map acc, value ->
+          acc[value] = acc[value] + 1
+          acc
+        }.sort {-it.value}
+        valueFrequencies.remove(0)
+        System.out.println("valueFrequencies = " + valueFrequencies);
+
+//        System.out.println("leastFrequentValues = " + valueGuessFrequencies.sort {it.value});
+//        guesses = guesses.sort{ it[1].sum{ valueGuessFrequencies[it] } / it[1].size() }
+//        System.out.println("guesses = " + guesses);
+
+        // guess by value
+        for (value in valueFrequencies.keySet()) {
+//          System.out.println("value = " + value + " " + guessDepth);
+          def guess
+          while ((guess = guesses.find { it[1].contains(value)}) != null) {
             def newBoard = board.clone()
             def row = guess[2]
             def col = guess[3]
             newBoard[row * 9 + col] = value
-//              println "guessing ${value} at $row : $col"
-            if (new Sudoku(newBoard).solve(depth + 1)) {
+            guess[1].removeAll{ it == value }
+//            System.out.println("guess = " + guess);
+//            println "guessing ${value} at $row : $col"
+            if (new Sudoku(newBoard).solve(guessDepth + 1)) {
               return true
             }
           }
         }
+
+        // guess by guess order
+/*
+        for (def guess : guesses) {
+          def values = guess[1].sort { valueGuessFrequencies[it] }
+//          System.out.println("values = " + values);
+          for (def value : values) {
+            def newBoard = board.clone()
+            def row = guess[2]
+            def col = guess[3]
+            newBoard[row * 9 + col] = value
+//            println "guessing ${value} at $row : $col"
+            if (new Sudoku(newBoard).solve(guessDepth + 1)) {
+              return true
+            }
+          }
+        }
+*/
 //        println "couldn't guess :("
-        println "${fails++} @ ${depth}"
+        println "${fails++} @ ${guessDepth}"
         return false
       } else {
+        println boardAsString()
         println "solved!!"
         return true
       }
@@ -166,10 +227,7 @@ class Sudoku1 {
 
       for (int sqRow = 0; sqRow < 9; sqRow += 3) {
         for (int sqCol = 0; sqCol < 9; sqCol += 3) {
-          def missingInSquare = (1..9).toList() - (sqRow..sqRow + 2).collect { eachRow ->
-            (sqCol..sqCol + 2).collect { eachCol -> board[eachRow * 9 + eachCol] }
-          }.flatten()
-
+          def missingInSquare = findMissingInSquare(sqRow, sqCol)
 
           outer3:
           for (def value : missingInSquare) {
