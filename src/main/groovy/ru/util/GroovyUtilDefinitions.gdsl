@@ -1,0 +1,10 @@
+package ru.util
+
+def parallelCollection = context(ctype: "java.lang.Object")
+
+contributor(parallelCollection) {
+    method name: "injectWithIndex", type: "Object", params: [accumulator: 'Object', closure: 'groovy.lang.Closure']
+    method name: "collectWithIndex", type: "Object", params: [closure: 'groovy.lang.Closure']
+    method name: "findAllWithIndex", type: "Object", params: [closure: 'groovy.lang.Closure']
+    method name: "findOne", type: "Object", params: [closure: 'groovy.lang.Closure']
+}
