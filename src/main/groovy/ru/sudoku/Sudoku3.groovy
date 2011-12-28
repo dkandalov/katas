@@ -8,6 +8,18 @@ import ru.util.GroovyUtil
  * Date: 28/12/2011
  */
 class Sudoku3 {
+  @Test public void groovyUnexpectedBehavior() {
+    def a = [[row: 0, column: 7]]
+    def b = [[row: 1, column: 6]]
+    println(a - b) // doesn't behave like removeAll(). I got empty list in groovy 1.8.5, 1.8.7
+    a.removeAll(b)
+    println a
+
+    Collection.metaClass.mixin(GroovyUtil)
+    assert [[row: 0, column: 7]].excluding([[row: 1, column: 6]]) == [[row: 0, column: 7]]
+    println([[row: 0, column: 7]] - [[row: 1, column: 6]])
+  }
+
   @Test public void shouldSolveSimpleSudoku() {
     def sudoku = """
              0, 0, 6,  8, 0, 0,  3, 9, 0,
@@ -65,16 +77,69 @@ class Sudoku3 {
     }
 
     def createHints() {
-      def result = []
+      boardOfHints = []
       allCellsByRow().each { cell ->
         if (valueAt(cell) == 0) {
-          result << (1..9).findAll { canBeUsedAt(cell, it) }
+          boardOfHints << (1..9).findAll { canBeUsedAt(cell, it) }
         } else {
-          result << []
+          boardOfHints << []
         }
       }
-      // TODO number claiming, pairs, triples, N-sets
-      result
+      claimNumbers()
+      // TODO pairs, triples, N-sets
+      boardOfHints
+    }
+
+    def claimNumbers() {
+      squaresOfBoard().each { squareCells ->
+        rowsInSquare(squareCells).each { rowCells ->
+          (1..9).each { value ->
+            def valueCanBeInRow = rowCells.any { cell -> hintsAt(cell).contains(value) }
+            def notUsedInTheRestOfSquare = !(squareCells.excluding(rowCells)).any { cell -> hintsAt(cell).contains(value) }
+            if (valueCanBeInRow && notUsedInTheRestOfSquare) {
+              def boardRow = rowCells[0].row
+              (cellsInRow(boardRow).excluding(rowCells)).each {
+                removeHintAt(it, value)
+//                println "removed ${value} at ${it} : ${hintsAt(it)}"
+              }
+            }
+          }
+        }
+        columnsInSquare(squareCells).each { columnCells ->
+          (1..9).each { value ->
+            def valueCanBeInColumn = columnCells.any { cell -> hintsAt(cell).contains(value) }
+            def notUsedInTheRestOfSquare = !(squareCells.excluding(columnCells)).any { cell -> hintsAt(cell).contains(value) }
+            if (valueCanBeInColumn && notUsedInTheRestOfSquare) {
+              def boardColumn = columnCells[0].column
+              (cellsInColumn(boardColumn).excluding(columnCells)).each {
+                removeHintAt(it, value)
+//                println "removed ${value} at ${it} : ${hintsAt(it)}"
+              }
+            }
+          }
+        }
+      }
+    }
+
+    @SuppressWarnings("GroovyAssignabilityCheck")
+    def rowsInSquare(squareCells) {
+      (0..2).collect { row ->
+        (0..2).collect { column -> squareCells[row * 3 + column] }
+      }
+    }
+
+    @SuppressWarnings("GroovyAssignabilityCheck")
+    def columnsInSquare(squareCells) {
+      (0..2).collect { column ->
+        (0..2).collect { row -> squareCells[row * 3 + column] }
+      }
+    }
+
+    @SuppressWarnings("GroovyAssignabilityCheck")
+    def squaresOfBoard() {
+      (0..2).collectMany { row ->
+        (0..2).collect { column -> cellsInSquare(row, column) }
+      }
     }
 
     def solve() {
@@ -86,10 +151,19 @@ class Sudoku3 {
           boardOfHints = createHints()
         } else {
           println "no more moves :("
+          if (!correct) println "finished in incorrect state :("
           return false
         }
       }
-      return true
+      if (!correct) {
+        println "finished in incorrect state :("
+        return false
+      }
+      true
+    }
+
+    boolean isCorrect() {
+      allCellsByRow().findAll { valueAt(it) != 0 }.every { cell -> canBeUsedAt(cell, valueAt(cell)) }
     }
 
     def singleCellCandidate() {
@@ -123,21 +197,27 @@ class Sudoku3 {
       boardOfHints[cell.row * 9 + cell.column]
     }
 
+    def removeHintAt(cell, value) {
+      boardOfHints[cell.row * 9 + cell.column].removeAll { it == value }
+    }
+
     boolean canBeUsedAt(cell, value) {
-      canBeUsedInRow(cell.row, value) && canBeUsedInColumn(cell.column, value) && canBeUsedInSquare(cell.row, cell.column, value)
+      canBeUsedInRow(cell, value) && canBeUsedInColumn(cell, value) && canBeUsedInSquare(cell, value)
     }
 
-    boolean canBeUsedInSquare(row, column, value) {
-      cellsInSquare(row.intdiv(3), column.intdiv(3)).every { valueAt(it) != value }
+    boolean canBeUsedInSquare(cell, value) {
+      def sqRow = cell.row.intdiv(3)
+      def sqColumn = cell.column.intdiv(3)
+      (cellsInSquare(sqRow, sqColumn).excluding(cell)).every { valueAt(it) != value }
     }
 
-    boolean canBeUsedInRow(row, value) {
-      cellsInRow(row).every { valueAt(it) != value }
+    boolean canBeUsedInRow(cell, value) {
+      (cellsInRow(cell.row).excluding(cell)).every { valueAt(it) != value }
     }
 
-    boolean canBeUsedInColumn(col, value) {
+    boolean canBeUsedInColumn(cell, value) {
       // was cellsInRow instead of cellsInColumn :(
-      cellsInColumn(col).every { valueAt(it) != value }
+      (cellsInColumn(cell.column).excluding(cell)).every { valueAt(it) != value }
     }
 
     def cellsInSquare(rowOfSquares, columnOfSquares) {

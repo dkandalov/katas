@@ -30,7 +30,7 @@ final class GroovyUtil {
     def result = null
     boolean hadOneMath = false
 
-    for (def value : this) {
+    for (def value: this) {
       if (closure.call(value)) {
         if (hadOneMath) {
           return null
@@ -42,4 +42,17 @@ final class GroovyUtil {
 
     result
   }
+
+  def excluding(Collection collection) {
+    def result = new LinkedList(findAll())
+    result.removeAll(collection)
+    result
+  }
+
+  def excluding(Object value) {
+    def result = new LinkedList(findAll())
+    result.remove(value)
+    result
+  }
+
 }
