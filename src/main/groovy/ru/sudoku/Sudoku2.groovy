@@ -29,7 +29,6 @@ class Sudoku2 {
       println solve()
       println toReadableString()
     }
-
   }
 
   @Test public void shouldSolveSudoku() {
