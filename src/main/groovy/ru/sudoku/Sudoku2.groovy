@@ -2,11 +2,13 @@ package ru.sudoku
 
 import org.junit.Test
 import ru.util.GroovyUtil
+import ru.util.Incorrect
 
 /**
  * User: dima
  * Date: 26/12/2011
  */
+@Incorrect // passes the test but won't solve "hard" sudoku
 class Sudoku2 {
   @Test public void shouldSolveSimpleSudoku() {
     def sudoku = """
@@ -24,7 +26,8 @@ class Sudoku2 {
 """
     new SudokuSolver(sudoku).with {
       println toReadableString()
-      solve()
+      println solve()
+      println toReadableString()
     }
 
   }
@@ -53,32 +56,47 @@ class Sudoku2 {
       data = sudoku.replaceAll(/[\s\n]/, "").split(/,/).collect {Integer.parseInt(it)}
     }
 
-    void solve() {
+    def solve() {
       int numberOfSteps = 0
       while (!isSolved() && numberOfSteps < 9 * 9) {
         def lastStep = makeStep()
-        break
+        if (lastStep == null) break
         println lastStep
         numberOfSteps++
       }
+      isSolved()
     }
 
     def makeStep() {
       def step
 
-      step = (2).findResult { value ->
-        // TODO: fix it
-        // used the whole board for iteration instead of just one row :(
-        def position = emptyCellsByRow().findOne { cell -> canBeUsedAt(value, cell.row, cell.column) } // used "row, column ->" instead of one param
-        println position
+      step = (1..9).findResult { value ->
+        def position
+
+        position = (0..8).findResult { row ->
+          emptyCellsOfRow(row).findOne { cell -> canBeUsedAt(value, cell.row, cell.column) }
+        }
         if (position != null) return [value, position]
 
-        position = emptyCellsByColumn().findOne { cell -> canBeUsedAt(value, cell.row, cell.column) }
-        if (position != null) return [value, position] else return null
+        position = (0..8).findResult { column ->
+          emptyCellsOfColumn(column).findOne { cell -> canBeUsedAt(value, cell.row, cell.column) }
+        }
+        if (position != null) return [value, position]
+
+        position = (0..2).findResult { squareRow ->
+          (0..2).findResult { squareCol ->
+            emptyCellsInSquare(squareRow, squareCol).findOne { cell -> canBeUsedAt(value, cell.row, cell.column) }
+          }
+        }
+        if (position != null) return [value, position]
+
+
+
+        null
       }
 
       if (step != null) {
-        def (row, col) = step[1]
+        def (row, col) = [step[1].row, step[1].column]
         setValueAt(row, col, step[0])
       }
       step
@@ -86,9 +104,9 @@ class Sudoku2 {
 
     def canBeUsedAt(value, row, column) {
       def r = canBeUsedInSquare(value, row, column) && canBeUsedInColumn(value, column) && canBeUsedInRow(value, row)
-      println "$row - $column = ${canBeUsedInRow(value, column) }"
-      println "$row - $column = ${canBeUsedInColumn(value, column) }"
-      println "$row - $column = ${canBeUsedInSquare(value, row, column) }"
+//      println "$row - $column = ${canBeUsedInRow(value, column) }"
+//      println "$row - $column = ${canBeUsedInColumn(value, column) }"
+//      println "$row - $column = ${canBeUsedInSquare(value, row, column) }"
       r
     }
 
@@ -104,6 +122,10 @@ class Sudoku2 {
       cellsInSquare(row.intdiv(3), column.intdiv(3)).every { cell -> valueAt(cell.row, cell.column) != value } // compared with 0 instead of "value"
     }
 
+    def emptyCellsInSquare(squareRow, squareCol) {
+      cellsInSquare(squareRow, squareCol).findAll { valueAt(it.row, it.column) == 0 }
+    }
+
     def cellsInSquare(squareRow, squareCol) {
       def result = []
       (squareRow..squareRow + 2).each { row ->
@@ -114,24 +136,20 @@ class Sudoku2 {
       result
     }
 
-    def emptyCellsByRow() {
-      def result = []
-      for (int row = 0; row < 9; row++) {
-        for (int col = 0; col < 9; col++) {
-          if (valueAt(row, col) == 0) result << [row: row, column: col]
-        }
-      }
-      result
+    def emptyCellsOfColumn(column) {
+      cellsInColumn(column).findAll { valueAt(it.row, it.column) == 0 }
     }
 
-    def emptyCellsByColumn() {
-      def result = []
-      for (int col = 0; col < 9; col++) {
-        for (int row = 0; row < 9; row++) {
-          if (valueAt(row, col) == 0) result << [row: row, column: col]
-        }
-      }
-      result
+    def cellsInColumn(column) {
+      (0..8).collect { [row: it, column: column] }
+    }
+
+    def emptyCellsOfRow(row) {
+      cellsInRow(row).findAll { valueAt(it.row, it.column) == 0 }
+    }
+
+    def cellsInRow(row) {
+      (0..8).collect { [row: row, column: it] }
     }
 
     def valueAt(row, column) {

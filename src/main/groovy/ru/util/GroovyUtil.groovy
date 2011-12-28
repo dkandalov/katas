@@ -28,12 +28,18 @@ final class GroovyUtil {
 
   def findOne(Closure closure) {
     def result = null
+    boolean hadOneMath = false
+
     for (def value : this) {
       if (closure.call(value)) {
-        if (result != null) return null
+        if (hadOneMath) {
+          return null
+        }
+        hadOneMath = true
         result = value
       }
     }
+
     result
   }
 }
