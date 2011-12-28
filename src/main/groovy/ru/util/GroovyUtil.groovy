@@ -7,7 +7,7 @@ package ru.util
 final class GroovyUtil {
   def injectWithIndex(def accumulator, Closure closure) {
     eachWithIndex { value, index ->
-      closure.call(accumulator, value, index)
+      accumulator = closure.call(accumulator, value, index)
     }
     accumulator
   }
