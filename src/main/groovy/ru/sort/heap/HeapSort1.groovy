@@ -1,6 +1,7 @@
 package ru.sort.heap
 
 import org.junit.Test
+import ru.util.GroovyUtil
 import static ru.sort.bubble.BubbleSort0.shuffledList
 
 /**
@@ -27,13 +28,13 @@ class HeapSort1 {
     }
 
     @Test public void performance() {
-        GUtil.measure(100, 1000) {
+        println(GroovyUtil.measure(100, 1000) {
             [6].each { i ->
                 (1..i).toList().permutations().each {
                     assert sort(it) == (1..i).asList()
                 }
             }
-        }.print()
+        })
     }
 
     private static def sort(List list) {

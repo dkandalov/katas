@@ -5,6 +5,10 @@ package ru.util
  * Date: 26/12/2011
  */
 final class GroovyUtil {
+  static def measure(int warmUpTime, int repeatTimes, Closure closure) {
+    "results of measurment" // TODO
+  }
+
   def injectWithIndex(def accumulator, Closure closure) {
     eachWithIndex { value, index ->
       accumulator = closure.call(accumulator, value, index)
