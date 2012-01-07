@@ -13,10 +13,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class StringUtilImplTest {
 
-	private StringUtilImpl stringUtil;
+	private StringUtil stringUtil;
 
 	@Before public void setup() {
-		stringUtil = new StringUtilImpl();
+		stringUtil = new SU2();
 	}
 
 	@Test public void shouldSortString() {
