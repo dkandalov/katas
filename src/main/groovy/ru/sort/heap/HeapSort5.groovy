@@ -9,13 +9,13 @@ import static ru.sort.heap.HeapSort5.Heap.heap
  */
 class HeapSort5 {
 
-  @Test public void shouldReturnContentOfHeapInSortedOrder() {
-    assert heap([3, 2, 1]).takeTillEmpty() == [3, 2, 1]
-    assert heap([1, 2, 3]).takeTillEmpty() == [3, 2, 1]
-    assert heap([2, 1, 3]).takeTillEmpty() == [3, 2, 1]
+  @Test public void shouldReturnContentsOfHeapInSortedOrder() {
+    assert heap([3, 2, 1]).takeAll() == [3, 2, 1]
+    assert heap([1, 2, 3]).takeAll() == [3, 2, 1]
+    assert heap([2, 1, 3]).takeAll() == [3, 2, 1]
     [1, 2, 3, 4, 5].each { size ->
       (1..size).toList().permutations().each { list ->
-        assert heap(list).takeTillEmpty() == (1..size).toList().reverse()
+        assert heap(list).takeAll() == (1..size).toList().reverse()
       }
     }
   }
@@ -52,7 +52,7 @@ class HeapSort5 {
 
     def data = []
 
-    def takeTillEmpty() {
+    def takeAll() {
       def result = []
       while (!data.isEmpty()) result << takeMax()
       result
@@ -104,10 +104,14 @@ class HeapSort5 {
 
     int leftChild(index) {
       (index + 1) * 2 - 1
+      // this is better (the code above is stupid)
+      // index * 2 + 1
     }
 
     int rightChild(index) {
       (index + 1) * 2
+      // this is better
+      // index * 2 + 2
     }
 
     @Override

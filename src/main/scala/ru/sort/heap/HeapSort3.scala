@@ -35,7 +35,7 @@ class Heap {
   val data = new Array[Int](10)
   var size = 0
 
-  def isEmpty(): Boolean = {
+  def isEmpty: Boolean = {
     size <= 0
   }
 

@@ -49,8 +49,6 @@ class HeapSort1 {
     }
 
     @Test public void shouldFixHeapAfterInsertion() {
-        assert 1.intdiv(2) == 0
-
         def heap = new Heap()
         assert heap.data == []
         assert heap.insert(2).data == [2]
@@ -109,7 +107,7 @@ class HeapSort1 {
                 swap(position, parent)
 
                 position = parent
-                parent = parentPosition(position)
+                parent = parentPosition(parent)
             }
         }
 
@@ -133,7 +131,8 @@ class HeapSort1 {
 
         private int childPosition(int position) {
             return ((position + 1) * 2) - 1
-//            return 2 * position + 1
+            // this is better
+            // return 2 * position + 1
         }
 
         private def swap(int p1, int p2) {

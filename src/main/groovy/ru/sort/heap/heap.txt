@@ -1,0 +1,6 @@
+A tree is heap-ordered if the key in each node is larger than or equal to the keys in all of that node's children (if any).
+Equivalently, the key in each node of a heap-ordered tree is smaller than or equal to the key in that node's parent (if any).
+
+No node in a heap-ordered tree has a key larger than the key at the root.
+
+A heap is a set of nodes with keys arranged in a complete heap-ordered binary tree, represented as an array.

@@ -3,8 +3,6 @@ package ru.sort.heap
 import org.junit.Test
 import org.scalatest.matchers.ShouldMatchers
 import ru.permutation.Perm3_
-import ru.util.Mess
-import java.lang.IllegalStateException
 
 /**
  * User: dima
@@ -29,10 +27,14 @@ class HeapSort4 extends ShouldMatchers {
 
   private def collectMaxValuesFrom(heap: AHeap): List[Int] = heap match {
     case EmptyHeap() => List()
-    case default => collectMaxValuesFrom(heap.removeMax()._2) ::: List(heap.value())
+    case default =>
+      val result = heap.removeMax()
+      val maxValue = result._1
+      val newHeap = result._2
+      collectMaxValuesFrom(newHeap) ::: List(maxValue)
   }
 
-  @Test def shouldAddElementsToNone() {
+  @Test def shouldAddElementsToEmptyHeap() {
     EmptyHeap() should equal(EmptyHeap())
     Heap(1) should equal(Heap(1))
 
@@ -95,6 +97,7 @@ class HeapSort4 extends ShouldMatchers {
           Heap(value, left, right.add(newValue))
         }
       } else {
+        // this is a random choice to add previous root as left child
         Heap(newValue, this)
       }
     }
