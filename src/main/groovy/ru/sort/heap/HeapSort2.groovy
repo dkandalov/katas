@@ -63,7 +63,7 @@ class HeapSort2 {
     }
 
     private static class Heap {
-        Node root
+        Node root // <--- this is ridiculous design!! Node is the only state that Heap has and all operations are on Nodes
 
         def leftShift(int value) {
             def oldRoot = root

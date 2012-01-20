@@ -90,16 +90,9 @@ class HeapSort4 extends ShouldMatchers {
 
     override
     def add(newValue: Int) = {
-      if (newValue <= value) {
-        if (left.value <= right.value) {
-          Heap(value, left.add(newValue), right)
-        } else {
-          Heap(value, left, right.add(newValue))
-        }
-      } else {
-        // this is a random choice to add previous root as left child
-        Heap(newValue, this)
-      }
+      if (newValue > value) Heap(newValue, this) // this is a random choice to add current root as left child
+      else if (left.value > right.value) Heap(value, left, right.add(newValue))
+      else Heap(value, left.add(newValue), right)
     }
   }
 }
