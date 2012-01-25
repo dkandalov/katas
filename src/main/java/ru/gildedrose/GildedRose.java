@@ -5,13 +5,11 @@ import java.util.List;
 
 public class GildedRose {
 
-    private static List<Item> items = null;
-
     public static void main(String[] args) {
 
         System.out.println("OMGHAI!");
 
-        items = new ArrayList<Item>();
+        List<Item> items = new ArrayList<Item>();
         items.add(new Item("+5 Dexterity Vest", 10, 20));
         items.add(new Item("Aged Brie", 2, 0));
         items.add(new Item("Elixir of the Mongoose", 5, 7));
