@@ -40,53 +40,41 @@ public class GildedRose {
         }
 
         for (Item item : items) {
-            if (item.getName().equals("Aged Brie")) {
-                if (item.getSellIn() < 0) {
-                    increaseQuality(item);
-                    increaseQuality(item);
-                } else {
-                    increaseQuality(item);
-                }
-            } else if (item.getName().equals("Backstage passes to a TAFKAL80ETC concert")) {
-                if (item.getSellIn() < 0) {
-                    resetQuality(item);
-                } else if (item.getSellIn() < 5) {
-                    increaseQuality(item);
-                    increaseQuality(item);
-                    increaseQuality(item);
-                } else if (item.getSellIn() < 10) {
-                    increaseQuality(item);
-                    increaseQuality(item);
-                } else {
-                    increaseQuality(item);
-                }
-            } else if (item.getName().equals("Sulfuras, Hand of Ragnaros")) {
-                // do nothing
-            } else {
-                if (item.getSellIn() < 0) {
-                    decreaseQuality(item);
-                    decreaseQuality(item);
-                } else {
-                    decreaseQuality(item);
-                }
-            }
+            int qualityChange = calcQualityFor(item);
+            if (qualityChange == 0) continue; // this is to preserve existing qualities that are > 50
 
+            item.setQuality(item.getQuality() + qualityChange);
+            if (item.getQuality() < 0) item.setQuality(0);
+            if (item.getQuality() > 50) item.setQuality(50);
         }
         return items;
     }
 
-    private static void resetQuality(Item item) {
-        item.setQuality(0);
+    private static int calcQualityFor(Item item) {
+        if (item.getName().equals("Aged Brie")) {
+            if (item.getSellIn() < 0) {
+                return 2;
+            } else {
+                return 1;
+            }
+        } else if (item.getName().equals("Backstage passes to a TAFKAL80ETC concert")) {
+            if (item.getSellIn() < 0) {
+                return -item.getQuality();
+            } else if (item.getSellIn() < 5) {
+                return 3;
+            } else if (item.getSellIn() < 10) {
+                return 2;
+            } else {
+                return 1;
+            }
+        } else if (item.getName().equals("Sulfuras, Hand of Ragnaros")) {
+            return 0;
+        } else {
+            if (item.getSellIn() < 0) {
+                return -2;
+            } else {
+                return -1;
+            }
+        }
     }
-
-    private static void decreaseQuality(Item item) {
-        if (item.getQuality() <= 0) return;
-        item.setQuality(item.getQuality() - 1);
-    }
-
-    private static void increaseQuality(Item item) {
-        if (item.getQuality() >= 50) return;
-        item.setQuality(item.getQuality() + 1);
-    }
-
 }
