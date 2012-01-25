@@ -7,34 +7,30 @@ import ru.gildedrose.Item
  * Date: 25/01/2012
  */
 class GlidedRose1 {
-  public static void main(String[] args) {
-    System.out.println("OMGHAI!");
+  static void main(String[] args) {
+    println "OMGHAI!"
 
-    List<Item> items = new ArrayList<Item>();
-    items.add(new Item("+5 Dexterity Vest", 10, 20));
-    items.add(new Item("Aged Brie", 2, 0));
-    items.add(new Item("Elixir of the Mongoose", 5, 7));
-    items.add(new Item("Sulfuras, Hand of Ragnaros", 0, 80));
-    items.add(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20));
-    items.add(new Item("Conjured Mana Cake", 3, 6));
+    def items = []
+    items.add(new Item("+5 Dexterity Vest", 10, 20))
+    items.add(new Item("Aged Brie", 2, 0))
+    items.add(new Item("Elixir of the Mongoose", 5, 7))
+    items.add(new Item("Sulfuras, Hand of Ragnaros", 0, 80))
+    items.add(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20))
+    items.add(new Item("Conjured Mana Cake", 3, 6))
 
-    for (int i = 0; i < 100; i++) {
-      printItems(updateQuality(items));
-    }
+    100.times { printItems(updateQuality(items)) }
   }
 
-  private static void printItems(List<Item> items) {
-    for (Item item: items) {
-      printItem(item);
-    }
-    System.out.println("---------------------");
+  static printItems(List<Item> items) {
+    items.each { printItem(it) }
+    println "---------------------"
   }
 
-  public static void printItem(Item item) {
-    System.out.println(item.getName() + " " + item.getSellIn() + " " + item.getQuality());
+  static printItem(Item item) {
+    println "$item.name $item.sellIn $item.quality"
   }
 
-  public static List<Item> updateQuality(List<Item> items) {
+  static List<Item> updateQuality(List<Item> items) {
     items.findAll { it.name != "Sulfuras, Hand of Ragnaros" }.each { it.sellIn -= 1 }
 
     def rules = [
@@ -57,15 +53,11 @@ class GlidedRose1 {
             [condition: {true},
                     action: {changeQuality(it, it.sellIn < 0 ? -2 : -1)}]
     ]
-    items.each { item ->
-      rules.find{ it.condition.call(item) }.action.call(item)
-    }
+    items.each { item -> rules.find{ it.condition(item) }.action(item) }
     items
   }
 
-  static def changeQuality(Item item, int qualityChange) {
-    if (qualityChange == 0) return
-
+  static changeQuality(Item item, int qualityChange) {
     item.quality += qualityChange
     if (item.quality < 0) item.quality = 0
     if (item.quality > 50) item.quality = 50
