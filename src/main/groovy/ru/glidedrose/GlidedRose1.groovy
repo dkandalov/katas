@@ -1,6 +1,7 @@
 package ru.glidedrose
 
 import ru.gildedrose.Item
+import static java.lang.Integer.MIN_VALUE
 
 /**
  * User: dima
@@ -10,24 +11,20 @@ class GlidedRose1 {
   static void main(String[] args) {
     println "OMGHAI!"
 
-    def items = []
-    items.add(new Item("+5 Dexterity Vest", 10, 20))
-    items.add(new Item("Aged Brie", 2, 0))
-    items.add(new Item("Elixir of the Mongoose", 5, 7))
-    items.add(new Item("Sulfuras, Hand of Ragnaros", 0, 80))
-    items.add(new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20))
-    items.add(new Item("Conjured Mana Cake", 3, 6))
+    def items = [
+        new Item("+5 Dexterity Vest", 10, 20),
+        new Item("Aged Brie", 2, 0),
+        new Item("Elixir of the Mongoose", 5, 7),
+        new Item("Sulfuras, Hand of Ragnaros", 0, 80),
+        new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+        new Item("Conjured Mana Cake", 3, 6),
+    ]
 
-    100.times { printItems(updateQuality(items)) }
-  }
-
-  static printItems(List<Item> items) {
-    items.each { printItem(it) }
-    println "---------------------"
-  }
-
-  static printItem(Item item) {
-    println "$item.name $item.sellIn $item.quality"
+    100.times {
+      updateQuality(items)
+      items.each { println("$it.name $it.sellIn $it.quality") }
+      println "---------------------"
+    }
   }
 
   static List<Item> updateQuality(List<Item> items) {
@@ -35,30 +32,27 @@ class GlidedRose1 {
 
     def rules = [
             [condition: {it.name == "Aged Brie"},
-                    action: {changeQuality(it, it.sellIn < 0 ? 2 : 1)}],
+                    action: {changeQualityOf(it, it.sellIn < 0 ? 2 : 1)}],
             [condition: {it.name == "Backstage passes to a TAFKAL80ETC concert"},
                     action: {
-                      if (it.sellIn < 0) {
-                        changeQuality(it, -it.quality)
-                      } else if (it.sellIn < 5) {
-                        changeQuality(it, 3)
-                      } else if (it.sellIn < 10) {
-                        changeQuality(it, 2)
-                      } else {
-                        changeQuality(it, 1)
+                      switch (it.sellIn) {
+                        case MIN_VALUE+1..-1: changeQualityOf(it, -it.quality); break;
+                        case 0..4: changeQualityOf(it, 3); break;
+                        case 5..9: changeQualityOf(it, 2); break;
+                        default: changeQualityOf(it, 1); break;
                       }
                     }],
             [condition: {it.name == "Sulfuras, Hand of Ragnaros"},
                     action: {}],
             [condition: {true},
-                    action: {changeQuality(it, it.sellIn < 0 ? -2 : -1)}]
+                    action: {changeQualityOf(it, it.sellIn < 0 ? -2 : -1)}]
     ]
-    items.each { item -> rules.find{ it.condition(item) }.action(item) }
+    items.each { item -> rules.find { it.condition(item) }.action(item) }
     items
   }
 
-  static changeQuality(Item item, int qualityChange) {
-    item.quality += qualityChange
+  private static changeQualityOf(Item item, int change) {
+    item.quality += change
     if (item.quality < 0) item.quality = 0
     if (item.quality > 50) item.quality = 50
   }
