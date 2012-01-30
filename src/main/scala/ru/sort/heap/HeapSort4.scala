@@ -69,11 +69,8 @@ class HeapSort4 extends ShouldMatchers {
 
   case class EmptyHeap() extends AHeap {
     override def add(newValue: Int) = Heap(newValue)
-
     override def removeMax() = throw new UnsupportedOperationException
-
     override def value() = Int.MinValue
-
     override def sink() = this
   }
 

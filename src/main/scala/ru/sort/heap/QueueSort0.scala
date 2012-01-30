@@ -1,4 +1,4 @@
-package ru.priorityQueue
+package ru.sort.heap
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
