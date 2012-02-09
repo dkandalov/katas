@@ -42,7 +42,34 @@ class BST8 {
     def root
 
     BST(Map map) {
-      map.each{ put(it.key, it.value) }
+      map.each{ put_(it.key, it.value) }
+    }
+
+    // non-recursive
+    def put_(key, value) {
+      if (root == null) {
+        root = new Node(key, value)
+        return
+      }
+
+      Node node = root
+      while (true) {
+        if (key > node.key) {
+          if (node.right == null) {
+            node.right = new Node(key, value)
+            return
+          } else {
+            node = node.right
+          }
+        } else {
+          if (node.left == null) {
+            node.left = new Node(key, value)
+            return
+          } else {
+            node = node.left
+          }
+        }
+      }
     }
 
     def put(key, value) {
