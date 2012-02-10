@@ -28,7 +28,7 @@ class HeapSort1 {
     }
 
     @Test public void performance() {
-        println(GroovyUtil.measure(100, 1000) {
+        println(GroovyUtil.benchmark(100, 1000) {
             [6].each { i ->
                 (1..i).toList().permutations().each {
                     assert sort(it) == (1..i).asList()

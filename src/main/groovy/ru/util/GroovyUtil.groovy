@@ -1,12 +1,26 @@
 package ru.util
 
+import java.util.concurrent.TimeUnit
+
 /**
  * User: dima
  * Date: 26/12/2011
  */
 final class GroovyUtil {
-  static def measure(int warmUpTime, int repeatTimes, Closure closure) {
-    "results of measurment" // TODO
+  static measure(Closure closure) {
+    def start = System.nanoTime()
+    closure.call()
+    TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
+  }
+
+  static benchmark(int warmUpCount, int measurementCount, Closure closure) {
+    warmUpCount.times{ closure.call() }
+
+    def start = System.nanoTime()
+    measurementCount.times { closure.call }
+    def timeInMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start)
+    def avg = measurementCount / timeInMillis
+    "Average time: ${avg}, total time: ${timeInMillis} (repeated ${measurementCount} times)"
   }
 
   def injectWithIndex(def accumulator, Closure closure) {

@@ -3,19 +3,18 @@ package ru.sokoban
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import java.awt.event.KeyEvent
-import static java.awt.event.KeyEvent.VK_DOWN
-import static java.awt.event.KeyEvent.VK_RIGHT
-import static java.awt.event.KeyEvent.VK_UP
-import static java.awt.event.KeyEvent.VK_LEFT
+import ru.util.Mess
+import static java.awt.event.KeyEvent.*
 
 /**
  * User: dima
  * Date: 29/01/2012
  */
+@Mess
 class Sokoban {
   static def frame
 
