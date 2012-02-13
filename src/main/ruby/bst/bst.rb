@@ -6,10 +6,11 @@ class BSTTest < Test::Unit::TestCase
 
     assert_equal(1, BST.new.add_all({"a" => 1, "b" => 2}).get("a"))
 
-    assert_equal(1, BST.new.add_all({"a" => 1, "b" => 2}).get("a"))
-    assert_equal(2, BST.new.add_all({"a" => 1, "b" => 2}).get("b"))
-    assert_equal(3, BST.new.add_all({"a" => 1, "b" => 2, "c" => 3}).get("c")) # was wrong test condition
-    assert_equal(nil, BST.new.add_all({"a" => 1, "b" => 2}).get("d"))
+    bst = BST.new.add_all({"a" => 1, "b" => 2, "c" => 3})
+    assert_equal(1, bst.get("a"))
+    assert_equal(2, bst.get("b"))
+    assert_equal(3, bst.get("c")) # was wrong test condition
+    assert_equal(nil, bst.get("d"))
   end
 
   private
