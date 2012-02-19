@@ -1,3 +1,5 @@
+#@Fail
+
 VALUE_OF_A = 64
 
 def string_to_ints s
@@ -7,19 +9,19 @@ def string_to_ints s
 end
 
 def ints_to_string ints
-  ints.map { |i| (i + 64).chr }.join("")
+  ints.map { |i| (i + VALUE_OF_A).chr }.join("")
 end
 
 def sum_ints ints1, ints2
   result = []
   ints1.each_with_index { |i1, i2| result << i1 + ints2[i2 % ints2.size] }
-  result.map { |i| i % 26 }
+  result.map { |i| i > 26 ? i - 26 : i }
 end
 
 def subtract_ints ints1, ints2
   result = []
-  ints1.each_with_index { |i1, i2| result << i1 + 26 - ints2[i2 % ints2.size] }
-  result.map { |i| i % 26 }
+  ints1.each_with_index { |i1, i2| result << i1 - ints2[i2 % ints2.size] }
+  result.map { |i| i < 1 ? i + 26 : i }
 end
 
 def encrypt message, keystream
@@ -53,23 +55,22 @@ def move_down card, times, deck
 
   deck.delete_at(i)
   deck.insert(new_i, card)
-
   deck
 end
 
 def triple_cut deck
   before_first_jack = deck.take_while { |card| card != "A" and card != "B" }
   after_last_jack = deck.reverse.take_while { |card| card != "A" and card != "B" }.reverse
-  between_jacks = deck[before_first_jack.size.. deck.size - after_last_jack.size]
+  between_jacks = deck[before_first_jack.size...deck.size - after_last_jack.size] # had ".." instead of "..." took a long time to find
   deck.clear
-  deck.push(* after_last_jack + between_jacks + before_first_jack)
+  deck.push(*(after_last_jack + between_jacks + before_first_jack))
 end
 
 def count_cut deck
   count = deck.last
   count = 53 if count == "A" or count == "B"
   cards = deck.first(count)
-  deck[0...count] = nil
+  deck[0..count - 1] = nil
   deck.insert(-2, *cards)
   deck
 end
@@ -91,6 +92,7 @@ def generate_keystream deck, size
     move_down "B", 2, deck
     triple_cut deck
     count_cut deck
+    p deck.size
     letter = output_letter(deck)
     key << letter unless letter.nil?
   end
@@ -98,5 +100,4 @@ def generate_keystream deck, size
 end
 
 deck = (1..52).to_a << "A" << "B"
-p generate_keystream deck, 20 # expected D (4)  W (49)  J (10)  Skip Joker (53)  X (24)  H (8)  Y (51)  R (44)  F (6)  D (4)  G (33)
-# actual "DWJDRAJHTOFADOIFSDBE"
+p generate_keystream deck, 20
