@@ -7,7 +7,7 @@ import org.junit.Test
  * Date: 09/02/2012
  */
 class BST8 {
-  @Test public void GIVEN_aSetOfKeysAndValues_SHOULD_addThemToBST_AND_retrieveValuesByKeys() {
+  @Test void GIVEN_aSetOfKeysAndValues_SHOULD_addThemToBST_AND_retrieveValuesByKeys() {
     assert new BST([:]).get("a") == null
     new BST([a: 1]).with {
       assert get("a") == 1
@@ -29,6 +29,20 @@ class BST8 {
         assert get("e") == 5
         assert get("f") == null
       }
+    }
+  }
+
+  @Test void GIVEN_BST_SHOULD_removeValuesByKeys() {
+    assert new BST([:]).remove("a") == null
+    new BST([a: 1]).with {
+      assert remove("b") == null
+      assert remove("a") == 1
+    }
+    new BST([b: 2, a: 1, c: 3]).with {
+      assert remove("d") == null
+      assert remove("a") == 1
+      assert remove("b") == 2
+      assert remove("c") == 3
     }
   }
 
@@ -84,6 +98,43 @@ class BST8 {
 
     def get(key) {
       doGet(key, root)
+    }
+
+    def remove(key) {
+      def result = doRemove(key, root)
+      root = result.node
+      result.value
+    }
+
+    private doRemove(key, Node node) {
+      if (node == null) {
+        [value: null, node: null]
+      } else if (key == node.key) {
+        [value: node.value, node: join(node.left, node.right)]
+      } else if (key < node.key) {
+        def result = doRemove(key, node.left)
+        [value: result.value, node: node.withLeft(result.node)]
+      } else if (key > node.key) {
+        def result = doRemove(key, node.right)
+        [value: result.value, node: node.withRight(result.node)]
+      }
+    }
+
+    private join(Node left, Node right) {
+      if (left == null) right
+      else if (right == null) left
+      else smallestToRoot(right).withLeft(left)
+    }
+
+    private Node smallestToRoot(Node node) {
+      if (node == null) null
+      else if (node.left == null) node
+      else rotateRight(node.withLeft(smallestToRoot(node)))
+    }
+
+    private rotateRight(Node node) {
+      def newRoot = node.left
+      newRoot.withRight(node.withLeft(newRoot.right))
     }
 
     private doGet(key, Node node) {
