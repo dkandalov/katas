@@ -7,6 +7,14 @@ import java.util.concurrent.TimeUnit
  * Date: 26/12/2011
  */
 final class GroovyUtil {
+  static catchingExceptions(Closure closure) {
+    try {
+      closure.call()
+    } catch (Exception e) {
+      e.printStackTrace()
+    }
+  }
+
   static measure(Closure closure) {
     def start = System.nanoTime()
     closure.call()

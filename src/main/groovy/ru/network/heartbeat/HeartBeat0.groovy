@@ -16,7 +16,7 @@ import static groovyx.gpars.actor.Actors.actor
  */
 @SuppressWarnings("GroovyResultOfObjectAllocationIgnored")
 @Pomodoro("2")
-class HeartBeat0 {
+class Heartbeat0 {
 
   @Test void heartbeatUserIsNotifiedForAllHeartbeatStates() {
     def bus = new Bus()
