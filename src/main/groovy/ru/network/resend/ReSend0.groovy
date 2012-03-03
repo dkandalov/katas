@@ -31,16 +31,17 @@ class ReSend0 {
     assert receiver.takeLastReceivedMessage() == "first message"
 
     sender.publish("second message")
-    assert sender.lastReSentMessage() == "second message"
+    assert sender.lastRePublishedMessage() == "second message"
     assert receiver.takeLastReceivedMessage() == "second message"
   }
 
   @Test(timeout = 10000L) void guaranteedDeliveryWhenOutgoingMessagesAreRandomlyDropped() {
-    int numberOfMessages = 50
+    int numberOfMessages = 10
 
     // setup
     def bus = new Bus()
-    bus.addFilter { it instanceof AckMessage ? false : new Random().nextBoolean() }
+//    bus.addFilter { it instanceof AckMessage ? false : new Random().nextBoolean() }
+    bus.addFilter { new Random().nextBoolean() }
 
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
@@ -58,16 +59,18 @@ class ReSend0 {
     received = received.collect{Integer.valueOf(it)}.sort()
     println received.size()
     println received
-    println received.unique()
+    println received.unique(false)
     assert received - (1..numberOfMessages).toList() == []
+    assert received == received.unique(false)
+    assert received.size() == numberOfMessages
   }
 
   static Closure<Boolean> filterOnce(messageToFilter) {
     boolean hasFiltered = false
     return { message ->
-      def result = !hasFiltered && message == messageToFilter
-      if (result) hasFiltered = true
-      result
+      if (hasFiltered) return false
+      if (message.message == messageToFilter) hasFiltered = true
+      message.message == messageToFilter
     }
   }
 
@@ -75,6 +78,8 @@ class ReSend0 {
   static class Receiver {
     BlockingQueue receivedMessages = new LinkedBlockingQueue()
     Bus bus
+    def lastId
+    def missedIds = new HashSet()
 
     Receiver(Bus bus) {
       this.bus = bus
@@ -84,14 +89,48 @@ class ReSend0 {
     @ActiveMethod
     def onMessage(message) {
       if (message instanceof AckMessage) return
-      receiveMessage(message)
+      if (message instanceof ReSentMessage) {
+        receiveMessage(message)
+      } else if (message instanceof Message) {
+        receiveMessage(message)
+      }
     }
 
-    private receiveMessage(message) {
+    private receiveMessage(ReSentMessage message) {
       catchingExceptions {
-        receivedMessages.add(message)
+        if (missedIds.remove((Object) message.message.id)) {
+          receivedMessages.add(message.message.message)
+        }
+        bus.publish(new AckMessage(initialMessage: message.message))
+      }
+    }
+
+    private receiveMessage(Message message) {
+      catchingExceptions {
+        if (!expected(message.id)) {
+          addMissedIdsBefore(message.id)
+        }
+        lastId = message.id
+
+        receivedMessages.add(message.message)
         bus.publish(new AckMessage(initialMessage: message))
       }
+    }
+
+    private addMissedIdsBefore(int id) {
+      if (lastId < id) {
+        (lastId..<id).each{ missedIds << it }
+      } else {
+        (lastId..<1000).each{ missedIds << it }
+        (0..<id).each{ missedIds << it }
+      }
+    }
+
+    private boolean expected(int id) {
+      if (lastId == null) return true
+      lastId++
+      if (lastId > 1000) lastId = 0
+      lastId == id
     }
 
     def takeLastReceivedMessage(int timeout = 2, TimeUnit timeUnit = SECONDS) {
@@ -103,6 +142,7 @@ class ReSend0 {
   static class Sender {
     Bus bus
     Map republishingActors = [:]
+    int currentId
     BlockingQueue republishedMessages = new LinkedBlockingQueue()
 
     Sender(Bus bus) {
@@ -110,10 +150,17 @@ class ReSend0 {
       bus.addListener(this)
     }
 
-    @ActiveMethod(blocking = true)
-    def publish(message) {
+    @ActiveMethod
+    def publish(String message) {
+      def wrappedMessage = new Message(message, nextId())
+      scheduleRepublishingOf(wrappedMessage)
+      bus.publish(wrappedMessage)
+    }
+
+    @ActiveMethod(blocking = true) // blocking to keep republishingActors up-to-date when republishing
+    def republish(Message message) {
       scheduleRepublishingOf(message)
-      bus.publish(message)
+      bus.publish(new ReSentMessage(message))
     }
 
     @ActiveMethod
@@ -123,6 +170,18 @@ class ReSend0 {
       }
     }
 
+    private scheduleRepublishingOf(Message message) {
+      def actor = actor {
+        react(1, SECONDS) {
+          if (it == TIMEOUT) {
+            republish(message)
+            republishedMessages << message.message
+          }
+        }
+      }
+      republishingActors.put(message, actor)
+    }
+
     private unScheduleRepublishingOf(message) {
       catchingExceptions {
         def actor = republishingActors.remove(message)
@@ -130,25 +189,30 @@ class ReSend0 {
       }
     }
 
-    private scheduleRepublishingOf(message) {
-      def actor = actor {
-        react(1, SECONDS) {
-          if (it == TIMEOUT) {
-            publish(message)
-            republishedMessages << message
-          }
-        }
-      }
-      republishingActors.put(message, actor)
+    private int nextId() {
+      currentId++
+      if (currentId > 1000) currentId = 0
+      currentId
     }
 
-    def lastReSentMessage() {
+    def lastRePublishedMessage() {
       republishedMessages.poll(2, SECONDS)
     }
   }
 
   @Immutable
+  static class ReSentMessage {
+    Message message
+  }
+
+  @Immutable
+  static class Message {
+    String message
+    int id
+  }
+
+  @Immutable
   static class AckMessage {
-    String initialMessage
+    Message initialMessage
   }
 }
