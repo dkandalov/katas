@@ -11,10 +11,11 @@ import static org.hamcrest.Matchers.equalTo;
  * User: dima
  * Date: 04/03/2012
  */
+@SuppressWarnings({"unchecked"})
 public class AuctionSniperDriver extends JFrameDriver {
     public AuctionSniperDriver(int timeoutMillis) {
         super(new GesturePerformer(),
-                JFrameDriver.topLevelFrame(
+                topLevelFrame(
                         named(Main.MAIN_WINDOW_NAME),
                         showingOnScreen()),
                 new AWTEventQueueProber(timeoutMillis, 100)
@@ -22,6 +23,6 @@ public class AuctionSniperDriver extends JFrameDriver {
     }
 
     public void showsSniperStatus(String statusText) {
-        new JLabelDriver(this, named(Main.SNIPER_STATUS_NAME)).hasText(equalTo(statusText));
+        new JLabelDriver(this, named(MainWindow.SNIPER_STATUS_NAME)).hasText(equalTo(statusText));
     }
 }
