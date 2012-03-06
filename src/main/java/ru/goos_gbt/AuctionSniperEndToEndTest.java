@@ -1,0 +1,29 @@
+package ru.goos_gbt;
+
+import org.junit.After;
+import org.junit.Test;
+
+/**
+ * User: dima
+ * Date: 28/02/2012
+ */
+public class AuctionSniperEndToEndTest {
+    private final FakeAuctionServer auction = new FakeAuctionServer("item-54321");
+    private final ApplicationRunner application = new ApplicationRunner();
+
+    @Test public void sniperJoinsAuctionUntilAuctionCloses() throws Exception {
+        auction.startSellingItem();
+        application.startBiddingIn(auction);
+        auction.hasReceivedJoinRequestFromSniper();
+        auction.announceClosed();
+        application.showSniperHasLostAuction();
+    }
+
+    @After public void stopAuction() {
+        auction.stop();
+    }
+
+    @After public void stopApplication() {
+        application.stop();
+    }
+}
