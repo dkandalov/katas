@@ -38,9 +38,9 @@ class Bus {
   }
 
   @ActiveMethod(blocking = true)
-  def addFilter(Closure<Boolean> filter) {
+  def withFilter(Closure<Boolean> filter) {
     filters << filter
-    filter
+    this
   }
 
   @ActiveMethod

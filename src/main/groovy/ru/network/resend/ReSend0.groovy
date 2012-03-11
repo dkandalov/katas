@@ -24,7 +24,7 @@ class ReSend0 {
   @Test void senderReSendsMessageWhenItsDroppedByBus() {
     // setup
     def bus = new Bus()
-    bus.addFilter(filterOnce("second message"))
+    bus.withFilter(filterOnce("second message"))
     PrintingBusListener.listenTo(bus)
 
     def receiver = new Receiver(bus)
@@ -44,7 +44,7 @@ class ReSend0 {
 
     // setup
     def bus = new Bus()
-    bus.addFilter { new Random().nextBoolean() }
+    bus.withFilter { new Random().nextBoolean() }
     PrintingBusListener.listenTo(bus)
 
     def receiver = new Receiver(bus)

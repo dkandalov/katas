@@ -28,13 +28,12 @@ class ReSend1 {
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
 
-    assert receiver.hasReceivedSeqId()
-    assert sender.hasEstablishedConnection()
+    assert receiver.hasReceivedSeqId(2, SECONDS)
+    assert sender.hasEstablishedConnection(2, SECONDS)
   }
 
   @Test void senderAndReceiverEstablishConnection_WhenMessageDeliveryIsUnReliable() {
-    def bus = new Bus()
-    bus.addFilter { new Random().nextBoolean() }
+    def bus = new Bus().withFilter { new Random().nextBoolean() }
     PrintingBusListener.listenTo(bus)
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
@@ -49,20 +48,20 @@ class ReSend1 {
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
 
-    assert receiver.hasReceivedSeqId()
-    assert sender.hasEstablishedConnection()
+    assert receiver.hasReceivedSeqId(2, SECONDS)
+    assert sender.hasEstablishedConnection(2, SECONDS)
 
     sender.send("message one")
-    assert receiver.takeLastReceived() == "message one"
-    assert sender.takeLastConfirmed() == "message one"
+    assert receiver.takeLastReceived(2, SECONDS) == "message one"
+    assert sender.takeLastConfirmed(2, SECONDS) == "message one"
   }
 
   @Test void senderSendsOneMessage_WhenMessageDeliveryIsUnReliable() {
-    def bus = new Bus()
-    bus.addFilter { new Random().nextBoolean() }
+    def bus = new Bus().withFilter { new Random().nextBoolean() }
     PrintingBusListener.listenTo(bus)
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
+
     sender.send("message one")
 
     assert receiver.hasReceivedSeqId(10, SECONDS)
@@ -72,27 +71,28 @@ class ReSend1 {
   }
 
   @Test void senderSendsSeveralMessages_WhenMessageDeliveryIsUnReliable() {
-    100.times{
+    20.times{
       println "-------------"
-      aaa()
+
+      def bus = new Bus().withFilter { new Random().nextBoolean() }
+      PrintingBusListener.listenTo(bus)
+      def receiver = new Receiver(bus)
+      def sender = new Sender(bus)
+
+      List messages = (0..10).collect { it.toString() }
+      messages.each { sender.send(it) }
+
+      assert receiver.hasReceivedSeqId(10, SECONDS)
+      assert sender.hasEstablishedConnection(10, SECONDS)
+      assert messages.collect { receiver.takeLastReceived(10, SECONDS) }.sort() == messages.sort()
+      assert collectUnique(messages.size()) { sender.takeLastConfirmed(10, SECONDS) }.sort() == messages.sort()
     }
   }
 
-  def aaa() {
-    List messages = (0..10).collect { it.toString() }
-
-    def bus = new Bus()
-    bus.addFilter { new Random().nextBoolean() }
-    PrintingBusListener.listenTo(bus)
-    def receiver = new Receiver(bus)
-    def sender = new Sender(bus)
-
-    messages.each { sender.send(it) }
-    assert receiver.hasReceivedSeqId(10, SECONDS)
-    assert sender.hasEstablishedConnection(10, SECONDS)
-    assert messages.collect { receiver.takeLastReceived(10, SECONDS) }.sort() == messages.sort()
-    // TODO confirmed messages can have duplicates
-    assert messages.collect { sender.takeLastConfirmed(10, SECONDS) }.sort() == messages.sort()
+  static collectUnique(int size, Closure closure) {
+    def result = new HashSet()
+    while (result.size() < size) result << closure.call()
+    result
   }
 
   @ActiveObject static class Sender {
@@ -121,7 +121,7 @@ class ReSend1 {
         if (message.originalMessage.payload == "syncSeqId") {
           establishedConnection.countDown()
         } else {
-          confirmedMessages << message.originalMessage.payload
+          confirmedMessages << message.originalMessage
         }
         rePublisher.unScheduleRepublishingOf(message.originalMessage)
       }
@@ -136,7 +136,7 @@ class ReSend1 {
     }
 
     def takeLastConfirmed(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
-      confirmedMessages.poll(timeout, timeUnit)
+      confirmedMessages.poll(timeout, timeUnit)?.payload
     }
   }
 
@@ -181,12 +181,12 @@ class ReSend1 {
     @ActiveMethod def onMessage(message) {
       if (message instanceof Message) {
         if (message.payload == "syncSeqId") {
-          if (!hasReceivedSeqId(0)) {
+          if (!hasReceivedSeqId()) {
             lastId = message.id
             receivedSeqId.countDown()
           }
           bus.publish(new AckMessage(message))
-        } else if (hasReceivedSeqId(0)) {
+        } else if (hasReceivedSeqId()) {
           if (lastId + 1 == message.id) {
             lastId = message.id
             receivedMessages << message.payload
@@ -204,7 +204,7 @@ class ReSend1 {
       }
     }
 
-    boolean hasReceivedSeqId(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
+    boolean hasReceivedSeqId(int timeout = 0, TimeUnit timeUnit = MILLISECONDS) {
       receivedSeqId.await(timeout, timeUnit)
     }
 
@@ -225,7 +225,7 @@ class ReSend1 {
     String payload
     int id
 
-    @Override String toString ( ) {
+    @Override String toString() {
       "Message{" + "payload='" + payload + '\'' + ", id=" + id + '}'
     }
   }
