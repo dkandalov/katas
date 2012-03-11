@@ -20,7 +20,7 @@ import static java.util.concurrent.TimeUnit.SECONDS
  * User: dima
  * Date: 11/03/2012
  */
-@Pomodoro("2")
+@Pomodoro("3")
 class ReSend1 {
   @Test void senderAndReceiverEstablishConnection_WhenMessageDeliveryIsReliable() {
     def bus = new Bus()
@@ -39,8 +39,8 @@ class ReSend1 {
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
 
-    assert receiver.hasReceivedSeqId(10)
-    assert sender.hasEstablishedConnection(10)
+    assert receiver.hasReceivedSeqId(10, SECONDS)
+    assert sender.hasEstablishedConnection(10, SECONDS)
   }
 
   @Test void senderSendsOneMessage_WhenMessageDeliveryIsReliable() {
@@ -65,24 +65,34 @@ class ReSend1 {
     def sender = new Sender(bus)
     sender.send("message one")
 
-    assert receiver.hasReceivedSeqId(10)
-    assert sender.hasEstablishedConnection(10)
-    assert receiver.takeLastReceived(10) == "message one"
-    assert sender.takeLastConfirmed(10) == "message one"
+    assert receiver.hasReceivedSeqId(10, SECONDS)
+    assert sender.hasEstablishedConnection(10, SECONDS)
+    assert receiver.takeLastReceived(10, SECONDS) == "message one"
+    assert sender.takeLastConfirmed(10, SECONDS) == "message one"
   }
 
   @Test void senderSendsSeveralMessages_WhenMessageDeliveryIsUnReliable() {
+    100.times{
+      println "-------------"
+      aaa()
+    }
+  }
+
+  def aaa() {
+    List messages = (0..10).collect { it.toString() }
+
     def bus = new Bus()
     bus.addFilter { new Random().nextBoolean() }
     PrintingBusListener.listenTo(bus)
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
 
-    3.times{ sender.send(it.toString()) }
-    assert receiver.hasReceivedSeqId(10)
-    assert sender.hasEstablishedConnection(10)
-    assert (0..2).collect { receiver.takeLastReceived(10) }.sort() == ["0", "1", "2"]
-    assert (0..2).collect { sender.takeLastConfirmed(10) }.sort() == ["0", "1", "2"]
+    messages.each { sender.send(it) }
+    assert receiver.hasReceivedSeqId(10, SECONDS)
+    assert sender.hasEstablishedConnection(10, SECONDS)
+    assert messages.collect { receiver.takeLastReceived(10, SECONDS) }.sort() == messages.sort()
+    // TODO confirmed messages can have duplicates
+    assert messages.collect { sender.takeLastConfirmed(10, SECONDS) }.sort() == messages.sort()
   }
 
   @ActiveObject static class Sender {
@@ -121,11 +131,11 @@ class ReSend1 {
       ++lastId
     }
 
-    boolean hasEstablishedConnection(int timeout = 1, TimeUnit timeUnit = SECONDS) {
+    boolean hasEstablishedConnection(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
       establishedConnection.await(timeout, timeUnit)
     }
 
-    def takeLastConfirmed(int timeout = 1, TimeUnit timeUnit = SECONDS) {
+    def takeLastConfirmed(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
       confirmedMessages.poll(timeout, timeUnit)
     }
   }
@@ -140,7 +150,7 @@ class ReSend1 {
 
     def scheduleRepublishingOf(Message message) {
       def actor = actor {
-        react(500, MILLISECONDS) {
+        react(25, MILLISECONDS) {
           if (it == DefaultActor.TIMEOUT) {
             bus.publish(message)
             scheduleRepublishingOf(message)
@@ -194,11 +204,11 @@ class ReSend1 {
       }
     }
 
-    boolean hasReceivedSeqId(int timeout = 1, TimeUnit timeUnit = SECONDS) {
+    boolean hasReceivedSeqId(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
       receivedSeqId.await(timeout, timeUnit)
     }
 
-    def takeLastReceived(int timeout = 1, TimeUnit timeUnit = SECONDS) {
+    def takeLastReceived(int timeout = 100, TimeUnit timeUnit = MILLISECONDS) {
       receivedMessages.poll(timeout, timeUnit)
     }
   }
