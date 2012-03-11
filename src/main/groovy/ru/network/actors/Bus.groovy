@@ -2,7 +2,7 @@ package ru.network.actors
 
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
-import static com.cmcmarkets.Util.runSafely
+import static ru.util.GroovyUtil.catchingExceptions
 
 /**
  * User: dima
@@ -19,7 +19,7 @@ class Bus {
   }
 
   private def doPublish(message) {
-    runSafely {
+    catchingExceptions {
       if (filters.any { filter -> filter.call(message) }) return
 
       for (def listener: listeners) {

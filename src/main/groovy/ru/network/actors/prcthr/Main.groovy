@@ -1,7 +1,8 @@
 package ru.network.actors.prcthr
 
 import ru.network.actors.Bus
-import ru.network.actors.BusListener
+
+import ru.network.actors.PrintingBusListener
 
 /**
  * User: dima
@@ -10,7 +11,7 @@ import ru.network.actors.BusListener
 class Main {
   public static void main(String[] args) {
     new Bus().with { Bus bus ->
-      new BusListener(bus)
+      new PrintingBusListener(bus)
       new RawPriceFeed(bus, 300)
       new TimeBasedPriceThrottler(bus, 1000)
       new MultBasedPriceThrottler(bus, 1000, 2)

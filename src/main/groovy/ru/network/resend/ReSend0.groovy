@@ -8,6 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 import org.junit.Test
 import ru.network.actors.Bus
+import ru.network.actors.PrintingBusListener
+import ru.util.Fail
 import static groovyx.gpars.actor.Actor.TIMEOUT
 import static groovyx.gpars.actor.Actors.actor
 import static java.util.concurrent.TimeUnit.SECONDS
@@ -17,11 +19,13 @@ import static ru.util.GroovyUtil.catchingExceptions
  * User: dima
  * Date: 03/03/2012
  */
+@Fail
 class ReSend0 {
   @Test void senderReSendsMessageWhenItsDroppedByBus() {
     // setup
     def bus = new Bus()
     bus.addFilter(filterOnce("second message"))
+    PrintingBusListener.listenTo(bus)
 
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
@@ -40,8 +44,8 @@ class ReSend0 {
 
     // setup
     def bus = new Bus()
-//    bus.addFilter { it instanceof AckMessage ? false : new Random().nextBoolean() }
     bus.addFilter { new Random().nextBoolean() }
+    PrintingBusListener.listenTo(bus)
 
     def receiver = new Receiver(bus)
     def sender = new Sender(bus)
@@ -57,18 +61,23 @@ class ReSend0 {
       received << message
     }
     received = received.collect{Integer.valueOf(it)}.sort()
+
     println received.size()
     println received
     println received.unique(false)
+
     assert received - (1..numberOfMessages).toList() == []
     assert received == received.unique(false)
     assert received.size() == numberOfMessages
+
+    // TODO fails if beginning of message stream is missing
   }
 
   static Closure<Boolean> filterOnce(messageToFilter) {
     boolean hasFiltered = false
     return { message ->
       if (hasFiltered) return false
+      if (!message.hasProperty("message")) return false
       if (message.message == messageToFilter) hasFiltered = true
       message.message == messageToFilter
     }
@@ -89,17 +98,45 @@ class ReSend0 {
     @ActiveMethod
     def onMessage(message) {
       if (message instanceof AckMessage) return
-      if (message instanceof ReSentMessage) {
-        receiveMessage(message)
+
+      if (isInitMessage(message) || !initialized()) {
+        receiveInitMessage(message)
+      } else if (message instanceof ReSentMessage) {
+        receiveReSentMessage(message)
       } else if (message instanceof Message) {
         receiveMessage(message)
       }
+      println lastId
+      println missedIds
     }
 
-    private receiveMessage(ReSentMessage message) {
+    private boolean isInitMessage(message) {
+      if (message instanceof ReSentMessage) message = message.message
+      message.message == Sender.FIRST_ID_MSG
+    }
+
+    private receiveInitMessage(message) {
+      if (!initialized() && isInitMessage(message)) {
+        if (message instanceof ReSentMessage) message = message.message
+        if (message.message == Sender.FIRST_ID_MSG) {
+          lastId = message.id
+        }
+      }
+      bus.publish(new AckMessage(initialMessage: message))
+    }
+
+    private boolean initialized() {
+      lastId != null
+    }
+
+    private receiveReSentMessage(ReSentMessage message) {
       catchingExceptions {
-        if (missedIds.remove((Object) message.message.id)) {
+        if (missedIds.remove((Object) message.message.id) || expected(message.message.id)) {
           receivedMessages.add(message.message.message)
+          if (message.message.id > lastId) {
+            addMissedIdsBefore(message.message.id)
+            lastId = message.message.id
+          }
         }
         bus.publish(new AckMessage(initialMessage: message.message))
       }
@@ -118,19 +155,18 @@ class ReSend0 {
     }
 
     private addMissedIdsBefore(int id) {
-      if (lastId < id) {
-        (lastId..<id).each{ missedIds << it }
-      } else {
-        (lastId..<1000).each{ missedIds << it }
-        (0..<id).each{ missedIds << it }
-      }
+      if (lastId + 1 < id) {
+        missedIds.addAll((lastId + 1..<id).toList())
+      } /*else {
+        missedIds.addAll((lastId + 1..<1000).toList())
+        missedIds.addAll((0..<id).toList())
+      }*/
     }
 
     private boolean expected(int id) {
-      if (lastId == null) return true
-      lastId++
-      if (lastId > 1000) lastId = 0
-      lastId == id
+      def expectedId = lastId + 1
+      if (expectedId > 1000) expectedId = 0
+      expectedId == id
     }
 
     def takeLastReceivedMessage(int timeout = 2, TimeUnit timeUnit = SECONDS) {
@@ -140,14 +176,18 @@ class ReSend0 {
 
   @ActiveObject
   static class Sender {
+    static FIRST_ID_MSG = "FIRST_ID_MSG"
+
     Bus bus
     Map republishingActors = [:]
     int currentId
-    BlockingQueue republishedMessages = new LinkedBlockingQueue()
+    boolean connected
+    BlockingQueue republishedMessages = new LinkedBlockingQueue() // this queue is shared between actors
 
     Sender(Bus bus) {
       this.bus = bus
       bus.addListener(this)
+      publish(FIRST_ID_MSG)
     }
 
     @ActiveMethod

@@ -8,8 +8,12 @@ import groovyx.gpars.activeobject.ActiveObject
  * Date: 21/10/2011
  */
 @ActiveObject
-class BusListener {
-  BusListener(Bus bus) {
+class PrintingBusListener {
+  static listenTo(Bus bus) {
+    new PrintingBusListener(bus)
+  }
+
+  PrintingBusListener(Bus bus) {
     bus.addListener(this)
   }
 
