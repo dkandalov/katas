@@ -24,17 +24,29 @@ public class Main {
     private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 
     private MainWindow ui;
+    @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
+    private Chat notToBeGCd;
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
         XMPPConnection connection = connectTo(args[ARG_HOSTNAME], args[ARG_USERNAME], args[ARG_PASSWORD]);
-        Chat chat = connection.getChatManager().createChat(auctionId(args[ARG_ITEM_ID], connection), new MessageListener() {
+        main.joinAuction(connection, args[ARG_ITEM_ID]);
+    }
+
+    private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
+        Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), new MessageListener() {
             @Override
             public void processMessage(Chat chat, Message message) {
-                // do nothing
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ui.showStatus(MainWindow.STATUS_LOST);
+                    }
+                });
             }
         });
         chat.sendMessage(new Message());
+        notToBeGCd = chat;
     }
 
     private static XMPPConnection connectTo(String hostname, String username, String password) throws XMPPException {
