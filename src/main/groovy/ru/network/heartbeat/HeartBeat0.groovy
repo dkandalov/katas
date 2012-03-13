@@ -25,7 +25,7 @@ class Heartbeat0 {
     new HeartbeatSender(bus)
 
     Thread.sleep(2000)
-    def filter = bus.addFilter { it == "heartbeat" }
+    def filter = bus.withFilter { it == "heartbeat" }
     Thread.sleep(2000)
     bus.removeFilter(filter)
     Thread.sleep(2000)
