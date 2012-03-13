@@ -14,7 +14,7 @@ public class MainWindow extends JFrame {
 
     private final JLabel sniperStatus = createLabel(STATUS_JOINING);
 
-    MainWindow() throws HeadlessException {
+    MainWindow() {
         super("Auction sniper");
         setName(Main.MAIN_WINDOW_NAME);
         add(sniperStatus);
