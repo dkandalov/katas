@@ -43,8 +43,25 @@ public class FakeAuctionServer {
         });
     }
 
-    public void hasReceivedJoinRequestFromSniper() throws InterruptedException {
-        messageListener.receivesAMessage(is(anything()));
+    public void hasReceivedJoinRequestFrom(String sniperId) throws InterruptedException {
+        receivesAMessageMatching(sniperId, equalTo(Main.JOIN_COMMAND_FORMAT));
+    }
+
+    public void hasReceivedBid(int bid, String sniperId) throws InterruptedException {
+        receivesAMessageMatching(sniperId, equalTo(String.format(Main.BID_COMMAND_FORMAT, bid)));
+    }
+
+    private void receivesAMessageMatching(String sniperId, Matcher<? super String> messageMatcher) throws InterruptedException {
+        messageListener.receivesAMessage(messageMatcher);
+        assertThat(currentChat.getParticipant(), equalTo(sniperId));
+    }
+
+    public void reportPrice(int price, int increment, String bidder) throws XMPPException {
+        currentChat.sendMessage(
+                String.format("SOLVersion: 1.1; Event: PRICE; " +
+                        "CurrentPride: %d; Increment: %d; Bidder: %s;",
+                        price, increment, bidder)
+        );
     }
 
     public void announceClosed() throws XMPPException {
@@ -57,22 +74,6 @@ public class FakeAuctionServer {
 
     public String getItemId() {
         return itemId;
-    }
-
-    public void reportPrice(int price, int increment, String bidder) throws XMPPException {
-        currentChat.sendMessage(
-                String.format("SOLVersion: 1.1; Event: PRICE; " +
-                        "CurrentPride: %d; Increment: %d; Bidder: %s;",
-                        price, increment, bidder)
-        );
-
-    }
-
-    public void hasReceivedBid(int price, String bidderId) throws InterruptedException {
-        assertThat(currentChat.getParticipant(), equalTo(bidderId));
-        messageListener.receivesAMessage(equalTo(
-                String.format("SOLVersion: 1.1; Command: BID; Price: %d", price)
-        ));
     }
 
     private static class SingleMessageListener implements MessageListener {

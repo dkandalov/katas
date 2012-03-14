@@ -11,7 +11,7 @@ import static ru.goos_gbt.MainWindow.*;
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
-    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@localhost/Auction";
+    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@m4/Auction";
 
     private AuctionSniperDriver driver;
 
