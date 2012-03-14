@@ -2,6 +2,7 @@ package ru.goos_gbt;
 
 
 import static ru.goos_gbt.FakeAuctionServer.XMPP_HOSTNAME;
+import static ru.goos_gbt.MainWindow.*;
 
 /**
  * User: dima
@@ -10,8 +11,7 @@ import static ru.goos_gbt.FakeAuctionServer.XMPP_HOSTNAME;
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
-    private static final String STATUS_JOINING = "Joining";
-    private static final String STATUS_LOST = "Lost";
+    public static final String SNIPER_XMPP_ID = SNIPER_ID + "@localhost/Auction";
 
     private AuctionSniperDriver driver;
 
@@ -35,6 +35,10 @@ public class ApplicationRunner {
 
     public void showSniperHasLostAuction() {
         driver.showsSniperStatus(STATUS_LOST);
+    }
+
+    public void hasShownSniperIsBidding() {
+        driver.showsSniperStatus(STATUS_BIDDING);
     }
 
     public void stop() {
