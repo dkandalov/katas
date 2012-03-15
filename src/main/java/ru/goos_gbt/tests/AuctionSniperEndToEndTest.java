@@ -1,7 +1,9 @@
-package ru.goos_gbt;
+package ru.goos_gbt.tests;
 
 import org.junit.After;
 import org.junit.Test;
+import ru.goos_gbt.ApplicationRunner;
+import ru.goos_gbt.FakeAuctionServer;
 
 /**
  * User: dima
