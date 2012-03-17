@@ -5,10 +5,11 @@ import org.jivesoftware.smack.packet.Message;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import ru.goos_gbt.AuctionEventListener;
 import ru.goos_gbt.AuctionMessageTranslator;
+import ru.goos_gbt.AuctionSniper;
 
 /**
  * User: dima
@@ -18,8 +19,10 @@ import ru.goos_gbt.AuctionMessageTranslator;
 public class AuctionMessageTranslatorTest {
     private static final Chat UNUSED_CHAT = null;
 
-    private final Mockery context = new Mockery();
-    private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
+    private final Mockery context = new Mockery() {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
+    private final AuctionSniper listener = context.mock(AuctionSniper.class);
     private final AuctionMessageTranslator translator = new AuctionMessageTranslator(listener);
 
     @Test public void notifiesAuctionClosedWhenCloseMessageReceived() {

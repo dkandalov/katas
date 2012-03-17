@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class AuctionMessageTranslator implements MessageListener {
 
-    private final AuctionEventListener listener;
+    private final AuctionSniper listener;
 
-    public AuctionMessageTranslator(AuctionEventListener listener) {
+    public AuctionMessageTranslator(AuctionSniper listener) {
         this.listener = listener;
     }
 

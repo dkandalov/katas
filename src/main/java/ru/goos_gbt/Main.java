@@ -12,7 +12,7 @@ import java.awt.event.WindowEvent;
  * User: dima
  * Date: 04/03/2012
  */
-public class Main implements AuctionEventListener {
+public class Main implements SniperListener {
     public static final String MAIN_WINDOW_NAME = "Auction Sniper";
     public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d";
     public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
@@ -37,16 +37,16 @@ public class Main implements AuctionEventListener {
 
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
         disconnectWhenUICloses(connection);
-        Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), new AuctionMessageTranslator(this));
+        Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), new AuctionMessageTranslator(new AuctionSniper(this)));
         chat.sendMessage(JOIN_COMMAND_FORMAT);
         notToBeGCd = chat;
     }
 
-    @Override public void auctionClosed() {
+    @Override public void sniperLost() {
         ui.showStatus(MainWindow.STATUS_LOST);
     }
 
-    @Override public void currentPrice(int price, int increment) {
+    @Override public void sniperBidding() {
     }
 
     private void disconnectWhenUICloses(final XMPPConnection connection) {
