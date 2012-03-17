@@ -1,7 +1,9 @@
-package ru.goos_gbt;
+package ru.goos_gbt.tests;
 
 
-import static ru.goos_gbt.FakeAuctionServer.XMPP_HOSTNAME;
+import ru.goos_gbt.Main;
+
+import static ru.goos_gbt.tests.FakeAuctionServer.XMPP_HOSTNAME;
 import static ru.goos_gbt.MainWindow.*;
 
 /**

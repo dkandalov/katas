@@ -1,8 +1,9 @@
-package ru.goos_gbt;
+package ru.goos_gbt.tests;
 
 import org.hamcrest.Matcher;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
+import ru.goos_gbt.Main;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
