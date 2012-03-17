@@ -6,4 +6,6 @@ package ru.goos_gbt;
  */
 public interface Auction {
     void bid(int price);
+
+    void join();
 }
