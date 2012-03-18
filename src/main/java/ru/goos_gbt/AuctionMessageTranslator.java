@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class AuctionMessageTranslator implements MessageListener {
 
-    private final AuctionSniper listener;
+    private final AuctionEventListener listener;
 
     public AuctionMessageTranslator(AuctionSniper listener) {
         this.listener = listener;
@@ -31,15 +31,6 @@ public class AuctionMessageTranslator implements MessageListener {
                     event.increment()
             );
         }
-    }
-
-    private static Map<String, String> unpackEventFrom(Message message) {
-        Map<String, String> event = new HashMap<String, String>();
-        for (String element : message.getBody().split(";")) {
-            String[] pair = element.split(":");
-            event.put(pair[0].trim(), pair[1].trim());
-        }
-        return event;
     }
 
     private static class AuctionEvent {
@@ -76,7 +67,6 @@ public class AuctionMessageTranslator implements MessageListener {
         private void addField(String field) {
             String[] pair = field.split(":");
             fields.put(pair[0].trim(), pair[1].trim());
-
         }
 
         private static String[] fieldsIn(String messageBody) {

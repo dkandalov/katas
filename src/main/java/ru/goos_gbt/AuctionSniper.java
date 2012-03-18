@@ -4,7 +4,7 @@ package ru.goos_gbt;
  * User: dima
  * Date: 17/03/2012
  */
-public class AuctionSniper {
+public class AuctionSniper implements AuctionEventListener {
     private final Auction auction;
     private final SniperListener sniperListener;
 
@@ -13,11 +13,11 @@ public class AuctionSniper {
         this.sniperListener = sniperListener;
     }
 
-    public void auctionClosed() {
+    @Override public void auctionClosed() {
         sniperListener.sniperLost();
     }
 
-    public void currentPrice(int price, int increment) {
+    @Override public void currentPrice(int price, int increment) {
         auction.bid(price + increment);
         sniperListener.sniperBidding();
     }
