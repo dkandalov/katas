@@ -12,21 +12,21 @@ public interface OrderConsumer {
     void startProcessing(Log log);
 
     /**
-     * Handles specific event with order data. The meaningful properties of the order depends on the
-     * action. Note that the rest properties are with unspecified, but in usual cases invalid
-     * values. meaningful props are:
+     * Handles specific event with order data.
+     * Depending on action different set of order properties are meaningful:
      * <ul>
      * <li>For REMOVE: orderId</li>
      * <li>For EDIT: orderId, quantity and price</li>
      * <li>For ADD: orderId, symbol, isBuy, quantity, and price</li>
+     * </ul>
      *
      * @param action The action.
-     * @param o      The order DTO.
+     * @param order  The order DTO.
      */
     void handleEvent(Action action, Order order);
 
     /**
-     * Called by the environment when no more events will be handled.
+     * Called by the environment after processing all events.
      */
     void finishProcessing();
 }

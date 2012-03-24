@@ -11,15 +11,14 @@ public class AppEnvironmentImpl implements AppEnvironment {
     private final Set<OrderConsumer> consumers = new LinkedHashSet<OrderConsumer>();
     private final LogLevel logLevel;
     /**
-     * Implementation of the {@link Log} facade which uses the standard out.
+     * Implementation of {@link Log} which uses the standard out.
      */
     protected final Log log = new Log() {
         @Override
         public void log(LogLevel logLevel, String msg) {
-            if (!isEnabled(logLevel)) {
-
+            if (isEnabled(logLevel)) {
+                System.out.println(logLevel + ": " + msg);
             }
-            System.out.println(logLevel + ": " + msg);
         }
 
         private boolean isEnabled(LogLevel logLevel) {
@@ -49,7 +48,7 @@ public class AppEnvironmentImpl implements AppEnvironment {
     }
 
     /**
-     * Sends a stream of orders to the {@link OrderConsumer}s.
+     * Sends a stream of orders to {@link OrderConsumer}s.
      *
      * @throws Exception if there is an error.
      * @see #notifyOrder(Action, Order)
@@ -63,15 +62,15 @@ public class AppEnvironmentImpl implements AppEnvironment {
             final Action action;
             final Order order;
 
-            public Command(Action action, long orderId, String symbol, boolean isBuy, int price,
-                           int quantity) {
+            public Command(Action action, long orderId, String symbol, boolean isBuy, int price, int quantity) {
                 this.action = action;
                 this.order = new Order(orderId, symbol, isBuy, price, quantity);
             }
 
         }
         Command[] commands =
-                new Command[]{new Command(Action.ADD, 1L, "MSFT.L", true, 5, 200),
+                new Command[]{
+                        new Command(Action.ADD, 1L, "MSFT.L", true, 5, 200),
                         new Command(Action.ADD, 2L, "VOD.L", true, 15, 100),
                         new Command(Action.ADD, 3L, "MSFT.L", false, 5, 300),
                         new Command(Action.ADD, 4L, "MSFT.L", true, 7, 150),
@@ -87,26 +86,25 @@ public class AppEnvironmentImpl implements AppEnvironment {
         for (Command command : commands) {
             notifyOrder(command.action, command.order);
         }
-
     }
 
     /**
      * Invokes {@link OrderConsumer#handleEvent(Action, Order)} for every registered consumer with
      * specified <code>action</code> and <code>order</code>.
      */
-    protected final void notifyOrder(Action action, Order order) {
+    protected void notifyOrder(Action action, Order order) {
         for (OrderConsumer consumer : consumers) {
             consumer.handleEvent(action, order);
         }
     }
 
-    private final void notifyStart() {
+    private void notifyStart() {
         for (OrderConsumer consumer : consumers) {
             consumer.startProcessing(log);
         }
     }
 
-    private final void notifyFinish() {
+    private void notifyFinish() {
         for (OrderConsumer consumer : consumers) {
             consumer.finishProcessing();
         }

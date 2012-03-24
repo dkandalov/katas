@@ -1,7 +1,7 @@
 package ru.orderbook.v1.iface;
 
 /**
- * A Data transfer object used by {@link AppEnvironment} to send data used.
+ * A data transfer object used by {@link AppEnvironment}.
  */
 public class Order {
     private final long orderId;
@@ -10,8 +10,7 @@ public class Order {
     private final int price;
     private final int quantity;
 
-    public Order(long orderId, String symbol, boolean isBuy, int price,
-                 int quantity) {
+    public Order(long orderId, String symbol, boolean isBuy, int price, int quantity) {
         this.orderId = orderId;
         this.symbol = symbol;
         this.isBuy = isBuy;
@@ -38,5 +37,4 @@ public class Order {
     public int getQuantity() {
         return quantity;
     }
-
 }
