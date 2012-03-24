@@ -1,6 +1,6 @@
 package ru.orderbook.v0
 
-import xml.{Node, XML}
+import scala.xml.{Node, XML}
 import java.lang.IllegalStateException
 import ru.util.Mess
 

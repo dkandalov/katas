@@ -32,7 +32,7 @@ class BST4 {
   }
 
   def sort(List list) {
-    list.inject(node()) { Node4 bst, int value -> bst.add(node(value)) }.traverseInOrder()
+    list.inject(node()) { Node4 bst, int value -> bst.add(node(value)) }.doTraverseInOrder()
   }
 
   @Test public void shouldRotateBST() {
@@ -88,13 +88,13 @@ final class Node4 {
   Node4 add(Node4 node) {
     if (node.value == NO_VALUE) return this
     else if (this.value == NO_VALUE) return node
-    else add(this, node)
+    else doAdd(this, node)
   }
 
-  private Node4 add(Node4 thisNode, Node4 nodeToAdd) {
+  private Node4 doAdd(Node4 thisNode, Node4 nodeToAdd) {
     if (thisNode == null) nodeToAdd
-    else if (nodeToAdd.value <= thisNode.value) node(thisNode.value, add(thisNode.left, nodeToAdd), thisNode.right)
-    else if (nodeToAdd.value > thisNode.value) node(thisNode.value, thisNode.left, add(thisNode.right, nodeToAdd))
+    else if (nodeToAdd.value <= thisNode.value) node(thisNode.value, doAdd(thisNode.left, nodeToAdd), thisNode.right)
+    else if (nodeToAdd.value > thisNode.value) node(thisNode.value, thisNode.left, doAdd(thisNode.right, nodeToAdd))
     else throw new IllegalStateException()
   }
 
@@ -112,24 +112,24 @@ final class Node4 {
   Node4 addToRoot(Node4 node) {
     if (node.value == NO_VALUE) return this
     else if (this.value == NO_VALUE) return node
-    addToRoot(this, node)
+    doAddToRoot(this, node)
   }
 
-  private Node4 addToRoot(Node4 thisNode, Node4 nodeToAdd) {
+  private Node4 doAddToRoot(Node4 thisNode, Node4 nodeToAdd) {
     if (thisNode == null) nodeToAdd
-    else if (nodeToAdd.value <= thisNode.value) node(thisNode.value, addToRoot(thisNode.left, nodeToAdd), thisNode.right).rotateRight() // rotated wrong way; used recursion with add() instead of addToRoot()
-    else if (nodeToAdd.value > thisNode.value) node(thisNode.value, thisNode.left, addToRoot(thisNode.right, nodeToAdd)).rotateLeft()
+    else if (nodeToAdd.value <= thisNode.value) node(thisNode.value, doAddToRoot(thisNode.left, nodeToAdd), thisNode.right).rotateRight() // rotated wrong way; used recursion with doAdd() instead of addToRoot()
+    else if (nodeToAdd.value > thisNode.value) node(thisNode.value, thisNode.left, doAddToRoot(thisNode.right, nodeToAdd)).rotateLeft()
     else throw new IllegalStateException()
   }
 
   List traverseInOrder() {
     if (this.value == NO_VALUE) return []
-    else traverseInOrder(this)
+    else doTraverseInOrder(this)
   }
 
-  private List traverseInOrder(Node4 thisNode) {
+  private List doTraverseInOrder(Node4 thisNode) {
     if (thisNode == null) return []
-    else [traverseInOrder(thisNode.left), thisNode.value, traverseInOrder(thisNode.right)].flatten() // forgot flatten()
+    else [doTraverseInOrder(thisNode.left), thisNode.value, doTraverseInOrder(thisNode.right)].flatten() // forgot flatten()
   }
 
   @Override

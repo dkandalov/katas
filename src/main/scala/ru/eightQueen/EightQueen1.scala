@@ -6,7 +6,6 @@ import org.scalatest.junit.AssertionsForJUnit
 /**
  * User: DKandalov
  */
-
 class EightQueen1 extends AssertionsForJUnit {
 
   @Test def shouldFindSolutionFor8QueenProblem() {
