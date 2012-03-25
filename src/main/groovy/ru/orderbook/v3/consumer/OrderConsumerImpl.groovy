@@ -11,7 +11,7 @@ import static java.util.Collections.reverseOrder
  * Date: 25/03/2012
  */
 class OrderConsumerImpl implements OrderConsumer {
-  private final Map<Symbol, OrderBook> orderBooks = new LinkedHashMap().withDefault { new OrderBook() }
+  private final Map<Symbol, OrderBook> orderBooks = new HashMap().withDefault { new OrderBook() }
   private log
 
   @Override void startProcessing(Log log) {
@@ -27,7 +27,7 @@ class OrderConsumerImpl implements OrderConsumer {
     else if (action == Action.REMOVE) orderBook.remove(order)
   }
 
-  OrderBook findBookFor(Order order) {
+  private OrderBook findBookFor(Order order) {
     if (order.symbol != null) orderBooks[order.symbol]
     else orderBooks.values().find { it.has(order) }
   }
@@ -63,7 +63,7 @@ class OrderBook {
     priceLevel.remove(order)
 
     if (priceLevel.empty) removePriceLevel(order)
- }
+  }
 
   boolean has(Order order) {
     ordersById.containsKey(order.orderId)
@@ -73,7 +73,7 @@ class OrderBook {
     (order.buy ? bidLevels : askLevels)[order.price]
   }
 
-  private void removePriceLevel(Order order) {
+  private removePriceLevel(Order order) {
     (order.buy ? bidLevels : askLevels).remove(order.price)
   }
 
