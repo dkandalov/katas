@@ -28,11 +28,8 @@ class OrderConsumerImpl implements OrderConsumer {
   }
 
   OrderBook findBookFor(Order order) {
-    if (order.symbol != null) {
-      orderBooks[order.symbol]
-    } else {
-      orderBooks.values().find { it.has(order) }
-    }
+    if (order.symbol != null) orderBooks[order.symbol]
+    else orderBooks.values().find { it.has(order) }
   }
 
   @Override void finishProcessing() {
