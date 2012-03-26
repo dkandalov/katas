@@ -21,7 +21,7 @@ class XmlAppEnvironment(filename: String, logLevel: LogLevel) extends AbstractAp
       val order = new Order(
         command.attribute("order-id").get.text.toLong,
         command.attribute("symbol").map(_.text).getOrElse(null),
-        command.attribute("type").map(_.text).getOrElse("") == "buy",
+        command.attribute("type").map(_.text == "buy").getOrElse(false),
         command.attribute("price").map(_.text.toInt).getOrElse(-1),
         command.attribute("quantity").map(_.text.toInt).getOrElse(-1)
       )
