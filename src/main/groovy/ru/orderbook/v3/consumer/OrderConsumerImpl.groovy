@@ -33,14 +33,28 @@ class OrderConsumerImpl implements OrderConsumer {
   }
 
   @Override void finishProcessing() {
-    log.log(LogLevel.INFO, orderBooks.entrySet().join("\n"))
+    log.log(LogLevel.INFO, toPrintableString(orderBooks.sort{ it.key }))
+  }
+
+  String toPrintableString(Map orderBookBySymbol) {
+    orderBookBySymbol.inject("") { result, entry ->
+      result + "\n\n${entry.key}\n" +
+              "bidSide${bookLevelToString(entry.value.bidLevels)}\n" +
+              "askSide${bookLevelToString(entry.value.askLevels)}"
+    }
+  }
+
+  String bookLevelToString(Map bookLevel) {
+    bookLevel.values().inject("") { result, PriceLevel level ->
+      result + "\n\tprice = ${level.price}, size = ${level.size}, count = ${level.count}"
+    }
   }
 }
 
 class OrderBook {
-  private final Map<Price, PriceLevel> bidLevels = new TreeMap(reverseOrder()).withDefault { new PriceLevel((int) it) }
-  private final Map<Price, PriceLevel> askLevels = new TreeMap().withDefault { new PriceLevel((int) it) }
   private final Map<Long, Order> ordersById = new TreeMap()
+  final Map<Price, PriceLevel> bidLevels = new TreeMap(reverseOrder()).withDefault { new PriceLevel((int) it) }
+  final Map<Price, PriceLevel> askLevels = new TreeMap().withDefault { new PriceLevel((int) it) }
 
   void add(Order order) {
     priceLevelFor(order).add(order)
@@ -76,16 +90,12 @@ class OrderBook {
   private removePriceLevel(Order order) {
     (order.buy ? bidLevels : askLevels).remove(order.price)
   }
-
-  @Override String toString() {
-    "OrderBook{ bidLevels {${bidLevels.entrySet().join("\n")}},\naskLevels {${askLevels.entrySet().join("\n")}}"
-  }
 }
 
 class PriceLevel {
-  private int price
-  private int count
-  private int size
+  int price
+  int count
+  int size
 
   PriceLevel(int price) {
     this.price = price
