@@ -31,8 +31,6 @@ case class OrderBook(bidSide: BookSide = BookSide.newBid, askSide: BookSide = Bo
   }
 
   def has(order: Order) = orders.contains(order.getOrderId)
-
-  override def toString = "\nbidSide: " + bidSide + "\naskSide: " + askSide
 }
 
 object BookSide {
