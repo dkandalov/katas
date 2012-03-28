@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ConsoleTest {
-    @Ignore
     @Test
     public void iteration1_acceptance_test() {
         Console console = new Console();
@@ -15,7 +14,6 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Bananas"), 325);
     }
 
-    @Ignore
     @Test
     public void iteration2_acceptance_test() {
         Console console = new Console();
@@ -24,6 +22,12 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Cherries"), 275);
         assertEquals(console.calculateListItemPrice("Apples"), 375);
         assertEquals(console.calculateListItemPrice("Cherries"), 430);
+    }
+
+    @Test
+    public void iteration3_csv_test() {
+        assertEquals(new Console().calculateListItemPrice("Apples,Cherries,Bananas"), 325);
+        assertEquals(new Console().calculateListItemPrice("Cherries,Cherries"), 130);
     }
 
     @Ignore
@@ -50,5 +54,20 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Bananas"), 380);
         assertEquals(console.calculateListItemPrice("Bananas"), 380);
         assertEquals(console.calculateListItemPrice("Apples"), 480);
+    }
+
+    @Test
+    public void iteration5() {
+//        Console console = new Console();
+//        assertEquals(console.calculateListItemPrice("Mele"), 100);
+//        assertEquals(console.calculateListItemPrice("Pommes"), 200);
+//        assertEquals(console.calculateListItemPrice("Pommes"), 300);
+//        assertEquals(console.calculateListItemPrice("Apples"), 400);
+//        assertEquals(console.calculateListItemPrice("Pommes"), 400);
+//        assertEquals(console.calculateListItemPrice("Mele"), 450);
+//        assertEquals(console.calculateListItemPrice("Cherries"), 525);
+//        assertEquals(console.calculateListItemPrice("Cherries"), 580);
+        assertEquals(new Console().calculateListItemPrice("Mele,Pommes,Pommes,Apples,Pommes,Mele,Cherries,Cherries,Bananas"), 680);
+
     }
 }

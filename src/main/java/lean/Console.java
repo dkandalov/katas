@@ -13,6 +13,8 @@ public class Console {
     private long price = 0;
     private int cherriesCount = 0;
     private int bananaCount = 0;
+    private int pommesCount = 0;
+    private int meleCount = 0;
 
     public static void main(String[] args) throws IOException {
         Console console = new Console();
@@ -38,6 +40,8 @@ public class Console {
     private long processLine(String line) {
         
         if (line.equals("Apples") || line.equals("Mele") || line.equals("Pommes")) {
+            if (line.equals("Pommes")) pommesCount++;
+            if (line.equals("Mele")) meleCount++;
             price += 100;
         } else if (line.equals("Cherries")) {
             cherriesCount++;
@@ -60,6 +64,14 @@ public class Console {
         if (bananaCount == 2) {
             price -= 150;
             bananaCount = 0;
+        }
+        if (pommesCount == 3) {
+            price = price - 100;
+            pommesCount = 0;
+        }
+        if (meleCount == 2) {
+            price = price - 100;
+            meleCount = 0;
         }
     }
 }
