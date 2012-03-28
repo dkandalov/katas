@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ConsoleTest {
+    @Ignore
     @Test
     public void iteration1_acceptance_test() {
         Console console = new Console();
@@ -14,6 +15,7 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Bananas"), 325);
     }
 
+    @Ignore
     @Test
     public void iteration2_acceptance_test() {
         Console console = new Console();
@@ -24,6 +26,7 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Cherries"), 430);
     }
 
+    @Ignore
     @Test
     public void iteration3_csv_test() {
         assertEquals(new Console().calculateListItemPrice("Apples,Cherries,Bananas"), 325);
@@ -56,6 +59,7 @@ public class ConsoleTest {
         assertEquals(console.calculateListItemPrice("Apples"), 480);
     }
 
+    @Ignore
     @Test
     public void iteration5() {
 //        Console console = new Console();
@@ -69,5 +73,15 @@ public class ConsoleTest {
 //        assertEquals(console.calculateListItemPrice("Cherries"), 580);
         assertEquals(new Console().calculateListItemPrice("Mele,Pommes,Pommes,Apples,Pommes,Mele,Cherries,Cherries,Bananas"), 680);
 
+    }
+
+    @Test
+    public void iteration6() {
+        Console console = new Console();
+        assertEquals(console.calculateListItemPrice("Mele,Pommes,Pommes,Mele"), 250);
+        assertEquals(console.calculateListItemPrice("Bananas"), 200);
+
+        console = new Console();
+        assertEquals(console.calculateListItemPrice("Mele,Pommes,Pommes,Apples,Mele"), 150);
     }
 }

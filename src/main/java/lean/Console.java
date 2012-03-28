@@ -15,6 +15,8 @@ public class Console {
     private int bananaCount = 0;
     private int pommesCount = 0;
     private int meleCount = 0;
+    private int appleCount;
+    private int fruitCount;
 
     public static void main(String[] args) throws IOException {
         Console console = new Console();
@@ -36,12 +38,13 @@ public class Console {
 
         return price;
     }
-    
+
     private long processLine(String line) {
-        
+
         if (line.equals("Apples") || line.equals("Mele") || line.equals("Pommes")) {
             if (line.equals("Pommes")) pommesCount++;
             if (line.equals("Mele")) meleCount++;
+            appleCount++;
             price += 100;
         } else if (line.equals("Cherries")) {
             cherriesCount++;
@@ -50,6 +53,8 @@ public class Console {
             bananaCount++;
             price += 150;
         }
+
+        fruitCount++;
 
         applyDiscount();
 
@@ -70,8 +75,16 @@ public class Console {
             pommesCount = 0;
         }
         if (meleCount == 2) {
-            price = price - 100;
+            price = price - 50;
             meleCount = 0;
+        }
+        if (appleCount == 4) {
+            price -= 100;
+            appleCount = 0;
+        }
+        if (fruitCount == 5) {
+            price -= 200;
+            fruitCount = 0;
         }
     }
 }
