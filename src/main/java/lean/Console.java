@@ -3,6 +3,9 @@ package lean;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * User: dima
@@ -11,12 +14,20 @@ import java.io.InputStreamReader;
 public class Console {
 
     private long price = 0;
-    private int cherriesCount = 0;
-    private int bananaCount = 0;
-    private int pommesCount = 0;
-    private int meleCount = 0;
-    private int appleCount;
-    private int fruitCount;
+
+    private final List<? extends PriceSource> priceSources = asList(
+            new Price("Apples", 100),
+            new Price("Pommes", 100),
+            new Price("Mele", 100),
+            new Price("Cherries", 75),
+            new Price("Bananas", 150),
+            new Discount("Cherries", 2, 20),
+            new Discount("Bananas", 2, 150),
+            new Discount("Pommes", 3, 100),
+            new Discount("Mele", 2, 50),
+            new Discount(asList("Apples", "Pommes", "Mele"), 4, 100),
+            new Discount(asList("Apples", "Pommes", "Mele", "Cherries", "Bananas"), 5, 200)
+    );
 
     public static void main(String[] args) throws IOException {
         Console console = new Console();
@@ -34,57 +45,62 @@ public class Console {
 
     public long calculateListItemPrice(String line) {
         String[] items = line.split(",\\s?");
-        for (String item : items) processLine(item);
+        for (String item : items) process(item);
 
         return price;
     }
 
-    private long processLine(String line) {
-
-        if (line.equals("Apples") || line.equals("Mele") || line.equals("Pommes")) {
-            if (line.equals("Pommes")) pommesCount++;
-            if (line.equals("Mele")) meleCount++;
-            appleCount++;
-            price += 100;
-        } else if (line.equals("Cherries")) {
-            cherriesCount++;
-            price += 75;
-        } else if (line.equals("Bananas")) {
-            bananaCount++;
-            price += 150;
+    private long process(String item) {
+        for (PriceSource priceSource : priceSources) {
+            price += priceSource.priceFor(item);
         }
-
-        fruitCount++;
-
-        applyDiscount();
-
         return price;
     }
 
-    private void applyDiscount() {
-        if (cherriesCount == 2) {
-            price -= 20;
-            cherriesCount = 0;
+    private interface PriceSource {
+        int priceFor(String name);
+    }
+    
+    private static class Price implements PriceSource {
+        private final String fruitName;
+        private final int price;
+
+        private Price(String fruitName, int price) {
+            this.fruitName = fruitName;
+            this.price = price;
         }
-        if (bananaCount == 2) {
-            price -= 150;
-            bananaCount = 0;
+
+        @Override
+        public int priceFor(String name) {
+            if (!fruitName.equals(name)) return 0;
+            else return price;
         }
-        if (pommesCount == 3) {
-            price = price - 100;
-            pommesCount = 0;
+    }
+    
+    private static class Discount implements PriceSource {
+        private final List<String> itemNames;
+        private final int count;
+        private final int discount;
+        private int i;
+
+        private Discount(String itemName, int count, int discount) {
+            this(asList(itemName), count, discount);
         }
-        if (meleCount == 2) {
-            price = price - 50;
-            meleCount = 0;
+
+        private Discount(List<String> itemNames, int count, int discount) {
+            this.itemNames = itemNames;
+            this.count = count;
+            this.discount = discount;
         }
-        if (appleCount == 4) {
-            price -= 100;
-            appleCount = 0;
-        }
-        if (fruitCount == 5) {
-            price -= 200;
-            fruitCount = 0;
+
+        @Override
+        public int priceFor(String item) {
+            if (!itemNames.contains(item)) return 0;
+            if (++i == count) {
+                i = 0;
+                return -discount;
+            }
+            return 0;
         }
     }
 }
