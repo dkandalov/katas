@@ -1,4 +1,4 @@
-package lean;
+package org.lscc.lean;
 
 import org.junit.Test;
 

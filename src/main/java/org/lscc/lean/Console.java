@@ -1,4 +1,4 @@
-package lean;
+package org.lscc.lean;
 
 import java.io.BufferedReader;
 import java.io.IOException;
