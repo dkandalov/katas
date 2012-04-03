@@ -9,8 +9,10 @@ case class OrderBook(bidSide: BookSide = BookSide.newBid, askSide: BookSide = Bo
   def add(order: Order): OrderBook = {
     val updatedOrders = orders.updated(order.getOrderId, order)
 
-    if (order.isBuy) OrderBook(bidSide.add(order), askSide, updatedOrders)
-    else OrderBook(bidSide, askSide.add(order), updatedOrders)
+    if (order.isBuy)
+      OrderBook(bidSide.add(order), askSide, updatedOrders)
+    else
+      OrderBook(bidSide, askSide.add(order), updatedOrders)
   }
 
   def edit(order: Order): OrderBook = {
@@ -18,16 +20,20 @@ case class OrderBook(bidSide: BookSide = BookSide.newBid, askSide: BookSide = Bo
     val newOrder = new Order(order.getOrderId, oldOrder.getSymbol, oldOrder.isBuy, order.getPrice, order.getQuantity)
     val updatedOrders = orders.updated(order.getOrderId, newOrder)
 
-    if (oldOrder.isBuy) OrderBook(bidSide.update(oldOrder, newOrder), askSide, updatedOrders)
-    else OrderBook(bidSide, askSide.update(oldOrder, newOrder), updatedOrders)
+    if (oldOrder.isBuy)
+      OrderBook(bidSide.update(oldOrder, newOrder), askSide, updatedOrders)
+    else
+      OrderBook(bidSide, askSide.update(oldOrder, newOrder), updatedOrders)
   }
 
   def remove(order: Order): OrderBook = {
     val oldOrder = orders(order.getOrderId)
     val updatedOrders = orders - order.getOrderId
 
-    if (oldOrder.isBuy) OrderBook(bidSide.remove(oldOrder), askSide, updatedOrders)
-    else OrderBook(bidSide, askSide.remove(oldOrder), updatedOrders)
+    if (oldOrder.isBuy)
+      OrderBook(bidSide.remove(oldOrder), askSide, updatedOrders)
+    else
+      OrderBook(bidSide, askSide.remove(oldOrder), updatedOrders)
   }
 
   def has(order: Order) = orders.contains(order.getOrderId)

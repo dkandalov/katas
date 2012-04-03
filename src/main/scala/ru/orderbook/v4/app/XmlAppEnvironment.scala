@@ -1,7 +1,7 @@
 package ru.orderbook.v4.app
 
 import ru.orderbook.v4.iface.{Order, Action, LogLevel}
-import scala.xml.{NodeSeq, XML}
+import scala.xml.XML
 
 /**
  * User: dima
