@@ -2,7 +2,6 @@ package ru.coins
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
-import runtime.RichInt
 import ru.util.Pomodoro
 
 /**
@@ -11,9 +10,7 @@ import ru.util.Pomodoro
  */
 @Pomodoro("1")
 class CountChange3 extends ShouldMatchers {
-  @Test def aaa() {
-    // TODO implicit conversion for nicer int ranges
-  }
+  import EnhancedInt._
 
   @Test def GIVEN_amount_of_money_SHOULD_find_all_unique_ways_to_change_it() {
     waysToChange(1).size should equal(1)
@@ -22,7 +19,15 @@ class CountChange3 extends ShouldMatchers {
     waysToChange(5).size should equal(2)
     waysToChange(5) should equal(Seq(Seq(1, 1, 1, 1, 1), Seq(5)))
 
-    waysToChange(10) should equal(Seq(Seq(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),Seq(1, 1, 1, 1, 1, 5), Seq(5, 5), Seq(10)))
+    waysToChange(10) should equal(Seq((10 times 1), (5 times 1) :+ 5, Seq(5, 5), Seq(10)))
+    waysToChange(15) should equal(Seq(
+      (15 times 1),
+      (10 times 1) :+ 5,
+      (5 times 1) ++ Seq(5, 5),
+      (3 times 5),
+      (5 times 1) :+ 10,
+      Seq(5, 10)
+    ))
 
     waysToChange(100).size should equal(292)
   }
@@ -42,7 +47,11 @@ class CountChange3 extends ShouldMatchers {
     case 4 => 50
   }
 
-  class Aaa(i: Int) {
-    def times(n: Int) = Seq.fill(n) {i}
+  class EnhancedInt(n: Int) {
+    def times(value: Int) = Seq.fill(n) {value}
+  }
+
+  object EnhancedInt {
+    implicit def intToEnhancedInt(i: Int): EnhancedInt = new EnhancedInt(i)
   }
 }
