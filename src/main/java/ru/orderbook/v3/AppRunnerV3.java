@@ -9,7 +9,7 @@ public class AppRunnerV3 {
 
     public static void main(String[] args) {
 //        AppEnvironment environment = new FakeAppEnvironment(LogLevel.INFO);
-        String filename = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders1.xml";
+        String filename = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders2.xml";
         AppEnvironment environment = new XmlAppEnvironment(filename, LogLevel.INFO);
         environment.registerHandler(new OrderConsumerImpl());
         environment.run();

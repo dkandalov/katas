@@ -16,7 +16,7 @@ class OrderConsumerImpl implements OrderConsumer {
 
   @Override void startProcessing(Log log) {
     this.log = log
-    log.log(LogLevel.INFO, "Processing orders")
+    log.log(LogLevel.INFO, "Started processing orders")
   }
 
   @Override void handleEvent(Action action, Order order) {
@@ -62,13 +62,10 @@ class OrderBook {
   }
 
   void edit(Order order) {
-    Order oldOrder = ordersById.put(order.orderId, order)
-    PriceLevel priceLevel = priceLevelFor(oldOrder)
-    priceLevel.remove(oldOrder)
-    if (priceLevel.empty) removePriceLevel(oldOrder)
-
-    order = new Order(oldOrder.orderId, oldOrder.symbol, oldOrder.buy, order.price, order.quantity)
-    priceLevelFor(order).add(order)
+    Order oldOrder = ordersById[order.orderId]
+    Order newOrder = new Order(oldOrder.orderId, oldOrder.symbol, oldOrder.buy, order.price, order.quantity)
+    remove(oldOrder)
+    add(newOrder)
   }
 
   void remove(Order order) {
