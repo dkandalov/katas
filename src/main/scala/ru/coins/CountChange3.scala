@@ -35,8 +35,9 @@ class CountChange3 extends ShouldMatchers {
   def waysToChange(money: Int, coinType: Int = 4): Seq[Seq[Int]] = {
     if (money < 0 || coinType < 0) Seq()
     else if (money == 0) Seq(Seq())
-    else waysToChange(money, coinType - 1) ++
-      waysToChange(money - valueOf(coinType), coinType).map{ seq => seq.:+(valueOf(coinType))}
+    else
+      waysToChange(money, coinType - 1) ++
+      waysToChange(money - valueOf(coinType), coinType).map{ _ :+ valueOf(coinType) }
   }
 
   def valueOf(coinType: Int): Int = coinType match {
