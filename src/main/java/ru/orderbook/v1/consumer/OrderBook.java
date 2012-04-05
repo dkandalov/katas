@@ -10,7 +10,7 @@ import java.util.TreeMap;
  * User: dima
  * Date: 17/2/11
  */
-public class OrderBook {
+class OrderBook {
     private final String symbol;
     private final Map<Integer, Level> bidLevelMap = new TreeMap<Integer, Level>(Collections.<Object>reverseOrder()); // used reverse order for ask, which was wrong
     private final Map<Integer, Level> askLevelMap = new TreeMap<Integer, Level>();
@@ -60,13 +60,22 @@ public class OrderBook {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "OrderBook{" +
-                "bidLevelMap=" + bidLevelMap +
-                ", askLevelMap=" + askLevelMap +
-                ", symbol='" + symbol + '\'' +
-                '}';
+    public String asString() {
+        String message = "";
+        message += symbol + "\n";
+        message += "bidSide\n";
+        message += levelsAsString(bidLevelMap);
+        message += "askSide\n";
+        message += levelsAsString(askLevelMap);
+        return message;
+    }
+
+    private static String levelsAsString(Map<Integer, Level> levelMap) {
+        String result = "";
+        for (Level level : levelMap.values()) {
+            result += "\t" + level.asString() + "\n";
+        }
+        return result;
     }
 
     @SuppressWarnings({"RedundantIfStatement"})
@@ -94,71 +103,4 @@ public class OrderBook {
         return result;
     }
 
-    public String asString() {
-        String message = "";
-        message += "----------------\n";
-        message += "Level Order Book for " + symbol + "\n";
-        message += "Bid:\n";
-        message += levelsAsString(bidLevelMap);
-        message += "Ask:\n";
-        message += levelsAsString(askLevelMap);
-        message += "----------------\n";
-        return message;
-    }
-
-    private String levelsAsString(Map<Integer, Level> levelMap) {
-        String result = "Price,Size,Count\n";
-        for (Level level : levelMap.values()) {
-            result += level.price + "," + level.size + "," + level.count + "\n";
-        }
-        return result;
-    }
-
-    private static class Level {
-        private int price;
-        private int size;
-        private int count;
-
-        public Level(int price) {
-            this(price, 0, 0);
-        }
-
-        private Level(int price, int size, int count) {
-            this.price = price;
-            this.size = size;
-            this.count = count;
-        }
-
-        @Override
-        public String toString() {
-            return "Level{" +
-                    "price=" + price +
-                    ", size=" + size +
-                    ", count=" + count +
-                    '}';
-        }
-
-        @SuppressWarnings({"RedundantIfStatement"})
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Level level = (Level) o;
-
-            if (count != level.count) return false;
-            if (price != level.price) return false;
-            if (size != level.size) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = price;
-            result = 31 * result + size;
-            result = 31 * result + count;
-            return result;
-        }
-    }
 }

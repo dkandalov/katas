@@ -5,6 +5,7 @@ import ru.orderbook.v1.iface.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class OrderConsumerImpl implements OrderConsumer {
 
@@ -15,6 +16,7 @@ public class OrderConsumerImpl implements OrderConsumer {
     @Override
     public void startProcessing(Log log) {
         this.log = log;
+        log.log(LogLevel.INFO, "Started processing orders");
     }
 
     @Override
@@ -58,10 +60,14 @@ public class OrderConsumerImpl implements OrderConsumer {
 
     @Override
     public void finishProcessing() {
-        String message = "";
-        for (OrderBook orderBook : orderBookMap.values()) {
-            message += orderBook.asString();
+        log.log(LogLevel.INFO, toPrintableString(orderBookMap));
+    }
+
+    private static String toPrintableString(Map<String, OrderBook> orderBookMap) {
+        String result = "\n";
+        for (OrderBook orderBook : new TreeMap<String, OrderBook>(orderBookMap).values()) {
+            result += "\n" + orderBook.asString();
         }
-        log.log(LogLevel.INFO, message);
+        return result;
     }
 }
