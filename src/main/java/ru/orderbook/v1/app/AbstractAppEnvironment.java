@@ -41,6 +41,7 @@ public abstract class AbstractAppEnvironment implements AppEnvironment {
         try {
             feedOrders();
         } catch (Exception e) {
+            e.printStackTrace();
             log.log(LogLevel.ERROR, e.getMessage());
         } finally {
             notifyFinish();
