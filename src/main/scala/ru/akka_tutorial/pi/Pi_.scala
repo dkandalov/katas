@@ -1,9 +1,8 @@
 package ru.akka_tutorial.pi
 
-import akka.routing.CyclicIterator
+import akka.actor._
+import akka.routing.RoundRobinRouter
 import java.util.concurrent.{TimeUnit, SynchronousQueue}
-import akka.actor.{PoisonPill, Actor}
-import akka.actor.Actor._
 
 /**
  * User: dima
@@ -12,9 +11,13 @@ import akka.actor.Actor._
 object Pi_ {
   def main(args: Array[String]) {
     val resultQueue = new SynchronousQueue[Double]()
-    val master = actorOf(new Master(4, 10000, 10000, resultQueue)).start()
+    val system = ActorSystem("PiSystem")
+
+    val master = system.actorOf(Props(new Master(4, 10000, 10000, resultQueue)))
     master ! CalculatePi
     println(resultQueue.take())
+
+    system.shutdown()
   }
 }
 
@@ -24,21 +27,19 @@ case class Task(from: Int, to: Int) extends PiMessage
 case class TaskResult(value: Double) extends PiMessage
 
 class Master(nOfWorkers: Int, calcCount: Int, batchSize: Int, resultQueue: SynchronousQueue[Double]) extends Actor {
-  var almostPi: Double = 0
+  var pi: Double = 0
   var counter: Int = 0
   var startTime: Long = 0
 
   override protected def receive = {
     case CalculatePi =>
-      val workers = Vector.fill(nOfWorkers) {actorOf[Worker].start()}
-      val cyclicIterator = CyclicIterator(workers)
-      0.until(calcCount).foreach{ i => cyclicIterator.next() ! Task(i * batchSize, (i + 1) * batchSize) }
-      workers.foreach{_ ! PoisonPill}
+      val workerRouter = context.actorOf(Props[Worker].withRouter(RoundRobinRouter(nOfWorkers)))
+      0.until(calcCount).foreach{ i => workerRouter ! Task(i * batchSize, (i + 1) * batchSize) }
 
     case TaskResult(value) =>
-      almostPi += value
+      pi += value
       counter += 1
-      if (counter == calcCount)  self.stop()
+      if (counter == calcCount) context.stop(self)
 
     case msg@_ => println("Don't know how to respond to message: " + msg)
   }
@@ -49,17 +50,17 @@ class Master(nOfWorkers: Int, calcCount: Int, batchSize: Int, resultQueue: Synch
 
   override def postStop() {
     println(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime))
-    resultQueue.put(almostPi * 4)
+    resultQueue.put(pi)
   }
 }
 
 class Worker extends Actor {
   override protected def receive = {
-    case Task(from, to) => self.reply(new TaskResult(calcPi(from, to)))
+    case Task(from, to) => sender ! new TaskResult(calcPi(from, to))
   }
 
   def calcPi(start: Int, end: Int): Double = {
-    start.until(end).foldLeft(0d){ (result, n) => result + math.pow(-1, n) / (2 * n + 1) }
+    4.0 * start.until(end).foldLeft(0d){ (result, n) => result + math.pow(-1, n) / (2 * n + 1) }
   }
 }
 
