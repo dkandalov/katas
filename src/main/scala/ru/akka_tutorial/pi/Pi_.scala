@@ -1,8 +1,9 @@
 package ru.akka_tutorial.pi
 
-import akka.actor.{Actors, Actor}
 import akka.routing.CyclicIterator
 import java.util.concurrent.{TimeUnit, SynchronousQueue}
+import akka.actor.{PoisonPill, Actor}
+import akka.actor.Actor._
 
 /**
  * User: dima
@@ -11,7 +12,7 @@ import java.util.concurrent.{TimeUnit, SynchronousQueue}
 object Pi_ {
   def main(args: Array[String]) {
     val resultQueue = new SynchronousQueue[Double]()
-    val master = Actor.actorOf(new Master(6, 10000, 10000, resultQueue)).start()
+    val master = actorOf(new Master(4, 10000, 10000, resultQueue)).start()
     master ! CalculatePi
     println(resultQueue.take())
   }
@@ -29,21 +30,26 @@ class Master(nOfWorkers: Int, calcCount: Int, batchSize: Int, resultQueue: Synch
 
   override protected def receive = {
     case CalculatePi =>
-      startTime = System.nanoTime()
-
-      val workers = Vector.fill(nOfWorkers) {Actor.actorOf[Worker].start()}
+      val workers = Vector.fill(nOfWorkers) {actorOf[Worker].start()}
       val cyclicIterator = CyclicIterator(workers)
       0.until(calcCount).foreach{ i => cyclicIterator.next() ! Task(i * batchSize, (i + 1) * batchSize) }
+      workers.foreach{_ ! PoisonPill}
 
     case TaskResult(value) =>
       almostPi += value
       counter += 1
-      if (counter == calcCount) {
-        println(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime))
-        resultQueue.put(almostPi * 4)
-      }
+      if (counter == calcCount)  self.stop()
 
     case msg@_ => println("Don't know how to respond to message: " + msg)
+  }
+
+  override def preStart() {
+    startTime = System.nanoTime()
+  }
+
+  override def postStop() {
+    println(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime))
+    resultQueue.put(almostPi * 4)
   }
 }
 
