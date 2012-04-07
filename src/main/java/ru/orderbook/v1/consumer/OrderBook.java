@@ -12,7 +12,7 @@ import java.util.TreeMap;
  */
 class OrderBook {
     private final String symbol;
-    private final Map<Integer, Level> bidLevelMap = new TreeMap<Integer, Level>(Collections.<Object>reverseOrder()); // used reverse order for ask, which was wrong
+    private final Map<Integer, Level> bidLevelMap = new TreeMap<Integer, Level>(Collections.<Object>reverseOrder());
     private final Map<Integer, Level> askLevelMap = new TreeMap<Integer, Level>();
 
     public OrderBook(String symbol) {
@@ -39,7 +39,7 @@ class OrderBook {
         Map<Integer, Level> levelMap = (order.isBuy() ? bidLevelMap : askLevelMap);
         Level level = levelMap.get(order.getPrice());
         if (level == null) {
-            level = new Level(order.getPrice()); // didn't include price into Level constructor
+            level = new Level(order.getPrice());
             levelMap.put(order.getPrice(), level);
         }
         return level;

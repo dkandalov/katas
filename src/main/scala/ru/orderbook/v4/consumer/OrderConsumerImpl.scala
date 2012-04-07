@@ -48,7 +48,7 @@ class OrderConsumerImpl extends OrderConsumer {
       s + "\n\n" + entry._1 +
       "\nbidSide" + bookSideToString(entry._2.bidSide) +
       "\naskSide" + bookSideToString(entry._2.askSide)
-    }
+    } + "\n"
   }
 }
 

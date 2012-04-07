@@ -41,7 +41,7 @@ class OrderConsumerImpl implements OrderConsumer {
       result + "\n\n${entry.key}\n" +
               "bidSide${bookLevelToString(entry.value.bidLevels)}\n" +
               "askSide${bookLevelToString(entry.value.askLevels)}"
-    }
+    } + "\n"
   }
 
   String bookLevelToString(Map bookLevel) {
