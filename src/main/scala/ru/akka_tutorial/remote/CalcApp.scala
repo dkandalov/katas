@@ -23,14 +23,21 @@ akka {
 }
 
 calculator {
-  akka {
-    remote.netty.port = 2552
-  }
+  akka { remote.netty.port = 2552 }
 }
-
 remoteLookup {
+  akka { remote.netty.port = 2553 }
+}
+remoteCreate {
   akka {
-    remote.netty.port = 2553
+    remote.netty.port = 2554
+    actor {
+      deployment {
+        /advancedCalc {
+          remote = "akka://CalcApp@127.0.0.1:2552"
+        }
+      }
+    }
   }
 }
 """)
