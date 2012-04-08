@@ -38,31 +38,51 @@ case class Add(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
 case class Edit(id: Int, price: Int, size: Int)
 case class Remove(id: Int)
 
-sealed trait ActionType
-case object Add extends ActionType
-case object Update extends ActionType
-case object Remove extends ActionType
-case class Action(actionType: ActionType, order: Order)
+case class AddOrder(order: Order)
+case class RemoveOrder(order: Order)
+case class UpdateOrder(oldOrder: Order, newOrder: Order)
 
 case class Order(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
 
 case class PriceLevel(price: Int, size: Int, count: Int)
 
-class OrderBook extends Actor {
-  var bidSide: mutable.Map[Int, PriceLevel] = mutable.Map()
-  var askSide: mutable.Map[Int, PriceLevel] = mutable.Map()
+class OrderBook(symbol: String) extends Actor {
+  private val bidSide: mutable.Map[Int, PriceLevel] = new mutable.HashMap() //(Ordering.Int.reverse)
+  private val askSide: mutable.Map[Int, PriceLevel] = new mutable.HashMap()
 
   protected def receive = {
-    case _ => println("Aaaa")
+    case AddOrder(order) => add(order)
+    case RemoveOrder(order) => remove(order)
+    case UpdateOrder(oldOrder, newOrder) =>
+      remove(oldOrder)
+      add(newOrder)
+    case msg@_ => println(msg)
   }
+
+  private def add(order: Order) {
+    bookSide(order.isBuy).put(order.price, PriceLevel(order.price, order.size, 1))
+  }
+
+  private def remove(order: Order) {
+    val level = bookSide(order.isBuy)(order.price)
+    bookSide(order.isBuy)(order.price) = PriceLevel(order.price, level.size - order.size, level.count - 1)
+  }
+
+  private def bookSide(isBuy: Boolean) = if (isBuy) bidSide else askSide
 }
 
 class CommandRouter extends Actor {
-  private var orderBooks: mutable.Map[String, ActorRef] = mutable.Map().withDefault { _ => context.actorOf(Props[OrderBook]) }
+  private val orderBooks: mutable.Map[String, ActorRef] = mutable.Map()
 
   protected def receive = {
-    case msg@Action(_, order) => orderBooks(order.symbol) ! msg
+    case msg@AddOrder(order) => orderBookFor(order) ! msg
+    case msg@UpdateOrder(oldOrder, _) => orderBookFor(oldOrder) ! msg
+    case msg@RemoveOrder(order) => orderBookFor(order) ! msg
     case msg@_ => println(msg)
+  }
+
+  def orderBookFor(order: Order): ActorRef = {
+    orderBooks.getOrElseUpdate(order.symbol, context.actorOf(Props(new OrderBook(order.symbol))))
   }
 }
 
@@ -73,14 +93,15 @@ class OrderRegistry(commandRouter: ActorRef) extends Actor {
     case Add(id, symbol, isBuy, price, size) =>
       val order = Order(id, symbol, isBuy, price, size)
       orders = orders.updated(id, order)
-      commandRouter ! Action(Add, order)
+      commandRouter ! AddOrder(order)
     case Edit(id, price, size) =>
+      Thread.sleep(100)
       val order = orders(id)
       val newOrder = Order(id, order.symbol, order.isBuy, price, size)
       orders(id) = newOrder
-      commandRouter ! Action(Update, order)
+      commandRouter ! UpdateOrder(order, newOrder)
     case Remove(id) =>
-      commandRouter ! Action(Remove, orders.remove(id).get)
+      commandRouter ! RemoveOrder(orders.remove(id).get)
   }
 }
 
