@@ -7,6 +7,7 @@ import org.xml.sax.{Attributes}
 import akka.actor.{ActorRef, Actor, Props, ActorSystem}
 
 import scala.collection._
+import immutable.TreeMap
 import ru.orderbook.v5.XmlCommandReader.ReadFrom
 
 /**
@@ -34,7 +35,6 @@ object Main {
 // common messages
 case object StartOfStream
 case object EndOfStream
-case object Unknown
 
 // sent from XmlCommandReader to OrderRegistry
 case class Add(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
@@ -54,15 +54,29 @@ case class OrderBookReport(symbol: String, bidSide: immutable.Map[Int, PriceLeve
 
 class ReportBuilder(orderRouter: ActorRef) extends Actor {
   var expectedReportsSize: Int = 0
-  val reports: mutable.Map[String, OrderBookReport] = mutable.Map()
+  var reports: TreeMap[String, OrderBookReport] = TreeMap()
   
   protected def receive = {
     case EndOfStream => orderRouter ! ReportRequest
     case ExpectedReportSize(size) => expectedReportsSize = size
     case report@OrderBookReport(symbol, _, _) =>
-      reports(symbol) = report
+      reports = reports.updated(symbol, report)
       if (reports.size == expectedReportsSize)
-        println(reports)
+        println(format(reports))
+  }
+
+  private def format(reports: TreeMap[String, OrderBookReport]): CharSequence = {
+    reports.values.foldLeft("") { (acc, report) =>
+      acc + "\n" + report.symbol + "\n" +
+        "bidSide:\n" + format(report.bidSide) +
+        "askSide:\n" + format(report.askSide)
+    }
+  }
+
+  private def format(bookSide: immutable.Map[Int, PriceLevel]): CharSequence = {
+    bookSide.values.foldLeft("") { (acc, level) =>
+      acc + "\tprice = " + level.price + ", size = " + level.size + ", count = " + level.count + "\n"
+    }
   }
 }
 
@@ -76,7 +90,7 @@ class OrderBook(symbol: String) extends Actor {
     case UpdateOrder(oldOrder, newOrder) =>
       remove(oldOrder)
       add(newOrder)
-    case ReportRequest => sender ! OrderBookReport(symbol, immutable.Map(), immutable.Map())
+    case ReportRequest => sender ! OrderBookReport(symbol, immutable.Map(bidSide.toSeq:_*), immutable.Map(askSide.toSeq:_*))
     case msg@_ => println("OrderBook doesn't understand: " + msg)
   }
 
@@ -164,8 +178,9 @@ class XmlCommandReader(orderRegistry: ActorRef, reportBuilder: ActorRef) extends
             valueOf("quantity").toInt
           )
           case "remove" => Remove(valueOf("order-id").toInt)
-          case _ => Unknown
+          case _ => // ignore
         }
+//        println(command)
         orderRegistry ! command
       }
 
