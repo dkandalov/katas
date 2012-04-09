@@ -9,7 +9,7 @@ import akka.actor.{ActorRef, Actor, Props, ActorSystem}
 import scala.collection._
 import immutable.TreeMap
 import ru.orderbook.v5.XmlCommandReader.ReadFrom
-import java.util.concurrent.{SynchronousQueue, TimeUnit, CountDownLatch}
+import java.util.concurrent.{SynchronousQueue, TimeUnit}
 
 /**
  * User: dima
@@ -28,6 +28,7 @@ object Main {
     commandReader ! XmlCommandReader.ReadFrom("/Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders2.xml")
 
     println(report.poll(10, TimeUnit.SECONDS))
+
     system.shutdown()
   }
 }
@@ -41,17 +42,18 @@ case class Add(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
 case class Edit(id: Int, price: Int, size: Int)
 case class Remove(id: Int)
 
-// sent from OrderRegistry to OrderBooks
+// sent from OrderRegistry to OrderRouter and eventually OrderBooks
 case class AddOrder(order: Order)
 case class RemoveOrder(order: Order)
 case class UpdateOrder(oldOrder: Order, newOrder: Order)
-case class Order(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
-case class PriceLevel(price: Int, size: Int, count: Int)
 
 // messages for generating report
 case object ReportRequest
 case class ExpectedReportSize(size: Int)
 case class OrderBookReport(symbol: String, bidSide: immutable.Map[Int, PriceLevel], askSide: immutable.Map[Int, PriceLevel])
+
+case class Order(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
+case class PriceLevel(price: Int, size: Int, count: Int)
 
 
 class ReportBuilder(reportOutput: SynchronousQueue[CharSequence]) extends Actor {
@@ -139,6 +141,7 @@ class OrderRouter(reportBuilder: ActorRef) extends Actor {
     orderBooks.getOrElseUpdate(order.symbol, { context.actorOf(Props(new OrderBook(order.symbol))) })
   }
 }
+
 
 class OrderRegistry(orderRouter: ActorRef) extends Actor {
   private var orders: mutable.Map[Int, Order] = mutable.Map()
