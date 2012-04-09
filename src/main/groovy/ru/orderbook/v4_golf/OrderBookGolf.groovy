@@ -16,7 +16,8 @@ class OrderBookGolf {
       else (a[2] <=> b[2]) * (a[1] ? -1 : 1)
     } as Comparator
 
-    println new XmlParser().parse("file:///Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders2.xml").children().collect() { node ->
+    def fileName = "file:///Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders2.xml"
+    println new XmlParser().parse(fileName).children().collect() { node ->
       def asInt = { it != null ? parseInt(it) : 0 }
       node.attributes().with { [action: node.name(), id: asInt(it["order-id"]), symbol: it["symbol"],
               buy: it["type"] == "buy", price: asInt(it["price"]), size: asInt(it["quantity"])] }

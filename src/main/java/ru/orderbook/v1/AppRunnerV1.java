@@ -10,7 +10,7 @@ public class AppRunnerV1 {
 
     public static void main(String[] args) {
 //        AppEnvironment environment = new FakeAppEnvironment(LogLevel.INFO);
-        AppEnvironment environment = new XmlAppEnvironment(LogLevel.INFO, PATH + "orders1.xml");
+        AppEnvironment environment = new XmlAppEnvironment(LogLevel.INFO, PATH + "orders2.xml");
         environment.registerHandler(new OrderConsumerImpl());
         environment.run();
     }

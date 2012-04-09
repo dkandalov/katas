@@ -9,6 +9,7 @@ import akka.actor.{ActorRef, Actor, Props, ActorSystem}
 import scala.collection._
 import immutable.TreeMap
 import ru.orderbook.v5.XmlCommandReader.ReadFrom
+import java.util.concurrent.{SynchronousQueue, TimeUnit, CountDownLatch}
 
 /**
  * User: dima
@@ -19,18 +20,17 @@ object Main {
   def main(args: Array[String]) {
     val system = ActorSystem("orderBook")
 
-    val orderRouter = system.actorOf(Props[OrderRouter])
-    val reportBuilder = system.actorOf(Props(new ReportBuilder(orderRouter)))
+    val report = new SynchronousQueue[CharSequence]()
+    val reportBuilder = system.actorOf(Props(new ReportBuilder(report)))
+    val orderRouter = system.actorOf(Props(new OrderRouter(reportBuilder)))
     val orderRegistry = system.actorOf(Props(new OrderRegistry(orderRouter)))
-    val commandReader = system.actorOf(Props(new XmlCommandReader(orderRegistry, reportBuilder)))
-    commandReader ! XmlCommandReader.ReadFrom("/Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders1.xml")
+    val commandReader = system.actorOf(Props(new XmlCommandReader(orderRegistry)))
+    commandReader ! XmlCommandReader.ReadFrom("/Users/dima/IdeaProjects/katas/src/main/scala/ru/orderbook/orders2.xml")
 
-//    system.shutdown()
+    println(report.poll(10, TimeUnit.SECONDS))
+    system.shutdown()
   }
 }
-
-// TODO try using Symbol type with StringLike behavior
-// TODO try using Price type for price
 
 // common messages
 case object StartOfStream
@@ -48,28 +48,30 @@ case class UpdateOrder(oldOrder: Order, newOrder: Order)
 case class Order(id: Int, symbol: String, isBuy: Boolean, price: Int, size: Int)
 case class PriceLevel(price: Int, size: Int, count: Int)
 
+// messages for generating report
 case object ReportRequest
 case class ExpectedReportSize(size: Int)
 case class OrderBookReport(symbol: String, bidSide: immutable.Map[Int, PriceLevel], askSide: immutable.Map[Int, PriceLevel])
 
-class ReportBuilder(orderRouter: ActorRef) extends Actor {
-  var expectedReportsSize: Int = 0
-  var reports: TreeMap[String, OrderBookReport] = TreeMap()
+
+class ReportBuilder(reportOutput: SynchronousQueue[CharSequence]) extends Actor {
+  private var expectedReportsSize: Int = 0
+  private var reports: TreeMap[String, OrderBookReport] = TreeMap()
   
   protected def receive = {
-    case EndOfStream => orderRouter ! ReportRequest
     case ExpectedReportSize(size) => expectedReportsSize = size
     case report@OrderBookReport(symbol, _, _) =>
       reports = reports.updated(symbol, report)
-      if (reports.size == expectedReportsSize)
-        println(format(reports))
+      if (reports.size == expectedReportsSize) {
+        reportOutput.add(format(reports))
+      }
   }
 
   private def format(reports: TreeMap[String, OrderBookReport]): CharSequence = {
     reports.values.foldLeft("") { (acc, report) =>
       acc + "\n" + report.symbol + "\n" +
-        "bidSide:\n" + format(report.bidSide) +
-        "askSide:\n" + format(report.askSide)
+        "bidSide\n" + format(report.bidSide) +
+        "askSide\n" + format(report.askSide)
     }
   }
 
@@ -80,9 +82,10 @@ class ReportBuilder(orderRouter: ActorRef) extends Actor {
   }
 }
 
+
 class OrderBook(symbol: String) extends Actor {
-  private val bidSide: mutable.Map[Int, PriceLevel] = new mutable.HashMap() // TODO (Ordering.Int.reverse)
-  private val askSide: mutable.Map[Int, PriceLevel] = new mutable.HashMap()
+  private var bidSide: immutable.Map[Int, PriceLevel] = new TreeMap()(Ordering.Int.reverse).withDefault{ PriceLevel(_, 0, 0) }
+  private var askSide: immutable.Map[Int, PriceLevel] = new TreeMap()(Ordering.Int).withDefault{ PriceLevel(_, 0, 0) }
 
   protected def receive = {
     case AddOrder(order) => add(order)
@@ -90,37 +93,50 @@ class OrderBook(symbol: String) extends Actor {
     case UpdateOrder(oldOrder, newOrder) =>
       remove(oldOrder)
       add(newOrder)
-    case ReportRequest => sender ! OrderBookReport(symbol, immutable.Map(bidSide.toSeq:_*), immutable.Map(askSide.toSeq:_*))
+    case ReportRequest => sender ! OrderBookReport(symbol, bidSide, askSide)
     case msg@_ => println("OrderBook doesn't understand: " + msg)
   }
 
   private def add(order: Order) {
-    bookSide(order.isBuy).put(order.price, PriceLevel(order.price, order.size, 1))
+    updateBookSideFor(order, { (bookSide, level) =>
+      bookSide.updated(level.price, PriceLevel(level.price, level.size + order.size, level.count + 1))
+    })
   }
 
   private def remove(order: Order) {
-    val level = bookSide(order.isBuy)(order.price)
-    bookSide(order.isBuy)(order.price) = PriceLevel(order.price, level.size - order.size, level.count - 1)
+    updateBookSideFor(order, { (bookSide, level) =>
+      if (level.count <= 1) bookSide - level.price
+      else bookSide.updated(level.price, PriceLevel(level.price, level.size - order.size, level.count - 1))
+    })
   }
 
-  private def bookSide(isBuy: Boolean) = if (isBuy) bidSide else askSide
+  private def updateBookSideFor(order: Order, f: (immutable.Map[Int, PriceLevel], PriceLevel) => immutable.Map[Int, PriceLevel]) {
+    if (order.isBuy)
+      bidSide = f(bidSide, bidSide(order.price))
+    else
+      askSide = f(askSide, askSide(order.price))
+  }
 }
 
-class OrderRouter extends Actor {
+
+class OrderRouter(reportBuilder: ActorRef) extends Actor {
   private val orderBooks: mutable.Map[String, ActorRef] = mutable.Map()
 
   protected def receive = {
     case msg@AddOrder(order) => orderBookFor(order) ! msg
     case msg@UpdateOrder(oldOrder, _) => orderBookFor(oldOrder) ! msg
     case msg@RemoveOrder(order) => orderBookFor(order) ! msg
-    case request@ReportRequest =>
-      sender ! ExpectedReportSize(orderBooks.size)
-      orderBooks.values.foreach{_ forward request}
+
+    case EndOfStream =>
+      reportBuilder ! ExpectedReportSize(orderBooks.size)
+      orderBooks.values.foreach{_ ! ReportRequest}
+    case msg : OrderBookReport => reportBuilder ! msg
+
     case msg@_ => println("OrderRouter doesn't understand :" + msg)
   }
 
   def orderBookFor(order: Order): ActorRef = {
-    orderBooks.getOrElseUpdate(order.symbol, context.actorOf(Props(new OrderBook(order.symbol))))
+    orderBooks.getOrElseUpdate(order.symbol, { context.actorOf(Props(new OrderBook(order.symbol))) })
   }
 }
 
@@ -133,7 +149,6 @@ class OrderRegistry(orderRouter: ActorRef) extends Actor {
       orders = orders.updated(id, order)
       orderRouter ! AddOrder(order)
     case Edit(id, price, size) =>
-      Thread.sleep(100)
       val order = orders(id)
       val newOrder = Order(id, order.symbol, order.isBuy, price, size)
       orders(id) = newOrder
@@ -144,11 +159,12 @@ class OrderRegistry(orderRouter: ActorRef) extends Actor {
   }
 }
 
+
 object XmlCommandReader {
   case class ReadFrom(filename: String)
 }
 
-class XmlCommandReader(orderRegistry: ActorRef, reportBuilder: ActorRef) extends Actor {
+class XmlCommandReader(orderRegistry: ActorRef) extends Actor {
   protected def receive = {
     case ReadFrom(filename) =>
       // use separate thread so that not to use actors thread-pool
@@ -178,18 +194,19 @@ class XmlCommandReader(orderRegistry: ActorRef, reportBuilder: ActorRef) extends
             valueOf("quantity").toInt
           )
           case "remove" => Remove(valueOf("order-id").toInt)
-          case _ => // ignore
+          case _ => () // ignore
         }
-//        println(command)
-        orderRegistry ! command
+        if (command != ()) {
+          orderRegistry ! command
+        }
       }
 
       override def startDocument() {
-        reportBuilder ! StartOfStream
+        orderRegistry ! StartOfStream
       }
 
       override def endDocument() {
-        reportBuilder ! EndOfStream
+        orderRegistry ! EndOfStream
       }
     })
   }
