@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Utility methods for {@code String} class.
- * This class is thread-safe.
+ * Implementations of this interface should be thread-safe.
  * <p/>
  * User: kanddmi
  * Date: 18/8/11

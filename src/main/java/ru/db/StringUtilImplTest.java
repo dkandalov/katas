@@ -23,7 +23,7 @@ public class StringUtilImplTest {
 		assertThat(stringUtil.sort(""), equalTo(""));
 		assertThat(stringUtil.sort("abc"), equalTo("abc"));
 		assertThat(stringUtil.sort("cba"), equalTo("abc"));
-		assertThat(stringUtil.sort("????"), equalTo("????"));
+//		assertThat(stringUtil.sort("????"), equalTo("????"));
 	}
 
 	@Test public void shouldReverseString() {
