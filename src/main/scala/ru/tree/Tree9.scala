@@ -46,6 +46,7 @@ class Tree9 extends ShouldMatchers {
   }
 
 
+
   @Test def breadthFirstTraversal() {
     traverseBreadthFirst(Node(1)) should equal(Seq(1))
     traverseBreadthFirst(Node(1, Node(2), Node(3))) should equal(Seq(1, 2, 3))
@@ -65,6 +66,7 @@ class Tree9 extends ShouldMatchers {
     }
     result
   }
+
 
 
   @Test def stackBasedPreOrderTraversal() {
@@ -87,7 +89,92 @@ class Tree9 extends ShouldMatchers {
     result
   }
 
-  @Test def queueBasedInOrderTraversal() {
-    // TODO
+  @Test def stackBasedInOrderTraversal() {
+    traverseInOrderS(Node(1)) should equal(Seq(1))
+    traverseInOrderS(Node(1, Node(2), Node(3))) should equal(Seq(2, 1, 3))
+    traverseInOrderS(Node(1, Node(2, Node(21)), Node(3))) should equal(Seq(21, 2, 1, 3))
   }
+
+  case class ProcessLeft(node: Node)
+  case class ProcessValue(node: Node)
+  case class ProcessRight(node: Node)
+
+  def traverseInOrderS(node: Node): Seq[Int] = {
+    var result = Seq[Int]()
+    val stack = mutable.Stack[Any](ProcessLeft(node))
+
+    while (!stack.isEmpty) {
+      stack.pop() match {
+        case ProcessLeft(n) =>
+          stack.push(ProcessValue(n))
+          if (n.left != null) stack.push(ProcessLeft(n.left))
+        case ProcessValue(n) =>
+          result = result :+ n.value
+          if (n.right != null) stack.push(ProcessLeft(n.right))
+      }
+    }
+    result
+  }
+
+  @Test def stackBasedPostOrderTraversal() {
+    traversePostOrderS(Node(1)) should equal(Seq(1))
+    traversePostOrderS(Node(1, Node(2), Node(3))) should equal(Seq(2, 3, 1))
+    traversePostOrderS(Node(1, Node(2, Node(21)), Node(3))) should equal(Seq(21, 2, 3, 1))
+  }
+
+  def traversePostOrderS(node: Node): Seq[Int] = {
+    var result = Seq[Int]()
+    val stack = mutable.Stack[Any](ProcessLeft(node))
+
+    while (!stack.isEmpty) {
+      stack.pop() match {
+        case ProcessLeft(n) =>
+          stack.push(ProcessRight(n))
+          if (n.left != null) stack.push(ProcessLeft(n.left))
+        case ProcessRight(n) =>
+          stack.push(ProcessValue(n))
+          if (n.right != null) stack.push(ProcessLeft(n.right))
+        case ProcessValue(n) =>
+          result = result :+ n.value
+      }
+    }
+    result
+  }
+
+
+
+  @Test def severalStacksBasedInOrderTraversal() {
+    traverseInOrderSs(Node(1)) should equal(Seq(1))
+    traverseInOrderSs(Node(1, Node(2), Node(3))) should equal(Seq(2, 1, 3))
+    traverseInOrderSs(Node(1, Node(2, Node(21)), Node(3))) should equal(Seq(21, 2, 1, 3))
+    traverseInOrderSs(Node(1, Node(2, Node(21)), Node(3, null, Node(32)))) should equal(Seq(21, 2, 1, 3, 32))
+  }
+
+  def traverseInOrderSs(node: Node): Seq[Int] = {
+    var result = Seq[Int]()
+    val values = mutable.Stack[Int]()
+    val lefts = mutable.Stack[Node]()
+    val rights = mutable.Stack[Node]()
+
+    def add(node: Node) {
+      values.push(node.value)
+      lefts.push(node.left)
+      rights.push(node.right)
+    }
+
+    add(node)
+
+    while (!values.isEmpty || !lefts.isEmpty || !rights.isEmpty) {
+      val left = if (lefts.isEmpty) null else lefts.pop()
+      if (left != null) {
+        add(left)
+      } else {
+        result = result :+ values.pop()
+        val right = if (rights.isEmpty) null else rights.pop()
+        if (right != null) add(right)
+      }
+    }
+    result
+  }
+
 }
