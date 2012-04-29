@@ -1,4 +1,4 @@
-package ru.katas.n14
+package ru.katas.n19
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
@@ -12,10 +12,12 @@ import collection.immutable.Seq
  */
 
 class WordChains0 extends ShouldMatchers {
+  // TODO finish
 
   @Test def aaa() {
-    val words = Source.fromFile("/usr/share/dict/words").getLines().foldLeft(TreeSet[String]()) { (acc, word) =>
-      acc + word.toLowerCase
+    val words = Source.fromFile("/usr/share/dict/words").getLines().foldLeft(TreeSet[String]()) {
+      (acc, word) =>
+        acc + word.toLowerCase
     }
     println(
       findWordChain("cat", "dog", words)
@@ -24,31 +26,36 @@ class WordChains0 extends ShouldMatchers {
 
   def findWordChain(fromWord: String, toWord: String, words: TreeSet[String]): Seq[String] = {
     if (!words.contains(fromWord) || !words.contains(toWord)) return Seq()
-    findMinWordChain(fromWord, toWord, (words - fromWord).filter{_.length() == toWord.length()})
+    findMinWordChain(fromWord, toWord, (words - fromWord).filter {
+      _.length() == toWord.length()
+    })
   }
-             
+
   def findMinWordChain(fromWord: String, toWord: String, words: TreeSet[String],
-                        length: Int = 0, minLength: Int = Int.MaxValue): Seq[String] = {
+                       length: Int = 0, minLength: Int = Int.MaxValue): Seq[String] = {
     if (length >= minLength) return Seq()
     if (fromWord == toWord) return {
       println("aa")
       Seq("")
     }
 
-    val nextWords = words.foldLeft(TreeSet[String]()) { (acc, word) => if (canBeNext(fromWord, word)) acc + word else acc }
+    val nextWords = words.foldLeft(TreeSet[String]()) {
+      (acc, word) => if (canBeNext(fromWord, word)) acc + word else acc
+    }
     println(nextWords.mkString(","))
 
     var newMinLength = minLength
     val updatedWords = words -- nextWords + toWord
-    nextWords.foldLeft(Seq[String]()) { (acc, nextWord: String) =>
-      val wordChain = findMinWordChain(nextWord, toWord, updatedWords, length + 1, newMinLength)
-      if (!wordChain.isEmpty && wordChain.length < newMinLength) {
-        println(wordChain)
-        newMinLength = wordChain.length
-        wordChain :+ nextWord
-      } else {
-        acc
-      }
+    nextWords.foldLeft(Seq[String]()) {
+      (acc, nextWord: String) =>
+        val wordChain = findMinWordChain(nextWord, toWord, updatedWords, length + 1, newMinLength)
+        if (!wordChain.isEmpty && wordChain.length < newMinLength) {
+          println(wordChain)
+          newMinLength = wordChain.length
+          wordChain :+ nextWord
+        } else {
+          acc
+        }
     }
   }
 
@@ -70,9 +77,9 @@ class WordChains0 extends ShouldMatchers {
       var word1 = fromWord
       var word2 = word
       while ((!word1.isEmpty || !word2.isEmpty) && diffs <= 1) {
-//        println(word1)
-//        println(word2)
-//        println(diffs)
+        //        println(word1)
+        //        println(word2)
+        //        println(diffs)
 
         if (word1.isEmpty) {
           word2 = word2.tail
