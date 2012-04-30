@@ -3,12 +3,14 @@ package ru.katas.n19
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.io.Source
+import ru.util.Pomodoro
 
 /**
  * User: dima
  * Date: 28/04/2012
  */
 
+@Pomodoro("1")
 class WordChains1 extends ShouldMatchers {
 
   @Test def aaa() {
@@ -20,18 +22,18 @@ class WordChains1 extends ShouldMatchers {
   def wordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
     val minChainSize = Int.MaxValue
 
-    def findWordChains(fromWord_: String, toWord_: String, dictionary: Set[String]): Seq[Seq[String]] = {
-      if (fromWord_ == toWord_) return Seq(Seq())
+    def findWordChains(fromWord: String, toWord: String, dictionary: Set[String], result: Seq[Seq[String]] = Seq()): Seq[Seq[String]] = {
+      if (fromWord == toWord || result.size > minChainSize) return Seq(Seq())
       println(dictionary.size)
 
-      var result = Seq[Seq[String]]()
+      var theResult = Seq[Seq[String]]()
       dictionary.foreach { word =>
-        if (canBeNext(fromWord_, word)) {
-          val seq = findWordChains(word, toWord_, dictionary - word).map { (seq: Seq[String]) => seq :+ word }
-          result = result ++ seq
+        if (canBeNext(fromWord, word)) {
+          val seq = findWordChains(word, toWord, dictionary - word).map { (seq: Seq[String]) => seq :+ word }
+          theResult = theResult ++ seq
         }
       }
-      result
+      theResult
     }
 
     if (fromWord.length() != toWord.length()) {
