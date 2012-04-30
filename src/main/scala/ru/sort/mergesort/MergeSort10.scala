@@ -24,16 +24,16 @@ class MergeSort10 extends ShouldMatchers {
 	  sort(List("b", "a")) should equal(List("a", "b"))
   }
 
-  def sort[T](list: List[T])(implicit o: Ordering[T]): List[T] = {
+  def sort[T](list: List[T])(implicit o: T => Ordered[T]): List[T] = {
     if (list.size <= 1) return list
     val (part1, part2) = list.splitAt(list.size / 2)
     merge(sort(part1), sort(part2))
   }
 
-  def merge[T](list1: List[T], list2: List[T])(implicit o: Ordering[T]): List[T] = {
+  def merge[T](list1: List[T], list2: List[T])(implicit o: T => Ordered[T]): List[T] = {
     if (list1.isEmpty) return list2
     if (list2.isEmpty) return list1
-    if (o.compare(list1(0), list2(0)) < 0)
+    if (list1(0) < list2(0))
       list1(0) :: merge(list1.tail, list2)
     else
       list2(0) :: merge(list1, list2.tail)
