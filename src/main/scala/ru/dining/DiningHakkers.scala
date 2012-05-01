@@ -1,9 +1,8 @@
 package ru.dining
 
 import ru.dining.DiningHakkers._
-import akka.actor.ActorSystem._
 import akka.actor.{Props, ActorSystem, Actor, ActorRef}
-import java.util.concurrent.{Callable, ScheduledExecutorService, Executors, TimeUnit}
+import java.util.concurrent.{ScheduledExecutorService, Executors, TimeUnit}
 
 sealed trait DiningHakkerMessage
 case class Busy(chopstick: ActorRef) extends DiningHakkerMessage
@@ -79,7 +78,7 @@ class Hakker(name: String, left: ActorRef, right: ActorRef) extends Actor {
 			become(eating)
 			scheduleOnce(self, Think, 5, TimeUnit.SECONDS)
 
-		case Busy(chopstick) =>
+		case Busy(chopstick) => // why not Busy(`chopstickToWaitFor`) ?
 			become(thinking)
 			otherChopstick ! Put(self)
 			self ! Eat
@@ -125,12 +124,12 @@ object DiningHakkers {
 		val system = ActorSystem("dinning_hakkers")
 
 		//Create 5 chopsticks
-		val chopsticks = for(i <- 1 to 5) yield system.actorOf(Props(new Chopstick("Chopstick "+i)))
+		val chopsticks = for (i <- 1 to 5) yield system.actorOf(Props(new Chopstick("Chopstick " + i)))
 
 		//Create 5 awesome hakkers and assign them their left and right chopstick
 		val hakkers = for {
-			(name,i) <- List("Ghosh","Bonér","Klang","Krasser","Manie").zipWithIndex
-		} yield system.actorOf(Props(new Hakker(name,chopsticks(i),chopsticks((i+1) % 5))))
+			(name, i) <- List("Ghosh", "Bonér", "Klang", "Krasser", "Manie").zipWithIndex
+		} yield system.actorOf(Props(new Hakker(name, chopsticks(i), chopsticks((i + 1) % 5))))
 
 		//Signal all hakkers that they should start thinking, and watch the show
 		hakkers.foreach(_ ! Think)
