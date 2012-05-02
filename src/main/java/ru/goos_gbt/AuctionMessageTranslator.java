@@ -27,7 +27,7 @@ public class AuctionMessageTranslator implements MessageListener {
         this.listener = listener;
     }
 
-    public void processMessage(Chat chat, Message message) {
+    @Override public void processMessage(Chat chat, Message message) {
         AuctionEvent event = AuctionEvent.from(message.getBody());
 
         String type = event.type();
@@ -41,7 +41,7 @@ public class AuctionMessageTranslator implements MessageListener {
     private static class AuctionEvent {
         private final Map<String, String> fields = new HashMap<String, String>();
 
-        static AuctionEvent from(String messageBody) {
+        public static AuctionEvent from(String messageBody) {
             AuctionEvent event = new AuctionEvent();
             for (String field : fieldsIn(messageBody)) {
                 event.addField(field);

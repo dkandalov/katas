@@ -23,9 +23,7 @@ import static ru.goos_gbt.tests.ApplicationRunner.SNIPER_ID;
 public class AuctionMessageTranslatorTest {
     private static final Chat UNUSED_CHAT = null;
 
-    private final Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    private final Mockery context = new Mockery() {{ setImposteriser(ClassImposteriser.INSTANCE); }};
     private final AuctionSniper listener = context.mock(AuctionSniper.class);
     private final AuctionMessageTranslator translator = new AuctionMessageTranslator(SNIPER_ID, listener);
 

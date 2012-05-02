@@ -5,7 +5,7 @@ package ru.goos_gbt;
  * Date: 17/03/2012
  */
 public interface Auction {
-    void bid(int price);
-
     void join();
+
+    void bid(int price);
 }

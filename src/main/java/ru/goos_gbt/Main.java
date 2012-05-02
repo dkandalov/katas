@@ -42,7 +42,7 @@ public class Main {
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
         disconnectWhenUICloses(connection);
 
-        final Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), null);
+        Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), null);
         notToBeGCd = chat;
 
         Auction auction = new XMPPAuction(chat);

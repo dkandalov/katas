@@ -14,12 +14,12 @@ public class XMPPAuction implements Auction {
         this.chat = chat;
     }
 
-    @Override public void bid(int amount) {
-        sendMessage(String.format(Main.BID_COMMAND_FORMAT, amount));
-    }
-
     @Override public void join() {
         sendMessage(String.format(Main.JOIN_COMMAND_FORMAT));
+    }
+
+    @Override public void bid(int amount) {
+        sendMessage(String.format(Main.BID_COMMAND_FORMAT, amount));
     }
 
     private void sendMessage(String message) {
