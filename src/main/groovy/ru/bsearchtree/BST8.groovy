@@ -32,7 +32,7 @@ class BST8 {
     }
   }
 
-  @Test void GIVEN_BST_SHOULD_removeValuesByKeys() {
+  @Test void GIVEN_BST_SHOULD_removeValuesByKeys() { // tOdO add more tests
     assert new BST([:]).remove("a") == null
     new BST([a: 1]).with {
       assert remove("b") == null
