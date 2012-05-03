@@ -1,5 +1,6 @@
 package ru.goos_gbt.tests;
 
+import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -15,6 +16,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -38,7 +40,7 @@ public class SnipersTableModelTest {
 
     @Test public void setsSniperValuesInColumns() {
         context.checking(new Expectations(){{
-            one(listener).tableChanged(with(any(TableModelEvent.class))); // TODO use with(aRowChangeEvent()));
+            one(listener).tableChanged(with(aRowChangeEvent()));
         }});
 
         model.sniperStateChanged(new SniperSnapshot("item id", 555, 666, SniperState.BIDDING));
@@ -55,7 +57,7 @@ public class SnipersTableModelTest {
         assertEquals(expected, model.getValueAt(rowIndex, columnIndex));
     }
 
-//    private Matcher<TableModelEvent> aRowChangeEvent() {
-//        return samePropertyValuesAs(new TableModelEvent(model, 0));
-//    }
+    private Matcher<TableModelEvent> aRowChangeEvent() {
+        return samePropertyValuesAs(new TableModelEvent(model, 0));
+    }
 }

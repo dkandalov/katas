@@ -15,6 +15,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static ru.goos_gbt.AuctionEventListener.PriceSource.FromOtherBidder;
 import static ru.goos_gbt.AuctionEventListener.PriceSource.FromSniper;
 import static ru.goos_gbt.SniperState.BIDDING;
+import static ru.goos_gbt.SniperState.WINNING;
 
 /**
  * User: dima
@@ -76,10 +77,14 @@ public class AuctionSniperTest {
 
     @Test public void reportsIsWinningWhenCurrentPriceComesFromSniper() {
         context.checking(new Expectations() {{
-            atLeast(1).of(sniperListener).sniperWinning();
+            ignoring(auction);
+            allowing(sniperListener).sniperStateChanged(with(aSniperThatIs(BIDDING))); then(sniperState.is("bidding"));
+            atLeast(1).of(sniperListener).sniperStateChanged(
+                    new SniperSnapshot(ITEM_ID, 135, 135, WINNING)); when(sniperState.is("bidding"));
         }});
 
-        sniper.currentPrice(123, 45, FromSniper);
+        sniper.currentPrice(123, 12, FromSniper);
+        sniper.currentPrice(135, 45, FromSniper);
     }
 
     private static Matcher<SniperSnapshot> aSniperThatIs(SniperState state) {

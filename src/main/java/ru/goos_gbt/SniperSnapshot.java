@@ -10,6 +10,18 @@ public class SniperSnapshot {
     public final int lastBid;
     public final SniperState state;
 
+    public static SniperSnapshot joining(String itemId) {
+        return new SniperSnapshot(itemId, 0, 0, SniperState.JOINING);
+    }
+
+    public SniperSnapshot winning(int newLastPrice) {
+        return new SniperSnapshot(itemId, newLastPrice, lastBid, SniperState.WINNING);
+    }
+
+    public SniperSnapshot bidding(int newLastPrice, int newLastBid) {
+        return new SniperSnapshot(itemId, newLastPrice, newLastBid, SniperState.BIDDING);
+    }
+
     public SniperSnapshot(String itemId, int lastPrice, int lastBid, SniperState state) {
         this.itemId = itemId;
         this.lastPrice = lastPrice;
@@ -17,8 +29,8 @@ public class SniperSnapshot {
         this.state = state;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @SuppressWarnings("RedundantIfStatement")
+    @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -32,8 +44,7 @@ public class SniperSnapshot {
         return true;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int result = itemId != null ? itemId.hashCode() : 0;
         result = 31 * result + lastPrice;
         result = 31 * result + lastBid;
