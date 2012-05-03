@@ -87,10 +87,10 @@ public class Main {
             showStatus(MainWindow.STATUS_LOST);
         }
 
-        @Override public void sniperBidding(final SniperState state) {
+        @Override public void sniperStateChanged(final SniperSnapshot snapshot) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
-                    ui.sniperStatusChanged(state, MainWindow.STATUS_BIDDING);
+                    ui.sniperStateChanged(snapshot);
                 }
             });
         }

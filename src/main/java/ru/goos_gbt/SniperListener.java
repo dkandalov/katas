@@ -7,7 +7,7 @@ package ru.goos_gbt;
 public interface SniperListener {
     void sniperLost();
 
-    void sniperBidding(SniperState sniperState);
+    void sniperStateChanged(SniperSnapshot sniperSnapshot);
 
     void sniperWinning();
 

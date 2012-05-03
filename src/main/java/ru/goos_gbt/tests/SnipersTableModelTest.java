@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import ru.goos_gbt.MainWindow;
+import ru.goos_gbt.SniperSnapshot;
 import ru.goos_gbt.SniperState;
 import ru.goos_gbt.SnipersTableModel;
 
@@ -40,12 +41,12 @@ public class SnipersTableModelTest {
             one(listener).tableChanged(with(any(TableModelEvent.class))); // TODO use with(aRowChangeEvent()));
         }});
 
-        model.sniperStatusChanged(new SniperState("item id", 555, 666), MainWindow.STATUS_BIDDING);
+        model.sniperStateChanged(new SniperSnapshot("item id", 555, 666, SniperState.BIDDING));
 
         assertColumnEquals(SnipersTableModel.Column.ITEM_IDENTIFIER, "item id");
         assertColumnEquals(SnipersTableModel.Column.LAST_PRICE, 555);
         assertColumnEquals(SnipersTableModel.Column.LAST_BID, 666);
-        assertColumnEquals(SnipersTableModel.Column.SNIPER_STATUS, MainWindow.STATUS_BIDDING);
+        assertColumnEquals(SnipersTableModel.Column.SNIPER_STATE, MainWindow.STATUS_BIDDING);
     }
 
     private void assertColumnEquals(SnipersTableModel.Column column, Object expected) {
