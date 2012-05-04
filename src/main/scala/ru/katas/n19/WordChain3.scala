@@ -49,7 +49,7 @@ class WordChain3 extends ShouldMatchers {
 		}
 	}
 
-	@tailrec def canBeNextWord(fromWord: String, word: String, diffs: Int = 0): Boolean = {
+	@tailrec private def canBeNextWord(fromWord: String, word: String, diffs: Int = 0): Boolean = {
 		if (diffs > 1) false
 		else if (fromWord.isEmpty && word.isEmpty) true
 		else if (fromWord(0) != word(0)) canBeNextWord(fromWord.tail, word.tail, diffs + 1)
