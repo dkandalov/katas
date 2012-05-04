@@ -3,7 +3,7 @@ package ru.katas.n19
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.io.Source
-import ru.util.Pomodoro
+import ru.util.{Fail, Pomodoro}
 
 /**
  * User: dima
@@ -11,6 +11,7 @@ import ru.util.Pomodoro
  */
 
 @Pomodoro("1")
+@Fail
 class WordChains1 extends ShouldMatchers {
 
 	@Test def aaa() {

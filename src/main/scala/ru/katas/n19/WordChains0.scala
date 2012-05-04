@@ -5,12 +5,13 @@ import org.junit.Test
 import scala.io.Source
 import collection.immutable.TreeSet
 import collection.immutable.Seq
+import ru.util.Fail
 
 /**
  * User: dima
  * Date: 22/04/2012
  */
-
+@Fail
 class WordChains0 extends ShouldMatchers {
 	// TODO finish
 
