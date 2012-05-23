@@ -41,20 +41,20 @@ class Roman2 extends ShouldMatchers {
 	)
 	
 	def toRoman(n: Int): String = {
-		def convert(n: Int): String = {
+		def convert(n: Int, nums: Seq[(Int,String,Int)]): String = {
 			if (n == 0) return ""
+			val numeral = nums.head
 
-			for (numeral <- numerals) {
-				if (numeral._1 - n > 0 && numeral._1 - n <= numeral._3) { // was "<" instead of "<="
-					return convert(numeral._3) + numeral._2 + convert(n % numeral._3)
-				} else if (n / numeral._1 > 0) {
-					return numeral._2 * (n / numeral._1) + convert(n % numeral._1)
-				}
+			if (numeral._1 - n > 0 && numeral._1 - n <= numeral._3) {
+				convert(numeral._3, nums.tail) + numeral._2 + convert(n % numeral._3, nums.tail)
+			} else if (n / numeral._1 > 0) {
+				numeral._2 * (n / numeral._1) + convert(n % numeral._1, nums)
+			} else {
+				convert(n, nums.tail)
 			}
-			throw new IllegalStateException()
 		}
 		
 		if (n <= 0) throw new IllegalArgumentException("n must be > 0 but was " + n)
-		convert(n)
+		convert(n, numerals)
 	}
 }
