@@ -1,10 +1,12 @@
 package ru.roman
 
 import org.junit.Test
+import ru.util.Fail
 
 /**
  * Done at coding dojo.
  */
+@Fail
 class Roman1 {
   @Test void should_convert_1_to_I() {
 //    assert [1, 5, 10, 50, 100, 500, 1000].collect { toRoman(it) } == ["I", "V", "X", "L", "C", "D", "M"]
