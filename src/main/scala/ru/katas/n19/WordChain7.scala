@@ -11,7 +11,6 @@ import ru.util.Pomodoro
  * Date: 24/05/2012
  */
 
-@Pomodoro
 class WordChain7 extends ShouldMatchers {
 	@Test def shouldChainOneWordToAnotherUsingOneLetterModification() {
 		findMinChain("aaa", "aaaa", SortedSet()) should equal(Seq())
