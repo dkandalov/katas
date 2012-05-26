@@ -26,7 +26,9 @@ class WordChain8 extends ShouldMatchers {
 	}
 
 	@Test def shouldDetermineIfWordsAreDifferentByJustOneCharacter() {
-		// TODO
+		canBeNextWord("cat", "car") should be(true)
+		canBeNextWord("cat", "rca") should be(false)
+		canBeNextWord("cat", "act") should be(false)
 	}
 
 	@Test def shouldFindMinWordChainFromCatToDog() {
@@ -56,8 +58,11 @@ class WordChain8 extends ShouldMatchers {
 
 		var minChain = Seq[String]()
 		var min = minChainSize
+		var updatedDictionary = dictionary
+
 		nextWords(fromWord, dictionary).foreach { word =>
-			val newChain = doFindMinChain(word, toWord, dictionary - word, chain :+ word, min)
+			updatedDictionary = updatedDictionary - word
+			val newChain = doFindMinChain(word, toWord, updatedDictionary, chain :+ word, min)
 			if (!newChain.isEmpty) {
 				minChain = newChain
 				min = newChain.length
@@ -71,7 +76,11 @@ class WordChain8 extends ShouldMatchers {
 	}
 
 	def canBeNextWord(fromWord: String, toWord: String) = {
-		false
+		var diffs = 0
+		fromWord.corresponds(toWord) { (a,b) =>
+			if (a != b) diffs += 1
+			diffs <= 1 
+		}
 	}
 
 }
