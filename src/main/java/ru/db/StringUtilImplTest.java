@@ -16,7 +16,7 @@ public class StringUtilImplTest {
 	private StringUtil stringUtil;
 
 	@Before public void setup() {
-		stringUtil = new SU2();
+		stringUtil = new StringUtilImpl();
 	}
 
 	@Test public void shouldSortString() {

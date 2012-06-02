@@ -5,7 +5,6 @@
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.1" />
-        <option name="fsc" value="true" />
         <option name="vmOptions" value="" />
       </configuration>
     </facet>
@@ -30,6 +29,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="clojure" level="application" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" name="Maven: jivesoftware:smack:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.jmock:jmock-junit4:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.jmock:jmock:2.5.1" level="project" />
