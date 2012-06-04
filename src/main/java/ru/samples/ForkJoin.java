@@ -1,5 +1,6 @@
 package ru.samples;
 
+import java.math.BigDecimal;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -11,15 +12,15 @@ import java.util.concurrent.RecursiveTask;
  */
 public class ForkJoin {
 
-    private static final int THRESHOLD = 10_000;
+    private static final int THRESHOLD = 1_000_000;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        ForkJoinTask<Long> task = forkJoinPool.submit(new MyRecursiveTask(0, 10_000_000_000L));
+        ForkJoinTask<BigDecimal> task = forkJoinPool.submit(new MyRecursiveTask(0, 10_000_000_000L));
         System.out.println("result = " + task.get());
     }
 
-    private static class MyRecursiveTask extends RecursiveTask<Long> {
+    private static class MyRecursiveTask extends RecursiveTask<BigDecimal> {
         private final long from;
         private final long to;
 
@@ -29,7 +30,7 @@ public class ForkJoin {
             System.out.println(from + " " + to);
         }
 
-        @Override protected Long compute() {
+        @Override protected BigDecimal compute() {
             if (to - from <= THRESHOLD) {
                 return calcSum();
             } else {
@@ -37,18 +38,18 @@ public class ForkJoin {
             }
         }
 
-        private long doFork() {
+        private BigDecimal doFork() {
             long mid = (to + from) / 2;
             MyRecursiveTask t1 = new MyRecursiveTask(from, mid);
             MyRecursiveTask t2 = new MyRecursiveTask(mid, to);
             t1.fork();
-            return t2.compute() + t1.join();
+            return t2.compute().add(t1.join());
         }
 
-        private long calcSum() {
-            long sum = 0;
+        private BigDecimal calcSum() {
+            BigDecimal sum = new BigDecimal(0);
             for (long i = from; i < to; i++) {
-                sum += i;
+                sum = sum.add(new BigDecimal(i));
             }
             return sum;
 

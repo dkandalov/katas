@@ -11,7 +11,7 @@ import ru.util.Pomodoro
  * Date: 26/05/2012
  */
 
-@Pomodoro("2.5")
+@Pomodoro("2.5 + X")
 class WordChain8 extends ShouldMatchers {
 	@Test def shouldFindMinChainOfTransformationsFromOneWordToAnother() {
 		findMinChain("aaa", "bbb", Set()) should equal(Seq())
@@ -49,6 +49,7 @@ class WordChain8 extends ShouldMatchers {
 //		doFindMinChain_(fromWord, toWord, shortenedDictionary - fromWord, Seq(fromWord), Int.MaxValue)
 	}
 
+	
 	// recursive process, recursive implementation
 	def doFindMinChain(fromWord: String, toWord: String, dictionary: Set[String],
 	                   chainSize: Int, minChainSize: Int): Seq[String] = {
@@ -59,19 +60,22 @@ class WordChain8 extends ShouldMatchers {
 		}
 		if (dictionary.isEmpty) return Seq()
 
-		var minChain = Seq[String]()
-		var min = minChainSize
-		var updatedDictionary = dictionary
+		case class State(minChain: Seq[String], min: Int, dict: Set[String])
 
-		nextWords(fromWord, dictionary).foreach { word =>
-			updatedDictionary = updatedDictionary - word
-			val newChain = doFindMinChain(word, toWord, updatedDictionary, chainSize + 1, min)
-			if (!newChain.isEmpty) {
-				minChain = fromWord +: newChain
-				min = minChain.length + chainSize
-			}
+		val seqop = { (state: State, word: String) =>
+				val updatedDict = state.dict - word
+				val newChain = doFindMinChain(word, toWord, updatedDict, chainSize + 1, state.min)
+				if (!newChain.isEmpty) {
+					val minChain = fromWord +: newChain
+					State(minChain, minChain.length + chainSize - 1, updatedDict)
+				} else {
+					state
+				}
 		}
-		minChain
+		val combine = { (state1: State, state2: State) =>
+				if (state1.min < state2.min) state1 else state2
+		}
+		nextWords(fromWord, dictionary).par.aggregate(State(Seq[String](), minChainSize, dictionary))(seqop, combine).minChain
 	}
 
 	// iterative process, recursive implementation
