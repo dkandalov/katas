@@ -48,6 +48,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.axonframework.com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>2.0</version>
+        </dependency>
+
         <!-- for growing object oriented software guided by tests (goos_gbt) package -->
         <dependency>
             <groupId>jivesoftware</groupId>
