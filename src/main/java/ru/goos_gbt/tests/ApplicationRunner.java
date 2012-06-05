@@ -2,6 +2,7 @@ package ru.goos_gbt.tests;
 
 
 import ru.goos_gbt.Main;
+import ru.goos_gbt.MainWindow;
 
 import static ru.goos_gbt.tests.FakeAuctionServer.XMPP_HOSTNAME;
 
@@ -33,6 +34,8 @@ public class ApplicationRunner {
 
         itemId = auction.getItemId();
         driver = new AuctionSniperDriver(1000);
+        driver.hasTitle(MainWindow.APPLICATION_TITLE);
+        driver.hasColumnTitles();
         driver.showsSniperStatus("Joining");
     }
 

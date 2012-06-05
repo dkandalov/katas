@@ -8,12 +8,13 @@ import java.awt.*;
 * Date: 06/03/2012
 */
 public class MainWindow extends JFrame {
+    public static final String APPLICATION_TITLE = "Auction sniper";
     public static final String SNIPERS_TABLE_NAME = "Snipers table";
 
     public final SnipersTableModel snipersTableModel;
 
     public MainWindow(SnipersTableModel snipersTableModel) {
-        super("Auction sniper");
+        super(APPLICATION_TITLE);
 
         this.snipersTableModel = snipersTableModel;
 
