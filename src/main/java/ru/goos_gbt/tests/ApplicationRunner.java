@@ -4,7 +4,6 @@ package ru.goos_gbt.tests;
 import ru.goos_gbt.Main;
 
 import static ru.goos_gbt.tests.FakeAuctionServer.XMPP_HOSTNAME;
-import static ru.goos_gbt.MainWindow.*;
 
 /**
  * User: dima
@@ -34,27 +33,27 @@ public class ApplicationRunner {
 
         itemId = auction.getItemId();
         driver = new AuctionSniperDriver(1000);
-        driver.showsSniperStatus(STATUS_JOINING);
+        driver.showsSniperStatus("Joining");
     }
 
     public void showSniperHasLostAuction() {
-        driver.showsSniperStatus(STATUS_LOST);
+        driver.showsSniperStatus("Lost");
     }
 
     public void hasShownSniperIsBidding() {
-        driver.showsSniperStatus(STATUS_BIDDING);
+        driver.showsSniperStatus("Bidding");
     }
 
     public void hasShownSniperIsBidding(int lastPrice, int lastBid) {
-        driver.showsSniperStatus(itemId, lastPrice, lastBid, STATUS_BIDDING);
+        driver.showsSniperStatus(itemId, lastPrice, lastBid, "Bidding");
     }
 
     public void hasShownSniperIsWinning(int winningBid) {
-        driver.showsSniperStatus(itemId, winningBid, winningBid, STATUS_WINNING);
+        driver.showsSniperStatus(itemId, winningBid, winningBid, "Winning");
     }
 
     public void showsSniperHasWonAuction(int lastPrice) {
-        driver.showsSniperStatus(itemId, lastPrice, lastPrice, STATUS_HAS_WON);
+        driver.showsSniperStatus(itemId, lastPrice, lastPrice, "Won");
     }
 
     public void stop() {

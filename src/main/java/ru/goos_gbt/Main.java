@@ -26,6 +26,7 @@ public class Main {
     private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 
     private MainWindow ui;
+    private final SnipersTableModel snipersTableModel = new SnipersTableModel();
     @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
     private Chat notToBeGCd;
 
@@ -49,7 +50,7 @@ public class Main {
 
         chat.addMessageListener(new AuctionMessageTranslator(
                 connection.getUser(),
-                new AuctionSniper(itemId, auction, new SniperStateDisplayer())
+                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipersTableModel))
         ));
         auction.join();
     }
@@ -77,16 +78,22 @@ public class Main {
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                ui = new MainWindow();
+                ui = new MainWindow(snipersTableModel);
             }
         });
     }
 
-    public class SniperStateDisplayer implements SniperListener {
+    private static class SwingThreadSniperListener implements SniperListener {
+        private final SniperListener listener;
+
+        public SwingThreadSniperListener(SniperListener listener) {
+            this.listener = listener;
+        }
+
         @Override public void sniperStateChanged(final SniperSnapshot snapshot) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override public void run() {
-                    ui.sniperStateChanged(snapshot);
+                    listener.sniperStateChanged(snapshot);
                 }
             });
         }

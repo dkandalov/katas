@@ -7,7 +7,6 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import ru.goos_gbt.MainWindow;
 import ru.goos_gbt.SniperSnapshot;
 import ru.goos_gbt.SniperState;
 import ru.goos_gbt.SnipersTableModel;
@@ -48,7 +47,7 @@ public class SnipersTableModelTest {
         assertColumnEquals(SnipersTableModel.Column.ITEM_IDENTIFIER, "item id");
         assertColumnEquals(SnipersTableModel.Column.LAST_PRICE, 555);
         assertColumnEquals(SnipersTableModel.Column.LAST_BID, 666);
-        assertColumnEquals(SnipersTableModel.Column.SNIPER_STATE, MainWindow.STATUS_BIDDING);
+        assertColumnEquals(SnipersTableModel.Column.SNIPER_STATE, "Bidding");
     }
 
     private void assertColumnEquals(SnipersTableModel.Column column, Object expected) {

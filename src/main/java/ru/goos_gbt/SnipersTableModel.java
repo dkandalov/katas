@@ -6,27 +6,47 @@ import javax.swing.table.AbstractTableModel;
  * User: dima
  * Date: 20/03/2012
  */
-public class SnipersTableModel extends AbstractTableModel {
+public class SnipersTableModel extends AbstractTableModel implements SniperListener {
 
     private static final SniperSnapshot STARTING_UP = new SniperSnapshot("", 0, 0, SniperState.JOINING);
     private static final String[] STATUS_TEXT = {
-            MainWindow.STATUS_JOINING,
-            MainWindow.STATUS_BIDDING
+            "Joining",
+            "Bidding",
+            "Winning",
+            "Lost",
+            "Won"
     };
     
     public enum Column {
-        ITEM_IDENTIFIER,
-        LAST_PRICE,
-        LAST_BID,
-        SNIPER_STATE;
+        ITEM_IDENTIFIER {
+            @Override public Object valueIn(SniperSnapshot snapshot) {
+                return snapshot.itemId;
+            }
+        },
+        LAST_PRICE {
+            @Override public Object valueIn(SniperSnapshot snapshot) {
+                return snapshot.lastPrice;
+            }
+        },
+        LAST_BID {
+            @Override public Object valueIn(SniperSnapshot snapshot) {
+                return snapshot.lastBid;
+            }
+        },
+        SNIPER_STATE {
+            @Override public Object valueIn(SniperSnapshot snapshot) {
+                return textFor(snapshot.state);
+            }
+        };
 
         public static Column at(int offset) {
             return values()[offset];
         }
+
+        public abstract Object valueIn(SniperSnapshot snapshot);
     }
 
     private SniperSnapshot snapshot = STARTING_UP;
-    private String state = MainWindow.STATUS_JOINING;
 
     @Override public int getRowCount() {
         return 1;
@@ -37,29 +57,15 @@ public class SnipersTableModel extends AbstractTableModel {
     }
 
     @Override public Object getValueAt(int rowIndex, int columnIndex) {
-        switch (Column.at(columnIndex)) {
-            case ITEM_IDENTIFIER:
-                return snapshot.itemId;
-            case LAST_PRICE:
-                return snapshot.lastPrice;
-            case LAST_BID:
-                return snapshot.lastBid;
-            case SNIPER_STATE:
-                return state;
-            default:
-                throw new IllegalStateException("No column at " + columnIndex);
-        }
+        return Column.at(columnIndex).valueIn(snapshot);
     }
 
-    public void setStatusText(String newStatusText) {
-        state = newStatusText;
-        fireTableRowsUpdated(0, 0);
-    }
-
-    public void sniperStateChanged(SniperSnapshot newSnapshot) {
+    @Override public void sniperStateChanged(SniperSnapshot newSnapshot) {
         this.snapshot = newSnapshot;
-        this.state = STATUS_TEXT[newSnapshot.state.ordinal()];
-
         fireTableRowsUpdated(0, 0);
+    }
+
+    private static String textFor(SniperState state) {
+        return STATUS_TEXT[state.ordinal()];
     }
 }
