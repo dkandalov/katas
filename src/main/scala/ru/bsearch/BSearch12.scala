@@ -15,15 +15,14 @@ class BSearch12 extends ShouldMatchers {
 		def withShift(shift: Int) = State(value, seq, shift, pos)
 
 		def next(): State = {
-			val state = this
-			if (state.seq.isEmpty) return state.withPos(Some(None))
+			if (seq.isEmpty) return withPos(Some(None))
 
-			val midPos = state.seq.size / 2
-			val midValue = state.seq(midPos)
+			val midPos = seq.size / 2
+			val midValue = seq(midPos)
 
-			if (state.value == midValue) state.withPos(Some(Some(state.shift + midPos)))
-			else if (state.value < midValue) state.withSeq(state.seq.slice(0, midPos))
-			else state.withSeq(state.seq.slice(midPos + 1, state.seq.size)).withShift(midPos + 1)
+			if (value == midValue) withPos(Some(Some(shift + midPos)))
+			else if (value < midValue) withSeq(seq.slice(0, midPos))
+			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
 		}
 	}
 	
@@ -73,17 +72,6 @@ class BSearch12 extends ShouldMatchers {
 
 	def doFind(state: State): Option[Int] = {
 		if (state.pos.isDefined) state.pos.get
-		else doFind(state.next)
-	}
-
-	def next(state: State): State = {
-		if (state.seq.isEmpty) return state.withPos(Some(None))
-
-		val midPos = state.seq.size / 2
-		val midValue = state.seq(midPos)
-
-		if (state.value == midValue) state.withPos(Some(Some(state.shift + midPos)))
-		else if (state.value < midValue) state.withSeq(state.seq.slice(0, midPos))
-		else state.withSeq(state.seq.slice(midPos + 1, state.seq.size)).withShift(midPos + 1)
+		else doFind(state.next())
 	}
 }
