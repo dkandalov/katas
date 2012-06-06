@@ -43,9 +43,9 @@ class BSearch12 extends ShouldMatchers {
 			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
 		}
 
-		def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
-		def withSeq(seq: Seq[Int]) = State(value, seq, shift, result)
-		def withShift(shift: Int) = State(value, seq, shift, result)
+		private def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
+		private def withSeq(seq: Seq[Int]) = State(value, seq, shift, result)
+		private def withShift(shift: Int) = State(value, seq, shift, result)
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
