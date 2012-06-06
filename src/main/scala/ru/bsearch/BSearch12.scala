@@ -35,6 +35,7 @@ class BSearch12 extends ShouldMatchers {
 
 		if (state.value == midValue) return state.withPos(Some(Some(midPos)))
 		else if (state.value < midValue) return state.withSeq(state.seq.slice(0, midPos))
+		else if (state.value > midValue) return state.withSeq(state.seq.slice(midPos + 1, state.seq.size)).withShift(midPos + 1)
 
 		state
 	}
