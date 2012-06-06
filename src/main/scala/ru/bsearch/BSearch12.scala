@@ -70,7 +70,7 @@ class BSearch12 extends ShouldMatchers {
 		val midPos = state.seq.size / 2
 		val midValue = state.seq(midPos)
 
-		if (state.value == midValue) state.withPos(Some(Some(midPos)))
+		if (state.value == midValue) state.withPos(Some(Some(state.shift + midPos)))
 		else if (state.value < midValue) state.withSeq(state.seq.slice(0, midPos))
 		else state.withSeq(state.seq.slice(midPos + 1, state.seq.size)).withShift(midPos + 1)
 	}
