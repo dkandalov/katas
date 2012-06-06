@@ -2,6 +2,7 @@ package ru.bsearch
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import annotation.tailrec
 
 /**
  * User: dima
@@ -9,23 +10,6 @@ import org.junit.Test
  */
 
 class BSearch12 extends ShouldMatchers {
-	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
-		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
-		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
-		def withShift(shift: Int) = State(value, seq, shift, pos)
-
-		def next(): State = {
-			if (seq.isEmpty) return withPos(Some(None))
-
-			val midPos = seq.size / 2
-			val midValue = seq(midPos)
-
-			if (value == midValue) withPos(Some(Some(shift + midPos)))
-			else if (value < midValue) withSeq(seq.slice(0, midPos))
-			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
-		}
-	}
-	
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
 		State(0, Seq(), 0, None).next should equal(State(0, Seq(), 0, Some(None)))
 		State(1, Seq(), 0, None).next should equal(State(1, Seq(), 0, Some(None)))
@@ -45,6 +29,23 @@ class BSearch12 extends ShouldMatchers {
 		State(3, Seq(1, 2, 3), 0, None).next should equal(State(3, Seq(3), 2, None))
 
 		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
+	}
+
+	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
+		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
+		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
+		def withShift(shift: Int) = State(value, seq, shift, pos)
+
+		def next(): State = {
+			if (seq.isEmpty) return withPos(Some(None))
+
+			val midPos = seq.size / 2
+			val midValue = seq(midPos)
+
+			if (value == midValue) withPos(Some(Some(shift + midPos)))
+			else if (value < midValue) withSeq(seq.slice(0, midPos))
+			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
+		}
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
@@ -70,7 +71,7 @@ class BSearch12 extends ShouldMatchers {
 		doFind(State(value, seq, 0, None))
 	}
 
-	def doFind(state: State): Option[Int] = {
+	@tailrec private def doFind(state: State): Option[Int] = {
 		if (state.pos.isDefined) state.pos.get
 		else doFind(state.next())
 	}
