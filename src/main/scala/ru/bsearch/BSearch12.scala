@@ -32,6 +32,8 @@ class BSearch12 extends ShouldMatchers {
 		next(State(1, Seq(1, 2, 3), 0, None)) should equal(State(1, Seq(1), 0, None))
 		next(State(2, Seq(1, 2, 3), 0, None)) should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
 		next(State(3, Seq(1, 2, 3), 0, None)) should equal(State(3, Seq(3), 2, None))
+
+		next(State(3, Seq(3), 2, None)) should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
