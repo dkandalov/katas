@@ -73,7 +73,7 @@ class BSearch12 extends ShouldMatchers {
 
 	def doFind(state: State): Option[Int] = {
 		if (state.pos.isDefined) state.pos.get
-		else doFind(next(state))
+		else doFind(state.next)
 	}
 
 	def next(state: State): State = {
