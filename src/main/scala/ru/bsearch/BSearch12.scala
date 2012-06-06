@@ -41,6 +41,10 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	def find(value: Int, seq: Seq[Int]): Option[Int] = {
+		doFind(State(value, seq, 0, None))
+	}
+
+	def doFind(state: State): Option[Int] = {
 		None
 	}
 
