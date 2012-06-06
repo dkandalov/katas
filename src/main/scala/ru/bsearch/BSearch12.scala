@@ -14,4 +14,8 @@ class BSearch12 extends ShouldMatchers {
 	@Test def aaa() {
 		
 	}
+
+	def next(state: State): State = {
+		state
+	}
 }
