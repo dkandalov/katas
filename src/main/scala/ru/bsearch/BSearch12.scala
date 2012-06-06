@@ -31,8 +31,8 @@ class BSearch12 extends ShouldMatchers {
 		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
-	case class State(value: Int, seq: Seq[Int], shift: Int, result: Option[Option[Int]]) {
-		def next(): State = {
+	case class State[T](value: T, seq: Seq[T], shift: Int, result: Option[Option[Int]])(implicit orderer: T => Ordered[T]) {
+		def next(): State[T] = {
 			if (seq.isEmpty) return this.withSomeResult(None)
 
 			val midPos = seq.size / 2
@@ -44,7 +44,7 @@ class BSearch12 extends ShouldMatchers {
 		}
 
 		private def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
-		private def withSeq(seq: Seq[Int]) = State(value, seq, shift, result)
+		private def withSeq(seq: Seq[T]) = State(value, seq, shift, result)
 		private def withShift(shift: Int) = State(value, seq, shift, result)
 	}
 
@@ -71,7 +71,7 @@ class BSearch12 extends ShouldMatchers {
 		doBinarySearch(State(value, seq, 0, None))
 	}
 
-	@tailrec private def doBinarySearch(state: State): Option[Int] = {
+	@tailrec private def doBinarySearch(state: State[Int]): Option[Int] = {
 		if (state.result.isDefined) state.result.get
 		else doBinarySearch(state.next())
 	}
