@@ -10,9 +10,7 @@ import org.junit.Test
 
 class BSearch12 extends ShouldMatchers {
 	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
-		def withPos(pos: Option[Option[Int]]) {
-			State(value, seq, shift, pos)
-		}
+		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
 	}
 	
 	@Test def aaa() {
@@ -28,7 +26,7 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	def next(state: State): State = {
-		if (state.seq.isEmpty) return state
+		if (state.seq.isEmpty) return state.withPos(Some(None))
 		state
 	}
 }
