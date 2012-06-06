@@ -20,6 +20,7 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	def next(state: State): State = {
+		if (state.seq.isEmpty) return state
 		state
 	}
 }
