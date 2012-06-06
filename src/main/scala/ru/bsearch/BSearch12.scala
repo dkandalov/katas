@@ -49,6 +49,8 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
+		import BinarySearch._
+
 		binarySearch(0, Seq()) should equal(None)
 
 		binarySearch(0, Seq(1)) should equal(None)
@@ -67,12 +69,14 @@ class BSearch12 extends ShouldMatchers {
 		binarySearch(4, Seq(1, 2, 3)) should equal(None)
 	}
 
-	def binarySearch[T](value: T, seq: Seq[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
-		doBinarySearch(State(value, seq, 0, None))
-	}
+	object BinarySearch {
+		def binarySearch[T](value: T, seq: Seq[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
+			doBinarySearch(State(value, seq, 0, None))
+		}
 
-	@tailrec private def doBinarySearch[T](state: State[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
-		if (state.result.isDefined) state.result.get
-		else doBinarySearch(state.next())
+		@tailrec private def doBinarySearch[T](state: State[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
+			if (state.result.isDefined) state.result.get
+			else doBinarySearch(state.next())
+		}
 	}
 }
