@@ -31,21 +31,21 @@ class BSearch12 extends ShouldMatchers {
 		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
-	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
+	case class State(value: Int, seq: Seq[Int], shift: Int, result: Option[Option[Int]]) {
 		def next(): State = {
-			if (seq.isEmpty) return withPos(Some(None))
+			if (seq.isEmpty) return withSomeResult(None)
 
 			val midPos = seq.size / 2
 			val midValue = seq(midPos)
 
-			if (value == midValue) withPos(Some(Some(shift + midPos)))
+			if (value == midValue) withSomeResult(Some(shift + midPos))
 			else if (value < midValue) withSeq(seq.slice(0, midPos))
 			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
 		}
 
-		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
-		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
-		def withShift(shift: Int) = State(value, seq, shift, pos)
+		def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
+		def withSeq(seq: Seq[Int]) = State(value, seq, shift, result)
+		def withShift(shift: Int) = State(value, seq, shift, result)
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
@@ -72,7 +72,7 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	@tailrec private def doFind(state: State): Option[Int] = {
-		if (state.pos.isDefined) state.pos.get
+		if (state.result.isDefined) state.result.get
 		else doFind(state.next())
 	}
 }
