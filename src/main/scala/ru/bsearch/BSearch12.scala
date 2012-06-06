@@ -26,6 +26,11 @@ class BSearch12 extends ShouldMatchers {
 		next(State(1, Seq(1, 2), 0, None)) should equal(State(1, Seq(1), 0, None))
 		next(State(2, Seq(1, 2), 0, None)) should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
 		next(State(3, Seq(1, 2), 0, None)) should equal(State(3, Seq(), 2, None))
+
+		next(State(0, Seq(1, 2, 3), 0, None)) should equal(State(0, Seq(1), 0, None))
+		next(State(1, Seq(1, 2, 3), 0, None)) should equal(State(1, Seq(1), 0, None))
+		next(State(2, Seq(1, 2, 3), 0, None)) should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
+		next(State(3, Seq(1, 2, 3), 0, None)) should equal(State(3, Seq(3), 2, None))
 	}
 
 	def find(value: Int, seq: Seq[Int], shift: Int): Option[Int] = {
