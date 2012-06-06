@@ -32,10 +32,6 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
-		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
-		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
-		def withShift(shift: Int) = State(value, seq, shift, pos)
-
 		def next(): State = {
 			if (seq.isEmpty) return withPos(Some(None))
 
@@ -46,6 +42,10 @@ class BSearch12 extends ShouldMatchers {
 			else if (value < midValue) withSeq(seq.slice(0, midPos))
 			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
 		}
+
+		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
+		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
+		def withShift(shift: Int) = State(value, seq, shift, pos)
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
