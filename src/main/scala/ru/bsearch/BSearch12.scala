@@ -15,7 +15,7 @@ class BSearch12 extends ShouldMatchers {
 		def withShift(shift: Int) = State(value, seq, shift, pos)
 	}
 	
-	@Test def aaa() {
+	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
 		next(State(0, Seq(), 0, None)) should equal(State(0, Seq(), 0, Some(None)))
 		next(State(1, Seq(), 0, None)) should equal(State(1, Seq(), 0, Some(None)))
 
