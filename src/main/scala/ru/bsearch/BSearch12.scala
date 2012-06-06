@@ -15,6 +15,10 @@ class BSearch12 extends ShouldMatchers {
 		
 	}
 
+	def find(value: Int, seq: Seq[Int], shift: Int): Option[Int] = {
+		None
+	}
+
 	def next(state: State): State = {
 		state
 	}
