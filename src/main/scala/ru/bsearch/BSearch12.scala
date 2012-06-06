@@ -45,6 +45,12 @@ class BSearch12 extends ShouldMatchers {
 		binarySearch(1, Seq(1, 2)) should equal(Some(0))
 		binarySearch(2, Seq(1, 2)) should equal(Some(1))
 		binarySearch(3, Seq(1, 2)) should equal(None)
+
+		binarySearch(0, Seq(1, 2, 3)) should equal(None)
+		binarySearch(1, Seq(1, 2, 3)) should equal(Some(0))
+		binarySearch(2, Seq(1, 2, 3)) should equal(Some(1))
+		binarySearch(3, Seq(1, 2, 3)) should equal(Some(2))
+		binarySearch(4, Seq(1, 2, 3)) should equal(None)
 	}
 
 	def binarySearch(value: Int, seq: Seq[Int]): Option[Int] = {
