@@ -13,6 +13,8 @@ class BSearch12 extends ShouldMatchers {
 	
 	@Test def aaa() {
 		next(State(1, Seq(), 0, None)) should equal(None)
+
+		next(State(0, Seq(1), 0, None)) should equal(State(1, Seq(), 0, None))
 		next(State(1, Seq(1), 0, None)) should equal(State(1, Seq(1), 0, Some(1)))
 	}
 
