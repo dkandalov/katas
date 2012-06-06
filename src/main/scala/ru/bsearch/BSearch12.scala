@@ -38,9 +38,9 @@ class BSearch12 extends ShouldMatchers {
 			val midPos = seq.size / 2
 			val midValue = seq(midPos)
 
-			if (value == midValue) withSomeResult(Some(shift + midPos))
-			else if (value < midValue) withSeq(seq.slice(0, midPos))
-			else withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
+			if (value == midValue) this.withSomeResult(Some(shift + midPos))
+			else if (value < midValue) this.withSeq(seq.slice(0, midPos))
+			else this.withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
 		}
 
 		private def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
