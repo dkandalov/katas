@@ -68,11 +68,11 @@ class BSearch12 extends ShouldMatchers {
 	}
 
 	def binarySearch(value: Int, seq: Seq[Int]): Option[Int] = {
-		doFind(State(value, seq, 0, None))
+		doBinarySearch(State(value, seq, 0, None))
 	}
 
-	@tailrec private def doFind(state: State): Option[Int] = {
+	@tailrec private def doBinarySearch(state: State): Option[Int] = {
 		if (state.result.isDefined) state.result.get
-		else doFind(state.next())
+		else doBinarySearch(state.next())
 	}
 }
