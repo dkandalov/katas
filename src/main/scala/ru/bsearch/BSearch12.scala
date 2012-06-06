@@ -9,7 +9,7 @@ import org.junit.Test
  */
 
 class BSearch12 extends ShouldMatchers {
-	case class State(value: Int, seq: Seq[Int], shift: Int)
+	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Int])
 	
 	@Test def aaa() {
 		
