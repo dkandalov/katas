@@ -33,7 +33,7 @@ class BSearch12 extends ShouldMatchers {
 
 	case class State(value: Int, seq: Seq[Int], shift: Int, result: Option[Option[Int]]) {
 		def next(): State = {
-			if (seq.isEmpty) return withSomeResult(None)
+			if (seq.isEmpty) return this.withSomeResult(None)
 
 			val midPos = seq.size / 2
 			val midValue = seq(midPos)
