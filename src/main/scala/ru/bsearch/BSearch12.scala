@@ -9,7 +9,11 @@ import org.junit.Test
  */
 
 class BSearch12 extends ShouldMatchers {
-	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]])
+	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Option[Int]]) {
+		def withPos(pos: Option[Option[Int]]) {
+			State(value, seq, shift, pos)
+		}
+	}
 	
 	@Test def aaa() {
 		next(State(1, Seq(), 0, None)) should equal(None)
