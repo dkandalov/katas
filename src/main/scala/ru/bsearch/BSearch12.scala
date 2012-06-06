@@ -28,12 +28,12 @@ class BSearch12 extends ShouldMatchers {
 	}
 	
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
-		next(State(0, Seq(), 0, None)) should equal(State(0, Seq(), 0, Some(None)))
-		next(State(1, Seq(), 0, None)) should equal(State(1, Seq(), 0, Some(None)))
+		State(0, Seq(), 0, None).next should equal(State(0, Seq(), 0, Some(None)))
+		State(1, Seq(), 0, None).next should equal(State(1, Seq(), 0, Some(None)))
 
-		next(State(0, Seq(1), 0, None)) should equal(State(0, Seq(), 0, None))
-		next(State(1, Seq(1), 0, None)) should equal(State(1, Seq(1), 0, Some(Some(0))))
-		next(State(2, Seq(1), 0, None)) should equal(State(2, Seq(), 1, None))
+		State(0, Seq(1), 0, None).next should equal(State(0, Seq(), 0, None))
+		State(1, Seq(1), 0, None).next should equal(State(1, Seq(1), 0, Some(Some(0))))
+		State(2, Seq(1), 0, None).next should equal(State(2, Seq(), 1, None))
 
 		next(State(0, Seq(1, 2), 0, None)) should equal(State(0, Seq(1), 0, None))
 		next(State(1, Seq(1, 2), 0, None)) should equal(State(1, Seq(1), 0, None))
