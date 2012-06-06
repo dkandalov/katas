@@ -27,6 +27,9 @@ class BSearch12 extends ShouldMatchers {
 
 	def next(state: State): State = {
 		if (state.seq.isEmpty) return state.withPos(Some(None))
+		val midPos = state.seq.size / 2
+		val midValue = state.seq(midPos)
+
 		state
 	}
 }
