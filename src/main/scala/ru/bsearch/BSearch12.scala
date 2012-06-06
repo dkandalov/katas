@@ -34,7 +34,11 @@ class BSearch12 extends ShouldMatchers {
 		next(State(3, Seq(1, 2, 3), 0, None)) should equal(State(3, Seq(3), 2, None))
 	}
 
-	def find(value: Int, seq: Seq[Int], shift: Int): Option[Int] = {
+	@Test def bbb() {
+		find(0, Seq()) should equal(None)
+	}
+
+	def find(value: Int, seq: Seq[Int]): Option[Int] = {
 		None
 	}
 
