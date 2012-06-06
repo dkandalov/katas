@@ -13,6 +13,18 @@ class BSearch12 extends ShouldMatchers {
 		def withPos(pos: Option[Option[Int]]) = State(value, seq, shift, pos)
 		def withSeq(seq: Seq[Int]) = State(value, seq, shift, pos)
 		def withShift(shift: Int) = State(value, seq, shift, pos)
+
+		def next(): State = {
+			val state = this
+			if (state.seq.isEmpty) return state.withPos(Some(None))
+
+			val midPos = state.seq.size / 2
+			val midValue = state.seq(midPos)
+
+			if (state.value == midValue) state.withPos(Some(Some(state.shift + midPos)))
+			else if (state.value < midValue) state.withSeq(state.seq.slice(0, midPos))
+			else state.withSeq(state.seq.slice(midPos + 1, state.seq.size)).withShift(midPos + 1)
+		}
 	}
 	
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
