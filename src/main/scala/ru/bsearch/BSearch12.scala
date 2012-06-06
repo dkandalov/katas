@@ -35,17 +35,17 @@ class BSearch12 extends ShouldMatchers {
 		State(1, Seq(1), 0, None).next should equal(State(1, Seq(1), 0, Some(Some(0))))
 		State(2, Seq(1), 0, None).next should equal(State(2, Seq(), 1, None))
 
-		next(State(0, Seq(1, 2), 0, None)) should equal(State(0, Seq(1), 0, None))
-		next(State(1, Seq(1, 2), 0, None)) should equal(State(1, Seq(1), 0, None))
-		next(State(2, Seq(1, 2), 0, None)) should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
-		next(State(3, Seq(1, 2), 0, None)) should equal(State(3, Seq(), 2, None))
+		State(0, Seq(1, 2), 0, None).next should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2), 0, None).next should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2), 0, None).next should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
+		State(3, Seq(1, 2), 0, None).next should equal(State(3, Seq(), 2, None))
 
-		next(State(0, Seq(1, 2, 3), 0, None)) should equal(State(0, Seq(1), 0, None))
-		next(State(1, Seq(1, 2, 3), 0, None)) should equal(State(1, Seq(1), 0, None))
-		next(State(2, Seq(1, 2, 3), 0, None)) should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
-		next(State(3, Seq(1, 2, 3), 0, None)) should equal(State(3, Seq(3), 2, None))
+		State(0, Seq(1, 2, 3), 0, None).next should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2, 3), 0, None).next should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2, 3), 0, None).next should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
+		State(3, Seq(1, 2, 3), 0, None).next should equal(State(3, Seq(3), 2, None))
 
-		next(State(3, Seq(3), 2, None)) should equal(State(3, Seq(3), 2, Some(Some(2))))
+		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
