@@ -12,15 +12,15 @@ class BSearch12 extends ShouldMatchers {
 	case class State(value: Int, seq: Seq[Int], shift: Int, pos: Option[Int])
 	
 	@Test def aaa() {
-		next(State(1, Seq(), 0, None)) should equal(State(1, Seq(), 0, None))
+		next(State(1, Seq(), 0, None)) should equal(None)
 	}
 
 	def find(value: Int, seq: Seq[Int], shift: Int): Option[Int] = {
 		None
 	}
 
-	def next(state: State): State = {
-		if (state.seq.isEmpty) return state
-		state
+	def next(state: State): Option[State] = {
+		if (state.seq.isEmpty) return Some(state)
+		None
 	}
 }
