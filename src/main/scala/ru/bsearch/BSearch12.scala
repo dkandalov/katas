@@ -10,6 +10,8 @@ import annotation.tailrec
  */
 
 class BSearch12 extends ShouldMatchers {
+	import BinarySearch._
+
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
 		State(0, Seq(), 0, None).next should equal(State(0, Seq(), 0, Some(None)))
 		State(1, Seq(), 0, None).next should equal(State(1, Seq(), 0, Some(None)))
@@ -31,26 +33,7 @@ class BSearch12 extends ShouldMatchers {
 		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
-	case class State[T](value: T, seq: Seq[T], shift: Int, result: Option[Option[Int]])(implicit orderer: T => Ordered[T]) {
-		def next(): State[T] = {
-			if (seq.isEmpty) return this.withSomeResult(None)
-
-			val midPos = seq.size / 2
-			val midValue = seq(midPos)
-
-			if (value == midValue) this.withSomeResult(Some(shift + midPos))
-			else if (value < midValue) this.withSeq(seq.slice(0, midPos))
-			else this.withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
-		}
-
-		private def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
-		private def withSeq(seq: Seq[T]) = State(value, seq, shift, result)
-		private def withShift(shift: Int) = State(value, seq, shift, result)
-	}
-
 	@Test def shouldFindIndexOfAnElementInASequence() {
-		import BinarySearch._
-
 		binarySearch(0, Seq()) should equal(None)
 
 		binarySearch(0, Seq(1)) should equal(None)
@@ -77,6 +60,23 @@ class BSearch12 extends ShouldMatchers {
 		@tailrec private def doBinarySearch[T](state: State[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
 			if (state.result.isDefined) state.result.get
 			else doBinarySearch(state.next())
+		}
+
+		case class State[T](value: T, seq: Seq[T], shift: Int, result: Option[Option[Int]])(implicit orderer: T => Ordered[T]) {
+			def next(): State[T] = {
+				if (seq.isEmpty) return this.withSomeResult(None)
+
+				val midPos = seq.size / 2
+				val midValue = seq(midPos)
+
+				if (value == midValue) this.withSomeResult(Some(shift + midPos))
+				else if (value < midValue) this.withSeq(seq.slice(0, midPos))
+				else this.withSeq(seq.slice(midPos + 1, seq.size)).withShift(midPos + 1)
+			}
+
+			private def withSomeResult(result: Option[Int]) = State(value, seq, shift, Some(result))
+			private def withSeq(seq: Seq[T]) = State(value, seq, shift, result)
+			private def withShift(shift: Int) = State(value, seq, shift, result)
 		}
 	}
 }
