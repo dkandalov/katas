@@ -38,6 +38,11 @@ class BSearch13 extends ShouldMatchers {
 		state.result.get
 	}
 
+	@Test def aaaa() {
+		doBinarySearch(1, Seq(), 0, 0) should equal(State(1, Seq(), 0, 0, Some(None)))
+		doBinarySearch(1, Seq(1), 0, 1) should equal(State(1, Seq(1), 0, 0, Some(Some(0))))
+	}
+
 	def doBinarySearch(n: Int, values: Seq[Int], from: Int, to: Int): State = {
 		null
 	}
