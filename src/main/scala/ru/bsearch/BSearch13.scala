@@ -49,8 +49,8 @@ class BSearch13 extends ShouldMatchers {
 		doBinarySearch(1, Seq(1), 3) should equal(State(1, Seq(1), 3, Some(Some(3))))
 	}
 
-	case class State(n: Int, values: Seq[Int], shift: Int, result: Option[Option[Int]]) {
-		def next(that: State): State = {
+	case class State(n: Int, values: Seq[Int], shift: Int, result: Option[Option[Int]] = None) {
+		def next(): State = {
 			if (values.isEmpty) return this.withResult(Some(None))
 
 			val midPos = values.size / 2
@@ -69,17 +69,12 @@ class BSearch13 extends ShouldMatchers {
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
 		var state = State(n, values, 0, None)
 		while (state.result == None) {
-			state = doBinarySearch(state.n, state.values, state.shift)
+			state = state.next()
 		}
 		state.result.get
 	}
 
 	def doBinarySearch(n: Int, values: Seq[Int], shift: Int): State = {
-		if (values.isEmpty) return State(n, values, shift, Some(None))
-
-		val midPos = values.size / 2
-		if (n == values(midPos)) State(n, values, shift, Some(Some(shift + midPos)))
-		else if (n < values(midPos)) State(n, values.slice(0, midPos), shift, None)
-		else State(n, values.slice(midPos + 1, values.size), shift + midPos + 1, None)
+		State(n, values, shift).next()
 	}
 }
