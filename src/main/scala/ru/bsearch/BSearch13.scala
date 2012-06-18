@@ -46,7 +46,9 @@ class BSearch13 extends ShouldMatchers {
 		doBinarySearch(2, Seq(1), 0) should equal(State(2, Seq(), 1, None))
 
 		doBinarySearch(0, Seq(1, 2), 0) should equal(State(0, Seq(1), 0, None))
-		doBinarySearch(1, Seq(1, 2), 0) should equal(State(1, Seq(1), 0, Some(Some(0))))
+		doBinarySearch(1, Seq(1, 2), 0) should equal(State(1, Seq(1), 0, None))
+		doBinarySearch(2, Seq(1, 2), 0) should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
+		doBinarySearch(3, Seq(1, 2), 0) should equal(State(3, Seq(), 2, None))
 	}
 
 	def doBinarySearch(n: Int, values: Seq[Int], shift: Int): State = {
