@@ -29,6 +29,10 @@ class BSearch13 extends ShouldMatchers {
 	}
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
+		doBinarySearch(n, values, 0, values.size)
+	}
+
+	def doBinarySearch(n: Int, values: Seq[Int], from: Int, to: Int): Option[Int] = {
 		None
 	}
 }
