@@ -2,6 +2,7 @@ package ru.bsearch
 
 import org.junit.Test
 import org.scalatest.matchers.ShouldMatchers
+import annotation.tailrec
 
 /**
  * User: dima
@@ -67,14 +68,11 @@ class BSearch13 extends ShouldMatchers {
 	}
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
-		var state = State(n, values, 0, None)
-		while (state.result == None) {
-			state = state.next()
-		}
-		state.result.get
+		doSearch(State(n, values, 0, None))
 	}
 
-	def doSearch(n: Int, values: Seq[Int], shift: Int): State = {
-		State(n, values, shift).next()
+	@tailrec private def doSearch(state: State): Option[Int] = {
+		if (state.result == None) doSearch(state.next()) 
+		else state.result.get
 	}
 }
