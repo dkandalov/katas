@@ -57,11 +57,13 @@ class BSearch13 extends ShouldMatchers {
 			val midValue = values(midPos)
 			
 			if (n == midValue) this.withResult(Some(Some(shift + midPos)))
-			else if (n < midValue) State(n, values.slice(0, midPos), shift, None)
-			else State(n, values.slice(midPos + 1, values.size), shift + midPos + 1, None)
+			else if (n < midValue) this.withValues(values.slice(0, midPos))
+			else this.withValues(values.slice(midPos + 1, values.size)).withShift(shift + midPos + 1)
 		}
 		
 		private def withResult(newResult: Option[Option[Int]]) = new State(n, values, shift, newResult)
+		private def withValues(newValues: Seq[Int]) = new State(n, newValues, shift, result)
+		private def withShift(newShift: Int) = new State(n, values, newShift, result)
 	}
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
