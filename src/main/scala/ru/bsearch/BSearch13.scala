@@ -29,24 +29,24 @@ class BSearch13 extends ShouldMatchers {
 	}
 
 	@Test def should_go_from_one_state_of_binary_search_to_another() {
-		doBinarySearch(1, Seq(), 0) should equal(State(1, Seq(), 0, Some(None)))
+		State(1, Seq(), 0).next() should equal(State(1, Seq(), 0, Some(None)))
 
-		doBinarySearch(0, Seq(1), 0) should equal(State(0, Seq(), 0, None))
-		doBinarySearch(1, Seq(1), 0) should equal(State(1, Seq(1), 0, Some(Some(0))))
-		doBinarySearch(2, Seq(1), 0) should equal(State(2, Seq(), 1, None))
+		State(0, Seq(1), 0).next() should equal(State(0, Seq(), 0, None))
+		State(1, Seq(1), 0).next() should equal(State(1, Seq(1), 0, Some(Some(0))))
+		State(2, Seq(1), 0).next() should equal(State(2, Seq(), 1, None))
 
-		doBinarySearch(0, Seq(1, 2), 0) should equal(State(0, Seq(1), 0, None))
-		doBinarySearch(1, Seq(1, 2), 0) should equal(State(1, Seq(1), 0, None))
-		doBinarySearch(2, Seq(1, 2), 0) should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
-		doBinarySearch(3, Seq(1, 2), 0) should equal(State(3, Seq(), 2, None))
+		State(0, Seq(1, 2), 0).next() should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2), 0).next() should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2), 0).next() should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
+		State(3, Seq(1, 2), 0).next() should equal(State(3, Seq(), 2, None))
 
-		doBinarySearch(0, Seq(1, 2, 3), 0) should equal(State(0, Seq(1), 0, None))
-		doBinarySearch(1, Seq(1, 2, 3), 0) should equal(State(1, Seq(1), 0, None))
-		doBinarySearch(2, Seq(1, 2, 3), 0) should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
-		doBinarySearch(3, Seq(1, 2, 3), 0) should equal(State(3, Seq(3), 2, None))
-		doBinarySearch(4, Seq(1, 2, 3), 0) should equal(State(4, Seq(3), 2, None))
+		State(0, Seq(1, 2, 3), 0).next() should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2, 3), 0).next() should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2, 3), 0).next() should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
+		State(3, Seq(1, 2, 3), 0).next() should equal(State(3, Seq(3), 2, None))
+		State(4, Seq(1, 2, 3), 0).next() should equal(State(4, Seq(3), 2, None))
 
-		doBinarySearch(1, Seq(1), 3) should equal(State(1, Seq(1), 3, Some(Some(3))))
+		State(1, Seq(1), 3).next() should equal(State(1, Seq(1), 3, Some(Some(3))))
 	}
 
 	case class State(n: Int, values: Seq[Int], shift: Int, result: Option[Option[Int]] = None) {
@@ -74,7 +74,7 @@ class BSearch13 extends ShouldMatchers {
 		state.result.get
 	}
 
-	def doBinarySearch(n: Int, values: Seq[Int], shift: Int): State = {
+	def doSearch(n: Int, values: Seq[Int], shift: Int): State = {
 		State(n, values, shift).next()
 	}
 }
