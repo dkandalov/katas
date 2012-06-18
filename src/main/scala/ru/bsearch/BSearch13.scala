@@ -31,7 +31,11 @@ class BSearch13 extends ShouldMatchers {
 	case class State(n: Int, values: Seq[Int], from: Int, to: Int, result: Option[Option[Int]])
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
-		doBinarySearch(n, values, 0, values.size).result.get
+		var state = State(n, values, 0, values.size, None)
+		while (state.result == None) {
+			state = doBinarySearch(state.n, state.values, state.from, state.to)
+		}
+		state.result.get
 	}
 
 	def doBinarySearch(n: Int, values: Seq[Int], from: Int, to: Int): State = {
