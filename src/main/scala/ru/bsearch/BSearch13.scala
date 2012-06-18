@@ -28,25 +28,26 @@ class BSearch13 extends ShouldMatchers {
 		bsearch(4, Seq(1, 2, 3)) should equal(None)
 	}
 
-	case class State(n: Int, values: Seq[Int], from: Int, to: Int, result: Option[Option[Int]])
+	case class State(n: Int, values: Seq[Int], shift: Int, result: Option[Option[Int]])
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
-		var state = State(n, values, 0, values.size, None)
+		var state = State(n, values, 0, None)
 		while (state.result == None) {
-			state = doBinarySearch(state.n, state.values, state.from, state.to)
+			state = doBinarySearch(state.n, state.values, state.shift)
 		}
 		state.result.get
 	}
 
 	@Test def should_go_from_one_state_of_binary_search_to_another() {
-		doBinarySearch(1, Seq(), 0, 0) should equal(State(1, Seq(), 0, 0, Some(None)))
-		doBinarySearch(1, Seq(1), 0, 1) should equal(State(1, Seq(1), 0, 1, Some(Some(0))))
+		doBinarySearch(1, Seq(), 0) should equal(State(1, Seq(), 0, Some(None)))
+		doBinarySearch(1, Seq(1), 0) should equal(State(1, Seq(1), 0, Some(Some(0))))
 	}
 
-	def doBinarySearch(n: Int, values: Seq[Int], from: Int, to: Int): State = {
-		if (from >= to) return State(n, values, from, to, Some(None))
+	def doBinarySearch(n: Int, values: Seq[Int], shift: Int): State = {
+		if (values.isEmpty) return State(n, values, shift, Some(None))
 
-		if (n == values(from)) return State(n, values, from, to, Some(Some(from)))
+		val midPos = values.size - 1
+		if (n == values(midPos)) return State(n, values, shift, Some(Some(midPos)))
 		null
 	}
 }
