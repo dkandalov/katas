@@ -40,6 +40,8 @@ class BSearch13 extends ShouldMatchers {
 
 	@Test def should_go_from_one_state_of_binary_search_to_another() {
 		doBinarySearch(1, Seq(), 0) should equal(State(1, Seq(), 0, Some(None)))
+
+		doBinarySearch(0, Seq(1), 0) should equal(State(0, Seq(), 0, None))
 		doBinarySearch(1, Seq(1), 0) should equal(State(1, Seq(1), 0, Some(Some(0))))
 	}
 
@@ -47,7 +49,8 @@ class BSearch13 extends ShouldMatchers {
 		if (values.isEmpty) return State(n, values, shift, Some(None))
 
 		val midPos = values.size - 1
-		if (n == values(midPos)) return State(n, values, shift, Some(Some(midPos)))
-		null
+		if (n == values(midPos)) State(n, values, shift, Some(Some(midPos)))
+		else if (n < values(midPos)) State(n, values.splitAt(midPos)._1, shift, None)
+		else null
 	}
 }
