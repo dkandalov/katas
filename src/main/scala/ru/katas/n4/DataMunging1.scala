@@ -61,7 +61,10 @@ class DataMunging1 extends ShouldMatchers {
 
 	def convertIntoNumber(rows: Seq[Seq[String]]) = rows.map{ row => row.map{_.replace("*", "").toInt }}
 
-	def extractColumns(seq: Seq[String], columns: Int*): Seq[Seq[String]] =  seq.map { _.split("\\s+").drop(1).take(3).toSeq }
+	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
+		val columns = row.split("\\s+").drop(1)
+		columnIndexes.map{columns(_)}
+	}
 
 	def extractData(seq: Seq[String]): Seq[String] = seq.filter(startsWithNumber)
 
