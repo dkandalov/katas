@@ -40,6 +40,10 @@ class DataMunging1 extends ShouldMatchers {
 	@Test def shouldConvertIntoNumericData() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
 		convertIntoNumber(rows)(0) should equal(Seq(1, 88, 59))
+		convertIntoNumber(rows)(25) should equal(Seq(26, 97, 64))
+
+		val rows2 = extractColumns(extractData(readFile(path2)), 0, 6, 8)
+		convertIntoNumber(rows2)(0) should equal(Seq(1, 79, 36))
 	}
 
 	@Test def shouldCalculateSpreads() {
@@ -59,7 +63,7 @@ class DataMunging1 extends ShouldMatchers {
 		seq.map{ row => (row(0), (row(1) - row(2)).abs ) }
 	}
 
-	def convertIntoNumber(rows: Seq[Seq[String]]) = rows.map{ row => row.map{_.replace("*", "").toInt }}
+	def convertIntoNumber(rows: Seq[Seq[String]]) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
 
 	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
 		val columns = row.split("\\s+").drop(1)
