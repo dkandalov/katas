@@ -28,13 +28,13 @@ class DataMunging1 extends ShouldMatchers {
 
 	@Test def shouldExtractFirstThreeColumns() {
 		val lines = extractData(readFile(path))
-		extractColumns(lines)(0) should equal(Seq("1", "88", "59"))
-		extractColumns(lines)(25) should equal(Seq("26", "97*", "64"))
-		extractColumns(lines)(29) should equal(Seq("30", "90", "45"))
+		extractColumns(lines, 0, 1, 2)(0) should equal(Seq("1", "88", "59"))
+		extractColumns(lines, 0, 1, 2)(25) should equal(Seq("26", "97*", "64"))
+		extractColumns(lines, 0, 1, 2)(29) should equal(Seq("30", "90", "45"))
 
 		val lines2 = extractData(readFile(path2))
-		extractColumns(lines2, 0, 1, 2)(0) should equal(Seq("1", "79", "36"))
-		extractColumns(lines2, 0, 6, 7)(19) should equal(Seq("20", "30", "64"))
+		extractColumns(lines2, 0, 6, 8)(0) should equal(Seq("1.", "79", "36"))
+		extractColumns(lines2, 0, 6, 8)(19) should equal(Seq("20.", "30", "64"))
 	}
 
 	@Test def shouldConvertIntoNumericData() {
@@ -63,7 +63,7 @@ class DataMunging1 extends ShouldMatchers {
 
 	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
 		val columns = row.split("\\s+").drop(1)
-		columnIndexes.map{columns(_)}
+		columnIndexes.map(columns)
 	}
 
 	def extractData(seq: Seq[String]): Seq[String] = seq.filter(startsWithNumber)
