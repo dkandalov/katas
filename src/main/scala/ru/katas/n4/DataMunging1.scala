@@ -38,18 +38,18 @@ class DataMunging1 extends ShouldMatchers {
 	}
 
 	@Test def shouldConvertIntoNumericData() {
-		val rows = extractColumns(extractData(readFile(path)))
+		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
 		convertIntoNumber(rows)(0) should equal(Seq(1, 88, 59))
 	}
 
 	@Test def shouldCalculateSpreads() {
-		val rows = convertIntoNumber(extractColumns(extractData(readFile(path))))
+		val rows = convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2))
 		calcSpread(rows)(0) should equal((1, 29))
 		calcSpread(rows)(29) should equal((30, 45))
 	}
 
 	@Test def shouldFindMinSpread() {
-		val rows = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path)))))
+		val rows = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2)))
 		findMinSpread(rows) should equal(14)
 	}
 
