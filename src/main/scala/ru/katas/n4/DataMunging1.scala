@@ -59,9 +59,12 @@ class DataMunging1 extends ShouldMatchers {
 	@Test def shouldFindMinSpread() {
 		val rows = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2)))
 		findMinSpread(rows) should equal(14)
+
+		val rows2 = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path2)), 0, 6, 8)))
+		findMinSpread(rows2) should equal("Aston_Villa")
 	}
 
-	def findMinSpread(rows: Seq[(Int, Int)]) = rows.minBy(_._2)._1
+	def findMinSpread[T](rows: Seq[(T, Int)]) = rows.minBy(_._2)._1
 
 	def calcSpread(seq: Seq[Seq[Int]]): Seq[(Int, Int)] = {
 		seq.map{ row => (row(0), (row(1) - row(2)).abs ) }
