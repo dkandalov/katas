@@ -33,8 +33,8 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines, 0, 1, 2)(29) should equal(Seq("30", "90", "45"))
 
 		val lines2 = extractData(readFile(path2))
-		extractColumns(lines2, 0, 6, 8)(0) should equal(Seq("1.", "79", "36"))
-		extractColumns(lines2, 0, 6, 8)(19) should equal(Seq("20.", "30", "64"))
+		extractColumns(lines2, 1, 6, 8)(0) should equal(Seq("1.", "79", "36"))
+		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("20.", "30", "64"))
 	}
 
 	@Test def shouldConvertIntoNumericData() {
@@ -42,7 +42,7 @@ class DataMunging1 extends ShouldMatchers {
 		convertIntoNumber(rows)(0) should equal(Seq(1, 88, 59))
 		convertIntoNumber(rows)(25) should equal(Seq(26, 97, 64))
 
-		val rows2 = extractColumns(extractData(readFile(path2)), 0, 6, 8)
+		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
 		convertIntoNumber(rows2)(0) should equal(Seq(1, 79, 36))
 	}
 
@@ -51,7 +51,7 @@ class DataMunging1 extends ShouldMatchers {
 		calcSpread(rows)(0) should equal((1, 29))
 		calcSpread(rows)(29) should equal((30, 45))
 
-		val rows2 = convertIntoNumber(extractColumns(extractData(readFile(path2)), 0, 6, 8))
+		val rows2 = convertIntoNumber(extractColumns(extractData(readFile(path2)), 1, 6, 8))
 		calcSpread(rows2)(0) should equal((1, 43))
 		calcSpread(rows2)(19) should equal((20, 34))
 	}
@@ -60,7 +60,7 @@ class DataMunging1 extends ShouldMatchers {
 		val rows = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2)))
 		findMinSpread(rows) should equal(14)
 
-		val rows2 = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path2)), 0, 6, 8)))
+		val rows2 = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path2)), 1, 6, 8)))
 		findMinSpread(rows2) should equal("Aston_Villa")
 	}
 
