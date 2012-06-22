@@ -33,8 +33,8 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines, 0, 1, 2)(29) should equal(Seq("30", "90", "45"))
 
 		val lines2 = extractData(readFile(path2))
-		extractColumns(lines2, 1, 6, 8)(0) should equal(Seq("1.", "79", "36"))
-		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("20.", "30", "64"))
+		extractColumns(lines2, 1, 6, 8)(0) should equal(Seq("Arsenal", "79", "36"))
+		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
 	@Test def shouldConvertIntoNumericData() {
@@ -70,7 +70,7 @@ class DataMunging1 extends ShouldMatchers {
 		seq.map{ row => (row(0), (row(1) - row(2)).abs ) }
 	}
 
-	def convertIntoNumber(rows: Seq[Seq[String]]) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
+	def convertIntoNumber(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
 
 	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
 		val columns = row.split("\\s+").drop(1)
