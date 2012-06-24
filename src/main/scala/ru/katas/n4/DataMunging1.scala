@@ -41,13 +41,13 @@ class DataMunging1 extends ShouldMatchers {
 	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow(min, max)
 	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow(min, max)
 
-	@Test def shouldConvertIntoNumericData() {
+	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
-		convertIntoNumber(rows)(0) should equal(Seq(1, 88, 59))
-		convertIntoNumber(rows)(25) should equal(Seq(26, 97, 64))
+		convertIntoNumber(rows)(0) should equal(WeatherRow(1, 88, 59))
+		convertIntoNumber(rows)(25) should equal(WeatherRow(26, 97, 64))
 
 		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
-		convertIntoNumber(rows2)(0) should equal(Seq(1, 79, 36))
+		convertIntoNumber(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
 	}
 
 	@Test def shouldCalculateSpreads() {
