@@ -37,9 +37,9 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
-	case class ARow(min: Int, max: Int)
-	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow(min, max)
-	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow(min, max)
+	case class ARow[+T](min: Int, max: Int)
+	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow[Int](min, max)
+	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow[String](min, max)
 
 	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
@@ -70,18 +70,18 @@ class DataMunging1 extends ShouldMatchers {
 
 	def findMinSpread[T](rows: Seq[(T, Int)]) = rows.minBy(_._2)._1
 
-	def calcSpread(seq: Seq[ARow]): Seq[(ARow, Int)] = {
+	def calcSpread(seq: Seq[ARow[Any]]): Seq[(ARow[Any], Int)] = {
 		seq.map{ row => (row, (row.max - row.min).abs ) }
 	}
 
 	def convertIntoNumber(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
-	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow] = rows.map{ row =>
+	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow[Any]] = rows.map{ row =>
 			val day = row(0).replaceAll("[*.]", "").toInt
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
 			WeatherRow(day, min, max)
 	}
-	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow] = rows.map{ row =>
+	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow[Any]] = rows.map{ row =>
 			val team = row(0)
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
