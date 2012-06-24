@@ -52,12 +52,12 @@ class DataMunging1 extends ShouldMatchers {
 
 	@Test def shouldCalculateSpreads() {
 		val rows = convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2))
-		calcSpread(rows)(0) should equal((1, 29))
-		calcSpread(rows)(29) should equal((30, 45))
+		calcSpread(rows)(0)._2 should equal(29)
+		calcSpread(rows)(29)._2 should equal(45)
 
 		val rows2 = convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8))
-		calcSpread(rows2)(0) should equal((1, 43))
-		calcSpread(rows2)(19) should equal((20, 34))
+		calcSpread(rows2)(0)._2 should equal(43)
+		calcSpread(rows2)(19)._2 should equal(34)
 	}
 
 	@Test def shouldFindMinSpread() {
