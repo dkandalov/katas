@@ -51,37 +51,37 @@ class DataMunging1 extends ShouldMatchers {
 	}
 
 	@Test def shouldCalculateSpreads() {
-		val rows = convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2))
+		val rows = convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2))
 		calcSpread(rows)(0) should equal((1, 29))
 		calcSpread(rows)(29) should equal((30, 45))
 
-		val rows2 = convertIntoNumber(extractColumns(extractData(readFile(path2)), 1, 6, 8))
+		val rows2 = convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8))
 		calcSpread(rows2)(0) should equal((1, 43))
 		calcSpread(rows2)(19) should equal((20, 34))
 	}
 
 	@Test def shouldFindMinSpread() {
-		val rows = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path)), 0, 1, 2)))
+		val rows = calcSpread(convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2)))
 		findMinSpread(rows) should equal(14)
 
-		val rows2 = calcSpread(convertIntoNumber(extractColumns(extractData(readFile(path2)), 1, 6, 8)))
+		val rows2 = calcSpread(convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8)))
 		findMinSpread(rows2) should equal("Aston_Villa")
 	}
 
 	def findMinSpread[T](rows: Seq[(T, Int)]) = rows.minBy(_._2)._1
 
-	def calcSpread(seq: Seq[Seq[Int]]): Seq[(Int, Int)] = {
-		seq.map{ row => (row(0), (row(1) - row(2)).abs ) }
+	def calcSpread(seq: Seq[ARow]): Seq[(ARow, Int)] = {
+		seq.map{ row => (row, (row.max - row.min).abs ) }
 	}
 
 	def convertIntoNumber(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
-	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row =>
+	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow] = rows.map{ row =>
 			val day = row(0).replaceAll("[*.]", "").toInt
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
 			WeatherRow(day, min, max)
 	}
-	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row =>
+	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow] = rows.map{ row =>
 			val team = row(0)
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
