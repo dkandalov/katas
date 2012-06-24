@@ -43,8 +43,8 @@ class DataMunging1 extends ShouldMatchers {
 
 	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
-		convertIntoNumber(rows)(0) should equal(WeatherRow(1, 88, 59))
-		convertIntoNumber(rows)(25) should equal(WeatherRow(26, 97, 64))
+		convertIntoWeatherRows(rows)(0) should equal(WeatherRow(1, 88, 59))
+		convertIntoWeatherRows(rows)(25) should equal(WeatherRow(26, 97, 64))
 
 		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
 		convertIntoNumber(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
@@ -75,6 +75,12 @@ class DataMunging1 extends ShouldMatchers {
 	}
 
 	def convertIntoNumber(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
+	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row =>
+			val day = row(0).replaceAll("[*.]", "").toInt
+			val min = row(1).replaceAll("[*.]", "").toInt
+			val max = row(2).replaceAll("[*.]", "").toInt
+			WeatherRow(day, min, max)
+	}
 
 	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
 		val columns = row.split("\\s+").drop(1)
