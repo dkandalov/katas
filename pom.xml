@@ -170,8 +170,8 @@
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest</artifactId>
-            <version>1.2</version>
+            <artifactId>scalatest_2.9.0-1</artifactId>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
