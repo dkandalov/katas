@@ -37,9 +37,9 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
-	case class ARow[+T](min: Int, max: Int)
-	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow[Int](min, max)
-	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow[String](min, max)
+	case class ARow[+T](id: T, min: Int, max: Int)
+	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow[Int](day, min, max)
+	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow[String](team, min, max)
 
 	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
@@ -62,10 +62,10 @@ class DataMunging1 extends ShouldMatchers {
 
 	@Test def shouldFindMinSpread() {
 		val rows = calcSpread(convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2)))
-		findMinSpread(rows) should equal(14)
+		findMinSpread(rows).id should equal(14)
 
 		val rows2 = calcSpread(convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8)))
-		findMinSpread(rows2) should equal("Aston_Villa")
+		findMinSpread(rows2).id should equal("Aston_Villa")
 	}
 
 	def findMinSpread[T](rows: Seq[(T, Int)]) = rows.minBy(_._2)._1
