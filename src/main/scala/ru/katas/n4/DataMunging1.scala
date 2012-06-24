@@ -37,6 +37,10 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
+	case class ARow(min: Int, max: Int)
+	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow(min, max)
+	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow(min, max)
+
 	@Test def shouldConvertIntoNumericData() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
 		convertIntoNumber(rows)(0) should equal(Seq(1, 88, 59))
