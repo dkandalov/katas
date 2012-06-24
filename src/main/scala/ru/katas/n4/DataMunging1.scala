@@ -47,7 +47,7 @@ class DataMunging1 extends ShouldMatchers {
 		convertIntoWeatherRows(rows)(25) should equal(WeatherRow(26, 97, 64))
 
 		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
-		convertIntoNumber(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
+		convertIntoFootballRows(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
 	}
 
 	@Test def shouldCalculateSpreads() {
@@ -80,6 +80,12 @@ class DataMunging1 extends ShouldMatchers {
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
 			WeatherRow(day, min, max)
+	}
+	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row =>
+			val team = row(0)
+			val min = row(1).replaceAll("[*.]", "").toInt
+			val max = row(2).replaceAll("[*.]", "").toInt
+			FootballRow(team, min, max)
 	}
 
 	def extractColumns(seq: Seq[String], columnIndexes: Int*): Seq[Seq[String]] = seq.map { row =>
