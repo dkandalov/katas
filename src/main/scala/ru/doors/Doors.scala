@@ -19,4 +19,11 @@ class Doors extends ShouldMatchers {
 		doors should equal(Array(true, false, false, true, false, false, false, false, true, false))
 	}
 
+	@Test def bbb() {
+		val size = 10
+		1.to(size).foldLeft(Seq.fill(size){false}) { (acc, stepSize) =>
+			acc.zipWithIndex.map{ v => if ((v._2 + 1) % stepSize == 0) v._1 else !v._1 }
+		} should equal(Seq(true, false, false, true, false, false, false, false, true, false))
+	}
+
 }
