@@ -28,6 +28,13 @@ class InsertSort8 extends ShouldMatchers {
 	}
 
 	def sort(seq: Seq[Int]): Seq[Int] = {
-		Seq()
+		def insert(seq: Seq[Int], n: Int): Seq[Int] = {
+			if (seq.isEmpty) Seq(n)
+			else if (seq.head >= n) n +: seq
+			else seq.head +: insert(seq.tail, n)
+		}
+
+		if (seq.isEmpty) seq
+		else insert(sort(seq.tail), seq.head)
 	}
 }
