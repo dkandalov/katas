@@ -17,6 +17,14 @@ class InsertSort9 extends SortTest with ShouldMatchers {
 	}
 
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
-		Seq()
+		
+		def insert(v: T, sorted: Seq[T]): Seq[T] = {
+			if (sorted.isEmpty) Seq(v)
+			else if (v <= sorted.head) v +: sorted
+			else sorted.head +: insert(v, sorted.tail)
+		}
+		
+		if (seq.isEmpty) seq
+		else insert(seq.head, sort(seq.tail))
 	}
 }
