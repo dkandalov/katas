@@ -1,6 +1,6 @@
 package ru.sort.insertsort
 
-import ru.sort.SortTest
+import ru.sort.SeqSortTest
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import ru.util.Arcade
@@ -11,11 +11,7 @@ import ru.util.Arcade
  */
 
 @Arcade
-class InsertSort9 extends SortTest with ShouldMatchers {
-	@Test def sort() {
-		shouldSortIntegerSequencesOfDifferentSize(this)
-	}
-
+class InsertSort9 extends SeqSortTest with ShouldMatchers {
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
 		
 		def insert(v: T, sorted: Seq[T]): Seq[T] = {
@@ -30,12 +26,18 @@ class InsertSort9 extends SortTest with ShouldMatchers {
 }
 
 @Arcade
-class InsertSort9_ extends SortTest with ShouldMatchers {
-	@Test def sort() {
-		shouldSortIntegerSequencesOfDifferentSize(this)
-	}
-
+class InsertSort9_ extends SeqSortTest with ShouldMatchers {
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
-		Seq()
+		def swap(s: Seq[T], i1: Int, i2: Int) = s.updated(i1, s(i2)).updated(i2, s(i1))
+
+		var result = seq
+		1.until(result.size).foreach{ i =>
+			0.until(i).reverse.foreach{ j =>
+				if (result(j) > result(j + 1)) {
+					result = swap(result, j, j + 1)
+				}
+			}
+		}
+		result
 	}
 }
