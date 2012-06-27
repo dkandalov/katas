@@ -28,3 +28,14 @@ class InsertSort9 extends SortTest with ShouldMatchers {
 		else insert(seq.head, sort(seq.tail))
 	}
 }
+
+@Arcade
+class InsertSort9_ extends SortTest with ShouldMatchers {
+	@Test def sort() {
+		shouldSortIntegerSequencesOfDifferentSize(this)
+	}
+
+	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
+		Seq()
+	}
+}
