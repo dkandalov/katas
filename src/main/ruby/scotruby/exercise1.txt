@@ -1,0 +1,21 @@
+Keeping Track of your Children
+A class is a factory that creates objects using its initialize method. In this short exercise we’ll see how we can use our knowledge of self to let a class keep track of these objects.
+
+1. Keep a list of objects a class creates
+
+Write a class that maintains a list of all the objects that it creates. Here are some tests to show how it should work.
+
+require 'test/unit'
+
+class TestChildTracker < Test::Unit::TestCase
+
+  def test_children
+    assert_equal  [], ChildTracker.children
+    c1 = ChildTracker.new
+    assert_equal [c1], ChildTracker.children
+    c2 = ChildTracker.new
+    assert_equal [c1, c2], ChildTracker.children
+  end
+
+end
+Try it on your own first.

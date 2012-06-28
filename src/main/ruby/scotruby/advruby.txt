@@ -1,0 +1,21 @@
+ - to_proc: collection.map(&:meth_name)
+
+ - object
+    - don't think classes, think object.. classes only a way to create objects
+    - always go to class for intance methods
+ - self
+   2 cases when self is not self
+    - specifying receiver
+    - in module, class decalration
+
+ - class
+    - ruby doesn't have class methods
+    - don't use @@var !!
+
+ - instance vars are always looked up at runtime in self
+ - methods are always looked up at runtime in self.class
+
+
+ - current class -- where methods are defined into
+
+ - alias _copies_ method definition

@@ -1,0 +1,49 @@
+Open Classes Exercises
+At the end of this exercise, you’ll know how to:
+
+introspect a class
+extend built-in classes
+monkey-patch a class
+1. Introspect a Class
+
+Let’s start by seeing what a built-in String can do.
+
+Use irb to print out all the instance methods that String supports.
+
+Hide Answer
+String.instance_methods
+
+Next print out only the instance methods implemented by String, not those inherited by its superclasses.
+
+Hide Answer
+String.instance_methods(false)
+
+Finally, print out the ancestor chain for String.
+
+Hide Answer
+String.ancestors
+
+2. Extend a Built-In Class
+
+In general, we don’t recommend extending built-in classes. However, let’s have some fun.
+
+Sometimes we want to sanitize names that people enter on web forms. Let’s add a sanitize method to the String class that removes all characters that aren’t alphanumerics or spaces. (The regular expression that matches an invalid character is [^\w\s].)
+
+Create a new file called string_extension.rb that adds the sanitize method to the string class. It should allow the following tests to pass:
+
+require 'test/unit'
+require_relative 'string-extensions'
+ 
+class TestSantize < Test::Unit::TestCase
+ 
+  def test_regular_characters
+    ok_string = "qwertyuiop asdfghjkl zxcvbnm 1234567890"
+    assert_equal ok_string, ok_string.sanitize
+  end
+ 
+  def test_remove_other_characters
+    assert_equal "dave thomas", "&^%d[[av]e !!!th\aom@@a^s.....".sanitize
+  end
+end
+Try it first. Your solution will probably end up looking something like this:
+
