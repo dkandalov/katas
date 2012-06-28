@@ -1,6 +1,5 @@
 require "test/unit"
 
-# arcade
 class TestPermutation < Test::Unit::TestCase
   def test_finds_all_permutations_of_an_array
     assert permutations_of([]) == [[]]
