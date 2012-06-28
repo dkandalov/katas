@@ -19,3 +19,6 @@
  - current class -- where methods are defined into
 
  - alias _copies_ method definition
+
+
+ - java: design class, runtime objects; ruby: runtime classes, design objects
