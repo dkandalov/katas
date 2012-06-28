@@ -1,0 +1,168 @@
+Mixins
+At the end of this exercise, you’ll know how to:
+
+share behavior through inheritance
+mix in common behavior using modules
+1. Mix In Class Methods
+
+In the “Object Model” exercises, you created custom my_attr_writer and attribute_writers class methods inside the class that used them. But what if you wanted to share those methods with other classes?
+
+Put your two my_* methods (along with any other things they might need) into a module and find a way of getting them to work in your Employee class, and generally in any other classes.
+
+Try it on your own first, then follow the steps below if you need help.
+
+Create a module called MyAttributes (or any name you choose) in a file my_attributes.rb.
+
+Copy your methods from SomeClass into this module. In SomeClass these were class methods (their names started self.). Change them into regular instance methods.
+
+Hide Answer
+module MyAttributes
+  def attribute_writers
+    @attribute_writers ||= []
+  end
+
+  def add_attribute_writers(names)
+    attribute_writers.concat(names)
+  end
+
+  def my_attr_writer(*attributes)
+    add_attribute_writers(attributes)
+    attr_writer(*attributes)
+  end
+end
+
+We’ve seen that object.extend(Module) adds the methods in Module to object. When called inside a class definition, extend adds the methods as “class methods”. Add the methods in the MyAttributes module into the Employee class using extend. Add a new writable attribute called stapler_color.
+
+Hide Answer
+class Employee
+  extend MyAttributes
+
+  my_attr_writer  :stapler_color
+  ...
+end
+
+Here are the tests. Make sure they pass (you’ll need to update the to_s method):
+
+Hide Answer
+require 'test/unit'
+require_relative 'employee'
+
+class TestEmployee < Test::Unit::TestCase
+
+  def setup
+    @fred = Employee.new("Fred Smith", "2011-06-01")
+  end
+
+  def test_to_s
+    assert_equal "Fred Smith joined 2011-06-01 and has a white stapler", @fred.to_s
+    @fred.stapler_color = "red"
+    assert_equal "Fred Smith joined 2011-06-01 and has a red stapler", @fred.to_s
+  end
+
+  def test_attribute_list
+    assert_equal [:stapler_color ], Employee.attribute_writers
+  end
+end
+
+2. Mix In Instance Methods and Class Methods
+
+Right now, the MyAttributes mixin contains methods that become class methods. That’s because classes that use it reference it using the extend method.
+
+But let’s suppose that we also want to be able to get to the list of attribute writers from instances of Employee, and not just via the Employee class. That is, we need to get the following tests to pass:
+
+def test_attribute_list_on_class
+  assert_equal [:stapler_color ], Employee.attribute_writers
+end
+
+def test_attribute_list_on_instance
+  assert_equal [:stapler_color ], @fred.attribute_writers
+end
+To do this, make changes to the MyAttributes mixin. Also change the way it is used in @Employee@—rather than use extend MyAttributes, you’ll now include it. Have a go at this now. (Hint: you may need to use the included hook method to define the class methods).
+
+Here’s a step-by-step walkthrough:
+
+Inside my_attributes.rb, we need to distinguish methods that will become class methods from those that will become instance methods. The Ruby convention is to wrap the class methods inside an inner module called ClassMethods. We’ll then define the instance method my_attribute_writers.
+
+Hide Answer
+module MyAttributes
+  module ClassMethods
+    def attribute_writers
+      @attribute_writers ||= []
+    end
+
+    def add_attribute_writers(names)
+      attribute_writers.concat(names)
+    end
+
+    def my_attr_writer(*attributes)
+      add_attribute_writers(attributes)
+      attr_writer(*attributes)
+    end
+  end
+
+  def attribute_writers
+    self.class.attribute_writers
+  end
+end
+
+When we include MyAttributes into Employee, our attribute_writers method will become an instance method of the class. To make the methods in ClassMethods into class methods of Employee, we need to tell Employee to extend itself with that inner module. We can do that using the special hook method included. It you define this as a module method within MyAttributes, then Ruby will invoke it whenever some class includes the module, passing in the class doing the including. We can then extend that class:
+
+Hide Answer
+def self.included(host_class)
+  host_class.extend ClassMethods
+end
+
+So, by the time you finish, my_attributes.rb will look something like this:
+
+Hide Answer
+module MyAttributes
+  module ClassMethods
+    def attribute_writers
+      @attribute_writers ||= []
+    end
+
+    def add_attribute_writers(names)
+      attribute_writers.concat(names)
+    end
+
+    def my_attr_writer(*attributes)
+      add_attribute_writers(attributes)
+      attr_writer(*attributes)
+    end
+  end
+
+  def attribute_writers
+    self.class.attribute_writers
+  end
+
+  def self.included(host_class)
+    host_class.extend ClassMethods
+  end
+
+end
+
+and employee.rb will look like this:
+
+Hide Answer
+require 'date'
+require_relative 'my_attributes'
+
+class Employee
+
+  include MyAttributes
+
+  attr_reader :name, :start_date
+
+  my_attr_writer :stapler_color
+
+  def initialize(name, start_date)
+    @name = name
+    @start_date = start_date.kind_of?(Date) ? start_date : Date.parse(start_date)
+    @stapler_color = "white"
+  end
+
+  def to_s
+    "#{@name} joined #{@start_date} and has a #{@stapler_color} stapler"
+  end
+end
+

@@ -1,0 +1,128 @@
+Inheritance
+At the end of this exercise, you’ll know how to:
+
+use inheritance to specialize a class
+use super to invoke behavior in a parent class
+1. Basic Inheritance
+
+Let’s model employees and managers. An employee has a name and a start date. Let’s start by creating an Employee class which accepts these two values in its initialize method, storing them in attributes. To make it a little more interesting, we’ll use Ruby’s Date class. We’ll store the start date as a Date object, but we’ll accept either a date object or the string representation of a data in the constructor. That means we could say
+
+fred = Employee.new("Fred Smith", Date.today)
+betty = Employee.new("Betty Jones", "2010-12-25")
+You can convert a string to a Date using the method Date.parse(string). (And remember to put require "date" at the top of your file.)
+
+Start by creating a file employee.rb that lets these tests pass. (So you’ll need to write a to_s method, too.)
+
+require 'test/unit'
+require_relative 'employee'
+
+class TestEmployee < Test::Unit::TestCase
+
+  def setup
+    @june_first = Date.new(2011, 6, 1)
+    @fred = Employee.new("Fred Smith", @june_first)
+    @betty = Employee.new("Betty Jones", "2011-06-20")
+  end
+
+  def test_attributes
+    assert_equal "Fred Smith", @fred.name
+    assert_equal @june_first, @fred.start_date
+
+    assert_equal "Betty Jones", @betty.name
+    assert_equal Date.new(2011, 6, 20), @betty.start_date
+  end
+
+  def test_to_s
+    assert_equal "Fred Smith joined 2011-06-01", @fred.to_s
+    assert_equal "Betty Jones joined 2011-06-20", @betty.to_s
+  end
+end
+Hide Answer
+require 'date'
+
+class Employee
+  attr_reader :name, :start_date
+
+  def initialize(name, start_date)
+    @name = name
+    @start_date = start_date.kind_of?(Date) ? start_date : Date.parse(start_date)
+  end
+
+  def to_s
+    "#{@name} joined #{@start_date}"
+  end
+end
+
+Now let’s add in a Manager class. A manager is an employee, so we’ll use inheritance to model this. The only difference between a manager and an employee (for now) is that the to_s method for managers displays their name in upper case.
+
+Create the Manager class in a new file called manager.rb. Here are the tests:
+
+require 'test/unit'
+require_relative 'manager'
+
+class TestManager < Test::Unit::TestCase
+
+  def setup
+    @barney = Manager.new("Barney Patel", "2011-01-20")
+  end
+
+  def test_attributes
+    assert_equal "Barney Patel", @barney.name
+    assert_equal Date.new(2011, 1, 20), @barney.start_date
+  end
+
+  def test_to_s
+    assert_equal "BARNEY PATEL joined 2011-01-20", @barney.to_s
+  end
+end
+Hide Answer
+require_relative 'employee'
+
+class Manager < Employee
+
+  def to_s
+    "#{@name.upcase} joined #{@start_date}"
+  end
+end
+
+2. Using super
+
+In the previous example, we overrode the whole to_s method in the child class. Now let’s use super to invoke the behavior in a parent class from a method in the child. The personel department tell us that managers now get keys to one of the executive washrooms. Change the Manager class so we can pass in the name of the washroom as a third parameter to the initialize method. Here are the tests:
+
+require 'test/unit'
+require_relative 'manager'
+
+class TestManager < Test::Unit::TestCase
+
+  def setup
+    @barney = Manager.new("Barney Patel", "2011-01-20", "washroom 1")
+  end
+
+  def test_attributes
+    assert_equal "Barney Patel", @barney.name
+    assert_equal Date.new(2011, 1, 20), @barney.start_date
+    assert_equal "washroom 1", @barney.washroom
+  end
+
+  def test_to_s
+    assert_equal "BARNEY PATEL joined 2011-01-20 and can use washroom 1",
+                 @barney.to_s
+  end
+end
+Hide Answer
+require_relative 'employee'
+
+class Manager < Employee
+
+  attr_reader :washroom
+
+  def initialize(*parent_args, washroom)
+    super(*parent_args)
+    @washroom = washroom
+  end
+
+  def to_s
+    "#{@name.upcase} joined #{@start_date} and can use #{@washroom}"
+  end
+end
+

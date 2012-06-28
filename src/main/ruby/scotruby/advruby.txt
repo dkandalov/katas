@@ -22,3 +22,22 @@
 
 
  - java: design class, runtime objects; ruby: runtime classes, design objects
+
+
+ - type of an object is capabilities it provides; object class is only it's initial type
+    type: what an object can do
+    class: what generated the object
+
+ - mixins don't have to be shared; can start by grouping chunks of code in class
+ - mixing are "-able"s (Iterable, Enumerable, Indexable)
+
+ - Forwardable, SimpleDelegator
+
+ - the only principle of good design: "Can I change my code easily?" (e.g. DRY to make code easier to change, etc)
+ there is no point in good design unless you change something
+
+performance
+ - 1st step for improving is to measure performance
+    - require 'benchmark'
+    - require 'profiler'
+    - adding string in ruby is SLOW; add to array and join
