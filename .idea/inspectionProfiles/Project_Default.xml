@@ -34,5 +34,8 @@
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
       <option name="myAdditionalJavadocTags" value="" />
     </inspection_tool>
+    <inspection_tool class="RubyInstanceMethodNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_maxLength" value="50" />
+    </inspection_tool>
   </profile>
 </component>
