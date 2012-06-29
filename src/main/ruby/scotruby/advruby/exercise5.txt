@@ -5,15 +5,18 @@ share behavior through inheritance
 mix in common behavior using modules
 1. Mix In Class Methods
 
-In the “Object Model” exercises, you created custom my_attr_writer and attribute_writers class methods inside the class that used them. But what if you wanted to share those methods with other classes?
+In the “Object Model” exercises, you created custom my_attr_writer and attribute_writers class methods inside
+the class that used them. But what if you wanted to share those methods with other classes?
 
-Put your two my_* methods (along with any other things they might need) into a module and find a way of getting them to work in your Employee class, and generally in any other classes.
+Put your two my_* methods (along with any other things they might need) into a module and find a way of getting them
+to work in your Employee class, and generally in any other classes.
 
 Try it on your own first, then follow the steps below if you need help.
 
 Create a module called MyAttributes (or any name you choose) in a file my_attributes.rb.
 
-Copy your methods from SomeClass into this module. In SomeClass these were class methods (their names started self.). Change them into regular instance methods.
+Copy your methods from SomeClass into this module. In SomeClass these were class methods (their names started self.).
+Change them into regular instance methods.
 
 Hide Answer
 module MyAttributes

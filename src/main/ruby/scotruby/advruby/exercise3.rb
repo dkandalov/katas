@@ -1,7 +1,7 @@
 require 'test/unit'
 require_relative 'string-extensions'
 
-class TestSantize < Test::Unit::TestCase
+class TestSanitize < Test::Unit::TestCase
 
   def test_regular_characters
     ok_string = "qwertyuiop asdfghjkl zxcvbnm 1234567890"

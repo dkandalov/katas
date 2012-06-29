@@ -5,7 +5,10 @@ use inheritance to specialize a class
 use super to invoke behavior in a parent class
 1. Basic Inheritance
 
-Let’s model employees and managers. An employee has a name and a start date. Let’s start by creating an Employee class which accepts these two values in its initialize method, storing them in attributes. To make it a little more interesting, we’ll use Ruby’s Date class. We’ll store the start date as a Date object, but we’ll accept either a date object or the string representation of a data in the constructor. That means we could say
+Let’s model employees and managers. An employee has a name and a start date. Let’s start by creating an Employee class
+which accepts these two values in its initialize method, storing them in attributes. To make it a little more interesting,
+we’ll use Ruby’s Date class. We’ll store the start date as a Date object, but we’ll accept either a date object or the
+string representation of a data in the constructor. That means we could say
 
 fred = Employee.new("Fred Smith", Date.today)
 betty = Employee.new("Betty Jones", "2010-12-25")
@@ -53,7 +56,8 @@ class Employee
   end
 end
 
-Now let’s add in a Manager class. A manager is an employee, so we’ll use inheritance to model this. The only difference between a manager and an employee (for now) is that the to_s method for managers displays their name in upper case.
+Now let’s add in a Manager class. A manager is an employee, so we’ll use inheritance to model this. The only difference
+between a manager and an employee (for now) is that the to_s method for managers displays their name in upper case.
 
 Create the Manager class in a new file called manager.rb. Here are the tests:
 
@@ -87,7 +91,10 @@ end
 
 2. Using super
 
-In the previous example, we overrode the whole to_s method in the child class. Now let’s use super to invoke the behavior in a parent class from a method in the child. The personel department tell us that managers now get keys to one of the executive washrooms. Change the Manager class so we can pass in the name of the washroom as a third parameter to the initialize method. Here are the tests:
+In the previous example, we overrode the whole to_s method in the child class. Now let’s use super to invoke the behavior
+in a parent class from a method in the child. The personel department tell us that managers now get keys to one of
+the executive washrooms. Change the Manager class so we can pass in the name of the washroom as a third parameter to
+the initialize method. Here are the tests:
 
 require 'test/unit'
 require_relative 'manager'
