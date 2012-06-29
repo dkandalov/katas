@@ -1,9 +1,9 @@
 require "rake"
 require "rake/clean"
 
-IMAGE_FILES = FileList['images/*.png']
+IMAGE_FILES = FileList['images/**/*.png']
 p IMAGE_FILES
-THUMB_FILES = IMAGE_FILES.pathmap("thumbs/%n-thumb%x")
+THUMB_FILES = IMAGE_FILES.pathmap("%{^images,thumbs}d/%n-thumb%x")
 p THUMB_FILES
 
 CLEAN.include(THUMB_FILES, "thumbs")
@@ -16,7 +16,9 @@ CLOBBER.include("final.png")
 directory 'thumbs'
 
 THUMB_FILES.zip(IMAGE_FILES).each do |target, source|
-  file target => ['thumbs', source] do
+  containing_dir = target.pathmap("%d")
+  directory containing_dir
+  file target => [containing_dir, source] do
     #sh "convert -thumbnail 32x32 #{source} #{target}"
     sh "cp #{source} #{target}"
   end
