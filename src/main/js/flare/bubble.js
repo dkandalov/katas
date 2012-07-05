@@ -12,24 +12,24 @@ var vis = d3.select("#chart").append("svg")
     .attr("class", "bubble");
 
 d3.json("flare.json", function(json) {
-    var node = vis.selectAll("g.node")
+    var nodes = vis.selectAll("g.node")
         .data(bubble.nodes(classes(json))
         .filter(function(d) { return !d.children; }))
         .enter().append("g")
         .attr("class", "node")
         .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-    node.append("title")
-        .text(function(d) { return d.className + ": " + format(d.value); });
+    nodes.append("title")
+         .text(function(d) { return d.className + ": " + format(d.value); });
 
-    node.append("circle")
-        .attr("r", function(d) { return d.r; })
-        .style("fill", function(d) { return fill(d.packageName); });
+    nodes.append("circle")
+         .attr("r", function(d) { return d.r; })
+         .style("fill", function(d) { return fill(d.packageName); });
 
-    node.append("text")
-        .attr("text-anchor", "middle")
-        .attr("dy", ".3em")
-        .text(function(d) { return d.className.substring(0, d.r / 3); });
+    nodes.append("text")
+         .attr("text-anchor", "middle")
+         .attr("dy", ".3em")
+         .text(function(d) { return d.className.substring(0, d.r / 3); });
 });
 
 // Returns a flattened hierarchy containing all leaf nodes under the root.
