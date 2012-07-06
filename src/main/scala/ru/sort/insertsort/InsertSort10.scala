@@ -24,6 +24,14 @@ class InsertSort10 extends ShouldMatchers {
 	}
 
 	def sort(seq: Seq[Int]): Seq[Int] = {
-		Seq()
+		if (seq.isEmpty) return seq
+		else insert(seq.head, sort(seq.tail))
+	}
+	
+	private def insert(value: Int, seq: Seq[Int]): Seq[Int] = {
+		if (seq.isEmpty) Seq(value)
+		else if (value <= seq.head) value +: seq
+		else if (value > seq.head) seq.head +: insert(value, seq.tail)
+		else throw new IllegalStateException()
 	}
 }
