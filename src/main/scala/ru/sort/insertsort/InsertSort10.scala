@@ -12,21 +12,21 @@ import collection.mutable.ArrayBuffer
 class InsertSort10 extends SeqSortTest with ShouldMatchers {
 
 	def sort[T](seq: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
-		var array = ArrayBuffer(seq: _*)
-
+		val array = ArrayBuffer(seq: _*)
 		1.until(array.size).foreach{ i =>
-			0.to(i).reverse.foreach{ j =>
-				if (array(j) > array(i)) {
-					swap(array, i, j)
+			1.to(i).reverse.foreach{ j =>
+				if (array(j - 1) > array(j)) {
+					swap(array, j - 1, j)
 				}
 			}
 		}
-
 		array.toSeq
 	}
 
-	def swap[T](buffer: ArrayBuffer[T], i1: Int, i2: Int) {
-
+	private def swap[T](buffer: ArrayBuffer[T], i1: Int, i2: Int) {
+		val tmp = buffer(i1)
+		buffer(i1) = buffer(i2)
+		buffer(i2) = tmp
 	}
 
 	def sort_[T](seq: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
