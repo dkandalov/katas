@@ -5,14 +5,22 @@ var t = 1297110663, // start time (seconds since epoch)
 function next() {
     return {
         time: ++t,
-        value: v = ~~Math.max(10, Math.min(90, v + 10 * (Math.random() - 0.5)))
+        value: v = ~~Math.max(10, Math.min(90, v + 20 * (Math.random() - 0.5)))
     };
+}
+function redraw() {
+    chart.selectAll("rect")
+        .data(data)
+        .transition()
+        .duration(500)
+        .attr("y", function(d) { return h - y(d.value) - 0.5; })
+        .attr("height", function(d) { return y(d.value); })
 }
 setInterval(function() {
     data.shift();
     data.push(next());
     redraw();
-}, 1500);
+}, 500);
 
 var w = 20, h = 80;
 var x = d3.scale.linear()
@@ -34,7 +42,7 @@ chart.selectAll("rect")
         .attr("x", function(d, i) { return x(i) - 0.5;} )
         .attr("y", function(d) { return h - y(d.value);} )
         .attr("width", w)
-        .attr("height", function(d) { return y(d.value) - 0.5; });
+        .attr("height", function(d) { return y(d.value); });
 
 // line at the bottom
 chart.append("line")
