@@ -15,7 +15,13 @@ class MergeSort11 extends SeqSortTest with ShouldMatchers {
 		}
 
 		def merge(seq1: Seq[T], seq2: Seq[T]): Seq[T] = {
-			Seq()
+			if (seq1.isEmpty) return seq2
+			if (seq2.isEmpty) return seq1
+
+			if (seq1.head <= seq2.head)
+				seq1.head +: merge(seq1.tail, seq2)
+			else
+				seq2.head +: merge(seq1, seq2.tail)
 		}
 
 		if (seq.size < 2) return seq
