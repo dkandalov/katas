@@ -15,6 +15,7 @@ var y = d3.scale.ordinal()
     .domain(data)
     .rangeBands([0, 120]);
 
+// vertical lines
 chart.selectAll("line")
         .data(x.ticks(10))
     .enter().append("line")
@@ -24,6 +25,7 @@ chart.selectAll("line")
         .attr("y2", 120)
         .style("stroke", "#ccc");
 
+// bars
 chart.selectAll("rect")
         .data(data)
     .enter().append("rect")
@@ -32,6 +34,7 @@ chart.selectAll("rect")
         .attr("width", x)
         .attr("height", y.rangeBand());
 
+// text on bars
 chart.selectAll("text")
         .data(data)
     .enter().append("text")
@@ -42,6 +45,7 @@ chart.selectAll("text")
         .attr("text-anchor", "end")
         .text(String);
 
+// text at the top
 chart.selectAll(".rule")
     .data(x.ticks(10))
     .enter().append("text")
@@ -52,4 +56,4 @@ chart.selectAll(".rule")
     .attr("height", 20)
     .attr("dy", -3)
     .attr("text-anchor", "middle")
-    .text(String) ;
+    .text(String);

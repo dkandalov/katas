@@ -14,10 +14,10 @@
 
 .chart text {
     font: 10px sans-serif;
-    fill: red;
+    fill: white;
 }
 
-.chart rule {
+.chart .rule {
     font: 10px sans-serif;
     fill: black;
 }
