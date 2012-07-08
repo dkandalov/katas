@@ -9,18 +9,26 @@ function next() {
     };
 }
 function redraw() {
-    chart.selectAll("rect")
-        .data(data)
-        .transition()
-        .duration(500)
+    var rect = chart.selectAll("rect")
+        .data(data, function(d) { return d.time; });
+
+    rect.enter().insert("rect", "line")
+        .attr("x", function(d, i) { return x(i) - 0.5; })
         .attr("y", function(d) { return h - y(d.value) - 0.5; })
-        .attr("height", function(d) { return y(d.value); })
+        .attr("width", w)
+        .attr("height", function(d) { return y(d.value); });
+
+    rect.transition()
+        .duration(1000)
+        .attr("x", function(d, i) { return x(i) - 0.5; });
+
+    rect.exit().remove();
 }
 setInterval(function() {
     data.shift();
     data.push(next());
     redraw();
-}, 500);
+}, 1000);
 
 var w = 20, h = 80;
 var x = d3.scale.linear()
