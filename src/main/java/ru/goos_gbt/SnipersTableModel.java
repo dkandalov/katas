@@ -1,6 +1,8 @@
 package ru.goos_gbt;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: dima
@@ -8,7 +10,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SnipersTableModel extends AbstractTableModel implements SniperListener {
 
-    private static final SniperSnapshot STARTING_UP = new SniperSnapshot("", 0, 0, SniperState.JOINING);
     private static final String[] STATUS_TEXT = {
             "Joining",
             "Bidding",
@@ -16,7 +17,7 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
             "Lost",
             "Won"
     };
-    
+
     public enum Column {
         ITEM_IDENTIFIER("Item") {
             @Override public Object valueIn(SniperSnapshot snapshot) {
@@ -52,10 +53,15 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
         public abstract Object valueIn(SniperSnapshot snapshot);
     }
 
-    private SniperSnapshot snapshot = STARTING_UP;
+    private final List<SniperSnapshot> snapshots = new ArrayList<>();
+
+    public void addSniper(SniperSnapshot sniperSnapshot) {
+        snapshots.add(sniperSnapshot);
+        fireTableRowsInserted(snapshots.size() - 1, snapshots.size() - 1);
+    }
 
     @Override public int getRowCount() {
-        return 1;
+        return snapshots.size();
     }
 
     @Override public int getColumnCount() {
@@ -63,7 +69,7 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
     }
 
     @Override public Object getValueAt(int rowIndex, int columnIndex) {
-        return Column.at(columnIndex).valueIn(snapshot);
+        return Column.at(columnIndex).valueIn(snapshots.get(rowIndex));
     }
 
     @Override public String getColumnName(int columnIndex) {
@@ -71,8 +77,28 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
     }
 
     @Override public void sniperStateChanged(SniperSnapshot newSnapshot) {
-        this.snapshot = newSnapshot;
-        fireTableRowsUpdated(0, 0);
+        int row = rowMatching(newSnapshot);
+        snapshots.set(row, newSnapshot);
+        fireTableRowsUpdated(row, row);
+
+//        for (int i = 0; i < snapshots.size(); i++) {
+//            SniperSnapshot snapshot = snapshots.get(i);
+//            if (newSnapshot.itemId.equals(snapshot.itemId)) {
+//                snapshots.set(i, newSnapshot);
+//                fireTableRowsUpdated(i, i);
+//                return;
+//            }
+//        }
+//        throw new Defect("SniperSnapshot with itemId = " + newSnapshot.itemId + " doesn't exist");
+    }
+
+    private int rowMatching(SniperSnapshot snapshot) {
+        for (int i = 0; i < snapshots.size(); i++) {
+            if (snapshot.isForSameItemAs(snapshots.get(i))) {
+                return i;
+            }
+        }
+        throw new Defect("Cannot find match for " + snapshot);
     }
 
     private static String textFor(SniperState state) {

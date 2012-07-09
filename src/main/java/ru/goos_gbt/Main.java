@@ -7,6 +7,8 @@ import org.jivesoftware.smack.XMPPException;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: dima
@@ -27,24 +29,29 @@ public class Main {
 
     private MainWindow ui;
     private final SnipersTableModel snipersTableModel = new SnipersTableModel();
-    @SuppressWarnings({"FieldCanBeLocal", "UnusedDeclaration"})
-    private Chat notToBeGCd;
+
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private final Collection<Chat> notToBeGCd = new ArrayList<>();
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
         XMPPConnection connection = connectTo(args[ARG_HOSTNAME], args[ARG_USERNAME], args[ARG_PASSWORD]);
-        main.joinAuction(connection, args[ARG_ITEM_ID]);
+        main.disconnectWhenUICloses(connection);
+
+        for (int i = ARG_ITEM_ID; i < args.length; i++) {
+            main.joinAuction(connection, args[i]);
+        }
     }
 
     public Main() throws Exception {
         startUserInterface();
     }
 
-    private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
-        disconnectWhenUICloses(connection);
+    private void joinAuction(XMPPConnection connection, String itemId) throws Exception {
+        safelyAddItemToModel(itemId);
 
         Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), null);
-        notToBeGCd = chat;
+        notToBeGCd.add(chat);
 
         Auction auction = new XMPPAuction(chat);
 
@@ -53,6 +60,14 @@ public class Main {
                 new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipersTableModel))
         ));
         auction.join();
+    }
+
+    private void safelyAddItemToModel(final String itemId) throws Exception {
+        SwingUtilities.invokeAndWait(new Runnable() {
+            @Override public void run() {
+                snipersTableModel.addSniper(SniperSnapshot.joining(itemId));
+            }
+        });
     }
 
     private void disconnectWhenUICloses(final XMPPConnection connection) {
