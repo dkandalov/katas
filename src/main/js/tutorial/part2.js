@@ -13,16 +13,22 @@ function redraw() {
         .data(data, function(d) { return d.time; });
 
     rect.enter().insert("rect", "line")
-        .attr("x", function(d, i) { return x(i) - 0.5; })
+        .attr("x", function(d, i) { return x(i + 1) - 0.5; })
         .attr("y", function(d) { return h - y(d.value) - 0.5; })
         .attr("width", w)
-        .attr("height", function(d) { return y(d.value); });
+        .attr("height", function(d) { return y(d.value); })
+    .transition()
+        .duration(1000)
+        .attr("x", function(d, i) { return x(i) - 0.5; });
 
     rect.transition()
         .duration(1000)
         .attr("x", function(d, i) { return x(i) - 0.5; });
 
-    rect.exit().remove();
+    rect.exit().transition()
+        .duration(1000)
+        .attr("x", function(d, i) { return x(i - 1) - 0.5; })
+        .remove();
 }
 setInterval(function() {
     data.shift();
@@ -45,10 +51,10 @@ var chart = d3.select("body").append("svg")
 
 // bars
 chart.selectAll("rect")
-        .data(data)
+        .data(data, function(d) { return d.time; })
     .enter().append("rect")
         .attr("x", function(d, i) { return x(i) - 0.5;} )
-        .attr("y", function(d) { return h - y(d.value);} )
+        .attr("y", function(d) { return h - y(d.value) - 0.5;} )
         .attr("width", w)
         .attr("height", function(d) { return y(d.value); });
 
