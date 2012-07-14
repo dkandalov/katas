@@ -10,14 +10,19 @@ import org.junit.Test
 
 class EightQueen4 extends ShouldMatchers {
 	type Position = (Int, Int)
+	type Solution = Seq[Position]
 
 	@Test def shouldFindSolutionForBoardOfSize_4() {
 		val solution = solveForBoardOfSize(4)
-		println(asPrintableBoard(solution, 4))
+		println(asPrintableSolution(solution, 4))
 	}
 
-	def solveForBoardOfSize(size: Int): Seq[Position] = {
+	def solveForBoardOfSize(size: Int): Seq[Solution] = {
 		Seq()
+	}
+
+	def asPrintableSolution(solutions: Seq[Solution], boardSize: Int): String = {
+		""
 	}
 
 	def asPrintableBoard(seq: Seq[Position], boardSize: Int): String = {
