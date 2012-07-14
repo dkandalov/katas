@@ -1,11 +1,12 @@
 var t = 1297110663, // start time (seconds since epoch)
-    v = 70,
+    v = 10,
     data = d3.range(33).map(next);
 
 function next() {
     return {
         time: ++t,
-        value: v = ~~Math.max(10, Math.min(90, v + 20 * (Math.random() - 0.5)))
+//        value: v = ~~Math.max(10, Math.min(90, v + 20 * (Math.random() - 0.5)))
+        value: v = v + 1
     };
 }
 function redraw() {
@@ -34,7 +35,7 @@ setInterval(function() {
     data.shift();
     data.push(next());
     redraw();
-}, 1000);
+}, 1100);
 
 var w = 20, h = 80;
 var x = d3.scale.linear()
