@@ -24,11 +24,11 @@ class EightQueen4 extends ShouldMatchers {
 			var result = Seq[Solution]()
 			Range(0, boardSize).foreach { row =>
 				Range(0, boardSize).foreach { col =>
-					if (row < from._1 || (row == from._1 && col < from._2)) return result
-
-					val queen = (row, col)
-					if (isCorrectMove(solution, queen))
-						result = result ++ solve(queen, solution :+ queen)
+					if (row > from._1 || (row == from._1 && col >= from._2)) {
+						val queen = (row, col)
+						if (isCorrectMove(solution, queen))
+							result = result ++ solve(queen, solution :+ queen)
+					}
 				}
 			}
 			result
