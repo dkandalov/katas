@@ -18,7 +18,10 @@ class EightQueen4 extends ShouldMatchers {
 	}
 
 	def solveForBoardOfSize(size: Int): Seq[Solution] = {
-		Seq(Seq())
+		def solve(solution: Solution): Seq[Solution] = {
+			Seq()
+		}
+		solve(Seq())
 	}
 
 	def asPrintableSolution(solutions: Seq[Solution], boardSize: Int): String = {
