@@ -19,9 +19,20 @@ class EightQueen4 extends ShouldMatchers {
 
 	def solveForBoardOfSize(size: Int): Seq[Solution] = {
 		def solve(solution: Solution): Seq[Solution] = {
+			Range(0, size).foreach { row =>
+				Range(0, size).foreach { col =>
+					val move = (row, col)
+					if (correctMove(solution, move))
+						solve(solution :+ move)
+				}
+			}
 			Seq()
 		}
 		solve(Seq())
+	}
+
+	def correctMove(solution: Solution, tuple: Position): Boolean = {
+		false
 	}
 
 	def asPrintableSolution(solutions: Seq[Solution], boardSize: Int): String = {
