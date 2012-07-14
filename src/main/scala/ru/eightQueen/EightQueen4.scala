@@ -38,8 +38,8 @@ class EightQueen4 extends ShouldMatchers {
 		false
 	}
 
-	def correctMove_(solution: Solution, queen: Queen): Boolean = {
-//		if (solution.forall { thisQueen => })
+	def correctMove_(solution: Solution, newQueen: Queen): Boolean = {
+		if (!solution.forall { queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 }) return false
 		false
 	}
 
