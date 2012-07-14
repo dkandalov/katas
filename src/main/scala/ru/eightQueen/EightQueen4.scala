@@ -17,8 +17,11 @@ class EightQueen4 extends ShouldMatchers {
 	}
 
 	def asPrintableBoard(seq: Seq[Position], boardSize: Int): String = {
-		val board = Seq.fill(boardSize) { Seq.fill(boardSize) }
-		""
+		Range(0, boardSize).map { row =>
+			Range(0, boardSize).map { col =>
+				if (seq.contains((row, col))) "0" else "X"
+			}
+		}.mkString("\n")
 	}
 
 	def solveForBoardWithSize(size: Int): Seq[Position] = {
