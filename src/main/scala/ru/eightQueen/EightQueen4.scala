@@ -9,8 +9,7 @@ import org.junit.Test
  */
 
 class EightQueen4 extends ShouldMatchers {
-	type Queen = (Int, Int)
-	def aQueen(row: Int, col: Int) = (row, col)
+	case class Queen(row: Int, col: Int)
 
 	type Solution = Seq[Queen]
 
@@ -34,7 +33,6 @@ Vector(X, Q, X, X)
 	@Test def shouldFindSolutionsForBoardOfSize_8() {
 		val solutions = solveForBoardOfSize(8)
 		solutions.size should equal(92)
-
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
@@ -44,8 +42,8 @@ Vector(X, Q, X, X)
 			var result = Seq[Solution]()
 			Range(0, boardSize).foreach { row =>
 				Range(0, boardSize).foreach { col =>
-					if (row > from._1 || (row == from._1 && col >= from._2)) {
-						val queen = aQueen(row, col)
+					if (row > from.row || (row == from.row && col >= from.col)) {
+						val queen = Queen(row, col)
 						if (isCorrectMove(solution, queen))
 							result = result ++ solve(queen, solution :+ queen)
 					}
@@ -53,21 +51,21 @@ Vector(X, Q, X, X)
 			}
 			result
 		}
-		solve(aQueen(0, 0), Seq())
+		solve(Queen(0, 0), Seq())
 	}
 
 	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
-		isCorrectMove(Seq(aQueen(row, col)), aQueen(row + 2, col - 2)) should be(false) // top-right
-		isCorrectMove(Seq(aQueen(row, col)), aQueen(row - 2, col - 2)) should be(false) // top-left
-		isCorrectMove(Seq(aQueen(row, col)), aQueen(row - 2, col + 2)) should be(false) // bottom-left
-		isCorrectMove(Seq(aQueen(row, col)), aQueen(row + 2, col + 2)) should be(false) // bottom-right
+		isCorrectMove(Seq(Queen(row, col)), Queen(row + 2, col - 2)) should be(false) // top-right
+		isCorrectMove(Seq(Queen(row, col)), Queen(row - 2, col - 2)) should be(false) // top-left
+		isCorrectMove(Seq(Queen(row, col)), Queen(row - 2, col + 2)) should be(false) // bottom-left
+		isCorrectMove(Seq(Queen(row, col)), Queen(row + 2, col + 2)) should be(false) // bottom-right
 	}
 
 	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
-		def notOnTheSameRowOrColumn = solution.forall { queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 }
-		def notOnTheSameDiagonal = solution.forall{ queen => (queen._1 - newQueen._1).abs != (queen._2 - newQueen._2).abs }
+		def notOnTheSameRowOrColumn = solution.forall { queen => queen.row != newQueen.row && queen.col != newQueen.col }
+		def notOnTheSameDiagonal = solution.forall{ queen => (queen.row - newQueen.row).abs != (queen.col - newQueen.col).abs }
 		notOnTheSameRowOrColumn && notOnTheSameDiagonal
 	}
 
@@ -78,7 +76,7 @@ Vector(X, Q, X, X)
 	def asPrintableBoard(solution: Seq[Queen], boardSize: Int): String = {
 		Range(0, boardSize).map { row =>
 			Range(0, boardSize).map { col =>
-				if (solution.contains((row, col))) "Q" else "X"
+				if (solution.contains(Queen(row, col))) "Q" else "X"
 			}
 		}.mkString("\n")
 	}
