@@ -13,7 +13,7 @@ class EightQueen4 extends ShouldMatchers {
 		def isBefore(queen: Queen) = queen.row > row || (queen.row == row && queen.col >= col)
 		def notOnTheSameRowOrColumnAs(queen: Queen) = queen.row != row && queen.col != col
 		def notOnTheSameDiagonalAs(queen: Queen) = (queen.row - row).abs != (queen.col - col).abs
-}
+	}
 
 	type Solution = Seq[Queen]
 
@@ -59,10 +59,10 @@ Vector(X, Q, X, X)
 	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
-		isCorrectMove(Seq(Queen(row, col)), Queen(row + 2, col - 2)) should be(false) // top-right
-		isCorrectMove(Seq(Queen(row, col)), Queen(row - 2, col - 2)) should be(false) // top-left
-		isCorrectMove(Seq(Queen(row, col)), Queen(row - 2, col + 2)) should be(false) // bottom-left
-		isCorrectMove(Seq(Queen(row, col)), Queen(row + 2, col + 2)) should be(false) // bottom-right
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col - 2)) should be(false) // top-right
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col - 2)) should be(false) // top-left
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col + 2)) should be(false) // bottom-left
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col + 2)) should be(false) // bottom-right
 	}
 
 	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
