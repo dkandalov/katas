@@ -9,8 +9,8 @@ import org.junit.Test
  */
 
 class EightQueen4 extends ShouldMatchers {
-	type Position = (Int, Int)
-	type Solution = Seq[Position]
+	type Queen = (Int, Int)
+	type Solution = Seq[Queen]
 
 	@Test def shouldFindSolutionForBoardOfSize_4() {
 		val solution = solveForBoardOfSize(4)
@@ -24,9 +24,9 @@ class EightQueen4 extends ShouldMatchers {
 			var result = Seq[Solution]()
 			Range(0, size).foreach { row =>
 				Range(0, size).foreach { col =>
-					val move = (row, col)
-					if (correctMove(solution, move))
-						result = result ++ solve(solution :+ move)
+					val queen = (row, col)
+					if (correctMove(solution, queen))
+						result = result ++ solve(solution :+ queen)
 				}
 			}
 			result
@@ -34,11 +34,12 @@ class EightQueen4 extends ShouldMatchers {
 		solve(Seq())
 	}
 
-	def correctMove(solution: Solution, position: Position): Boolean = {
+	def correctMove(solution: Solution, queen: Queen): Boolean = {
 		false
 	}
 
-	def correctMove_(solution: Solution, position: Position): Boolean = {
+	def correctMove_(solution: Solution, queen: Queen): Boolean = {
+//		if (solution.forall { thisQueen => })
 		false
 	}
 
@@ -46,10 +47,10 @@ class EightQueen4 extends ShouldMatchers {
 		solutions.foldLeft("") { (result, solution) => result + asPrintableBoard(solution, boardSize) + "\n\n" }
 	}
 
-	def asPrintableBoard(solution: Seq[Position], boardSize: Int): String = {
+	def asPrintableBoard(solution: Seq[Queen], boardSize: Int): String = {
 		Range(0, boardSize).map { row =>
 			Range(0, boardSize).map { col =>
-				if (solution.contains((row, col))) "0" else "X"
+				if (solution.contains((row, col))) "Q" else "X"
 			}
 		}.mkString("\n")
 	}
