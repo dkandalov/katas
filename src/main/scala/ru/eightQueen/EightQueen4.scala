@@ -43,8 +43,7 @@ Vector(X, Q, X, X)
 		def solve(fromQueen: Queen, solution: Solution): Seq[Solution] = {
 			if (solution.size == boardSize) return Seq(solution)
 
-			var result = Seq[Solution]()
-			for (row <- 0 until boardSize) {
+			val r = for (row <- 0 until boardSize) yield {
 				val r = for (col <- 0 until boardSize) yield {
 					val queen = Queen(row, col)
 					if (fromQueen.isBefore(queen) && isValidMove(solution, queen))
@@ -52,9 +51,9 @@ Vector(X, Q, X, X)
 					else
 						Seq[Solution]()
 				}
-				result = result ++ r.flatten
+				r.flatten
 			}
-			result
+			r.flatten
 		}
 		solve(Queen(0, 0), Seq())
 	}
