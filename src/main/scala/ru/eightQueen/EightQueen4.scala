@@ -66,9 +66,7 @@ Vector(X, Q, X, X)
 	}
 
 	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
-		def notOnTheSameRowOrColumn = solution.forall { queen => queen.row != newQueen.row && queen.col != newQueen.col }
-		def notOnTheSameDiagonal = solution.forall{ queen => (queen.row - newQueen.row).abs != (queen.col - newQueen.col).abs }
-		notOnTheSameRowOrColumn && notOnTheSameDiagonal
+		solution.forall(_.notOnTheSameRowOrColumnAs(newQueen)) && solution.forall(_.notOnTheSameDiagonalAs(newQueen))
 	}
 
 	def asPrintableSolution(solutions: Seq[Solution], boardSize: Int): String = {
