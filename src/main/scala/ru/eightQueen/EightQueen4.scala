@@ -17,13 +17,13 @@ class EightQueen4 extends ShouldMatchers {
 		println(asPrintableSolution(solution, 4))
 	}
 
-	def solveForBoardOfSize(size: Int): Seq[Solution] = {
+	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
 		def solve(fromRow: Int, fromCol: Int, solution: Solution): Seq[Solution] = {
 			if (solution.size == size) return Seq(solution)
 
 			var result = Seq[Solution]()
-			Range(0, size).foreach { row =>
-				Range(0, size).foreach { col =>
+			Range(fromRow, boardSize).foreach { row =>
+				Range(fromCol, boardSize).foreach { col =>
 					val queen = (row, col)
 					if (isCorrectMove(solution, queen))
 						result = result ++ solve(row, col, solution :+ queen)
