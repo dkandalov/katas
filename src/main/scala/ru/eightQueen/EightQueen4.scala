@@ -34,9 +34,7 @@ class EightQueen4 extends ShouldMatchers {
 		solve(Seq())
 	}
 
-	@Test def correctMove() {
-		correctMove(Seq(), (0, 0)) should be(true)
-
+	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
 		correctMove(Seq((row, col)), (row + 2, col - 2)) should be(false) // top-right
