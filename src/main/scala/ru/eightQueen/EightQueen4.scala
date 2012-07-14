@@ -10,6 +10,8 @@ import org.junit.Test
 
 class EightQueen4 extends ShouldMatchers {
 	type Queen = (Int, Int)
+	def aQueen(row: Int, col: Int) = (row, col)
+
 	type Solution = Seq[Queen]
 
 	@Test def shouldFindSolutionsForBoardOfSize_4() {
@@ -43,7 +45,7 @@ Vector(X, Q, X, X)
 			Range(0, boardSize).foreach { row =>
 				Range(0, boardSize).foreach { col =>
 					if (row > from._1 || (row == from._1 && col >= from._2)) {
-						val queen = (row, col)
+						val queen = aQueen(row, col)
 						if (isCorrectMove(solution, queen))
 							result = result ++ solve(queen, solution :+ queen)
 					}
@@ -51,16 +53,16 @@ Vector(X, Q, X, X)
 			}
 			result
 		}
-		solve((0, 0), Seq())
+		solve(aQueen(0, 0), Seq())
 	}
 
 	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
-		isCorrectMove(Seq((row, col)), (row + 2, col - 2)) should be(false) // top-right
-		isCorrectMove(Seq((row, col)), (row - 2, col - 2)) should be(false) // top-left
-		isCorrectMove(Seq((row, col)), (row - 2, col + 2)) should be(false) // bottom-left
-		isCorrectMove(Seq((row, col)), (row + 2, col + 2)) should be(false) // bottom-right
+		isCorrectMove(Seq(aQueen(row, col)), aQueen(row + 2, col - 2)) should be(false) // top-right
+		isCorrectMove(Seq(aQueen(row, col)), aQueen(row - 2, col - 2)) should be(false) // top-left
+		isCorrectMove(Seq(aQueen(row, col)), aQueen(row - 2, col + 2)) should be(false) // bottom-left
+		isCorrectMove(Seq(aQueen(row, col)), aQueen(row + 2, col + 2)) should be(false) // bottom-right
 	}
 
 	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
