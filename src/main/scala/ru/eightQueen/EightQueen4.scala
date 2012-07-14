@@ -13,10 +13,11 @@ class EightQueen4 extends ShouldMatchers {
 
 	@Test def shouldFindSolutionForBoardOfSize_4() {
 		val solution = solveForBoardWithSize(4)
-		println(asPrintableBoard(solution))
+		println(asPrintableBoard(solution, 4))
 	}
 
-	def asPrintableBoard(seq: Seq[Position]): String = {
+	def asPrintableBoard(seq: Seq[Position], boardSize: Int): String = {
+		val board = Seq.fill(boardSize) { Seq.fill(boardSize) }
 		""
 	}
 
