@@ -25,7 +25,7 @@ class EightQueen4 extends ShouldMatchers {
 			Range(0, size).foreach { row =>
 				Range(0, size).foreach { col =>
 					val queen = (row, col)
-					if (correctMove(solution, queen))
+					if (isCorrectMove(solution, queen))
 						result = result ++ solve(solution :+ queen)
 				}
 			}
@@ -37,15 +37,15 @@ class EightQueen4 extends ShouldMatchers {
 	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
-		correctMove(Seq((row, col)), (row + 2, col - 2)) should be(false) // top-right
-		correctMove(Seq((row, col)), (row - 2, col - 2)) should be(false) // top-left
-		correctMove(Seq((row, col)), (row - 2, col + 2)) should be(false) // bottom-left
-		correctMove(Seq((row, col)), (row + 2, col + 2)) should be(false) // bottom-right
+		isCorrectMove(Seq((row, col)), (row + 2, col - 2)) should be(false) // top-right
+		isCorrectMove(Seq((row, col)), (row - 2, col - 2)) should be(false) // top-left
+		isCorrectMove(Seq((row, col)), (row - 2, col + 2)) should be(false) // bottom-left
+		isCorrectMove(Seq((row, col)), (row + 2, col + 2)) should be(false) // bottom-right
 	}
 
-	def correctMove(solution: Solution, newQueen: Queen): Boolean = {
+	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
 		def notOnTheSameRowOrColumn = solution.forall { queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 }
-		def notOnTheSameDiagonal = solution.forall{ queen => (queen._1 - queen._2).abs != (newQueen._1 - newQueen._2).abs }
+		def notOnTheSameDiagonal = solution.forall{ queen => (queen._1 - newQueen._1).abs != (queen._2 - newQueen._2).abs }
 		notOnTheSameRowOrColumn && notOnTheSameDiagonal
 	}
 
