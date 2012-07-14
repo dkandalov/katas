@@ -37,9 +37,12 @@ class EightQueen4 extends ShouldMatchers {
 	@Test def correctMove() {
 		correctMove(Seq(), (0, 0)) should be(true)
 
-		correctMove(Seq((7, 5)), (9, 3)) should be(false) // top-right
-		correctMove(Seq((7, 5)), (5, 3)) should be(false) // top-left
-//		correctMove(Seq((7, 5)), (5, 7)) should be(false) // bottom-left
+		val row = 7
+		val col = 5
+		correctMove(Seq((row, col)), (row + 2, col - 2)) should be(false) // top-right
+		correctMove(Seq((row, col)), (row - 2, col - 2)) should be(false) // top-left
+		correctMove(Seq((row, col)), (row - 2, col + 2)) should be(false) // bottom-left
+		correctMove(Seq((row, col)), (row + 2, col + 2)) should be(false) // bottom-right
 	}
 
 	def correctMove(solution: Solution, newQueen: Queen): Boolean = {
