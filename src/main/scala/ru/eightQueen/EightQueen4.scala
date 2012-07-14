@@ -40,13 +40,11 @@ Vector(X, Q, X, X)
 			if (solution.size == boardSize) return Seq(solution)
 
 			var result = Seq[Solution]()
-			Range(0, boardSize).foreach { row =>
-				Range(0, boardSize).foreach { col =>
-					if (row > from.row || (row == from.row && col >= from.col)) {
-						val queen = Queen(row, col)
-						if (isCorrectMove(solution, queen))
-							result = result ++ solve(queen, solution :+ queen)
-					}
+			for (row <- 0 until boardSize; col <- 0 until boardSize) {
+				if (row > from.row || (row == from.row && col >= from.col)) {
+					val queen = Queen(row, col)
+					if (isCorrectMove(solution, queen))
+						result = result ++ solve(queen, solution :+ queen)
 				}
 			}
 			result
