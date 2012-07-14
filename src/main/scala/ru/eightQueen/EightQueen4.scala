@@ -39,7 +39,9 @@ class EightQueen4 extends ShouldMatchers {
 	}
 
 	def correctMove_(solution: Solution, newQueen: Queen): Boolean = {
-		if (!solution.forall { queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 }) return false
+		def onTheSameRowOrColumn = !solution.forall { queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 }
+		def onTheSameDiagonal = true
+		if (onTheSameRowOrColumn || onTheSameRowOrColumn) return false
 		false
 	}
 
