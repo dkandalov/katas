@@ -40,16 +40,14 @@ Vector(X, Q, X, X)
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
-		def solve(from: Queen, solution: Solution): Seq[Solution] = {
+		def solve(fromQueen: Queen, solution: Solution): Seq[Solution] = {
 			if (solution.size == boardSize) return Seq(solution)
 
 			var result = Seq[Solution]()
 			for (row <- 0 until boardSize; col <- 0 until boardSize) {
 				val queen = Queen(row, col)
-				if (from.isBefore(queen)) {
-					if (isCorrectMove(solution, queen))
+				if (fromQueen.isBefore(queen) && isValidMove(solution, queen))
 						result = result ++ solve(queen, solution :+ queen)
-				}
 			}
 			result
 		}
@@ -65,7 +63,7 @@ Vector(X, Q, X, X)
 		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col + 2)) should be(false) // bottom-right
 	}
 
-	def isCorrectMove(solution: Solution, newQueen: Queen): Boolean = {
+	def isValidMove(solution: Solution, newQueen: Queen): Boolean = {
 		solution.forall(_.notOnTheSameRowOrColumnAs(newQueen)) && solution.forall(_.notOnTheSameDiagonalAs(newQueen))
 	}
 
