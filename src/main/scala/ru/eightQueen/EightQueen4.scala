@@ -12,8 +12,12 @@ class EightQueen4 extends ShouldMatchers {
 	type Position = (Int, Int)
 
 	@Test def shouldFindSolutionForBoardOfSize_4() {
-		val solution = solveForBoardWithSize(4)
+		val solution = solveForBoardOfSize(4)
 		println(asPrintableBoard(solution, 4))
+	}
+
+	def solveForBoardOfSize(size: Int): Seq[Position] = {
+		Seq()
 	}
 
 	def asPrintableBoard(seq: Seq[Position], boardSize: Int): String = {
@@ -22,9 +26,5 @@ class EightQueen4 extends ShouldMatchers {
 				if (seq.contains((row, col))) "0" else "X"
 			}
 		}.mkString("\n")
-	}
-
-	def solveForBoardWithSize(size: Int): Seq[Position] = {
-		Seq()
 	}
 }
