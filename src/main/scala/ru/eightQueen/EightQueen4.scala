@@ -10,7 +10,7 @@ import org.junit.Test
 
 class EightQueen4 extends ShouldMatchers {
 	case class Queen(row: Int, col: Int) {
-		def isBefore(thatQueen: Queen) = false
+		def isBefore(queen: Queen) = queen.row > row || (queen.row == row && queen.col >= col)
 	}
 
 	type Solution = Seq[Queen]
@@ -44,7 +44,7 @@ Vector(X, Q, X, X)
 			var result = Seq[Solution]()
 			for (row <- 0 until boardSize; col <- 0 until boardSize) {
 				val queen = Queen(row, col)
-				if (row > from.row || (row == from.row && col >= from.col)) {
+				if (from.isBefore(queen)) {
 					if (isCorrectMove(solution, queen))
 						result = result ++ solve(queen, solution :+ queen)
 				}
