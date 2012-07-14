@@ -14,7 +14,17 @@ class EightQueen4 extends ShouldMatchers {
 
 	@Test def shouldFindSolutionForBoardOfSize_4() {
 		val solution = solveForBoardOfSize(4)
-		println(asPrintableSolution(solution, 4))
+		asPrintableSolution(solution, 4) should equal(
+			"""Vector(X, Q, X, X)
+Vector(X, X, X, Q)
+Vector(Q, X, X, X)
+Vector(X, X, Q, X)
+
+Vector(X, X, Q, X)
+Vector(Q, X, X, X)
+Vector(X, X, X, Q)
+Vector(X, Q, X, X)"""
+		)
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
