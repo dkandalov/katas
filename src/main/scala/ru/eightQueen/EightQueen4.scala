@@ -18,17 +18,17 @@ class EightQueen4 extends ShouldMatchers {
 	}
 
 	def solveForBoardOfSize(size: Int): Seq[Solution] = {
-		Seq()
+		Seq(Seq())
 	}
 
 	def asPrintableSolution(solutions: Seq[Solution], boardSize: Int): String = {
-		""
+		solutions.foldLeft("") { (result, solution) => result + asPrintableBoard(solution, boardSize) + "\n\n" }
 	}
 
-	def asPrintableBoard(seq: Seq[Position], boardSize: Int): String = {
+	def asPrintableBoard(solution: Seq[Position], boardSize: Int): String = {
 		Range(0, boardSize).map { row =>
 			Range(0, boardSize).map { col =>
-				if (seq.contains((row, col))) "0" else "X"
+				if (solution.contains((row, col))) "0" else "X"
 			}
 		}.mkString("\n")
 	}
