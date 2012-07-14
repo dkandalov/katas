@@ -12,7 +12,7 @@ class EightQueen4 extends ShouldMatchers {
 	type Queen = (Int, Int)
 	type Solution = Seq[Queen]
 
-	@Test def shouldFindSolutionForBoardOfSize_4() {
+	@Test def shouldFindSolutionsForBoardOfSize_4() {
 		val solution = solveForBoardOfSize(4)
 		asPrintableSolution(solution, 4) should equal(
 			"""Vector(X, Q, X, X)
@@ -23,8 +23,16 @@ Vector(X, X, Q, X)
 Vector(X, X, Q, X)
 Vector(Q, X, X, X)
 Vector(X, X, X, Q)
-Vector(X, Q, X, X)"""
+Vector(X, Q, X, X)
+
+"""
 		)
+	}
+
+	@Test def shouldFindSolutionsForBoardOfSize_8() {
+		val solutions = solveForBoardOfSize(8)
+		solutions.size should equal(92)
+
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
