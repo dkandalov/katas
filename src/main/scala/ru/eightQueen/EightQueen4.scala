@@ -48,14 +48,14 @@ Vector(X, Q, X, X)
 				if (fromQueen.isBefore(queen) && isValidMove(solution, queen))
 					solve(queen, solution :+ queen)
 				else
-					Seq[Solution]()
+					Seq()
 			}
 			result.flatten
 		}
 		solve(Queen(0, 0), Seq())
 	}
 
-	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
+	@Test def shouldDetermineIfQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
 		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col - 2)) should be(false) // top-right
