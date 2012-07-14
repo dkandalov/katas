@@ -18,22 +18,22 @@ class EightQueen4 extends ShouldMatchers {
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
-		def solve(fromRow: Int, fromCol: Int, solution: Solution): Seq[Solution] = {
+		def solve(from: Queen, solution: Solution): Seq[Solution] = {
 			if (solution.size == boardSize) return Seq(solution)
 
 			var result = Seq[Solution]()
 			Range(0, boardSize).foreach { row =>
 				Range(0, boardSize).foreach { col =>
-					if (row < fromCol || (row == fromCol && col < fromCol)) return result
+					if (row < from._1 || (row == from._1 && col < from._2)) return result
 
 					val queen = (row, col)
 					if (isCorrectMove(solution, queen))
-						result = result ++ solve(row, col, solution :+ queen)
+						result = result ++ solve(queen, solution :+ queen)
 				}
 			}
 			result
 		}
-		solve(0, 0, Seq())
+		solve((0, 0), Seq())
 	}
 
 	@Test def shouldDetermineIsQueensAreOnTheSameDiagonal() {
