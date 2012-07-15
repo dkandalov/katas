@@ -9,16 +9,15 @@ import org.junit.Test
 class EightQueen5 {
   @Test void shouldFindSolutionsForBoardOfSize_4() {
     def solutions = solveForBoardOfSize(4)
-    assert solutions.size == 2
-    solutions.each {
-      println(asPrintableBoard(it) + "\n")
-    }
+    solutions.each { println(asPrintableBoard(it) + "\n") }
+    assert solutions.size() == 2
   }
 
-  def solveForBoardOfSize(int i) {
+  def solveForBoardOfSize(int boardSize) {
+    []
   }
 
-  static String asPrintableBoard(Object o) {
-    ""
+  static String asPrintableBoard(List solution) {
+    solution.join(", ") // TODO
   }
 }
