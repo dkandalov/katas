@@ -17,13 +17,20 @@ class EightQueen5 {
     doSolve([0, 0], [], boardSize)
   }
 
-  List doSolve(fromQueen, List solution, int boardSize) {
+  List doSolve(fromQueen, Collection solution, int boardSize) {
     def result = []
     forEachCellOf(boardSize) { row, col ->
       if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
-
+      def queen = [row, col]
+      if (isValidMove(queen, solution)) {
+        doSolve([row, col], solution + queen, boardSize)
+      }
     }
     result
+  }
+
+  boolean isValidMove(newQueen, Collection solution) {
+    false
   }
 
   def forEachCellOf(int boardSize, Closure closure) {
