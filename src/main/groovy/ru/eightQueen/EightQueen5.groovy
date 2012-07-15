@@ -20,13 +20,18 @@ class EightQueen5 {
   List doSolve(fromQueen, List solution, int boardSize) {
     def result = []
     forEachCellOf(boardSize) { row, col ->
+      if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
 
     }
     result
   }
 
-  def forEachCellOf(boardSize, Closure closure) {
-    closure.call(0, 0)
+  def forEachCellOf(int boardSize, Closure closure) {
+    (0..boardSize).each { row ->
+      (0..boardSize).each { col ->
+        closure.call(row, col)
+      }
+    }
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
