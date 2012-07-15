@@ -18,12 +18,12 @@ class EightQueen5 {
   }
 
   List doSolve(fromQueen, int boardSize) {
-    [[1,1], [2,2]]
+    [[[1,1], [2,2]]]
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
-    def board = (0..boardSize).collect { Collections.nCopies(boardSize, "X") }
-//    solution.each { board[it[0], it[1]] = "Q" }
+    def board = (0..boardSize).collect { ("X" * boardSize).toList() }
+    solution.each { board[it[0]][it[1]] = "Q" }
     board.join("\n")
   }
 }
