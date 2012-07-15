@@ -30,10 +30,12 @@ class EightQueen5 {
   }
 
   boolean isValidMove(newQueen, Collection solution) {
-    false
+    def hasNoQueensOnTheSameRowOrColumn = { false }
+    def hasNoQueensOnTheDiagonal = { false }
+    hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
-  def forEachCellOf(int boardSize, Closure closure) {
+  static forEachCellOf(int boardSize, Closure closure) {
     (0..boardSize).each { row ->
       (0..boardSize).each { col ->
         closure.call(row, col)
