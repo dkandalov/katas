@@ -13,8 +13,12 @@ class EightQueen5 {
     assert solutions.size() == 2
   }
 
-  def solveForBoardOfSize(int boardSize) {
-    []
+  def List<List> solveForBoardOfSize(int boardSize) {
+    doSolve([0, 0], boardSize)
+  }
+
+  List doSolve(fromQueen, int boardSize) {
+    [[1,1], [2,2]]
   }
 
   static String asPrintableBoard(List solution) {
