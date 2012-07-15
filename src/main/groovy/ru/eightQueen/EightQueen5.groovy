@@ -14,11 +14,19 @@ class EightQueen5 {
   }
 
   def List<List> solveForBoardOfSize(int boardSize) {
-    doSolve([0, 0], boardSize)
+    doSolve([0, 0], [], boardSize)
   }
 
-  List doSolve(fromQueen, int boardSize) {
-    [[[1,1], [2,2]]]
+  List doSolve(fromQueen, List solution, int boardSize) {
+    def result = []
+    forEachCellOf(boardSize) { row, col ->
+
+    }
+    result
+  }
+
+  def forEachCellOf(boardSize, Closure closure) {
+    closure.call(0, 0)
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
