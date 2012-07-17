@@ -30,7 +30,7 @@ class EightQueen5 {
   }
 
   boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { false }
+    def hasNoQueensOnTheSameRowOrColumn = { !solution.any { it[0] == newQueen[0] || it[1] == newQueen[1]} }
     def hasNoQueensOnTheDiagonal = { false }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
