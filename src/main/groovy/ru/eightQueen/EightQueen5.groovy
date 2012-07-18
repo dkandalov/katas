@@ -19,19 +19,23 @@ class EightQueen5 {
 
   List doSolve(fromQueen, Collection solution, int boardSize) {
     def result = []
-    forEachCellOf(boardSize) { row, col ->
-      if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
-      def queen = [row, col]
-      if (isValidMove(queen, solution)) {
-        doSolve([row, col], solution + queen, boardSize)
+    for (int row = 0; row < boardSize; row++) {
+      for (int col = 0; col < boardSize; col++) {
+
+        if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
+        def queen = [row, col]
+        if (isValidMove(queen, solution)) {
+          doSolve([row, col], solution + queen, boardSize)
+        }
+
       }
     }
     result
   }
 
   boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { !solution.any { it[0] == newQueen[0] || it[1] == newQueen[1]} }
-    def hasNoQueensOnTheDiagonal = { false }
+    def hasNoQueensOnTheSameRowOrColumn = { true }
+    def hasNoQueensOnTheDiagonal = { true }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
