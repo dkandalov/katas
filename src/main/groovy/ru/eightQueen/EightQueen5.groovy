@@ -18,14 +18,16 @@ class EightQueen5 {
   }
 
   List doSolve(fromQueen, Collection solution, int boardSize) {
+    if (solution.size() == boardSize) return solution
+
     def result = []
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
-
         if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
+
         def queen = [row, col]
         if (isValidMove(queen, solution)) {
-          doSolve([row, col], solution + queen, boardSize)
+          doSolve([row, col], solution + [queen], boardSize)
         }
 
       }
@@ -37,14 +39,6 @@ class EightQueen5 {
     def hasNoQueensOnTheSameRowOrColumn = { true }
     def hasNoQueensOnTheDiagonal = { true }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
-  }
-
-  static forEachCellOf(int boardSize, Closure closure) {
-    (0..boardSize).each { row ->
-      (0..boardSize).each { col ->
-        closure.call(row, col)
-      }
-    }
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
