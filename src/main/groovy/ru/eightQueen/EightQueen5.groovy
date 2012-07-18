@@ -19,12 +19,8 @@ class EightQueen5 {
     int col
   }
 
-  static newQueen(row, col) { [row, col] }
-  static rowOf(queen) { queen[0] }
-  static colOf(queen) { queen[1] }
-
   def List<List> solveForBoardOfSize(int boardSize) {
-    doSolve(newQueen(0, 0), [], boardSize)
+    doSolve(new Queen(0, 0), [], boardSize)
   }
 
   List doSolve(fromQueen, Collection solution, int boardSize) {
@@ -33,9 +29,9 @@ class EightQueen5 {
     def result = []
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
-        if (row < rowOf(fromQueen) || (row == rowOf(fromQueen) && col < colOf(fromQueen))) continue
+        if (row < fromQueen.row || (row == fromQueen.row && col < fromQueen.col)) continue
 
-        def queen = newQueen(row, col)
+        def queen = new Queen(row, col)
         if (isValidMove(queen, solution)) {
           result += doSolve(queen, solution + [queen], boardSize)
         }
@@ -45,15 +41,15 @@ class EightQueen5 {
     result
   }
 
-  static boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { solution.every { rowOf(it) != rowOf(newQueen) && colOf(it) != colOf(newQueen) } }
-    def hasNoQueensOnTheDiagonal = { solution.every { (rowOf(it) - rowOf(newQueen)).abs() != (colOf(it) - colOf(newQueen)).abs() } }
+  static boolean isValidMove(Queen newQueen, Collection solution) {
+    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it.row != newQueen.row && it.col != newQueen.col } }
+    def hasNoQueensOnTheDiagonal = { solution.every { (it.row - newQueen.row).abs() != (it.col - newQueen.col).abs() } }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
     def board = (0..boardSize).collect { ("X" * boardSize).toList() }
-    solution.each { board[colOf(it)][rowOf(it)] = "Q" }
+    solution.each { board[it.col][it.row] = "Q" }
     board.join("\n")
   }
 }
