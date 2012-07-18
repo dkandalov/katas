@@ -19,12 +19,12 @@ class EightQueen5 {
     int col
   }
 
-  static newQueen(row, col) {
-    [row, col]
-  }
+  static newQueen(row, col) { [row, col] }
+  static rowOf(queen) { queen[0] }
+  static colOf(queen) { queen[1] }
 
   def List<List> solveForBoardOfSize(int boardSize) {
-    doSolve([0, 0], [], boardSize)
+    doSolve(newQueen(0, 0), [], boardSize)
   }
 
   List doSolve(fromQueen, Collection solution, int boardSize) {
@@ -33,7 +33,7 @@ class EightQueen5 {
     def result = []
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
-        if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
+        if (row < rowOf(fromQueen) || (row == rowOf(fromQueen) && col < colOf(fromQueen))) continue
 
         def queen = newQueen(row, col)
         if (isValidMove(queen, solution)) {
