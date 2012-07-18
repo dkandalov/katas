@@ -29,6 +29,12 @@ class EightQueen5 {
     def plus(Queen queen) {
       new Solution(coll + [queen])
     }
+
+    boolean isValidMove(Queen newQueen) {
+      def hasNoQueensOnTheSameRowOrColumn = { coll.every { it.row != newQueen.row && it.col != newQueen.col } }
+      def hasNoQueensOnTheDiagonal = { coll.every { (it.row - newQueen.row).abs() != (it.col - newQueen.col).abs() } }
+      hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
+    }
   }
   
   def List<List> solveForBoardOfSize(int boardSize) {
@@ -44,19 +50,13 @@ class EightQueen5 {
         if (row < fromQueen.row || (row == fromQueen.row && col < fromQueen.col)) continue
 
         def queen = new Queen(row, col)
-        if (isValidMove(queen, solution.coll)) {
+        if (solution.isValidMove(queen)) {
           result += doSolve(queen, solution + queen, boardSize)
         }
 
       }
     }
     result
-  }
-
-  static boolean isValidMove(Queen newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it.row != newQueen.row && it.col != newQueen.col } }
-    def hasNoQueensOnTheDiagonal = { solution.every { (it.row - newQueen.row).abs() != (it.col - newQueen.col).abs() } }
-    hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
