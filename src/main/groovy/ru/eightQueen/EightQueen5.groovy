@@ -46,14 +46,14 @@ class EightQueen5 {
   }
 
   static boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it[0] != newQueen[0] && it[1] != newQueen[1] } }
-    def hasNoQueensOnTheDiagonal = { solution.every { (it[0] - newQueen[0]).abs() != (it[1] - newQueen[1]).abs() } }
+    def hasNoQueensOnTheSameRowOrColumn = { solution.every { rowOf(it) != rowOf(newQueen) && colOf(it) != colOf(newQueen) } }
+    def hasNoQueensOnTheDiagonal = { solution.every { (rowOf(it) - rowOf(newQueen)).abs() != (colOf(it) - colOf(newQueen)).abs() } }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
   static String asPrintableBoard(List solution, int boardSize) {
     def board = (0..boardSize).collect { ("X" * boardSize).toList() }
-    solution.each { board[it[0]][it[1]] = "Q" }
+    solution.each { board[colOf(it)][rowOf(it)] = "Q" }
     board.join("\n")
   }
 }
