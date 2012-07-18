@@ -18,7 +18,7 @@ class EightQueen5 {
   }
 
   List doSolve(fromQueen, Collection solution, int boardSize) {
-    if (solution.size() == boardSize) return solution
+    if (solution.size() == boardSize) return [solution]
 
     def result = []
     for (int row = 0; row < boardSize; row++) {
@@ -27,7 +27,7 @@ class EightQueen5 {
 
         def queen = [row, col]
         if (isValidMove(queen, solution)) {
-          doSolve([row, col], solution + [queen], boardSize)
+          result += doSolve([row, col], solution + [queen], boardSize)
         }
 
       }
@@ -36,7 +36,7 @@ class EightQueen5 {
   }
 
   boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { true }
+    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it[0] == newQueen[0] && it[1] == newQueen[1] } }
     def hasNoQueensOnTheDiagonal = { true }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
