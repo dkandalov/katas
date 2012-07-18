@@ -25,6 +25,10 @@ class EightQueen5 {
     Solution(coll = []) {
       this.coll = coll
     }
+
+    def plus(Queen queen) {
+      new Solution(coll + [queen])
+    }
   }
   
   def List<List> solveForBoardOfSize(int boardSize) {
@@ -41,7 +45,7 @@ class EightQueen5 {
 
         def queen = new Queen(row, col)
         if (isValidMove(queen, solution.coll)) {
-          result += doSolve(queen, new Solution(solution.coll + [queen]), boardSize)
+          result += doSolve(queen, solution + queen, boardSize)
         }
 
       }
