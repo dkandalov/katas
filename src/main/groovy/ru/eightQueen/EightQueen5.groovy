@@ -9,7 +9,7 @@ import org.junit.Test
 class EightQueen5 {
   @Test void shouldFindSolutionsForBoardOfSize_4() {
     def solutions = solveForBoardOfSize(4)
-    solutions.each { println(asPrintableBoard(it, 4) + "\n") }
+    solutions.each { println(asPrintableBoard(it.coll, 4) + "\n") }
     assert solutions.size() == 2
   }
 
@@ -19,12 +19,20 @@ class EightQueen5 {
     int col
   }
 
+  static class Solution {
+    def coll
+
+    Solution(coll = []) {
+      this.coll = coll
+    }
+  }
+  
   def List<List> solveForBoardOfSize(int boardSize) {
-    doSolve(new Queen(0, 0), [], boardSize)
+    doSolve(new Queen(0, 0), new Solution(), boardSize)
   }
 
-  List doSolve(fromQueen, Collection solution, int boardSize) {
-    if (solution.size() == boardSize) return [solution]
+  List doSolve(fromQueen, Solution solution, int boardSize) {
+    if (solution.coll.size() == boardSize) return [solution]
 
     def result = []
     for (int row = 0; row < boardSize; row++) {
@@ -32,8 +40,8 @@ class EightQueen5 {
         if (row < fromQueen.row || (row == fromQueen.row && col < fromQueen.col)) continue
 
         def queen = new Queen(row, col)
-        if (isValidMove(queen, solution)) {
-          result += doSolve(queen, solution + [queen], boardSize)
+        if (isValidMove(queen, solution.coll)) {
+          result += doSolve(queen, new Solution(solution.coll + [queen]), boardSize)
         }
 
       }
