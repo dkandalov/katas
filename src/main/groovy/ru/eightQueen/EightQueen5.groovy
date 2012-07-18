@@ -13,6 +13,16 @@ class EightQueen5 {
     assert solutions.size() == 2
   }
 
+  @Immutable
+  static final class Queen {
+    int row
+    int col
+  }
+
+  static newQueen(row, col) {
+    [row, col]
+  }
+
   def List<List> solveForBoardOfSize(int boardSize) {
     doSolve([0, 0], [], boardSize)
   }
@@ -25,9 +35,9 @@ class EightQueen5 {
       for (int col = 0; col < boardSize; col++) {
         if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
 
-        def queen = [row, col]
+        def queen = newQueen(row, col)
         if (isValidMove(queen, solution)) {
-          result += doSolve([row, col], solution + [queen], boardSize)
+          result += doSolve(queen, solution + [queen], boardSize)
         }
 
       }
@@ -35,7 +45,7 @@ class EightQueen5 {
     result
   }
 
-  boolean isValidMove(newQueen, Collection solution) {
+  static boolean isValidMove(newQueen, Collection solution) {
     def hasNoQueensOnTheSameRowOrColumn = { solution.every { it[0] != newQueen[0] && it[1] != newQueen[1] } }
     def hasNoQueensOnTheDiagonal = { solution.every { (it[0] - newQueen[0]).abs() != (it[1] - newQueen[1]).abs() } }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
