@@ -23,7 +23,7 @@ class EightQueen5 {
     def result = []
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
-        if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) return
+        if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
 
         def queen = [row, col]
         if (isValidMove(queen, solution)) {
@@ -36,8 +36,8 @@ class EightQueen5 {
   }
 
   boolean isValidMove(newQueen, Collection solution) {
-    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it[0] == newQueen[0] && it[1] == newQueen[1] } }
-    def hasNoQueensOnTheDiagonal = { true }
+    def hasNoQueensOnTheSameRowOrColumn = { solution.every { it[0] != newQueen[0] && it[1] != newQueen[1] } }
+    def hasNoQueensOnTheDiagonal = { solution.every { (it[0] - newQueen[0]).abs() != (it[1] - newQueen[1]).abs() } }
     hasNoQueensOnTheSameRowOrColumn() && hasNoQueensOnTheDiagonal()
   }
 
