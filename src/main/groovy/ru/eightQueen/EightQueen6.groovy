@@ -8,10 +8,11 @@ import org.junit.Test
  */
 class EightQueen6 {
   @Test public void shouldSolveQueenProblem() {
-    assert solveForBoardOfSize(4).size() == 2
+    assert findSoltutionsFor(4).size() == 2
   }
 
-  def solveForBoardOfSize(int boardSize) {
-    []
+  def findSoltutionsFor(int boardSize) {
+    def solution = [[0, 0]]
+    [solution]
   }
 }
