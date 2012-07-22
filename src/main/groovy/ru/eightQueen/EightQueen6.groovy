@@ -21,13 +21,17 @@ class EightQueen6 {
   }
 
   @Test void shouldPresentSolutionAsABoard() {
-    def solution = [[0, 0]]
-    def solutions = [solution]
+    def solution = [[0, 0], [0, 2], [2, 0]]
+    assert asBoard(solution, 3) == [
+            [1, 0, 1],
+            [0, 0, 0],
+            [1, 0, 0]
+    ]
   }
 
-  def asBoard(solutions, int boardSize) {
+  def asBoard(solution, int boardSize) {
     def board = (0..<boardSize).collect { (0..<boardSize).inject([]) { board, i -> board + [0] } }
-    solutions.each { it.each { queen -> board[queen[0]][queen[1]] = 1 }}
+    solution.each { queen -> board[queen[0]][queen[1]] = 1 }
     board
   }
 
