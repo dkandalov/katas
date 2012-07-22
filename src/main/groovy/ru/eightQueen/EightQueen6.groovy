@@ -31,10 +31,17 @@ class EightQueen6 {
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
         if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
-        solution += [[row, col]]
+        def newQueen = [row, col]
+        if (isValidMove(newQueen, solution)) {
+          solution += [newQueen]
+        }
       }
     }
     [solution]
+  }
+
+  boolean isValidMove(newQueen, solution) {
+    true
   }
 
   @Test void shouldConvertBoardToPrintableString() {
