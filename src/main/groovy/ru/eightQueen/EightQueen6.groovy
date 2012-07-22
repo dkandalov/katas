@@ -27,18 +27,19 @@ class EightQueen6 {
   }
 
   private def doFindSolutions(fromQueen, solution, boardSize) {
-    if (solution.size() == boardSize) return solution
+    if (solution.size() == boardSize) return [solution]
 
+    def result = []
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
         if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
         def newQueen = [row, col]
         if (isValidMove(newQueen, solution)) {
-          doFindSolutions(newQueen, solution + [newQueen], boardSize)
+          result += doFindSolutions(newQueen, solution + [newQueen], boardSize)
         }
       }
     }
-    [solution]
+    result
   }
 
   @Test public void shouldDetermineIsMoveIsValid() {
