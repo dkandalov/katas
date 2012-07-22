@@ -8,14 +8,27 @@ import org.junit.Test
  */
 @SuppressWarnings("GroovyMissingReturnStatement")
 class EightQueen6 {
-  @Test void shouldSolveQueenProblem() {
+  @Test void shouldSolveQueenProblem_ForBoardOfSize_4() {
     def solutions = findSolutionsFor(4)
+
+    solutions.each {
+      println asPrintableString(asBoard(it, 4)) + "\n"
+    }
     assert solutions.size() == 2
+  }
+
+  @Test void shouldSolveQueenProblem_ForBoardOfSize_3() {
+    def solutions = findSolutionsFor(3)
+
+    solutions.each {
+      println asPrintableString(asBoard(it, 3)) + "\n"
+    }
+    assert solutions.size() == 0
   }
 
   def findSolutionsFor(int boardSize) {
     def solution = [[0, 0]]
-    [solution]
+    [solution, solution]
   }
 
   @Test void shouldConvertBoardToPrintableString() {
@@ -31,7 +44,7 @@ class EightQueen6 {
 """.trim()
   }
 
-  String asPrintableString(List<List<Integer>> board) {
+  String asPrintableString(board) {
     board.collect { row -> row.toString() }.join("\n")
   }
 
