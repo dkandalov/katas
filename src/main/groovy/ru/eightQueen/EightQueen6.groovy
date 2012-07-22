@@ -30,6 +30,7 @@ class EightQueen6 {
 //    if (solution.size() == boardSize) return solution
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
+        if (row < fromQueen[0] || (row == fromQueen[0] && col < fromQueen[1])) continue
         solution += [[row, col]]
       }
     }
