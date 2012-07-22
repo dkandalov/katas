@@ -42,11 +42,12 @@ class EightQueen6 {
 
   @Test public void shouldDetermineIsMoveIsValid() {
     assert isValidMove([0, 0], [])
-    assert !isValidMove([0, 0], [0, 0])
+    assert !isValidMove([0, 0], [[0, 0]])
   }
 
   boolean isValidMove(newQueen, solution) {
-    true
+    def queensAreNotOnTheSameRowOrColumn = { !solution.any{ queen -> queen[0] == newQueen[0] || queen[1] == newQueen[1] } }
+    queensAreNotOnTheSameRowOrColumn()
   }
 
   @Test void shouldConvertBoardToPrintableString() {
