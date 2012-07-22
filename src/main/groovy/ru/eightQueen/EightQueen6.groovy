@@ -11,22 +11,22 @@ class EightQueen6 {
   @Test void shouldSolveQueenProblem_ForBoardOfSize_4() {
     def solutions = findSolutionsFor(4)
 
-    solutions.each {
-      println asPrintableString(asBoard(it, 4)) + "\n"
-    }
+    solutions.each { println asPrintableString(asBoard(it, 4)) + "\n" }
     assert solutions.size() == 2
   }
 
   @Test void shouldSolveQueenProblem_ForBoardOfSize_3() {
     def solutions = findSolutionsFor(3)
 
-    solutions.each {
-      println asPrintableString(asBoard(it, 3)) + "\n"
-    }
+    solutions.each { println asPrintableString(asBoard(it, 3)) + "\n" }
     assert solutions.size() == 0
   }
 
   def findSolutionsFor(int boardSize) {
+    doFindSolutions([0, 0], boardSize)
+  }
+
+  def doFindSolutions(fromQueen, boardSize) {
     def solution = [[0, 0]]
     [solution, solution]
   }
