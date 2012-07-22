@@ -10,14 +10,27 @@ import org.junit.Test
 class EightQueen6 {
   @Test void shouldSolveQueenProblem() {
     findSolutionsFor(4).with {
-      assert asBoard(it, 4) == [
-              [0, 0, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0]
-      ]
       assert size() == 2
     }
+  }
+
+  def findSolutionsFor(int boardSize) {
+    def solution = [[0, 0]]
+    [solution]
+  }
+
+  @Test void shouldConvertBoardToPrintableString() {
+    def board = [
+            [1, 0, 1],
+            [0, 0, 0],
+            [1, 0, 1],
+    ]
+    assert asPrintableString(board) == """
+"""
+  }
+
+  String asPrintableString(List<List<Integer>> board) {
+    ""
   }
 
   @Test void shouldPresentSolutionAsABoard() {
@@ -33,10 +46,5 @@ class EightQueen6 {
     def board = (0..<boardSize).collect { (0..<boardSize).inject([]) { board, i -> board + [0] } }
     solution.each { queen -> board[queen[0]][queen[1]] = 1 }
     board
-  }
-
-  def findSolutionsFor(int boardSize) {
-    def solution = [[0, 0]]
-    [solution]
   }
 }
