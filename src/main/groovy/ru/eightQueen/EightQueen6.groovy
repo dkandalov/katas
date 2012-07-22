@@ -9,9 +9,8 @@ import org.junit.Test
 @SuppressWarnings("GroovyMissingReturnStatement")
 class EightQueen6 {
   @Test void shouldSolveQueenProblem() {
-    findSolutionsFor(4).with {
-      assert size() == 2
-    }
+    def solutions = findSolutionsFor(4)
+    assert solutions.size() == 2
   }
 
   def findSolutionsFor(int boardSize) {
@@ -26,14 +25,14 @@ class EightQueen6 {
             [1, 0, 1],
     ]
     assert asPrintableString(board) == """
-[1, 0, 1],
-[0, 0, 0],
+[1, 0, 1]
+[0, 0, 0]
 [1, 0, 1]
 """.trim()
   }
 
   String asPrintableString(List<List<Integer>> board) {
-    board.toString()
+    board.collect { row -> row.toString() }.join("\n")
   }
 
   @Test void shouldPresentSolutionAsABoard() {
