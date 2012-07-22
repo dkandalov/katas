@@ -10,7 +10,7 @@ import org.junit.Test
 class EightQueen6 {
   @Test public void shouldSolveQueenProblem() {
     findSolutionsFor(4).with {
-      assert asBoard() == [
+      assert asBoard(it, 4) == [
               [0, 0, 0, 0],
               [0, 0, 0, 0],
               [0, 0, 0, 0],
@@ -20,8 +20,9 @@ class EightQueen6 {
     }
   }
 
-  def asBoard() {
-    [[]]
+  def asBoard(solutions, int boardSize) {
+    def board = (0..boardSize).collect { new ArrayList(boardSize) }
+    board
   }
 
   def findSolutionsFor(int boardSize) {
