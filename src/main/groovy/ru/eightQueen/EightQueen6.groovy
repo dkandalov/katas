@@ -26,11 +26,14 @@ class EightQueen6 {
             [1, 0, 1],
     ]
     assert asPrintableString(board) == """
-"""
+[1, 0, 1],
+[0, 0, 0],
+[1, 0, 1]
+""".trim()
   }
 
   String asPrintableString(List<List<Integer>> board) {
-    ""
+    board.toString()
   }
 
   @Test void shouldPresentSolutionAsABoard() {
