@@ -21,8 +21,7 @@ class EightQueen6 {
   }
 
   def asBoard(solutions, int boardSize) {
-    def board = (0..boardSize).collect { new ArrayList(boardSize) }
-    board
+    (0..<boardSize).collect { (0..<boardSize).inject([]) { board, i -> board + [0] } }
   }
 
   def findSolutionsFor(int boardSize) {
