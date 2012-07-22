@@ -40,6 +40,11 @@ class EightQueen6 {
     [solution]
   }
 
+  @Test public void shouldDetermineIsMoveIsValid() {
+    assert isValidMove([0, 0], [])
+    assert !isValidMove([0, 0], [0, 0])
+  }
+
   boolean isValidMove(newQueen, solution) {
     true
   }
