@@ -27,8 +27,13 @@ class EightQueen6 {
   }
 
   private def doFindSolutions(fromQueen, solution, boardSize) {
-    if (solution.size() == boardSize) return solution
-    []
+//    if (solution.size() == boardSize) return solution
+    for (int row = 0; row < boardSize; row++) {
+      for (int col = 0; col < boardSize; col++) {
+        solution += [[row, col]]
+      }
+    }
+    [solution]
   }
 
   @Test void shouldConvertBoardToPrintableString() {
