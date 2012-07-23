@@ -19,19 +19,19 @@ class EightQueen7 extends ShouldMatchers {
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {
 		val solution = Seq()
-		asBoard(4, solution) should equal(
+		asBoard(4, solution).trim should equal(
 """
 X,X,X,X
 X,X,X,X
 X,X,X,X
 X,X,X,X
-""")
+""".trim)
 	}
 
 	def asBoard(boardSize: Int, solution: Seq[(Int, Int)]): String = {
 		val board = for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
-			if (col == boardSize - 1) "X\n" else "X"
+			if (col == boardSize - 1) "X\n" else "X,"
 		}
-		board.mkString(",")
+		board.mkString("")
 	}
 }
