@@ -36,7 +36,7 @@ Q,X,X,Q
 
 	def asBoard(boardSize: Int, solution: Seq[(Int, Int)]): String = {
 		val board = for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
-			val symbol = "X"
+			val symbol = if (solution.contains((row, col))) "Q" else "X"
 		  val separator = if (col == boardSize - 1) "\n" else ","
 			symbol + separator
 		}
