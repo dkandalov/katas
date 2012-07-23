@@ -14,8 +14,8 @@ class EightQueen7 extends ShouldMatchers {
 		solutions.foreach { solution => println(asBoard(4, solution)) }
 		solutions.foreach { solution =>
 			solution.size should equal(4)
-			solution.forall { queen =>
-				true
+			solution.foreach { queen =>
+				solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
 			}
 		}
 //		solutions.size should equal(5)
