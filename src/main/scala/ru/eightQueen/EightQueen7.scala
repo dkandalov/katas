@@ -23,9 +23,9 @@ class EightQueen7 extends ShouldMatchers {
 	}
 
 	def asBoard(boardSize: Int, solution: Seq[(Int, Int)]): String = {
-		val line = for (col <- 0 to boardSize) yield {
-			"X"
+		val board = for (row <- 0 to boardSize; col <- 0 to boardSize) yield {
+			if (col == boardSize) "X\n" else "X"
 		}
-		line.mkString(",")
+		board.mkString(",")
 	}
 }
