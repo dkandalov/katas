@@ -1,6 +1,7 @@
 package ru.eightQueen
 
 import org.scalatest.matchers.ShouldMatchers
+import org.junit.Test
 
 /**
  * User: dima
@@ -8,5 +9,11 @@ import org.scalatest.matchers.ShouldMatchers
  */
 
 class EightQueen7 extends ShouldMatchers {
+	@Test def shouldSolveForBoardOfSize_4() {
+		solveForBoard(4).size should equal(5)
+	}
 
+	def solveForBoard(boardSize: Int): Seq[Seq[Int]] = {
+		Seq()
+	}
 }
