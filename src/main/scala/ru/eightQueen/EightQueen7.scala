@@ -30,9 +30,12 @@ class EightQueen7 extends ShouldMatchers {
 
 	def doSolve(fromQueen: (Int, Int), solution: Seq[(Int, Int)], boardSize: Int): Seq[Seq[(Int, Int)]] = {
 		if (solution.size == boardSize) return Seq(solution)
+
 		for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
 			if (row > fromQueen._1 || (row == fromQueen._1 && col >= fromQueen._2)) {
+				if (noQueensOnSameRowOrColumn(solution, (row, col))) {
 
+				}
 			}
 		}
 		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
