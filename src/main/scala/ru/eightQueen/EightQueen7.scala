@@ -25,6 +25,10 @@ class EightQueen7 extends ShouldMatchers {
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
+		doSolve((0, 0), Seq())
+	}
+
+	def doSolve(fromQueen: (Int, Int), solution: Seq[(Int, Int)]): Seq[Seq[(Int, Int)]] = {
 		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
 	}
 
