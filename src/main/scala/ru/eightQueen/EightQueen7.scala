@@ -15,8 +15,8 @@ class EightQueen7 extends ShouldMatchers {
 		solutions.foreach { solution =>
 			solution.size should equal(4)
 			solution.foreach { queen =>
-				val noQueensOnSameRowOrColumn = solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
-				val noQueensOnSameDiagonal = solution.filter(_ != queen).forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
+				def noQueensOnSameRowOrColumn = solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
+				def noQueensOnSameDiagonal = solution.filter(_ != queen).forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
 				noQueensOnSameRowOrColumn should equal(true)
 				noQueensOnSameDiagonal should equal(true)
 			}
@@ -33,12 +33,12 @@ class EightQueen7 extends ShouldMatchers {
 	def doSolve(fromQueen: (Int, Int), solution: Seq[(Int, Int)], boardSize: Int): Seq[Seq[(Int, Int)]] = {
 		if (solution.size == boardSize) return Seq(solution)
 		for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
-			if (row < fromQueen._1 || (row == fromQueen._1 && col < fromQueen._2)) {
+			if (row > fromQueen._1 || (row == fromQueen._1 && col >= fromQueen._2)) {
 
 			}
 		}
-//		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
-		Seq(Seq())
+		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
+//		Seq(Seq())
 	}
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {
