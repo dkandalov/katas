@@ -11,6 +11,7 @@ import org.junit.Test
 class EightQueen7 extends ShouldMatchers {
 	@Test def shouldSolveForBoardOfSize_4() {
 		val solutions = solveForBoard(4)
+		println(solutions)
 		solutions.foreach { solution => println(asBoard(4, solution)) }
 		solutions.foreach { solution =>
 			solution.size should equal(4)
