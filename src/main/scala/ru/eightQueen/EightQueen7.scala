@@ -16,6 +16,7 @@ class EightQueen7 extends ShouldMatchers {
 			solution.size should equal(4)
 			solution.foreach { queen =>
 				val noQueensOnSameRowOrColumn = solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
+				val noQueensOnSameDiagonal = solution.filter(_ != queen).forall{ otherQueen => (otherQueen._1 - queen._2).abs != (otherQueen._2 - queen._2).abs }
 				noQueensOnSameRowOrColumn should equal(true)
 			}
 		}
