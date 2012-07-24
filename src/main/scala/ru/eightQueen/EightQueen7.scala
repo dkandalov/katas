@@ -16,8 +16,8 @@ class EightQueen7 extends ShouldMatchers {
 		solutions.foreach { solution =>
 			solution.size should equal(4)
 			solution.foreach { queen =>
-				noQueensOnSameRowOrColumn(solution, queen) should equal(true)
-				noQueensOnSameDiagonal(solution, queen) should equal(true)
+				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
+				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
 			}
 		}
 		solutions.size should equal(2)
@@ -58,10 +58,10 @@ class EightQueen7 extends ShouldMatchers {
 	}
 
 	def noQueensOnSameRowOrColumn(solution: Seq[(Int, Int)], queen: (Int, Int)) =
-		solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
+		solution.forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
 
 	def noQueensOnSameDiagonal(solution: Seq[(Int, Int)], queen: (Int, Int)) =
-		solution.filter(_ != queen).forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
+		solution.forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {
 		asBoard(4, Seq()).trim should equal(
