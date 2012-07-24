@@ -18,13 +18,14 @@ class EightQueen7 extends ShouldMatchers {
 				val noQueensOnSameRowOrColumn = solution.filter(_ != queen).forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
 				val noQueensOnSameDiagonal = solution.filter(_ != queen).forall{ otherQueen => (otherQueen._1 - queen._2).abs != (otherQueen._2 - queen._2).abs }
 				noQueensOnSameRowOrColumn should equal(true)
+				noQueensOnSameDiagonal should equal(true)
 			}
 		}
 //		solutions.size should equal(5)
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
-		Seq(Seq((1,1), (2,2), (2,2), (2,2)))
+		Seq(Seq((1, 0), (3, 1), (2,2), (2,2)))
 	}
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {
