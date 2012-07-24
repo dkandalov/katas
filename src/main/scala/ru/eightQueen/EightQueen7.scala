@@ -23,6 +23,19 @@ class EightQueen7 extends ShouldMatchers {
 		solutions.size should equal(2)
 	}
 
+	@Test def shouldSolveForBoardOfSize_8() {
+		val solutions = solveForBoard(8)
+		solutions.foreach { solution => println(asBoard(8, solution)) }
+		solutions.foreach { solution =>
+			solution.size should equal(8)
+			solution.foreach { queen =>
+				noQueensOnSameRowOrColumn(solution, queen) should equal(true)
+				noQueensOnSameDiagonal(solution, queen) should equal(true)
+			}
+		}
+		solutions.size should equal(92)
+	}
+
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
 		val initialPosition = (0, 0)
 		val emptySolution = Seq()
