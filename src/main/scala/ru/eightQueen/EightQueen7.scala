@@ -42,9 +42,7 @@ class EightQueen7 extends ShouldMatchers {
 			} else {
 				Seq()
 			}
-		}
-		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
-//		Seq(Seq())
+		}.flatten
 	}
 
 	def noQueensOnSameRowOrColumn(solution: Seq[(Int, Int)], queen: (Int, Int)) =
