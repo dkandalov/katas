@@ -21,7 +21,7 @@ class EightQueen7 extends ShouldMatchers {
 				noQueensOnSameDiagonal should equal(true)
 			}
 		}
-//		solutions.size should equal(5)
+		solutions.size should equal(2)
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
