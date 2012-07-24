@@ -33,9 +33,14 @@ class EightQueen7 extends ShouldMatchers {
 
 		for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
 			if (row > fromQueen._1 || (row == fromQueen._1 && col >= fromQueen._2)) {
-				if (noQueensOnSameRowOrColumn(solution, (row, col))) {
-
+				val newQueen = (row, col)
+				if (noQueensOnSameRowOrColumn(solution, newQueen) && noQueensOnSameDiagonal(solution, newQueen)) {
+					doSolve(newQueen, solution :+ newQueen, boardSize)
+				} else {
+					Seq()
 				}
+			} else {
+				Seq()
 			}
 		}
 		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
