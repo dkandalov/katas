@@ -25,10 +25,16 @@ class EightQueen7 extends ShouldMatchers {
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
-		doSolve((0, 0), Seq())
+		val initialPosition = (0, 0)
+		val emptySolution = Seq()
+		doSolve(initialPosition, emptySolution, boardSize)
 	}
 
-	def doSolve(fromQueen: (Int, Int), solution: Seq[(Int, Int)]): Seq[Seq[(Int, Int)]] = {
+	def doSolve(fromQueen: (Int, Int), solution: Seq[(Int, Int)], boardSize: Int): Seq[Seq[(Int, Int)]] = {
+		if (solution.size == boardSize) return Seq(solution)
+		for (row <- 0 until boardSize; col <- 0 until boardSize) yield {
+
+		}
 		Seq(Seq((1, 0), (3, 1), (0, 2), (2, 3)))
 	}
 
