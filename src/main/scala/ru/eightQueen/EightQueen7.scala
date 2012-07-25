@@ -10,44 +10,44 @@ import org.junit.Test
 
 class EightQueen7 extends ShouldMatchers {
 	@Test def shouldSolveForBoardOfSize_4() {
-		val solutions = solveForBoard(4)
+		val boardSize = 4
+
+		val solutions = solveForBoard(boardSize)
 		println(solutions)
-		solutions.foreach { solution => println(asBoard(4, solution)) }
-		solutions.foreach { _.size should equal(4) }
-		solutions.foreach { solution =>
-			solution.foreach { queen =>
-				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
-				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
-			}
-		}
+		assertIsValid(solutions, boardSize)
+
 		solutions.size should equal(2)
 	}
 
 	@Test def shouldSolveForBoardOfSize_5() {
-		val solutions = solveForBoard(5)
+		val boardSize = 5
+
+		val solutions = solveForBoard(boardSize)
 		println(solutions)
-		solutions.foreach { solution => println(asBoard(5, solution)) }
-		solutions.foreach { solution =>
-			solution.size should equal(5)
-			solution.foreach { queen =>
-				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
-				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
-			}
-		}
+		assertIsValid(solutions, boardSize)
+
 		solutions.size should equal(10)
 	}
 
 	@Test def shouldSolveForBoardOfSize_8() {
-		val solutions = solveForBoard(8)
-		solutions.foreach { solution => println(asBoard(8, solution)) }
-		solutions.foreach { solution =>
-			solution.size should equal(8)
-			solution.foreach { queen =>
-				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
-				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
-			}
-		}
+		val boardSize = 8
+
+		val solutions = solveForBoard(boardSize)
+		println(solutions)
+		assertIsValid(solutions, boardSize)
+
 		solutions.size should equal(92)
+	}
+
+	def assertIsValid(solutions: scala.Seq[scala.Seq[(Int, Int)]], boardSize: Int) {
+		solutions.foreach { solution => println(asBoard(boardSize, solution))}
+		solutions.foreach { _.size should equal(boardSize)}
+		solutions.foreach { solution =>
+				solution.foreach { queen =>
+						noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
+						noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
+				}
+		}
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
