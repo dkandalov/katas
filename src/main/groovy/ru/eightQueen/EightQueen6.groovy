@@ -20,6 +20,12 @@ class EightQueen6 {
     assert solutions.size() == 2
   }
 
+  @Test void shouldSolveQueenProblem_ForBoardOfSize_5() {
+    def solutions = findSolutionsFor(5)
+    solutions.each { println asPrintableString(asBoard(it, 5)) + "\n" }
+    assert solutions.size() == 10
+  }
+
   @Test void shouldSolveQueenProblem_ForBoardOfSize_8() {
     def solutions = findSolutionsFor(8)
     assert solutions.size() == 92
