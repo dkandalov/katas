@@ -67,9 +67,9 @@ class EightQueen6 {
 
   @Test void shouldConvertBoardToPrintableString() {
     def board = [
-            [1, 0, 1],
-            [0, 0, 0],
-            [1, 0, 1],
+            ["Q", "X", "Q"],
+            ["X", "X", "X"],
+            ["Q", "X", "Q"]
     ]
     assert asPrintableString(board) == """
 Q,X,Q
