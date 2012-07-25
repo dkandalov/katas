@@ -92,8 +92,8 @@ class EightQueen6 {
   }
 
   def asBoard(solution, int boardSize) {
-    def board = (0..<boardSize).collect { (0..<boardSize).inject([]) { board, i -> board + [0] } }
-    solution.each { queen -> board[queen[0]][queen[1]] = 1 }
+    def board = (0..<boardSize).collect { (0..<boardSize).inject([]) { board, i -> board + ["X"] } }
+    solution.each { queen -> board[queen[0]][queen[1]] = "Q" }
     board
   }
 }
