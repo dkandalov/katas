@@ -34,7 +34,7 @@ class EightQueen7 extends ShouldMatchers {
 				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
 			}
 		}
-		solutions.size should equal(2)
+		solutions.size should equal(10)
 	}
 
 	@Test def shouldSolveForBoardOfSize_8() {
