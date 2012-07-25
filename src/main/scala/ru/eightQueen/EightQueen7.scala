@@ -64,11 +64,14 @@ class EightQueen7 extends ShouldMatchers {
 			if (row > fromQueen._1 || (row == fromQueen._1 && col > fromQueen._2)) {
 				val newQueen = (row, col)
 				if (noQueensOnSameRowOrColumn(solution, newQueen) && noQueensOnSameDiagonal(solution, newQueen)) {
-					result = result ++ doSolve(newQueen, solution :+ newQueen, boardSize)
+					doSolve(newQueen, solution :+ newQueen, boardSize)
+				} else {
+					Seq()
 				}
+			} else {
+				Seq()
 			}
-		}
-		result
+		}.flatten
 	}
 
 	def noQueensOnSameRowOrColumn(solution: Seq[(Int, Int)], queen: (Int, Int)) =
