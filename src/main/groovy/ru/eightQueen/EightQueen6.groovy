@@ -72,22 +72,22 @@ class EightQueen6 {
             [1, 0, 1],
     ]
     assert asPrintableString(board) == """
-[1, 0, 1]
-[0, 0, 0]
-[1, 0, 1]
+Q,X,Q
+X,X,X
+Q,X,Q
 """.trim()
   }
 
   String asPrintableString(board) {
-    board.collect { row -> row.toString() }.join("\n")
+    board.collect { row -> row.join(",") }.join("\n")
   }
 
   @Test void shouldPresentSolutionAsABoard() {
     def solution = [[0, 0], [0, 2], [2, 0]]
     assert asBoard(solution, 3) == [
-            [1, 0, 1],
-            [0, 0, 0],
-            [1, 0, 0]
+            ["Q", "X", "Q"],
+            ["X", "X", "X"],
+            ["Q", "X", "X"]
     ]
   }
 
