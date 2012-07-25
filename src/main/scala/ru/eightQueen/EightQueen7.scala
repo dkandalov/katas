@@ -43,8 +43,8 @@ class EightQueen7 extends ShouldMatchers {
 		solutions.foreach { solution =>
 			solution.size should equal(8)
 			solution.foreach { queen =>
-				noQueensOnSameRowOrColumn(solution, queen) should equal(true)
-				noQueensOnSameDiagonal(solution, queen) should equal(true)
+				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
+				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
 			}
 		}
 		solutions.size should equal(92)
