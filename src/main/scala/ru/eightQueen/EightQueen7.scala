@@ -13,8 +13,8 @@ class EightQueen7 extends ShouldMatchers {
 		val solutions = solveForBoard(4)
 		println(solutions)
 		solutions.foreach { solution => println(asBoard(4, solution)) }
+		solutions.foreach { _.size should equal(4) }
 		solutions.foreach { solution =>
-			solution.size should equal(4)
 			solution.foreach { queen =>
 				noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
 				noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
