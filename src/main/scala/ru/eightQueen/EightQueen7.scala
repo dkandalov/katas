@@ -51,7 +51,7 @@ class EightQueen7 extends ShouldMatchers {
 	}
 
 	def solveForBoard(boardSize: Int): Seq[Seq[(Int, Int)]] = {
-		val initialPosition = (0, 0)
+		val initialPosition = (-1, -1)
 		val emptySolution = Seq()
 		doSolve(initialPosition, emptySolution, boardSize)
 	}
