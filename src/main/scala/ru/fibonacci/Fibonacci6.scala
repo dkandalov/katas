@@ -21,10 +21,10 @@ class Fibonacci6 extends ShouldMatchers {
 
 	@Test def shouldCalculateFibonacci_ForLargeNumbers() {
 		fibonacci(20) should equal(10946)
-		fibonacci(100) should equal(BigDecimal("1298777728820984005"))
-		fibonacci(200) should equal(3721511182311577122L)
-		fibonacci(1000) should equal(9079565065540428013L)
-		fibonacci(10000) should equal(9079565065540428013L)
+		fibonacci(100) should equal(BigDecimal("573147844013817084101"))
+		fibonacci(200) should equal(BigDecimal("4.539736941653079531972969696974110E+41"))
+		fibonacci(1000) should equal(BigDecimal("7.033036771142281582183525487718359E+208"))
+		fibonacci(10000) should equal(BigDecimal("5.443837311356528133873426099375023E+2089"))
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
