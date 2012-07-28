@@ -33,10 +33,10 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
-		f(State(1, 0, BigDecimal(0), BigDecimal(0)))
+		f(State(1, 0, 0, 0)) should equal(State(1, 1, 0, 0))
 	}
 
-	case class State(n: Int, i: Int, last: BigDecimal, current: BigDecimal)
+	case class State(n: Int, i: Int, last: BigDecimal = 1, current: BigDecimal = 1)
 
 	def f(state: State): Option[State] = {
 		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
