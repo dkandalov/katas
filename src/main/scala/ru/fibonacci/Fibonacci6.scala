@@ -35,29 +35,29 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
-		f(State(0)) should equal(State(0, 0, 0, 0))
-		f(State(1)) should equal(State(1, 1, 0, 1))
+		f(State()) should equal(State(0, 0, 0))
+		f(State()) should equal(State(1, 0, 1))
 
-		f(State(2)) should equal(State(2, 1, 0, 1))
-		f(f(State(2))) should equal(State(2, 2, 1, 1))
+		f(State()) should equal(State(1, 0, 1))
+		f(f(State())) should equal(State(2, 1, 1))
 
-		f(State(3)) should equal(State(3, 1, 0, 1))
-		f(f(State(3))) should equal(State(3, 2, 1, 1))
-		f(f(f(State(3)))) should equal(State(3, 3, 1, 2))
+		f(State()) should equal(State(1, 0, 1))
+		f(f(State())) should equal(State(2, 1, 1))
+		f(f(f(State()))) should equal(State(3, 1, 2))
 
-		f(State(4)) should equal(State(4, 1, 0, 1))
-		f(f(State(4))) should equal(State(4, 2, 1, 1))
-		f(f(f(State(4)))) should equal(State(4, 3, 1, 2))
-		f(f(f(f(State(4))))) should equal(State(4, 4, 2, 3))
+		f(State()) should equal(State(1, 0, 1))
+		f(f(State())) should equal(State(2, 1, 1))
+		f(f(f(State()))) should equal(State(3, 1, 2))
+		f(f(f(f(State())))) should equal(State(4, 2, 3))
 	}
 
-	case class State(n: Int, i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 1)
+	case class State(i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 1)
 
 	def f(state: State): State = {
-		if (state.n == 0) return State(0, 0, 0, 0)
-		if (state.n == 1) return State(1, 1, 0, 1)
+		if (state.i == 0) return State(0, 0, 0)
+		if (state.i == 1) return State(1, 0, 1)
 
-		State(state.n, state.i + 1, state.current, state.last + state.current)
+		State(state.i + 1, state.current, state.last + state.current)
 	}
 
 	def fibonacci_iterative(n: Int): BigDecimal = {
