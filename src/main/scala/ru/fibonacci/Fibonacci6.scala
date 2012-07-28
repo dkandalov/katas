@@ -36,15 +36,16 @@ class Fibonacci6 extends ShouldMatchers {
 	@Test def shouldProgressFromOneStateToAnother() {
 		f(State(0)) should equal(State(0, 0, 0, 0))
 		f(State(1)) should equal(State(1, 1, 0, 1))
+		f(State(2)) should equal(State(2, 1, 0, 1))
 	}
 
-	case class State(n: Int, i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 0)
+	case class State(n: Int, i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 1)
 
 	def f(state: State): State = {
-		if (state.n == 0) return state
+		if (state.n == 0) return State(0, 0, 0, 0)
 		if (state.n == 1) return State(1, 1, 0, 1)
 
-		State(0, 0, BigDecimal(0), BigDecimal(0))
+		State(state.n, state.i + 1, state.current, state.last + state.current)
 	}
 
 	def fibonacci_iterative(n: Int): BigDecimal = {
