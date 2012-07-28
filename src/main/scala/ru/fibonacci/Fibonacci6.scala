@@ -17,6 +17,8 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(4) should equal(5)
 		fibonacci(5) should equal(8)
 		fibonacci(6) should equal(13)
+
+		fibonacci(20) should equal(10946)
 	}
 
 	def fibonacci(n: Int): Int = n match {
