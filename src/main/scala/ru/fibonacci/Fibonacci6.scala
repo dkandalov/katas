@@ -30,8 +30,9 @@ class Fibonacci6 extends ShouldMatchers {
 	def fibonacci(n: Int): BigDecimal = {
 		case class State(n: Int, i: Int, last: BigDecimal, current: BigDecimal)
 		def f(state: State): Option[State] = {
-			None
+			Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
 		}
+		if (n < 2) return 1
 		0
 	}
 
