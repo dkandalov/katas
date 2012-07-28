@@ -28,7 +28,7 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(10000) should equal(BigDecimal("3.364476487643178326662161200510745E+2089"))
 	}
 
-	def fibonacci_(n: Int): BigDecimal = {
+	def fibonacci(n: Int): BigDecimal = {
 		if (n < 2) return 1
 		0
 	}
@@ -43,7 +43,7 @@ class Fibonacci6 extends ShouldMatchers {
 		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
 	}
 
-	def fibonacci__(n: Int): BigDecimal = {
+	def fibonacci_iterative(n: Int): BigDecimal = {
 		if (n == 0) return 0
 		if (n == 1) return 1
 
@@ -57,9 +57,9 @@ class Fibonacci6 extends ShouldMatchers {
 		result
 	}
 
-	def fibonacci(n: Int): Int = n match {
-		case 0 => 1
+	def fibonacci_recursive_exponential(n: Int): Int = n match {
+		case 0 => 0
 		case 1 => 1
-		case _ => fibonacci(n - 1) + fibonacci(n - 2)
+		case _ => fibonacci_recursive_exponential(n - 1) + fibonacci_recursive_exponential(n - 2)
 	}
 }
