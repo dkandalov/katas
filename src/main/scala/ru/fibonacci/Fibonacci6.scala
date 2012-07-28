@@ -38,12 +38,11 @@ class Fibonacci6 extends ShouldMatchers {
 	@Test def shouldProgressFromOneStateToAnother() {
 		def doNext(state: State, times: Int) = {
 			var result = state
-
-//			0.until(times).foreach { result = state.next() }
+			for (i <- 0 until times) { result = state.next() }
 			result
 		}
 
-		State().next() should equal(State(0, 0, 0))
+		doNext(State(), 1) should equal(State(0, 0, 0))
 		State().next().next() should equal(State(1, 0, 1))
 		State().next().next().next() should equal(State(2, 1, 1))
 		State().next().next().next().next() should equal(State(3, 1, 2))
