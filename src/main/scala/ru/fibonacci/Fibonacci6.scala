@@ -40,6 +40,7 @@ class Fibonacci6 extends ShouldMatchers {
 		f(f(f(State()))) should equal(State(2, 1, 1))
 		f(f(f(f(State())))) should equal(State(3, 1, 2))
 		f(f(f(f(f(State()))))) should equal(State(4, 2, 3))
+		f(f(f(f(f(f(State())))))) should equal(State(5, 3, 5))
 	}
 
 	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0)
