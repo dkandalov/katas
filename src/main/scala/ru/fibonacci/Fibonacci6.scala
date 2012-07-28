@@ -29,8 +29,9 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
-		var state = State(n)
-		0
+		var state = f(State(n))
+		while (state.i < state.n) { state = f(state) }
+		state.last
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
