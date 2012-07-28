@@ -28,6 +28,13 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
+		def f(state: (BigDecimal, BigDecimal)): (BigDecimal, BigDecimal) = {
+			(0, 0)
+		}
+		0
+	}
+
+	def fibonacci_it(n: Int): BigDecimal = {
 		if (n < 2) return 1
 
 		var prev = BigDecimal(1)
