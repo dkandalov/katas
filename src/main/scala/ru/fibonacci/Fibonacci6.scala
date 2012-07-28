@@ -10,13 +10,14 @@ import org.junit.Test
 
 class Fibonacci6 extends ShouldMatchers {
 	@Test def shouldCalculateFibonacciNumbers() {
-		fibonacci(0) should equal(1)
+		fibonacci(0) should equal(0)
 		fibonacci(1) should equal(1)
-		fibonacci(2) should equal(2)
-		fibonacci(3) should equal(3)
-		fibonacci(4) should equal(5)
-		fibonacci(5) should equal(8)
-		fibonacci(6) should equal(13)
+		fibonacci(2) should equal(1)
+		fibonacci(3) should equal(2)
+		fibonacci(4) should equal(3)
+		fibonacci(5) should equal(5)
+		fibonacci(6) should equal(8)
+		fibonacci(7) should equal(13)
 	}
 
 	@Test def shouldCalculateFibonacci_ForLargeNumbers() {
@@ -27,7 +28,7 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(10000) should equal(BigDecimal("5.443837311356528133873426099375023E+2089"))
 	}
 
-	def fibonacci(n: Int): BigDecimal = {
+	def fibonacci_(n: Int): BigDecimal = {
 		if (n < 2) return 1
 		0
 	}
@@ -42,10 +43,11 @@ class Fibonacci6 extends ShouldMatchers {
 		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
 	}
 
-	def fibonacci_it(n: Int): BigDecimal = {
-		if (n < 2) return 1
+	def fibonacci(n: Int): BigDecimal = {
+		if (n == 0) return 0
+		if (n == 1) return 1
 
-		var prev = BigDecimal(1)
+		var prev = BigDecimal(0)
 		var result = BigDecimal(1)
 		for (i <- 2 to n) {
 			val tmp = result
