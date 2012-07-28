@@ -28,10 +28,9 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(10000) should equal(BigDecimal("3.364476487643178326662161200510745E+2089"))
 	}
 
-	def fibonacci(n: Int): BigDecimal = {
-		var state = State()
-		while (state.i < n) { state = f(state) }
-		state.current
+	def fibonacci(n: Int, state: State = State()): BigDecimal = {
+		if (state.i >= n) state.current
+		else fibonacci(n, state.next())
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
