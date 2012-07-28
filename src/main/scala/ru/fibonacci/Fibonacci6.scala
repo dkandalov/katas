@@ -23,10 +23,9 @@ class Fibonacci6 extends ShouldMatchers {
 	@Test def shouldCalculateFibonacci_ForLargeNumbers() {
 		fibonacci(20) should equal(6765)
 		fibonacci(100) should equal(BigDecimal("354224848179261915075"))
-		println(fibonacci(200).toShortExact)
-		fibonacci(200) should equal(BigDecimal("4.539736941653079531972969696974110E+41"))
-		fibonacci(1000) should equal(BigDecimal("7.033036771142281582183525487718359E+208"))
-		fibonacci(10000) should equal(BigDecimal("5.443837311356528133873426099375023E+2089"))
+		fibonacci(200) should equal(BigDecimal("2.805711729925101400376119324130389E+41"))
+		fibonacci(1000) should equal(BigDecimal("4.346655768693745643568852767504065E+208"))
+		fibonacci(10000) should equal(BigDecimal("3.364476487643178326662161200510745E+2089"))
 	}
 
 	def fibonacci_(n: Int): BigDecimal = {
@@ -44,7 +43,7 @@ class Fibonacci6 extends ShouldMatchers {
 		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
 	}
 
-	def fibonacci(n: Int): BigDecimal = {
+	def fibonacci__(n: Int): BigDecimal = {
 		if (n == 0) return 0
 		if (n == 1) return 1
 
@@ -58,9 +57,9 @@ class Fibonacci6 extends ShouldMatchers {
 		result
 	}
 
-	def fibonacci_r(n: Int): Int = n match {
+	def fibonacci(n: Int): Int = n match {
 		case 0 => 1
 		case 1 => 1
-		case _ => fibonacci_r(n - 1) + fibonacci_r(n - 2)
+		case _ => fibonacci(n - 1) + fibonacci(n - 2)
 	}
 }
