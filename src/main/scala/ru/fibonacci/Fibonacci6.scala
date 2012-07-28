@@ -2,6 +2,7 @@ package ru.fibonacci
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import annotation.tailrec
 
 /**
  * User: dima
@@ -28,16 +29,17 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(10000) should equal(BigDecimal("3.364476487643178326662161200510745E+2089"))
 	}
 
-	def fibonacci(n: Int, state: State = State()): BigDecimal = {
+	@tailrec
+	private def fibonacci(n: Int, state: State = State()): BigDecimal = {
 		if (state.i >= n) state.current
 		else fibonacci(n, state.next())
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
-		f(State()) should equal(State(0, 0, 0))
-		f(f(State())) should equal(State(1, 0, 1))
-		f(f(f(State()))) should equal(State(2, 1, 1))
-		f(f(f(f(State())))) should equal(State(3, 1, 2))
+		State().next() should equal(State(0, 0, 0))
+		State().next().next() should equal(State(1, 0, 1))
+		State().next().next().next() should equal(State(2, 1, 1))
+		State().next().next().next().next() should equal(State(3, 1, 2))
 		f(f(f(f(f(State()))))) should equal(State(4, 2, 3))
 		f(f(f(f(f(f(State())))))) should equal(State(5, 3, 5))
 	}
