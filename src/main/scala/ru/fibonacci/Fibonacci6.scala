@@ -19,13 +19,14 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(6) should equal(13)
 
 		fibonacci(20) should equal(10946)
+		fibonacci(100) should equal(1298777728820984005L)
 	}
 
-	def fibonacci(n: Int): Int = {
+	def fibonacci(n: Int): Long = {
 		if (n < 2) return 1
 
-		var prev = 1
-		var result = 1
+		var prev = 1L
+		var result = 1L
 		for (i <- 2 to n) {
 			val tmp = result
 			result = result + prev
@@ -37,6 +38,6 @@ class Fibonacci6 extends ShouldMatchers {
 	def fibonacci_r(n: Int): Int = n match {
 		case 0 => 1
 		case 1 => 1
-		case _ => fibonacci(n - 1) + fibonacci(n - 2)
+		case _ => fibonacci_r(n - 1) + fibonacci_r(n - 2)
 	}
 }
