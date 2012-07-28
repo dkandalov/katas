@@ -29,16 +29,17 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
-		var state = State(n)
+		var state = State()
 		while (state.i < n) { state = f(state) }
 		state.current
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
 		f(State()) should equal(State(0, 0, 0))
-		f(f(State())) should equal(State(2, 1, 1))
-		f(f(f(State()))) should equal(State(3, 1, 2))
-		f(f(f(f(State())))) should equal(State(4, 2, 3))
+		f(f(State())) should equal(State(1, 0, 1))
+		f(f(f(State()))) should equal(State(2, 1, 1))
+		f(f(f(f(State())))) should equal(State(3, 1, 2))
+		f(f(f(f(f(State()))))) should equal(State(4, 2, 3))
 	}
 
 	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0)
