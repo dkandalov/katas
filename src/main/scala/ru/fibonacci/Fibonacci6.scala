@@ -36,6 +36,9 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
+		def eval() = {
+			null
+		}
 		State().next() should equal(State(0, 0, 0))
 		State().next().next() should equal(State(1, 0, 1))
 		State().next().next().next() should equal(State(2, 1, 1))
