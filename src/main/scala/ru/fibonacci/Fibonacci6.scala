@@ -30,7 +30,7 @@ class Fibonacci6 extends ShouldMatchers {
 
 	def fibonacci(n: Int): BigDecimal = {
 		var state = f(State(n))
-		while (state.i < state.n) { state = f(state) }
+		while (state.i < n) { state = f(state) }
 		state.current
 	}
 
