@@ -31,24 +31,24 @@ class Fibonacci6 extends ShouldMatchers {
 	def fibonacci(n: Int): BigDecimal = {
 		var state = f(State(n))
 		while (state.i < state.n) { state = f(state) }
-		state.last
+		state.current
 	}
 
 	@Test def shouldProgressFromOneStateToAnother() {
 		f(State(0)) should equal(State(0, 0, 0, 0))
 		f(State(1)) should equal(State(1, 1, 0, 1))
 
-		f(State(2)) should equal(State(2, 1, 1, 1))
-		f(f(State(2))) should equal(State(2, 2, 1, 2))
+		f(State(2)) should equal(State(2, 1, 0, 1))
+		f(f(State(2))) should equal(State(2, 2, 1, 1))
 
-		f(State(3)) should equal(State(3, 1, 1, 1))
-		f(f(State(3))) should equal(State(3, 2, 1, 2))
-		f(f(f(State(3)))) should equal(State(3, 3, 2, 3))
+		f(State(3)) should equal(State(3, 1, 0, 1))
+		f(f(State(3))) should equal(State(3, 2, 1, 1))
+		f(f(f(State(3)))) should equal(State(3, 3, 1, 2))
 
-		f(State(4)) should equal(State(4, 1, 1, 1))
-		f(f(State(4))) should equal(State(4, 2, 1, 2))
-		f(f(f(State(4)))) should equal(State(4, 3, 2, 3))
-		f(f(f(f(State(4))))) should equal(State(4, 4, 3, 5))
+		f(State(4)) should equal(State(4, 1, 0, 1))
+		f(f(State(4))) should equal(State(4, 2, 1, 1))
+		f(f(f(State(4)))) should equal(State(4, 3, 1, 2))
+		f(f(f(f(State(4))))) should equal(State(4, 4, 2, 3))
 	}
 
 	case class State(n: Int, i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 1)
