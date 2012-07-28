@@ -29,7 +29,7 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
-		if (n < 2) return 1
+		var state = State(n)
 		0
 	}
 
