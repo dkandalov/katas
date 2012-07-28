@@ -44,18 +44,15 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0) {
-		def nextState() = {
+		def next() = {
 			if (i == -1) State(0, 0, 0)
 			else if (i == 0) State(1, 0, 1)
 			else State(i + 1, current, last + current)
 		}
 	}
 
-	def f(state: State): State = {
-		if (state.i == -1) return State(0, 0, 0)
-		if (state.i == 0) return State(1, 0, 1)
-
-		State(state.i + 1, state.current, state.last + state.current)
+	private def f(state: State): State = {
+		state.next()
 	}
 
 	def fibonacci_iterative(n: Int): BigDecimal = {
