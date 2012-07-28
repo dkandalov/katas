@@ -17,9 +17,14 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(4) should equal(5)
 		fibonacci(5) should equal(8)
 		fibonacci(6) should equal(13)
+	}
 
+	@Test def shouldCalculateFibonacci_ForLargeNumbers() {
 		fibonacci(20) should equal(10946)
 		fibonacci(100) should equal(1298777728820984005L)
+		fibonacci(200) should equal(3721511182311577122L)
+		fibonacci(1000) should equal(9079565065540428013L)
+		fibonacci(10000) should equal(9079565065540428013L)
 	}
 
 	def fibonacci(n: Int): Long = {
