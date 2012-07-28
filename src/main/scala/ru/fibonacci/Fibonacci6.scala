@@ -21,17 +21,17 @@ class Fibonacci6 extends ShouldMatchers {
 
 	@Test def shouldCalculateFibonacci_ForLargeNumbers() {
 		fibonacci(20) should equal(10946)
-		fibonacci(100) should equal(1298777728820984005L)
+		fibonacci(100) should equal(BigDecimal("1298777728820984005"))
 		fibonacci(200) should equal(3721511182311577122L)
 		fibonacci(1000) should equal(9079565065540428013L)
 		fibonacci(10000) should equal(9079565065540428013L)
 	}
 
-	def fibonacci(n: Int): Long = {
+	def fibonacci(n: Int): BigDecimal = {
 		if (n < 2) return 1
 
-		var prev = 1L
-		var result = 1L
+		var prev = BigDecimal(1)
+		var result = BigDecimal(1)
 		for (i <- 2 to n) {
 			val tmp = result
 			result = result + prev
