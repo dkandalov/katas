@@ -43,7 +43,13 @@ class Fibonacci6 extends ShouldMatchers {
 		f(f(f(f(f(f(State())))))) should equal(State(5, 3, 5))
 	}
 
-	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0)
+	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0) {
+		def nextState() = {
+			if (i == -1) State(0, 0, 0)
+			else if (i == 0) State(1, 0, 1)
+			else State(i + 1, current, last + current)
+		}
+	}
 
 	def f(state: State): State = {
 		if (state.i == -1) return State(0, 0, 0)
