@@ -21,7 +21,16 @@ class Fibonacci6 extends ShouldMatchers {
 		fibonacci(20) should equal(10946)
 	}
 
-	def fibonacci(n: Int): Int = n match {
+	def fibonacci(n: Int): Int = {
+		if (n < 2) return 1
+		val prev = 1
+		for (i <- 2 until n) {
+
+		}
+		prev
+	}
+
+	def fibonacci_r(n: Int): Int = n match {
 		case 0 => 1
 		case 1 => 1
 		case _ => fibonacci(n - 1) + fibonacci(n - 2)
