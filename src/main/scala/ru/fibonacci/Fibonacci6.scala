@@ -23,11 +23,15 @@ class Fibonacci6 extends ShouldMatchers {
 
 	def fibonacci(n: Int): Int = {
 		if (n < 2) return 1
-		val prev = 1
-		for (i <- 2 until n) {
 
+		var prev = 1
+		var result = 1
+		for (i <- 2 to n) {
+			val tmp = result
+			result = result + prev
+			prev = tmp
 		}
-		prev
+		result
 	}
 
 	def fibonacci_r(n: Int): Int = n match {
