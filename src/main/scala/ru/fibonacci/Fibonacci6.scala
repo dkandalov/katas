@@ -38,10 +38,13 @@ class Fibonacci6 extends ShouldMatchers {
 		f(State(1)) should equal(State(1, 1, 0, 1))
 	}
 
-	case class State(n: Int, i: Int = 0, last: BigDecimal = 1, current: BigDecimal = 1)
+	case class State(n: Int, i: Int = 0, last: BigDecimal = 0, current: BigDecimal = 0)
 
-	def f(state: State): Option[State] = {
-		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
+	def f(state: State): State = {
+		if (state.n == 0) return state
+		if (state.n == 1) return State(1, 1, 0, 1)
+
+		State(0, 0, BigDecimal(0), BigDecimal(0))
 	}
 
 	def fibonacci_iterative(n: Int): BigDecimal = {
