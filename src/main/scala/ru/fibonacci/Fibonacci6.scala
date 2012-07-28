@@ -28,12 +28,18 @@ class Fibonacci6 extends ShouldMatchers {
 	}
 
 	def fibonacci(n: Int): BigDecimal = {
-		case class State(n: Int, i: Int, last: BigDecimal, current: BigDecimal)
-		def f(state: State): Option[State] = {
-			Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
-		}
 		if (n < 2) return 1
 		0
+	}
+
+	@Test def shouldProgressFromOneStateToAnother() {
+		f(State(1, 0, BigDecimal(0), BigDecimal(0)))
+	}
+
+	case class State(n: Int, i: Int, last: BigDecimal, current: BigDecimal)
+
+	def f(state: State): Option[State] = {
+		Some(State(0, 0, BigDecimal(0), BigDecimal(0)))
 	}
 
 	def fibonacci_it(n: Int): BigDecimal = {
