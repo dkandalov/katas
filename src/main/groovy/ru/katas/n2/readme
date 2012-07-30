@@ -16,13 +16,13 @@ Goals
 
 This Kata has three separate goals:
 
-As you’re coding each algorithm, keep a note of the kinds of error you encounter. A binary search is a ripe breeding
+As you're coding each algorithm, keep a note of the kinds of error you encounter. A binary search is a ripe breeding
 ground for "off by one" and fencepost errors. As you progress through the week, see if the frequency of these errors
 decreases (that is, do you learn from experience in one technique when it comes to coding with a different technique?).
-What can you say about the relative merits of the various techniques you’ve chosen? Which is the most likely to make
+What can you say about the relative merits of the various techniques you've chosen? Which is the most likely to make
 it in to production code? Which was the most fun to write? Which was the hardest to get working? And for all these
 questions, ask yourself "why?".
-It’s fairly hard to come up with five unique approaches to a binary chop. How did you go about coming up with approaches
+It's fairly hard to come up with five unique approaches to a binary chop. How did you go about coming up with approaches
 four and five? What techniques did you use to fire those "off the wall" neurons?
 Specification
 
@@ -36,7 +36,7 @@ are not issues (assuming the chop terminates before you get bored and kill it, a
 Test Data
 
 Here is the Test::Unit code I used when developing my methods. Feel free to add to it. The tests assume that array
-indices start at zero. You’ll probably have to do a couple of global search-and-replaces to make this compile in your
+indices start at zero. You'll probably have to do a couple of global search-and-replaces to make this compile in your
 language of choice (unless your enlightened choice happens to be Ruby).
 
   def test_chop
