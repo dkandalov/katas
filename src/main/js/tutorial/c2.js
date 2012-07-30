@@ -28,11 +28,14 @@ chart.selectAll("line")
 // bars
 chart.selectAll("rect")
         .data(data)
-    .enter().append("rect")
+    .enter()
+        .append("rect")
 //        .attr("y", function(d, i) { return i * 20; })
         .attr("y", y)
         .attr("width", x)
-        .attr("height", y.rangeBand());
+        .attr("height", y.rangeBand())
+    .sort(function (a, b) { return a - b; })
+;
 
 // text on bars
 chart.selectAll("text")
