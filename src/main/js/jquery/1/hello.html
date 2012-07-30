@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Demo</title>
+    <style type="text/css">
+        a.test {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<a href="http://google.com">google</a>
+<script src="../jquery-1.7.2.js" type="text/javascript"></script>
+<script type="text/javascript">
+    //    window.onload = function () { alert("hello js"); }
+    $(document).ready(function () {
+        $("a").addClass("test");
+        $("a").removeClass("test");
+
+        $("a").click(function (event) {
+            alert("gooo");
+            event.preventDefault();
+            $(this).hide("slow");
+        });
+
+        $.ajax({
+            url:"my.json",
+            dataType:"json",
+            success:function (data) {
+                alert(data.hello);
+            }
+        })
+    });
+    setInterval(function () {
+        $.getJSON("my.json", function (data) {
+            alert(data.hello);
+        })
+    }, 5000);
+</script>
+</body>
+</html>
