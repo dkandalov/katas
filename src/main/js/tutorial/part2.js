@@ -5,8 +5,8 @@ var t = 1297110663, // start time (seconds since epoch)
 function next() {
     return {
         time: ++t,
-        value: v = ~~Math.max(10, Math.min(90, v + 20 * (Math.random() - 0.5)))
-//        value: v = v + 1
+//        value: v = ~~Math.max(10, Math.min(90, v + 20 * (Math.random() - 0.5)))
+        value: v = 0
     };
 }
 function redraw() {
@@ -33,9 +33,11 @@ function redraw() {
         .remove();
 }
 setInterval(function() {
-    data.shift();
-    data.push(next());
-    redraw();
+    $.getJSON("http://localhost:8787/", function(d) {
+        data.shift();
+        data.push({time: ++t, value: d.v});
+        redraw();
+    });
 }, 1100);
 
 var w = 20, h = 80;

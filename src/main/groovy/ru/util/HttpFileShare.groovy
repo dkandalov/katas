@@ -18,6 +18,13 @@ class HttpFileShare {
       @Override void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) {
         println request.requestURI
 
+        if (request.requestURI == "/") {
+          response.writer.write("{\"v\": ${new Random().nextInt(100)}}")
+          response.writer.flush()
+          request.handled = true
+          return
+        }
+
         def file = new File(request.requestURI)
         if (file.exists()) {
           response.writer.write(file.readLines().join("\n"))
