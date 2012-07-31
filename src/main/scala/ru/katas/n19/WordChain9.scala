@@ -11,6 +11,14 @@ import scala.io.Source
 
 class WordChain9 extends ShouldMatchers {
 
+	@Test def shouldFindWordChainsFrom_Cat_to_Dog() {
+		findWordChain("cat", "dog", Set("cat")) should equal(Seq(Seq()))
+	}
+
+	def findWordChain(fromWord: String, toWord: String, dictionary: Set[String]) = {
+		Seq()
+	}
+
 	def canMove(fromWord: String, toWord: String): Boolean = {
 		if (fromWord.size != toWord.size) return false
 		fromWord.diff(toWord).size == 1
