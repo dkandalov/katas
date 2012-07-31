@@ -11,9 +11,13 @@ import scala.io.Source
 
 class WordChain9 extends ShouldMatchers {
 
-	@Test def aaa() {
+	@Test def shouldDetermineCorrectTransition() {
+
+	}
+
+	@Test def shouldLoadStandardMacDictionary() {
 		val words = loadDictionary()
-		words.size should equal(235886)
+		words.size should equal(234371)
 	}
 
 	def loadDictionary(): Set[String] = {
