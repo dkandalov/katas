@@ -12,12 +12,15 @@ import scala.io.Source
 class WordChain9 extends ShouldMatchers {
 
 	def canMove(fromWord: String, toWord: String): Boolean = {
+		if (fromWord == toWord) return false
+		if (fromWord.size != toWord.size) return false
 		true
 	}
 
 	@Test def shouldDetermineCorrectTransition() {
 		canMove("", "") should be === (true)
 		canMove("a", "") should be === (false)
+		canMove("a", "a") should be === (false)
 	}
 
 	@Test def shouldLoadStandardMacDictionary() {
