@@ -14,7 +14,7 @@ class WordChain9 extends ShouldMatchers {
 	def canMove(fromWord: String, toWord: String): Boolean = {
 		if (fromWord == toWord) return false
 		if (fromWord.size != toWord.size) return false
-		true
+		fromWord.diff(toWord).size == 1
 	}
 
 	@Test def shouldDetermineCorrectTransition() {
@@ -23,6 +23,8 @@ class WordChain9 extends ShouldMatchers {
 		assert(!canMove("a", "a"))
 
 		assert(canMove("a", "b"))
+		assert(canMove("aa", "ab"))
+		assert(!canMove("aa", "bb"))
 	}
 
 	@Test def shouldLoadStandardMacDictionary() {
