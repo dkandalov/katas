@@ -13,7 +13,7 @@ class WordChain9 extends ShouldMatchers {
 
 	@Test def aaa() {
 		val words = readWords()
-		words.size should equal(235886)
+		awords.size should equal(235886)
 	}
 
 	def readWords(): Seq[String] = {
