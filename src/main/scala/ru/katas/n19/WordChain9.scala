@@ -15,6 +15,7 @@ class WordChain9 extends ShouldMatchers {
 		words.size should equal(10000)
 	}
 	def readWords(): Seq[String] = {
+
 		Seq()
 
 	}
