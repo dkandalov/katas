@@ -11,8 +11,9 @@ import scala.io.Source
 
 class WordChain9 extends ShouldMatchers {
 
-	@Test def shouldFindWordChainsFrom_Cat_to_Dog() {
-		findWordChain("cat", "dog", Set("cat")) should equal(Seq(Seq()))
+	@Test def shouldFindSimpleWordChains() {
+		findWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equal(Seq(Set("aaa", "aab", "abb", "bbb")))
+//		findWordChain("cat", "dog", Set("cat")) should equal(Seq(Seq()))
 	}
 
 	def findWordChain(fromWord: String, toWord: String, dictionary: Set[String]) = {
