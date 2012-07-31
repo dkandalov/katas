@@ -25,6 +25,14 @@ class WordChain9 extends ShouldMatchers {
 		assert(canMove("a", "b"))
 		assert(canMove("aa", "ab"))
 		assert(!canMove("aa", "bb"))
+
+		assert(canMove("aaa", "aab"))
+		assert(canMove("aaa", "aba"))
+		assert(canMove("aaa", "baa"))
+		assert(!canMove("aaa", "bba"))
+
+		assert(canMove("cat", "cot"))
+		assert(!canMove("cat", "dog"))
 	}
 
 	@Test def shouldLoadStandardMacDictionary() {
