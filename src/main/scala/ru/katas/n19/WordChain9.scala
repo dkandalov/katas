@@ -18,9 +18,11 @@ class WordChain9 extends ShouldMatchers {
 	}
 
 	@Test def shouldDetermineCorrectTransition() {
-		canMove("", "") should be === (true)
-		canMove("a", "") should be === (false)
-		canMove("a", "a") should be === (false)
+		assert(!canMove("", ""))
+		assert(!canMove("a", ""))
+		assert(!canMove("a", "a"))
+
+		assert(canMove("a", "b"))
 	}
 
 	@Test def shouldLoadStandardMacDictionary() {
