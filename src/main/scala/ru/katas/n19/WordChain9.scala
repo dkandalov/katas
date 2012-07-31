@@ -12,11 +12,11 @@ import scala.io.Source
 class WordChain9 extends ShouldMatchers {
 
 	@Test def aaa() {
-		val words = readWords()
+		val words = loadDictionary()
 		words.size should equal(235886)
 	}
 
-	def readWords(): Seq[String] = {
-		Source.fromFile("/usr/share/dict/words").getLines().toSeq
+	def loadDictionary(): Set[String] = {
+		Source.fromFile("/usr/share/dict/words").getLines().map{_.toLowerCase}.toSet
 	}
 }
