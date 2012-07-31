@@ -17,6 +17,8 @@ class WordChain9 extends ShouldMatchers {
 
 	def readWords(): Seq[String] = {
 
+
+
 		Seq()
 
 	}
