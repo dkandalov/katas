@@ -9,7 +9,13 @@ import org.junit.Test
  */
 
 class WordChain9 extends ShouldMatchers {
+
 	@Test def aaa() {
+		val words = readWords()
+		words.size should equal(10000)
+	}
+	def readWords(): Seq[String] = {
+		Seq()
 
 	}
 }
