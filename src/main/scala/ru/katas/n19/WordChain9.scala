@@ -12,7 +12,6 @@ import scala.io.Source
 class WordChain9 extends ShouldMatchers {
 
 	def canMove(fromWord: String, toWord: String): Boolean = {
-		if (fromWord == toWord) return false
 		if (fromWord.size != toWord.size) return false
 		fromWord.diff(toWord).size == 1
 	}
