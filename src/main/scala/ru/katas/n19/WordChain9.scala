@@ -2,6 +2,7 @@ package ru.katas.n19
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import scala.io.Source
 
 /**
  * User: dima
@@ -12,14 +13,10 @@ class WordChain9 extends ShouldMatchers {
 
 	@Test def aaa() {
 		val words = readWords()
-		words.size should equal(10000)
+		words.size should equal(235886)
 	}
 
 	def readWords(): Seq[String] = {
-
-
-
-		Seq()
-
+		Source.fromFile("/usr/share/dict/words").getLines().toSeq
 	}
 }
