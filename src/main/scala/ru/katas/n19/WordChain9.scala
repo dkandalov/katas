@@ -30,7 +30,15 @@ class WordChain9 extends ShouldMatchers {
 		fromWord +: doFind(fromWord, toWord, newDictionary - fromWord, 1, Int.MaxValue)
 	}
 
-	def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, minDepth: Int): Seq[String] = {
+	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, minDepth: Int): Seq[String] = {
+		if (fromWord == toWord) return Seq(toWord)
+		if (depth >= minDepth) return Seq()
+
+		val nextWords = dictionary.filter{canMove(fromWord, _)}
+		Seq()
+	}
+
+	private def doFind_(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, minDepth: Int): Seq[String] = {
 		if (fromWord == toWord) return Seq(toWord)
 		if (depth >= minDepth) return Seq()
 
