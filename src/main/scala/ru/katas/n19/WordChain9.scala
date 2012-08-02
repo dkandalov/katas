@@ -44,7 +44,6 @@ class WordChain9 extends ShouldMatchers {
 				min = newChain.size
 				result = newChain
 				println(result.size)
-				return result
 			}
 		}
 		result
