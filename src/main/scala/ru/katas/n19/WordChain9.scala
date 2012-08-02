@@ -11,12 +11,12 @@ import scala.io.Source
 
 class WordChain9 extends ShouldMatchers {
 
-	@Test def shouldFindSimpleWordChains() {
-		findWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equal(Seq(Set("aaa", "aab", "abb", "bbb")))
-//		findWordChain("cat", "dog", Set("cat")) should equal(Seq(Seq()))
+	@Test def shouldFindSingleWordChain() {
+		findMinWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equal(Seq("aaa", "aab", "abb", "bbb"))
+//		findMinWordChain("cat", "dog", Set("cat")) should equal(Seq(Seq()))
 	}
 
-	def findWordChain(fromWord: String, toWord: String, dictionary: Set[String]) = {
+	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		Seq()
 	}
 
