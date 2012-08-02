@@ -26,7 +26,7 @@ class WordChain9 extends ShouldMatchers {
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
-		val newDictionary = dictionary.filter(_.size != toWord.size)
+		val newDictionary = dictionary.filter(_.size == toWord.size)
 		doFind(fromWord, toWord, newDictionary - fromWord, Seq(fromWord))
 	}
 
@@ -43,7 +43,7 @@ class WordChain9 extends ShouldMatchers {
 			}
 		}
 
-		Seq("aaa", "aab", "abb", "bbb")
+		result
 	}
 
 	def canMove(fromWord: String, toWord: String): Boolean = {
