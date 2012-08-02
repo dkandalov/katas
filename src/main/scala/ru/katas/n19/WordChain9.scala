@@ -36,12 +36,15 @@ class WordChain9 extends ShouldMatchers {
 
 		val nextWords = dictionary.filter{canMove(fromWord, _)}
 		var min = minDepth
-		var result = Seq()
+		var result = Seq[String]()
 
 		for (word <- nextWords) {
-			doFind(word, toWord, dictionary - word, depth + 1, min)
+			val chain = doFind(word, toWord, dictionary - word, depth + 1, min)
+			if (!chain.isEmpty) {
+				min = chain.size + depth
+				result = word +: chain
+			}
 		}
-
 		result
 	}
 
