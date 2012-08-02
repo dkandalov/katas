@@ -32,8 +32,7 @@ class WordChain9 extends ShouldMatchers {
 
 	def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, minSize: Int): Seq[String] = {
 		if (fromWord == toWord) return Seq(toWord)
-//		if (chain.size >= minSize) return Seq()
-//		if (depth >= minSize) return Seq()
+		if (depth >= minSize) return Seq()
 
 		var min = minSize
 		var result = Seq[String]()
@@ -41,8 +40,8 @@ class WordChain9 extends ShouldMatchers {
 
 		for (word <- nextWords) {
 			val newChain = doFind(word, toWord, dictionary - word, depth + 1, min)
-			if (!newChain.isEmpty && newChain.size < min) {
-				min = newChain.size
+			if (!newChain.isEmpty && newChain.size + depth < min) {
+				min = newChain.size + depth
 				if (word != newChain(0))
 					result = word +: newChain
 				else
