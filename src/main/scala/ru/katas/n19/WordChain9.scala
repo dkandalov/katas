@@ -39,13 +39,13 @@ class WordChain9 extends ShouldMatchers {
 		val nextWords = dictionary.filter { canMove(fromWord, _) }
 
 		for (word <- nextWords) {
-			val newChain = doFind(word, toWord, dictionary - word, depth + 1, minDepth)
-			if (!newChain.isEmpty && newChain.size + depth < minDepth) {
-				minDepth = newChain.size + depth
-				if (word != newChain(0)) {
-					result = word +: newChain
+			val chain = doFind(word, toWord, dictionary - word, depth + 1, minDepth)
+			if (!chain.isEmpty && chain.size + depth < minDepth) {
+				minDepth = chain.size + depth
+				if (word != chain(0)) {
+					result = word +: chain
 				} else {
-					result = newChain
+					result = chain
 				}
 				println(result.size + depth)
 			}
