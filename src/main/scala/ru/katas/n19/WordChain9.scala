@@ -47,7 +47,7 @@ class WordChain9 extends ShouldMatchers {
 				} else {
 					result = chain
 				}
-				println(result.size + depth)
+				println(min)
 			}
 		}
 		result
