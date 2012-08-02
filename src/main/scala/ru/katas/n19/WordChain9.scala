@@ -16,7 +16,7 @@ class WordChain9 extends ShouldMatchers {
 	}
 
 	@Test def shouldChooseShortestWordChain() {
-		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equal(Seq("aaa", "aab", "abb", "bbb"))
+		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
 	@Test def shouldFindWordChain_FromCatToDog_WithRealDictionary() {
