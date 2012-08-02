@@ -31,7 +31,13 @@ class WordChain9 extends ShouldMatchers {
 	}
 
 	def doFind(fromWord: String, toWord: String, dictionary: Set[String], chain: Seq[String]): Seq[String] = {
+		if (fromWord == toWord) return chain
+
 		var minSize = Int.MaxValue
+		dictionary.filter{canMove(fromWord, _)}.foreach{ word =>
+			doFind(word, toWord, dictionary - word, chain :+ word)
+		}
+
 		Seq("aaa", "aab", "abb", "bbb")
 	}
 
