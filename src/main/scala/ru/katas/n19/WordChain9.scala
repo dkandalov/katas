@@ -42,7 +42,9 @@ class WordChain9 extends ShouldMatchers {
 			val chain = doFind(word, toWord, dictionary - word, depth + 1, min)
 			if (!chain.isEmpty) {
 				min = chain.size + depth
-				result = word +: chain
+				if (word == chain(0)) result = chain
+				else result = word +: chain
+				println(min)
 			}
 		}
 		result
