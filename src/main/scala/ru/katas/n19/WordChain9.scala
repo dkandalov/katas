@@ -27,19 +27,20 @@ class WordChain9 extends ShouldMatchers {
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
 		val newDictionary = dictionary.filter(_.size == toWord.size)
-		doFind(fromWord, toWord, newDictionary - fromWord, Seq(fromWord), Int.MaxValue)
+		doFind(fromWord, toWord, newDictionary - fromWord, Seq(fromWord), 0, Int.MaxValue)
 	}
 
-	def doFind(fromWord: String, toWord: String, dictionary: Set[String], chain: Seq[String], minSize: Int): Seq[String] = {
+	def doFind(fromWord: String, toWord: String, dictionary: Set[String], chain: Seq[String], depth: Int, minSize: Int): Seq[String] = {
 		if (fromWord == toWord) return chain
 		if (chain.size >= minSize) return Seq()
+		if (depth >= minSize) return Seq()
 
 		var min = minSize
 		var result = Seq[String]()
 		val nextWords = dictionary.filter { canMove(fromWord, _) }
 
 		for (word <- nextWords) {
-			val newChain = doFind(word, toWord, dictionary - word, chain :+ word, min)
+			val newChain = doFind(word, toWord, dictionary - word, chain :+ word, depth + 1, min)
 			if (!newChain.isEmpty && newChain.size < min) {
 				min = newChain.size
 				result = newChain
