@@ -3,6 +3,7 @@ package ru.katas.n19
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.io.Source
+import collection.mutable
 
 /**
  * User: dima
@@ -29,6 +30,8 @@ class WordChain9 extends ShouldMatchers {
 		val newDictionary = dictionary.filter(_.size == toWord.size)
 		doFind(fromWord, toWord, newDictionary - fromWord, 1, Int.MaxValue)
 	}
+
+	val wordMaxDepth: mutable.Map[String, Int] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
