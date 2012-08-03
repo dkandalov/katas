@@ -53,6 +53,9 @@ class WordChain9 extends ShouldMatchers {
 				result = fromWord +: chain
 			}
 		}
+		if (!result.isEmpty) {
+			wordMaxDepth(toWord) = depth
+		}
 		result
 	}
 
