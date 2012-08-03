@@ -60,6 +60,7 @@ class WordChain9 extends ShouldMatchers {
 	}
 
 	def canMove(fromWord: String, toWord: String): Boolean = {
+		if (fromWord.size == 0 || toWord.size == 0) return false
 		if (fromWord.size != toWord.size) return false
 		var i = 0
 		var errCount = 0
@@ -70,7 +71,7 @@ class WordChain9 extends ShouldMatchers {
 			}
 			i += 1
 		}
-		true
+		errCount == 1
 	}
 
 	@Test def shouldDetermineCorrectTransition() {
