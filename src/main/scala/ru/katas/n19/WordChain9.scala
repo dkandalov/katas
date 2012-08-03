@@ -21,7 +21,7 @@ class WordChain9 extends ShouldMatchers {
 
 	@Test//(timeout = 10000)
 	def shouldFindWordChain_FromCatToDog_WithRealDictionary() {
-		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq())
+		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq("cat", "cag", "cog", "dog"))
 	}
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
