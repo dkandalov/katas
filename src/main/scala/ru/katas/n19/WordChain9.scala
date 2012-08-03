@@ -30,14 +30,14 @@ class WordChain9 extends ShouldMatchers {
 		doFind(fromWord, toWord, newDictionary - fromWord, 1, Int.MaxValue)
 	}
 
-	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, minDepth: Int): Seq[String] = {
-		if (depth >= minDepth) return Seq()
+	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
+		if (depth >= maxDepth) return Seq()
 		if (fromWord == toWord) {
 			println(depth)
 			return Seq(toWord)
 		}
 
-		var min = minDepth
+		var min = maxDepth
 		var result = Seq[String]()
 		var newDict = dictionary
 
