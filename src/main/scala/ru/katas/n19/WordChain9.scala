@@ -35,7 +35,7 @@ class WordChain9 extends ShouldMatchers {
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
-		if (wordMaxDepth.get(toWord).isDefined && depth >= wordMaxDepth.get(toWord).get) return Seq()
+		if (wordMaxDepth.get(fromWord).isDefined && depth >= wordMaxDepth.get(fromWord).get) return Seq()
 		if (fromWord == toWord) {
 			println(depth)
 			return Seq(toWord)
@@ -54,7 +54,7 @@ class WordChain9 extends ShouldMatchers {
 			}
 		}
 		if (!result.isEmpty) {
-			wordMaxDepth(toWord) = depth
+			wordMaxDepth(fromWord) = depth
 		}
 		result
 	}
