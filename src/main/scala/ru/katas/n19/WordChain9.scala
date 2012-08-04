@@ -28,13 +28,17 @@ class WordChain9 extends ShouldMatchers {
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
 		var filteredDict = dictionary.filter(_.size == toWord.size)
-		filteredDict.foreach { word => wordConnections(word) = countConnections(word, filteredDict) }
+		filteredDict.foreach { word =>
+			wordConnections(word) = countConnections(word, filteredDict)
+			wordConnections2(word) = findAllConnectionsOf(word, filteredDict)
+		}
 		filteredDict = filteredDict.filter(wordConnections(_) > 0)
 
 		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
 	}
 
 	val wordConnections: mutable.Map[String, Int] = mutable.Map()
+	val wordConnections2: mutable.Map[String, Set[String]] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
@@ -62,6 +66,10 @@ class WordChain9 extends ShouldMatchers {
 		(dict - word).foldLeft(0) { (acc, toWord) =>
 			if (canMove(word, toWord)) acc + 1 else acc
 		}
+	}
+
+	private def findAllConnectionsOf(word: String, dict: Set[String]): Set[String] = {
+		Set()
 	}
 
 	private def canMove(fromWord: String, toWord: String): Boolean = {
