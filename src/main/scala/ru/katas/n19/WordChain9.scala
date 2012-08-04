@@ -20,22 +20,24 @@ class WordChain9 extends ShouldMatchers {
 		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
-	@Test//(timeout = 10000)
+	@Test (timeout = 20000)
 	def shouldFindWordChain_FromCatToDog_WithRealDictionary() {
 		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq("cat", "cag", "cog", "dog"))
 	}
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
-		val filteredDict = dictionary.filter(_.size == toWord.size)
-		doFind(fromWord, toWord, filteredDict, 1, Int.MaxValue)
+		var filteredDict = dictionary.filter(_.size == toWord.size)
+		filteredDict.foreach { word => wordConnections(word) = countConnections(word, filteredDict) }
+		filteredDict = filteredDict.filter(wordConnections(_) > 0)
+
+		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
 	}
 
-	val wordMaxDepth: mutable.Map[String, Int] = mutable.Map()
+	val wordConnections: mutable.Map[String, Int] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
-		if (wordMaxDepth.get(fromWord).isDefined && depth >= wordMaxDepth.get(fromWord).get) return Seq()
 		if (fromWord == toWord) {
 			println(depth)
 			return Seq(toWord)
@@ -43,8 +45,8 @@ class WordChain9 extends ShouldMatchers {
 
 		var min = maxDepth
 		var result = Seq[String]()
-		val nextWords = dictionary.filter(canMove(fromWord, _))
-		val newDict = (dictionary -- nextWords) - fromWord
+		val nextWords = dictionary.filter(canMove(fromWord, _)).toSeq.sortBy(wordConnections(_))
+		val newDict = (dictionary -- (nextWords.filter(_ != toWord))) - fromWord
 
 		for (word <- nextWords) {
 			val chain = doFind(word, toWord, newDict, depth + 1, min)
@@ -53,13 +55,16 @@ class WordChain9 extends ShouldMatchers {
 				result = fromWord +: chain
 			}
 		}
-		if (!result.isEmpty) {
-			wordMaxDepth(fromWord) = depth
-		}
 		result
 	}
 
-	def canMove(fromWord: String, toWord: String): Boolean = {
+	private def countConnections(word: String, dict: Set[String]) = {
+		(dict - word).foldLeft(0) { (acc, toWord) =>
+			if (canMove(word, toWord)) acc + 1 else acc
+		}
+	}
+
+	private def canMove(fromWord: String, toWord: String): Boolean = {
 		if (fromWord.size == 0 || toWord.size == 0) return false
 		if (fromWord.size != toWord.size) return false
 		var i = 0
