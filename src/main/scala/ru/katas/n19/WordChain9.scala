@@ -74,7 +74,9 @@ class WordChain9 extends ShouldMatchers {
 	}
 
 	private def findAllConnectionsOf(word: String, dict: Set[String]): Set[String] = {
-		Set()
+		(dict - word).foldLeft(Set[String]()) { (acc, toWord) =>
+			if (canMove(word, toWord)) acc else acc
+		}
 	}
 
 	private def canMove(fromWord: String, toWord: String): Boolean = {
