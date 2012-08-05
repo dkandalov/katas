@@ -27,7 +27,7 @@ class WordChain9 extends ShouldMatchers {
 
 	@Test
 	def shouldFindWordChain_FromLeadToGold_WithRealDictionary() {
-		findMinWordChain("lead", "gold", loadDictionary()) should equal(Seq("lead", "gold"))
+		findMinWordChain("lead", "gold", loadDictionary()) should equal(Seq("lead", "load", "goad", "gold"))
 	}
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
