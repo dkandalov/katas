@@ -1,3 +1,5 @@
+// from http://bost.ocks.org/mike/path/
+
 var n = 40,
     random = d3.random.normal(0, .4);
 
