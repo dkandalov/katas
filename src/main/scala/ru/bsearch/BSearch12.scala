@@ -57,7 +57,7 @@ class BSearch12 extends ShouldMatchers {
 			doBinarySearch(State(value, seq, 0, None))
 		}
 
-		@tailrec private def doBinarySearch[T](state: State[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
+		private def doBinarySearch[T](state: State[T])(implicit orderer: T => Ordered[T]): Option[Int] = {
 			if (state.result.isDefined) state.result.get
 			else doBinarySearch(state.next())
 		}
