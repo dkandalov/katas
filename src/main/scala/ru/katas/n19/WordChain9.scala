@@ -34,14 +34,14 @@ class WordChain9 extends ShouldMatchers {
 		if (fromWord.size != toWord.size) return Seq()
 		var filteredDict = dictionary.filter(_.size == toWord.size)
 		filteredDict.foreach { word =>
-			wordConnections2(word) = findAllConnectionsOf(word, filteredDict)
+			wordConnections(word) = findAllConnectionsOf(word, filteredDict)
 		}
-		filteredDict = filteredDict.filter(wordConnections2(_).size > 0)
+		filteredDict = filteredDict.filter(wordConnections(_).size > 0)
 
 		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
 	}
 
-	val wordConnections2: mutable.Map[String, Set[String]] = mutable.Map()
+	val wordConnections: mutable.Map[String, Set[String]] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
@@ -52,7 +52,7 @@ class WordChain9 extends ShouldMatchers {
 
 		var min = maxDepth
 		var result = Seq[String]()
-		val nextWords = dictionary.filter(wordConnections2(fromWord).contains(_)).toSeq.sortBy(wordConnections2(_).size)
+		val nextWords = wordConnections(fromWord).toSeq.sortBy(wordConnections(_).size)
 		val newDict = (dictionary -- nextWords) - fromWord + toWord
 
 		for (word <- nextWords) {
