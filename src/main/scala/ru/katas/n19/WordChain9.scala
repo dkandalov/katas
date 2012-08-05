@@ -34,15 +34,13 @@ class WordChain9 extends ShouldMatchers {
 		if (fromWord.size != toWord.size) return Seq()
 		var filteredDict = dictionary.filter(_.size == toWord.size)
 		filteredDict.foreach { word =>
-			wordConnections(word) = countConnections(word, filteredDict)
 			wordConnections2(word) = findAllConnectionsOf(word, filteredDict)
 		}
-		filteredDict = filteredDict.filter(wordConnections(_) > 0)
+		filteredDict = filteredDict.filter(wordConnections2(_).size > 0)
 
 		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
 	}
 
-	val wordConnections: mutable.Map[String, Int] = mutable.Map()
 	val wordConnections2: mutable.Map[String, Set[String]] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
@@ -54,7 +52,7 @@ class WordChain9 extends ShouldMatchers {
 
 		var min = maxDepth
 		var result = Seq[String]()
-		val nextWords = dictionary.filter(canMove(fromWord, _)).toSeq.sortBy(wordConnections(_))
+		val nextWords = dictionary.filter(canMove(fromWord, _)).toSeq.sortBy(wordConnections2(_).size)
 		val newDict = (dictionary -- nextWords) - fromWord + toWord
 
 		for (word <- nextWords) {
@@ -67,15 +65,9 @@ class WordChain9 extends ShouldMatchers {
 		result
 	}
 
-	private def countConnections(word: String, dict: Set[String]) = {
-		(dict - word).foldLeft(0) { (acc, toWord) =>
-			if (canMove(word, toWord)) acc + 1 else acc
-		}
-	}
-
 	private def findAllConnectionsOf(word: String, dict: Set[String]): Set[String] = {
 		(dict - word).foldLeft(Set[String]()) { (acc, toWord) =>
-			if (canMove(word, toWord)) acc else acc
+			if (canMove(word, toWord)) acc + toWord else acc
 		}
 	}
 
