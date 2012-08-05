@@ -52,7 +52,7 @@ class WordChain9 extends ShouldMatchers {
 
 		var min = maxDepth
 		var result = Seq[String]()
-		val nextWords = wordConnections(fromWord).toSeq.sortBy(wordConnections(_).size)
+		val nextWords = wordConnections(fromWord).intersect(dictionary).toSeq.sortBy(wordConnections(_).size)
 		val newDict = (dictionary -- nextWords) - fromWord + toWord
 
 		for (word <- nextWords) {
