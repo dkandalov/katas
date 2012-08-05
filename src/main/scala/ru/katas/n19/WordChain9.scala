@@ -21,12 +21,12 @@ class WordChain9 extends ShouldMatchers {
 		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
-	@Test(timeout = 20000)
+	@Test(timeout = 5000)
 	def shouldFindWordChain_FromCatToDog_WithRealDictionary() {
 		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq("cat", "cag", "cog", "dog"))
 	}
 
-	@Test
+	@Test(timeout = 70000)
 	def shouldFindWordChain_FromLeadToGold_WithRealDictionary() {
 		findMinWordChain("lead", "gold", loadDictionary()) should equal(Seq("lead", "load", "goad", "gold"))
 	}
@@ -34,14 +34,19 @@ class WordChain9 extends ShouldMatchers {
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
 		var filteredDict = dictionary.filter(_.size == toWord.size)
-		filteredDict.foreach { word => wordConnections(word) = findAllConnectionsOf(word, filteredDict) }
-		filteredDict.foreach { word => wordConnections(word) = SortedSet(wordConnections(word).toSeq : _*) }
+
+		val acc = filteredDict.foldLeft(Map[String, Seq[String]]()){ (acc, word) => acc.updated(word, findAllConnectionsOf(word, filteredDict)) }
+		acc.foreach{ e =>
+			val set = mutable.LinkedHashSet[String]()
+			e._2.sortBy(acc(_).size).foreach(word => set.add(word) )
+			wordConnections(e._1) = set
+		}
 		filteredDict = filteredDict.filter(wordConnections(_).size > 0)
 
 		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
 	}
 
-	val wordConnections: mutable.Map[String, Set[String]] = mutable.Map()
+	val wordConnections: mutable.Map[String, mutable.LinkedHashSet[String]] = mutable.Map()
 
 	private def doFind(fromWord: String, toWord: String, dictionary: Set[String], depth: Int, maxDepth: Int): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
@@ -52,7 +57,7 @@ class WordChain9 extends ShouldMatchers {
 
 		var min = maxDepth
 		var result = Seq[String]()
-		val nextWords = wordConnections(fromWord).intersect(dictionary).toSeq.sortBy(wordConnections(_).size)
+		val nextWords = wordConnections(fromWord).intersect(dictionary)
 		val newDict = (dictionary -- nextWords) - fromWord + toWord
 
 		for (word <- nextWords) {
@@ -65,9 +70,9 @@ class WordChain9 extends ShouldMatchers {
 		result
 	}
 
-	private def findAllConnectionsOf(word: String, dict: Set[String]): Set[String] = {
-		(dict - word).foldLeft(Set[String]()) { (acc, toWord) =>
-			if (canMove(word, toWord)) acc + toWord else acc
+	private def findAllConnectionsOf(word: String, dict: Set[String]): Seq[String] = {
+		(dict - word).foldLeft(Seq[String]()) { (acc, toWord) =>
+			if (canMove(word, toWord)) acc :+ toWord else acc
 		}
 	}
 
