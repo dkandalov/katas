@@ -4,6 +4,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.io.Source
 import collection.mutable
+import collection.immutable.SortedSet
 
 /**
  * User: dima
@@ -33,9 +34,8 @@ class WordChain9 extends ShouldMatchers {
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
 		if (fromWord.size != toWord.size) return Seq()
 		var filteredDict = dictionary.filter(_.size == toWord.size)
-		filteredDict.foreach { word =>
-			wordConnections(word) = findAllConnectionsOf(word, filteredDict)
-		}
+		filteredDict.foreach { word => wordConnections(word) = findAllConnectionsOf(word, filteredDict) }
+		filteredDict.foreach { word => wordConnections(word) = SortedSet(wordConnections(word).toSeq : _*) }
 		filteredDict = filteredDict.filter(wordConnections(_).size > 0)
 
 		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
