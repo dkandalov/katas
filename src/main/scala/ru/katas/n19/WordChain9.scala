@@ -4,7 +4,6 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.io.Source
 import collection.mutable
-import collection.immutable.SortedSet
 
 /**
  * User: dima
@@ -26,9 +25,11 @@ class WordChain9 extends ShouldMatchers {
 		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq("cat", "cag", "cog", "dog"))
 	}
 
-	@Test(timeout = 70000)
+	@Test(timeout = 5000)
 	def shouldFindWordChain_FromLeadToGold_WithRealDictionary() {
 		findMinWordChain("lead", "gold", loadDictionary()) should equal(Seq("lead", "load", "goad", "gold"))
+		findMinWordChain("pork", "file", loadDictionary()) should equal(Seq("pork", "polk", "folk", "fole", "file"))
+		findMinWordChain("cold", "door", loadDictionary()) should equal(Seq("cold", "mold", "mood", "moor", "door"))
 	}
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
@@ -43,7 +44,9 @@ class WordChain9 extends ShouldMatchers {
 		}
 		filteredDict = filteredDict.filter(wordConnections(_).size > 0)
 
-		doFind(fromWord, toWord, filteredDict, 1, filteredDict.size + 1)
+		2.to(filteredDict.size + 1).foldLeft(Seq[String]()) { (acc, maxDepth) =>
+			if (acc.isEmpty) doFind(fromWord, toWord, filteredDict, 1, maxDepth) else acc
+		}
 	}
 
 	val wordConnections: mutable.Map[String, mutable.LinkedHashSet[String]] = mutable.Map()
