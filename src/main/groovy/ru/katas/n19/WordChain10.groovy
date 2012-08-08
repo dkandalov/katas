@@ -31,12 +31,13 @@ class WordChain10 {
   }
 
   private static Map<String, Collection<String>> findAllValidMoves(String fromWord, Collection dict, Map result = [:]) {
-    if (result.containsKey(fromWord)) return
+    Queue queue = new LinkedList([fromWord])
+    while (!queue.empty) {
+      fromWord = queue.pop()
+      def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
+      result[fromWord] = nextWords
 
-    def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
-    result[fromWord] = nextWords
-    nextWords.each { String word ->
-      findAllValidMoves(word, dict, result)
+      queue.addAll(nextWords.findAll{ !result.containsKey(it) })
     }
     result
   }
