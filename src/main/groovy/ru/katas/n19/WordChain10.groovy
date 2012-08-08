@@ -27,12 +27,12 @@ class WordChain10 {
     int diffs = 0
     def list = toWord.toList()
     for (c in fromWord) {
-      if (list.remove(c)) {
+      if (!list.remove(c)) {
         diffs++
         if (diffs > 1) return false
       }
     }
-    true
+    diffs == 1
   }
 
   @Test void shouldDetermineIfMoveIsValid() {
