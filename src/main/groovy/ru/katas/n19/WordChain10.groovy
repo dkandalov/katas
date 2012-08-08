@@ -29,8 +29,13 @@ class WordChain10 {
   }
 
   private static Map<String, Collection<String>> findAllValidMoves(String fromWord, Collection dict, Map result = [:]) {
+    if (result.containsKey(fromWord)) return
+
     def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
     result[fromWord] = nextWords
+    nextWords.each { String word ->
+      findAllValidMoves(word, dict, result)
+    }
     result
   }
 
