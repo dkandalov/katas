@@ -19,6 +19,11 @@ class WordChain10 {
 
   private def doFind(String fromWord, String toWord, Collection dict, int minDepth) {
     if (fromWord == toWord) return [toWord]
+    def nextWords = dict.findAll() { String word -> canMove(fromWord, word) }
     []
+  }
+
+  private static boolean canMove(String fromWord, String toWord) {
+    false
   }
 }
