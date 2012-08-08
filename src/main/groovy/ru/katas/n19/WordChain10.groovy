@@ -9,7 +9,7 @@ import org.junit.Test
 class WordChain10 {
   @Test void shouldFindSimpleWordChains() {
     assert findShortestChain("aaa", "bbb", []) == []
-    assert findShortestChain("aaa", "aaa", []) == ["aaa"]
+    assert findShortestChain("aaa", "aaa", ["aaa"]) == ["aaa"]
     assert findShortestChain("aaa", "bbb", ["aaa", "aab", "abb", "bbb"]) == ["aaa", "aab", "abb", "bbb"]
   }
 
@@ -19,10 +19,11 @@ class WordChain10 {
   }
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
-    doFind(fromWord, toWord, dict - fromWord, 1, dict.size())
+    doFind(fromWord, toWord, dict - fromWord, 1, dict.size() + 1)
   }
 
   private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
+    if (depth >= minDepth) return []
     if (fromWord == toWord) return [toWord]
     def nextWords = dict.findAll() { String word -> canMove(fromWord, word) }
 
