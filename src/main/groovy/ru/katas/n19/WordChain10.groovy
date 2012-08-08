@@ -28,12 +28,17 @@ class WordChain10 {
     doFind(fromWord, toWord, dict - fromWord, 1, dict.size() + 1)
   }
 
-  private static Map<String, Set<String>> findAllValidMoves(String fromWord, Collection dict, Map result = [:]) {
-    dict.findAll {canMove(fromWord, it)}
+  private static Map<String, Collection<String>> findAllValidMoves(String fromWord, Collection dict, Map result = [:]) {
+    def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
+    result[fromWord] = nextWords
     result
   }
 
-  def Map<String, Set<String>> moves
+  @Test void aaa() {
+
+  }
+
+  def Map<String, Collection<String>> moves
 
   private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
     if (depth >= minDepth) return []
