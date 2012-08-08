@@ -2,6 +2,9 @@ package ru.katas.n19
 
 import org.junit.Test
 
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.junit.Assert.assertThat
+
 /**
  * User: dima
  * Date: 08/08/2012
@@ -19,9 +22,9 @@ class WordChain10 {
     assert findShortestChain("aaa", "bbb", dict) == ["aaa", "aab", "abb", "bbb"]
   }
 
-  @Test(timeout = 10000L)
+  @Test(timeout = 70000L)
   void shouldFindShortestWordChain_FromCatToDog() {
-    assert findShortestChain("cat", "dog", loadDict()) == ["cat", "...", "dog"]
+    assertThat(findShortestChain("cat", "dog", loadDict()), equalTo(["cat", "cag", "cog", "dog"]))
   }
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
@@ -33,7 +36,7 @@ class WordChain10 {
 
   private static def sortMovesByNextMovesAmount(Map<String, Collection<String>> moves) {
     moves.each { entry ->
-      moves[entry.key] = moves[entry.key].sort { moves[entry.key].size() }
+      moves[entry.key] = moves[entry.key].sort { moves[it].size() }
     }
   }
 
@@ -41,7 +44,7 @@ class WordChain10 {
     Set set = new TreeSet([fromWord])
     while (!set.empty) {
       fromWord = set.pollFirst()
-      def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
+      def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }.unique()
       result[fromWord] = nextWords
 
       set.addAll(nextWords.findAll{ !result.containsKey(it) })
@@ -67,11 +70,17 @@ class WordChain10 {
     }
 
     def result = []
-    for (String word in moves[fromWord]) {
-      def chain = doFind(word, toWord, dict - word, depth + 1, minDepth)
+    def nextWords = moves[fromWord].intersect(dict)
+    dict = new HashSet(dict)
+    dict.removeAll(nextWords)
+    dict.add(toWord)
+
+    for (String word in nextWords) {
+      def chain = doFind(word, toWord, dict, depth + 1, minDepth)
       if (!chain.empty) {
-        result = [fromWord] + chain
         minDepth = depth + chain.size()
+        chain.add(0, fromWord)
+        result = chain
       }
     }
     result
