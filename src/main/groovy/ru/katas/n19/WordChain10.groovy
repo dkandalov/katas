@@ -34,7 +34,7 @@ class WordChain10 {
     if (result.containsKey(fromWord)) return
 
     def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
-    result[fromWord] = new TreeSet(nextWords)
+    result[fromWord] = nextWords
     nextWords.each { String word ->
       findAllValidMoves(word, dict, result)
     }
@@ -58,8 +58,10 @@ class WordChain10 {
       return [toWord]
     }
 
+    def nextWords = moves[fromWord].sort { moves[it].size() }
+
     def result = []
-    for (String word in moves[fromWord]) {
+    for (String word in nextWords) {
       def chain = doFind(word, toWord, dict - word, depth + 1, minDepth)
       if (!chain.empty) {
         result = [fromWord] + chain
