@@ -26,7 +26,8 @@ class WordChain10 {
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
     moves = findAllValidMoves(fromWord, dict)
-    doFind(fromWord, toWord, dict - fromWord, 1, dict.size() + 1)
+    def newDict = moves.findResults { moves[it.getKey()] }
+    doFind(fromWord, toWord, newDict - fromWord, 1, newDict.size() + 1)
   }
 
   private static Map<String, Collection<String>> findAllValidMoves(String fromWord, Collection dict, Map result = [:]) {
