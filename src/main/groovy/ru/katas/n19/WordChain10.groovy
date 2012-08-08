@@ -22,7 +22,7 @@ class WordChain10 {
     assert findShortestChain("aaa", "bbb", dict) == ["aaa", "aab", "abb", "bbb"]
   }
 
-  @Test(timeout = 70000L)
+  @Test(timeout = 10000L)
   void shouldFindShortestWordChain_FromCatToDog() {
     assertThat(findShortestChain("cat", "dog", loadDict()), equalTo(["cat", "cag", "cog", "dog"]))
   }
@@ -31,7 +31,12 @@ class WordChain10 {
     moves = findAllValidMoves(fromWord, dict.findAll{ it.length() == toWord.length() })
     sortMovesByNextMovesAmount(moves)
     def newDict = new HashSet(moves.keySet())
-    doFind(fromWord, toWord, newDict - fromWord, 1, newDict.size() + 1)
+
+    for (i in (1..newDict.size() + 1)) {
+      def chain = doFind(fromWord, toWord, newDict - fromWord, 1, i)
+      if (!chain.empty) return chain
+    }
+    []
   }
 
   private static def sortMovesByNextMovesAmount(Map<String, Collection<String>> moves) {
@@ -65,7 +70,6 @@ class WordChain10 {
   private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
     if (depth >= minDepth) return []
     if (fromWord == toWord) {
-      println depth
       return [toWord]
     }
 
