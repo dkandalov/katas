@@ -18,7 +18,7 @@ class WordChain10 {
     assert findShortestChain("aaa", "bbb", dict) == ["aaa", "aab", "abb", "bbb"]
   }
 
-  @Test(timeout = 10000) void shouldFindShortestWordChain_FromCatToDog() {
+  @Test(timeout = 10000L) void shouldFindShortestWordChain_FromCatToDog() {
     assert findShortestChain("cat", "dog", loadDict()) == ["cat", "...", "dog"]
   }
 
