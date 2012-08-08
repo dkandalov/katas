@@ -19,18 +19,19 @@ class WordChain10 {
   }
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
-    doFind(fromWord, toWord, dict - fromWord, dict.size())
+    doFind(fromWord, toWord, dict - fromWord, 1, dict.size())
   }
 
-  private def doFind(String fromWord, String toWord, Collection dict, int minDepth) {
+  private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
     if (fromWord == toWord) return [toWord]
     def nextWords = dict.findAll() { String word -> canMove(fromWord, word) }
 
     def result = []
     for (String word in nextWords) {
-      def chain = doFind(word, toWord, dict - word, minDepth)
+      def chain = doFind(word, toWord, dict - word, depth + 1, minDepth)
       if (!chain.empty) {
         result = [fromWord] + chain
+        minDepth = depth + chain.size()
       }
     }
     result
