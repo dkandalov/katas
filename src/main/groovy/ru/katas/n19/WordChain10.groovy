@@ -20,7 +20,15 @@ class WordChain10 {
   private def doFind(String fromWord, String toWord, Collection dict, int minDepth) {
     if (fromWord == toWord) return [toWord]
     def nextWords = dict.findAll() { String word -> canMove(fromWord, word) }
-    []
+
+    def result = []
+    for (String word in nextWords) {
+      def chain = doFind(word, toWord, dict - word, minDepth)
+      if (!chain.empty) {
+        result = [fromWord] + chain
+      }
+    }
+    result
   }
 
   private static boolean canMove(String fromWord, String toWord) {
