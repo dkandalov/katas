@@ -8,6 +8,10 @@ import org.junit.Test
  */
 class WordChain10 {
   @Test void shouldFindSimpleWordChains() {
+    assert findShortestChain("aaa", "bbb", []) == []
+  }
 
+  private def findShortestChain(String fromWord, String toWord, Collection dict) {
+    []
   }
 }
