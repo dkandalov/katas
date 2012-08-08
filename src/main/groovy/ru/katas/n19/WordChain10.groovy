@@ -66,10 +66,8 @@ class WordChain10 {
       return [toWord]
     }
 
-    def nextWords = moves[fromWord].sort { moves[it].size() }
-
     def result = []
-    for (String word in nextWords) {
+    for (String word in moves[fromWord]) {
       def chain = doFind(word, toWord, dict - word, depth + 1, minDepth)
       if (!chain.empty) {
         result = [fromWord] + chain
