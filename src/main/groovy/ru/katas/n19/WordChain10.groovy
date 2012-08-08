@@ -25,7 +25,7 @@ class WordChain10 {
   }
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
-    moves = findAllValidMoves(fromWord, dict)
+    moves = findAllValidMoves(fromWord, dict.findAll{ it.length() == toWord.length() })
     def newDict = moves.findResults { entry -> moves[entry.key] }
     doFind(fromWord, toWord, newDict - fromWord, 1, newDict.size() + 1)
   }
@@ -72,6 +72,8 @@ class WordChain10 {
   }
 
   private static boolean canMove(String fromWord, String toWord) {
+    if (fromWord.length() != toWord.length()) return false
+
     int diffs = 0
     def list = toWord.toList()
     for (c in fromWord) {
