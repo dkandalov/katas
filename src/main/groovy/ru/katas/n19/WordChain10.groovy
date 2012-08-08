@@ -26,7 +26,7 @@ class WordChain10 {
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
     moves = findAllValidMoves(fromWord, dict)
-    def newDict = moves.findResults { moves[it.getKey()] }
+    def newDict = moves.findResults { entry -> moves[entry.key] }
     doFind(fromWord, toWord, newDict - fromWord, 1, newDict.size() + 1)
   }
 
@@ -34,7 +34,7 @@ class WordChain10 {
     if (result.containsKey(fromWord)) return
 
     def nextWords = dict.findAll{ String word -> canMove(fromWord, word) }
-    result[fromWord] = nextWords
+    result[fromWord] = new TreeSet(nextWords)
     nextWords.each { String word ->
       findAllValidMoves(word, dict, result)
     }
@@ -53,7 +53,10 @@ class WordChain10 {
 
   private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
     if (depth >= minDepth) return []
-    if (fromWord == toWord) return [toWord]
+    if (fromWord == toWord) {
+      println depth
+      return [toWord]
+    }
 
     def result = []
     for (String word in moves[fromWord]) {
