@@ -27,7 +27,7 @@ class WordChain10 {
   def findShortestChain(String fromWord, String toWord, Collection dict) {
     moves = findAllValidMoves(fromWord, dict.findAll{ it.length() == toWord.length() })
     sortMovesByNextMovesAmount(moves)
-    def newDict = moves.findResults { entry -> moves[entry.key] }
+    def newDict = new HashSet(moves.keySet())
     doFind(fromWord, toWord, newDict - fromWord, 1, newDict.size() + 1)
   }
 
