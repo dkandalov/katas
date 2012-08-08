@@ -13,6 +13,11 @@ class WordChain10 {
     assert findShortestChain("aaa", "bbb", ["aaa", "aab", "abb", "bbb"]) == ["aaa", "aab", "abb", "bbb"]
   }
 
+  @Test void shouldFindShortestWordChain() {
+    def dict = ["aaa", "aab", "abb", "abc", "acc", "bbb"]
+    assert findShortestChain("aaa", "bbb", dict) == ["aaa", "aab", "abb", "bbb"]
+  }
+
   def findShortestChain(String fromWord, String toWord, Collection dict) {
     doFind(fromWord, toWord, dict - fromWord, dict.size())
   }
