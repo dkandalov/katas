@@ -23,7 +23,12 @@ class WordChain10 {
   }
 
   def findShortestChain(String fromWord, String toWord, Collection dict) {
+    findAllValidMoves(fromWord, dict)
     doFind(fromWord, toWord, dict - fromWord, 1, dict.size() + 1)
+  }
+
+  private static Map<String, Set<String>> findAllValidMoves(String fromWord, Collection dict) {
+    [:]
   }
 
   private def doFind(String fromWord, String toWord, Collection dict, int depth, int minDepth) {
