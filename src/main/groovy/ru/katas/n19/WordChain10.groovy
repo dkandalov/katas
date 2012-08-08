@@ -18,6 +18,10 @@ class WordChain10 {
     assert findShortestChain("aaa", "bbb", dict) == ["aaa", "aab", "abb", "bbb"]
   }
 
+  @Test(timeout = 10000) void shouldFindShortestWordChain_FromCatToDog() {
+    assert findShortestChain("cat", "dog", loadDict()) == ["cat", "...", "dog"]
+  }
+
   def findShortestChain(String fromWord, String toWord, Collection dict) {
     doFind(fromWord, toWord, dict - fromWord, 1, dict.size() + 1)
   }
@@ -54,7 +58,7 @@ class WordChain10 {
     new File("/usr/share/dict/words").readLines()
   }
 
-  @Test public void shouldLoadRealDictionary() {
+  @Test void shouldLoadRealDictionary() {
     assert loadDict().size() > 10000
   }
 
