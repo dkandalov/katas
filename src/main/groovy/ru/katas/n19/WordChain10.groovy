@@ -24,6 +24,11 @@ class WordChain10 {
   }
 
   private static boolean canMove(String fromWord, String toWord) {
-    false
+    fromWord.toList() - toWord.toList() == 1
+  }
+
+  @Test void determineNextMove() {
+    assert canMove("a", "a")
+    assert canMove("a", "b")
   }
 }
