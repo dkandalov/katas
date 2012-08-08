@@ -36,7 +36,9 @@ class WordChain10 {
 
   @Test void shouldFindAllValidMoves() {
     assert findAllValidMoves("aaa", ["aaa", "aab", "aba", "ccc"]) == [
-            "aaa" : ["aab", "aba"]
+            "aaa" : ["aab", "aba"],
+            "aab" : ["aaa"],
+            "aba" : ["aaa"],
     ]
   }
 
