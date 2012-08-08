@@ -34,8 +34,10 @@ class WordChain10 {
     result
   }
 
-  @Test void aaa() {
-
+  @Test void shouldFindAllValidMoves() {
+    assert findAllValidMoves("aaa", ["aaa", "aab", "aba", "ccc"]) == [
+            "aaa" : ["aab", "aba"]
+    ]
   }
 
   def Map<String, Collection<String>> moves
