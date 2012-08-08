@@ -50,6 +50,14 @@ class WordChain10 {
     diffs == 1
   }
 
+  private static List<String> loadDict() {
+    new File("/usr/share/dict/words").readLines()
+  }
+
+  @Test public void shouldLoadRealDictionary() {
+    assert loadDict().size() > 10000
+  }
+
   @Test void shouldDetermineIfMoveIsValid() {
     assert !canMove("a", "a")
     assert canMove("a", "b")
