@@ -24,7 +24,15 @@ class WordChain10 {
   }
 
   private static boolean canMove(String fromWord, String toWord) {
-    (fromWord.toList() - toWord.toList()).size() == 1
+    int diffs = 0
+    def list = toWord.toList()
+    for (c in fromWord) {
+      if (list.remove(c)) {
+        diffs++
+        if (diffs > 1) return false
+      }
+    }
+    true
   }
 
   @Test void shouldDetermineIfMoveIsValid() {
