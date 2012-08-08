@@ -24,11 +24,16 @@ class WordChain10 {
   }
 
   private static boolean canMove(String fromWord, String toWord) {
-    fromWord.toList() - toWord.toList() == 1
+    (fromWord.toList() - toWord.toList()).size() == 1
   }
 
-  @Test void determineNextMove() {
-    assert canMove("a", "a")
+  @Test void shouldDetermineIfMoveIsValid() {
+    assert !canMove("a", "a")
     assert canMove("a", "b")
+
+    assert canMove("aaa", "aab")
+    assert canMove("aaa", "aba")
+    assert canMove("aaa", "baa")
+    assert !canMove("aaa", "abb")
   }
 }
