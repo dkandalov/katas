@@ -22,6 +22,14 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	@Test def shouldFindNextWords() {
+		canBeNext("aaa", "aaa") should be(false)
+		canBeNext("aaa", "aab") should be(true)
+		canBeNext("aaa", "aba") should be(true)
+		canBeNext("aaa", "baa") should be(true)
+		canBeNext("aaa", "bba") should be(false)
+	}
 
+	private def canBeNext(fromWord: String, toWord: String): Boolean = {
+		fromWord.diff(toWord).size == 1
 	}
 }
