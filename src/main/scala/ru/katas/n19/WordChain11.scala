@@ -20,6 +20,15 @@ class WordChain11 extends ShouldMatchers {
 		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "abc", "cbc", "ccc")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
+	@Test def shouldFindShortestWordChain_From_Cat_to_Dog() {
+		val dict = loadMacDict()
+		findShortestWordChain("cat", "dog", dict) should equal(Seq())
+	}
+
+	private def loadMacDict(): Seq[String] = {
+		Seq()
+	}
+
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
 		doFind(fromWord, toWord, dict, 1, dict.size + 1)
 	}
