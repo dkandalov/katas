@@ -39,11 +39,13 @@ class WordChain11 extends ShouldMatchers {
 		Seq()
 	}
 
-	private def findAllCorrectMoves(dict: Seq[String]): Map[String, Seq[String]] = {
+	type Moves = Map[String, Seq[String]]
+
+	private def findAllCorrectMoves(dict: Seq[String]): Moves = {
 		Map()
 	}
 
-	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int, moves: Map[String, Seq[String]]): Seq[String] = {
+	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int, moves: Moves): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
 		if (fromWord == toWord) return Seq(toWord)
 
