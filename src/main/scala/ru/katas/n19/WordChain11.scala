@@ -31,9 +31,10 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
-		val moves = findAllCorrectMoves(dict)
+		val newDict = dict.filter(_.length == toWord.length)
+		val moves = findAllCorrectMoves(newDict)
 		for (maxDepth <- 2 to dict.size + 1) {
-			val chain = doFind(fromWord, toWord, dict, 1, maxDepth, moves)
+			val chain = doFind(fromWord, toWord, newDict, 1, maxDepth, moves)
 			if (!chain.isEmpty) return chain
 		}
 		Seq()
