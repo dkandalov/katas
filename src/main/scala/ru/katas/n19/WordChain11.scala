@@ -75,7 +75,12 @@ class WordChain11 extends ShouldMatchers {
 		canBeNext("aaa", "bba") should be(false)
 	}
 
-	private def canBeNext(fromWord: String, toWord: String): Boolean = {
-		fromWord.diff(toWord).size == 1
+	private def canBeNext(fromWord: String, toWord: String, diffs: Int = 0): Boolean = {
+		if (diffs > 1) return false
+		else if (fromWord.isEmpty) diffs == 1
+		else if (fromWord(0) == toWord(0))
+			canBeNext(fromWord.tail, toWord.tail, diffs)
+		else
+			canBeNext(fromWord.tail, toWord.tail, diffs + 1)
 	}
 }
