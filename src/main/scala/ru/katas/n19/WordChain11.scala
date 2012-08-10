@@ -21,17 +21,23 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
-		doFind(fromWord, toWord, dict, 1, dict.size - 1)
+		doFind(fromWord, toWord, dict, 1, dict.size + 1)
 	}
 
 	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int): Seq[String] = {
+		if (depth >= maxDepth) return Seq()
 		if (fromWord == toWord) return Seq(toWord)
 
 		val nextWords = dict.filter{ canBeNext(fromWord, _) }
+		var newMaxDepth = maxDepth
 		var result = Seq[String]()
+
 		for (word <- nextWords) {
-			val chain = doFind(word, toWord, dict.filterNot(nextWords.contains(_)), depth + 1, maxDepth)
-			if (!chain.isEmpty) result = fromWord +: chain
+			val chain = doFind(word, toWord, dict.filterNot(nextWords.contains(_)), depth + 1, newMaxDepth)
+			if (!chain.isEmpty) {
+				result = fromWord +: chain
+				newMaxDepth = depth + chain.size
+			}
 		}
 
 		result
