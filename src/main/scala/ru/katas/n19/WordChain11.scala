@@ -23,7 +23,8 @@ class WordChain11 extends ShouldMatchers {
 
 	@Test def shouldFindShortestWordChain_From_Cat_to_Dog() {
 		val dict = loadMacDict()
-		findShortestWordChain("cat", "dog", dict) should equal(Seq("cat", "dog"))
+		findShortestWordChain("cat", "dog", dict) should equal(Seq("cat", "cag", "cog", "dog"))
+		findShortestWordChain("dog", "cat", dict) should equal(Seq("dog", "cog", "cag", "cat"))
 	}
 
 	private def loadMacDict(): Seq[String] = {
