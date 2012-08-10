@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat
  * User: dima
  * Date: 08/08/2012
  */
+@SuppressWarnings("GroovyMissingReturnStatement")
 class WordChain10 {
 
   private def shortestWordChain = new ShortestWordChain()
