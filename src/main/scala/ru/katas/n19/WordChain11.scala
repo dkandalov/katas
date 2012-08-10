@@ -20,9 +20,10 @@ class WordChain11 extends ShouldMatchers {
 		if (fromWord == toWord) return Seq(toWord)
 
 		val nextWords = dict.filter{ canBeNext(fromWord, _) }
-		var result = Seq()
+		var result = Seq[String]()
 		for (word <- nextWords) {
-
+			val chain = findShortestWordChain(word, toWord, dict.filterNot(nextWords.contains(_)))
+			if (!chain.isEmpty) result = word +: chain
 		}
 
 		result
