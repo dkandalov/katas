@@ -2,6 +2,7 @@ package ru.katas.n19
 
 import org.junit.Test
 import org.scalatest.matchers.ShouldMatchers
+import scala.io.Source
 
 /**
  * User: dima
@@ -22,10 +23,11 @@ class WordChain11 extends ShouldMatchers {
 
 	@Test def shouldFindShortestWordChain_From_Cat_to_Dog() {
 		val dict = loadMacDict()
-		findShortestWordChain("cat", "dog", dict) should equal(Seq())
+		findShortestWordChain("cat", "dog", dict) should equal(Seq("cat", "dog"))
 	}
 
 	private def loadMacDict(): Seq[String] = {
+		Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase)
 		Seq()
 	}
 
