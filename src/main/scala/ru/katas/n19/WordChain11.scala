@@ -17,7 +17,7 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	@Test def shouldFindShortestWordChains() {
-		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "abc", "acc", "ccc")) should equal(Seq("aaa", "aac", "acc", "ccc"))
+		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "abc", "cbc", "ccc")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
