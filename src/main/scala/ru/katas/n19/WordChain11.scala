@@ -27,8 +27,7 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	private def loadMacDict(): Seq[String] = {
-		Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase)
-		Seq()
+		Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase).toSeq
 	}
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
