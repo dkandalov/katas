@@ -18,7 +18,14 @@ class WordChain11 extends ShouldMatchers {
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
 		if (fromWord == toWord) return Seq(toWord)
-		Seq()
+
+		val nextWords = dict.filter{ canBeNext(fromWord, _) }
+		var result = Seq()
+		for (word <- nextWords) {
+
+		}
+
+		result
 	}
 
 	@Test def shouldFindNextWords() {
