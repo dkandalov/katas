@@ -31,14 +31,19 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	def findShortestWordChain(fromWord: String, toWord: String, dict: Seq[String]): Seq[String] = {
-		for (maxDepth <- 1 to dict.size + 1) {
-			val chain = doFind(fromWord, toWord, dict, 1, maxDepth)
+		val moves = findAllCorrectMoves(dict)
+		for (maxDepth <- 2 to dict.size + 1) {
+			val chain = doFind(fromWord, toWord, dict, 1, maxDepth, moves)
 			if (!chain.isEmpty) return chain
 		}
 		Seq()
 	}
 
-	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int): Seq[String] = {
+	private def findAllCorrectMoves(dict: Seq[String]): Map[String, Seq[String]] = {
+		Map()
+	}
+
+	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int, moves: Map[String, Seq[String]]): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
 		if (fromWord == toWord) return Seq(toWord)
 
@@ -47,7 +52,7 @@ class WordChain11 extends ShouldMatchers {
 		var result = Seq[String]()
 
 		for (word <- nextWords) {
-			val chain = doFind(word, toWord, dict.filterNot(nextWords.contains(_)), depth + 1, newMaxDepth)
+			val chain = doFind(word, toWord, dict.filterNot(nextWords.contains(_)), depth + 1, newMaxDepth, moves)
 			if (!chain.isEmpty) {
 				result = fromWord +: chain
 				newMaxDepth = depth + chain.size
