@@ -42,14 +42,16 @@ class WordChain11 extends ShouldMatchers {
 	type Moves = Map[String, Seq[String]]
 
 	private def findAllCorrectMoves(dict: Seq[String]): Moves = {
-		Map()
+		dict.foldLeft(Map[String, Seq[String]]()) { (acc, word) =>
+			acc.updated(word, dict.filter(canBeNext(word, _)))
+		}
 	}
 
 	private def doFind(fromWord: String, toWord: String, dict: Seq[String], depth: Int, maxDepth: Int, moves: Moves): Seq[String] = {
 		if (depth >= maxDepth) return Seq()
 		if (fromWord == toWord) return Seq(toWord)
 
-		val nextWords = dict.filter{ canBeNext(fromWord, _) }
+		val nextWords = moves(fromWord)
 		var newMaxDepth = maxDepth
 		var result = Seq[String]()
 
