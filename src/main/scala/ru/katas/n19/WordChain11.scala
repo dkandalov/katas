@@ -23,7 +23,7 @@ class WordChain11 extends ShouldMatchers {
 		var result = Seq[String]()
 		for (word <- nextWords) {
 			val chain = findShortestWordChain(word, toWord, dict.filterNot(nextWords.contains(_)))
-			if (!chain.isEmpty) result = word +: chain
+			if (!chain.isEmpty) result = fromWord +: chain
 		}
 
 		result
