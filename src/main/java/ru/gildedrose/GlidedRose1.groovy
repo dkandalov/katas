@@ -1,8 +1,6 @@
-package ru.glidedrose
+package ru.gildedrose
 
-import ru.gildedrose.Item
 import static java.lang.Integer.MIN_VALUE
-
 /**
  * User: dima
  * Date: 25/01/2012

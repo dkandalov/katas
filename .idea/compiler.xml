@@ -22,10 +22,15 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <processorPath useClasspath="true" />
+        <module name="katas" />
+      </profile>
     </annotationProcessing>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.7" />
+    <bytecodeTargetLevel>
+      <module name="katas" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
