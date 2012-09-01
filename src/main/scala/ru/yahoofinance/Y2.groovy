@@ -28,7 +28,7 @@ class Y2 {
     }
 
     println(position + " " + money)
-    requestQuotes("YHOO", "2000-01-01", "2001-03-10").reverse().each { Quote quote ->
+    requestQuotes("YHOO", "2000-01-01", "2001-01-01").reverse().each { Quote quote ->
       println(quote)
       println(var.calc(quote.open))
       if (quote.date == date("2009-09-14")) {
@@ -39,6 +39,12 @@ class Y2 {
       }
     }
     println(position + " " + money)
+  }
+
+  static class QuoteService {
+    def openPricesFor(String symbol) {
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect{ it.open }
+    }
   }
 
   static class VarCalc {
@@ -75,17 +81,6 @@ class Y2 {
     boolean isFull() { list.size() == size }
 
     double[] values() { list }
-  }
-
-  static class Market {
-    Market(String fromDate, String toDate) {
-    }
-
-    def replay(Closure listener) {
-      requestQuotes("YHOO", "2009-09-11", "2010-03-10").each {
-        listener.call(it)
-      }
-    }
   }
 
   public static requestQuotes(String symbol, String fromDate, String toDate) {

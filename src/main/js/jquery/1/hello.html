@@ -33,8 +33,8 @@
         })
     });
     setInterval(function () {
-        $.getJSON("my.json", function (data) {
-            alert(data.hello);
+        $.getJSON("/random", function (data) {
+            alert(data.v);
         })
     }, 5000);
 </script>
