@@ -1,5 +1,7 @@
 package ru.yahoofinance
+
 import com.cmcmarkets.storage.Storage
+import org.apache.commons.math.stat.descriptive.moment.Variance
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
@@ -9,27 +11,101 @@ import org.joda.time.format.DateTimeFormat
  */
 class Y2 {
   public static void main(String[] args) {
-    requestQuotes("YHOO", "2009-09-11", "2010-03-10")
+    BigDecimal money = 0
+    int position = 0
+    def var = new VarCalc(7)
+
+    def buy = { Quote quote, int amount ->
+      position += amount
+      money -= quote.open * amount
+      println(quote)
+    }
+
+    def sell = { Quote quote, int amount ->
+      position -= amount
+      money += quote.open * amount
+      println(quote)
+    }
+
+    println(position + " " + money)
+    requestQuotes("YHOO", "2000-01-01", "2001-03-10").reverse().each { Quote quote ->
+      println(quote)
+      println(var.calc(quote.open))
+      if (quote.date == date("2009-09-14")) {
+        buy(quote, 1)
+      }
+      if (quote.date == date("2009-10-14")) {
+        sell(quote, 1)
+      }
+    }
+    println(position + " " + money)
   }
 
-  public static void requestQuotes(String symbol, String fromDate, String toDate) {
+  static class VarCalc {
+    private final RingBuffer ringBuffer
+    private final Variance var = new Variance()
+
+    VarCalc(int size) {
+      ringBuffer = new RingBuffer(size)
+    }
+
+    def calc(double value) {
+      ringBuffer.add(value)
+      if (ringBuffer.full) {
+        var.evaluate(ringBuffer.values())
+      } else {
+        Double.NaN
+      }
+    }
+  }
+
+  static class RingBuffer {
+    private final int size
+    private final List list = []
+
+    RingBuffer(int size) {
+      this.size = size
+    }
+
+    def add(double value) {
+      list.add(value)
+      if (list.size() > size) list.remove(0)
+    }
+
+    boolean isFull() { list.size() == size }
+
+    double[] values() { list }
+  }
+
+  static class Market {
+    Market(String fromDate, String toDate) {
+    }
+
+    def replay(Closure listener) {
+      requestQuotes("YHOO", "2009-09-11", "2010-03-10").each {
+        listener.call(it)
+      }
+    }
+  }
+
+  public static requestQuotes(String symbol, String fromDate, String toDate) {
     def url = "select * from yahoo.finance.historicaldata where symbol = \"${symbol}\" and startDate = \"${fromDate}\" and endDate = \"${toDate}\""
     def query = URLEncoder.encode(url, "UTF-8")
-//    assert URLEncoder.encode(url, "UTF-8") == "select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22YHOO%22%20and%20startDate%20%3D%20%222009-09-11%22%20and%20endDate%20%3D%20%222010-03-10%22"
     def postfix = "diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
     String text = Storage.cached(query) { "http://query.yahooapis.com/v1/public/yql?q=${query}&${postfix}".toURL().text }
     println(text)
 
     def rootNode = new XmlParser().parseText(text)
-    println(rootNode.name())
-    println(rootNode.results)
-    println(rootNode.results.quote)
-    println rootNode.results.quote.collect { Quote.fromXmlNode(it) }
+    rootNode.results.quote.collect { Quote.fromXmlNode(it) }
+  }
+
+  static DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC()
+
+  static date(String s) {
+    DATE_FORMAT.parseDateTime(s)
   }
 
   static class Quote {
-    static DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC()
-
     DateTime date
     double open
     double high
@@ -39,7 +115,7 @@ class Y2 {
 
     static Quote fromXmlNode(quoteNode) {
       new Quote(
-              DATE_FORMAT.parseDateTime(quoteNode.Date.text()),
+              Y2.date(quoteNode.Date.text()),
               Double.parseDouble(quoteNode.Open.text()),
               Double.parseDouble(quoteNode.High.text()),
               Double.parseDouble(quoteNode.Low.text()),
