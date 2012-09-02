@@ -36,6 +36,16 @@ class StartServer {
       }
     }
 
+    handlers << { String requestURI ->
+      if (requestURI.startsWith("/variance/")) {
+        def symbol = requestURI.replaceFirst("/variance/", "")
+        def quotes = quoteService.varianceOf(symbol)
+        "{ \"v\": [${quotes.collect{it.toJSON()}.join(",")}] }"
+      } else {
+        null
+      }
+    }
+
     def server = new Server(8787)
 
     server.addHandler(new AbstractHandler() {
@@ -43,12 +53,16 @@ class StartServer {
         println request.requestURI
 
         for (Closure closure in handlers) {
-          def result = closure.call(request.requestURI)
-          if (result != null) {
-            response.writer.write((String) result)
-            response.writer.flush()
-            request.handled = true
-            return
+          try {
+            def result = closure.call(request.requestURI)
+            if (result != null) {
+              response.writer.write((String) result)
+              response.writer.flush()
+              request.handled = true
+              return
+            }
+          } catch (Exception e) {
+            e.printStackTrace()
           }
         }
 

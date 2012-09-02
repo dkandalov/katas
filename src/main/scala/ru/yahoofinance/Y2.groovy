@@ -13,7 +13,7 @@ class Y2 {
   public static void main(String[] args) {
     BigDecimal money = 0
     int position = 0
-    def var = new VarCalc(7)
+    def var = new VarianceCalc(7)
 
     def buy = { Quote quote, int amount ->
       position += amount
@@ -49,13 +49,19 @@ class Y2 {
     def quotesFor(String symbol) {
       requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse()
     }
+
+    def varianceOf(String symbol, int period = 7) {
+      def variance = new VarianceCalc(period)
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.open), it) }
+              .findAll{ !Double.isNaN(it.value) }
+    }
   }
 
-  static class VarCalc {
+  static class VarianceCalc {
     private final RingBuffer ringBuffer
     private final Variance var = new Variance()
 
-    VarCalc(int size) {
+    VarianceCalc(int size) {
       ringBuffer = new RingBuffer(size)
     }
 
@@ -104,13 +110,58 @@ class Y2 {
     DATE_FORMAT.parseDateTime(s)
   }
 
+  static class CalcResult {
+    final double value
+    final Quote quote
+
+    CalcResult(double value, Quote quote) {
+      this.quote = quote
+      this.value = value
+    }
+
+    String toJSON() {
+      "{ " +
+              "\"value\": ${value}, " +
+              "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(quote.date)}\"" +
+              "}"
+    }
+
+    @Override String toString() {
+      "CalcResult{" +
+              "value=" + value +
+              ", quote.date=" + quote.date +
+              '}'
+    }
+
+    @Override boolean equals(o) {
+      if (is(o)) return true
+      if (getClass() != o.class) return false
+
+      CalcResult that = (CalcResult) o
+
+      if (Double.compare(that.value, value) != 0) return false
+      if (quote != that.quote) return false
+
+      return true
+    }
+
+    @Override int hashCode() {
+      int result
+      long temp
+      temp = value != +0.0d ? Double.doubleToLongBits(value) : 0L
+      result = (int) (temp ^ (temp >>> 32))
+      result = 31 * result + (quote != null ? quote.hashCode() : 0)
+      return result
+    }
+  }
+
   static class Quote {
-    DateTime date
-    double open
-    double high
-    double low
-    double close
-    double volume
+    final DateTime date
+    final double open
+    final double high
+    final double low
+    final double close
+    final double volume
 
     static Quote fromXmlNode(quoteNode) {
       new Quote(
@@ -135,6 +186,7 @@ class Y2 {
     String toJSON() {
       "{" +
               "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(date)}\", " +
+              "\"value\": ${open}, " +
               "\"open\": ${open}, " +
               "\"high\": ${high}, " +
               "\"low\": ${low}, " +
@@ -143,8 +195,7 @@ class Y2 {
       "}"
     }
 
-    @Override
-    String toString() {
+    @Override String toString() {
       "Quote{" +
               "date=" + date +
               ", open=" + open +
@@ -155,7 +206,7 @@ class Y2 {
               '}'
     }
 
-    boolean equals(o) {
+    @Override boolean equals(o) {
       if (is(o)) return true
       if (getClass() != o.class) return false
 
@@ -171,7 +222,7 @@ class Y2 {
       return true
     }
 
-    int hashCode() {
+    @Override int hashCode() {
       int result
       long temp
       result = (date != null ? date.hashCode() : 0)
