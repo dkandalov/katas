@@ -1,6 +1,7 @@
 package ru.yahoofinance
 
 import com.cmcmarkets.storage.Storage
+import org.apache.commons.math.stat.descriptive.moment.StandardDeviation
 import org.apache.commons.math.stat.descriptive.moment.Variance
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -52,14 +53,38 @@ class Y2 {
 
     def varianceOf(String symbol, int period = 7) {
       def variance = new VarianceCalc(period)
-      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.open), it) }
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.close), it) }
               .findAll{ !Double.isNaN(it.value) }
+    }
+
+    def stdDeviationOf(String symbol, int period = 7) {
+      def deviation = new StdDeviation(period)
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(deviation.calc(it.close), it) }
+              .findAll{ !Double.isNaN(it.value) }
+    }
+  }
+
+  static class StdDeviation {
+    private final RingBuffer ringBuffer
+    private final StandardDeviation deviation = new StandardDeviation()
+
+    StdDeviation(int size) {
+      ringBuffer = new RingBuffer(size)
+    }
+
+    def calc(double value) {
+      ringBuffer.add(value)
+      if (ringBuffer.full) {
+        deviation.evaluate(ringBuffer.values())
+      } else {
+        Double.NaN
+      }
     }
   }
 
   static class VarianceCalc {
     private final RingBuffer ringBuffer
-    private final Variance var = new Variance()
+    private final Variance variance = new Variance()
 
     VarianceCalc(int size) {
       ringBuffer = new RingBuffer(size)
@@ -68,7 +93,7 @@ class Y2 {
     def calc(double value) {
       ringBuffer.add(value)
       if (ringBuffer.full) {
-        var.evaluate(ringBuffer.values())
+        variance.evaluate(ringBuffer.values())
       } else {
         Double.NaN
       }
@@ -186,7 +211,7 @@ class Y2 {
     String toJSON() {
       "{" +
               "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(date)}\", " +
-              "\"value\": ${open}, " +
+              "\"value\": ${close}, " +
               "\"open\": ${open}, " +
               "\"high\": ${high}, " +
               "\"low\": ${low}, " +

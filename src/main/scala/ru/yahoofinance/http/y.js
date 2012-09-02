@@ -1,5 +1,3 @@
-// from http://bost.ocks.org/mike/path/
-
 var n = 40;
 
 function chart(interpolation, myData, myData2) {
@@ -49,7 +47,7 @@ function chart(interpolation, myData, myData2) {
         .attr("clip-path", "url(#clip)")
         .append("path")
         .data([myData2])
-        .attr("class", "line")
+        .attr("class", "line2")
         .attr("d", line2);
 
     svg.append("g")
@@ -63,7 +61,7 @@ function chart(interpolation, myData, myData2) {
 }
 
 $.getJSON("/quote/YHOO", function (myData1) {
-    $.getJSON("/variance/YHOO", function (myData2) {
+    $.getJSON("/stddev/YHOO", function (myData2) {
         var parse = d3.time.format("%d/%m/%Y").parse;
         var adaptedData = myData1.v;
         adaptedData.forEach(function (d) { d.date = parse(d.date); });

@@ -18,33 +18,16 @@ class StartServer {
   static void main(String[] args) {
     handlers << { requestURI ->
       if (requestURI == "/random") {
-        def list = (0..40).inject([]) { acc, v -> acc << new Random().nextDouble() - 0.5; acc }
-        "{\"v\": [${list.join(",")}]}"
+        "{\"v\": [${(0..40).inject([]) { acc, v -> acc << new Random().nextDouble() - 0.5; acc }.join(",")}]}"
       } else {
         null
       }
     }
 
     def quoteService = new Y2.QuoteService()
-    handlers << { String requestURI ->
-      if (requestURI.startsWith("/quote/")) {
-        def symbol = requestURI.replaceFirst("/quote/", "")
-        def quotes = quoteService.quotesFor(symbol)
-        "{ \"v\": [${quotes.collect{it.toJSON()}.join(",")}] }"
-      } else {
-        null
-      }
-    }
-
-    handlers << { String requestURI ->
-      if (requestURI.startsWith("/variance/")) {
-        def symbol = requestURI.replaceFirst("/variance/", "")
-        def quotes = quoteService.varianceOf(symbol)
-        "{ \"v\": [${quotes.collect{it.toJSON()}.join(",")}] }"
-      } else {
-        null
-      }
-    }
+    handlers << createHandler("/quote/") { String symbol -> quoteService.quotesFor(symbol) }
+    handlers << createHandler("/variance/") { String symbol -> quoteService.varianceOf(symbol) }
+    handlers << createHandler("/stddev/") { String symbol -> quoteService.stdDeviationOf(symbol) }
 
     def server = new Server(8787)
 
@@ -78,5 +61,17 @@ class StartServer {
       }
     })
     server.start()
+  }
+
+  private static Closure createHandler(String name, Closure dataRequest) {
+    { String requestURI ->
+      if (requestURI.startsWith(name)) {
+        def symbol = requestURI.replaceFirst(name, "")
+        def quotes = dataRequest.call(symbol)
+        "{ \"v\": [${quotes.collect{it.toJSON()}.join(",")}] }"
+      } else {
+        null
+      }
+    }
   }
 }
