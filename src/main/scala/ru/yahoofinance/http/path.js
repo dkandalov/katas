@@ -7,18 +7,18 @@ function chart(domain, interpolation, myData, tick) {
         width = 960 - margin.right,
         height = 320 - margin.top - margin.bottom;
 
-    var x = d3.scale.linear()
-        .domain(domain)
+    var x = d3.time.scale()
+        .domain([myData[0].date, myData[myData.length - 1].date])
         .range([0, width]);
 
     var y = d3.scale.linear()
-        .domain([0, d3.max(myData)])
+        .domain([0, d3.max(myData, function (d){ return d.open; })])
         .range([height, 0]);
 
     var line = d3.svg.line()
         .interpolate(interpolation)
-        .x(function(d, i) { return x(i); })
-        .y(function(d, i) { return y(d); });
+        .x(function(d, i) { return x(d.date); })
+        .y(function(d, i) { return y(d.open); });
 
     var svg = d3.select("body").append("p").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -47,16 +47,21 @@ function chart(domain, interpolation, myData, tick) {
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (height) + ")")
-        .call(d3.svg.axis().scale(x).ticks(20).orient("bottom"));
+        .call(d3.svg.axis().scale(x).tickSize(-height).tickSubdivide(false).tickFormat(d3.time.format("%d/%m/%y")).ticks(10).orient("bottom"));
 
 //    tick(path, line, data, x);
 }
 
 //$.getJSON("/random", function (myData) {
 $.getJSON("/quote/YHOO", function (myData) {
-    chart([0, n - 1], "linear", myData.v, function tick(path, line, data, x) {
-    //chart([1, n - 1], "basis", function tick(path, line, data, x) {
+    var parse = d3.time.format("%d/%m/%Y").parse;
+    var adaptedData = myData.v;
+    adaptedData.forEach(function (d) {
+        d.date = parse(d.date);
+    });
 
+    chart([0, n - 1], "linear", adaptedData, function tick(path, line, data, x) {
+    //chart([1, n - 1], "basis", function tick(path, line, data, x) {
          // push a new data point onto the back
          data.push(myData);
 

@@ -43,7 +43,11 @@ class Y2 {
 
   static class QuoteService {
     def openPricesFor(String symbol) {
-      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect{ it.open }
+      quotesFor(symbol).collect{ it.open }
+    }
+
+    def quotesFor(String symbol) {
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse()
     }
   }
 
@@ -126,6 +130,17 @@ class Y2 {
       this.low = low
       this.open = open
       this.volume = volume
+    }
+
+    String toJSON() {
+      "{" +
+              "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(date)}\", " +
+              "\"open\": ${open}, " +
+              "\"high\": ${high}, " +
+              "\"low\": ${low}, " +
+              "\"close\": ${close}, " +
+              "\"volume\": ${volume}" +
+      "}"
     }
 
     @Override

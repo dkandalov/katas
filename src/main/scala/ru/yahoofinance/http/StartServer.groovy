@@ -29,8 +29,8 @@ class StartServer {
     handlers << { String requestURI ->
       if (requestURI.startsWith("/quote/")) {
         def symbol = requestURI.replaceFirst("/quote/", "")
-        def quotes = quoteService.openPricesFor(symbol)
-        "{\"v\": [${quotes.join(",")}]}"
+        def quotes = quoteService.quotesFor(symbol)
+        "{ \"v\": [${quotes.collect{it.toJSON()}.join(",")}] }"
       } else {
         null
       }
