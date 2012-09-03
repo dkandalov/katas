@@ -28,6 +28,8 @@ class StartServer {
     handlers << createHandler("/quote/") { String symbol -> quoteService.quotesFor(symbol) }
     handlers << createHandler("/variance/") { String symbol -> quoteService.varianceOf(symbol) }
     handlers << createHandler("/stddev/") { String symbol -> quoteService.stdDeviationOf(symbol) }
+    handlers << createHandler("/ema/") { String symbol -> quoteService.emaOf(symbol) }
+    handlers << createHandler("/macd/") { String symbol -> quoteService.macdOf(symbol) }
 
     def server = new Server(8787)
 

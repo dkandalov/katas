@@ -61,14 +61,14 @@ function chart(interpolation, myData, myData2) {
 }
 
 $.getJSON("/quote/YHOO", function (myData1) {
-    $.getJSON("/stddev/YHOO", function (myData2) {
+    $.getJSON("/ema/YHOO", function (myData2) {
         var parse = d3.time.format("%d/%m/%Y").parse;
         var adaptedData = myData1.v;
         adaptedData.forEach(function (d) { d.date = parse(d.date); });
 
         var adaptedData2 = myData2.v;
         adaptedData2.forEach(function (d) { d.date = parse(d.date); });
-        adaptedData2.forEach(function (d) { d.value = d.value / 30; }); // TODO add separate scale?
+//        adaptedData2.forEach(function (d) { d.value = d.value; }); // TODO add separate scale?
 
         chart("linear", adaptedData, adaptedData2);
     });

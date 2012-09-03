@@ -62,6 +62,58 @@ class Y2 {
       requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(deviation.calc(it.close), it) }
               .findAll{ !Double.isNaN(it.value) }
     }
+
+    def emaOf(String symbol, int period = 7) {
+      def ema = new EMACalc(period)
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(ema.calc(it.close), it) }
+              .findAll{ !Double.isNaN(it.value) }
+    }
+
+    def macdOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
+      def macd = new MACDCalc(shortPeriod, longPeriod)
+      requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(macd.calc(it.close), it) }
+              .findAll{ !Double.isNaN(it.value) }
+    }
+  }
+
+  static class MACDCalc {
+    private final EMACalc emaCalcShort
+    private final EMACalc emaCalcLong
+
+    MACDCalc(int shortPeriod, int longPeriod) {
+      emaCalcShort = new EMACalc(shortPeriod)
+      emaCalcLong = new EMACalc(longPeriod)
+    }
+
+    def calc(double value) {
+      def emaShort = emaCalcShort.calc(value)
+      def emaLong = emaCalcLong.calc(value)
+      emaShort - emaLong
+    }
+  }
+
+  static class EMACalc {
+    private final RingBuffer ringBuffer
+    private final double weight
+
+    EMACalc(int size, double weight = 2 / (size + 1)) {
+      this.ringBuffer = new RingBuffer(size)
+      this.weight = weight
+    }
+
+    def calc(double value) {
+      ringBuffer.add(value)
+      if (!ringBuffer.full) return Double.NaN
+      emaOf(ringBuffer.values(), weight)
+    }
+
+    private static double emaOf(double[] values, double weight) {
+      double result = 0
+      for (int i = 1; i < values.length; i++) {
+        result += values[i] * weight * Math.pow(1 - weight, i)
+      }
+      result
+    }
   }
 
   static class StdDeviation {
