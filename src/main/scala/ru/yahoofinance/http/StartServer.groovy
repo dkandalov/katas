@@ -2,12 +2,12 @@ package ru.yahoofinance.http
 
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
-import ru.yahoofinance.Y2
+import ru.yahoofinance.IndicatorService
+import ru.yahoofinance.quotes.QuoteSource
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.CopyOnWriteArrayList
-
 /**
  * User: dima
  * Date: 01/09/2012
@@ -24,7 +24,8 @@ class StartServer {
       }
     }
 
-    def quoteService = new Y2.QuoteService()
+    def quoteSource = new QuoteSource()
+    def quoteService = new IndicatorService(quoteSource)
     handlers << createHandler("/quote/") { String symbol -> quoteService.quotesFor(symbol) }
     handlers << createHandler("/variance/") { String symbol -> quoteService.varianceOf(symbol) }
     handlers << createHandler("/stddev/") { String symbol -> quoteService.stdDeviationOf(symbol) }

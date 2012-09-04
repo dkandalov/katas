@@ -8,7 +8,7 @@ import com.cmcmarkets.storage.Storage
  */
 class QuoteSource {
 
-  static requestQuotes(String symbol, String fromDate, String toDate) {
+  def requestQuotes(String symbol, String fromDate, String toDate) {
     def url = "select * from yahoo.finance.historicaldata where symbol = \"${symbol}\" and startDate = \"${fromDate}\" and endDate = \"${toDate}\""
     def query = URLEncoder.encode(url, "UTF-8")
     def postfix = "diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
