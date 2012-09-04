@@ -8,6 +8,7 @@ import ru.yahoofinance.quotes.QuoteSource
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import java.util.concurrent.CopyOnWriteArrayList
+
 /**
  * User: dima
  * Date: 01/09/2012

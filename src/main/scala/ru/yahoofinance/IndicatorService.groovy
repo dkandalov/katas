@@ -22,30 +22,30 @@ class IndicatorService {
   }
 
   def quotesFor(String symbol) {
-    quoteSource.requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse()
+    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse()
   }
 
   def varianceOf(String symbol, int period = 7) {
     def variance = new VarianceCalc(period)
-    quoteSource.requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def stdDeviationOf(String symbol, int period = 7) {
     def deviation = new StdDeviation(period)
-    quoteSource.requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(deviation.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(deviation.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def emaOf(String symbol, int period = 7) {
     def ema = new EMACalc(period)
-    quoteSource.requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(ema.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(ema.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def macdOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
     def macd = new MACDCalc(shortPeriod, longPeriod)
-    quoteSource.requestQuotes(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(macd.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(macd.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 

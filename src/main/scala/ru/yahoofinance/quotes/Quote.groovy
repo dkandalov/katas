@@ -44,9 +44,13 @@ class Quote {
 //    println("http://ichart.yahoo.com/table.csv?s=GOOG&a=0&b=1&c=2000&d=0&e=31&f=2010&g=w&ignore=.csv".toURL().text)
   }
 
+  String toCsv() {
+    "${format(date)},${open},${high},${low},${close},${volume}"
+  }
+
   String toJSON() {
     "{" +
-            "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(date)}\", " +
+            "\"date\": \"${format(date)}\", " +
             "\"value\": ${close}, " +
             "\"open\": ${open}, " +
             "\"high\": ${high}, " +
@@ -54,6 +58,10 @@ class Quote {
             "\"close\": ${close}, " +
             "\"volume\": ${volume}" +
             "}"
+  }
+
+  private static String format(DateTime date) {
+    DateTimeFormat.forPattern("dd/MM/yyyy").print(date)
   }
 
   @Override String toString() {

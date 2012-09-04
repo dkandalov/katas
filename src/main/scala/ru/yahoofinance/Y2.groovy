@@ -28,7 +28,7 @@ class Y2 {
 
     def quoteSource = new QuoteSource()
     println(position + " " + money)
-    quoteSource.requestQuotes("YHOO", "2000-01-01", "2001-01-01").reverse().each { Quote quote ->
+    quoteSource.quotesFor("YHOO", "2000-01-01", "2001-01-01").reverse().each { Quote quote ->
       println(quote)
       println(var.calc(quote.open))
       if (quote.date == parseDate("2009-09-14")) {
