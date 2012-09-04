@@ -11,6 +11,8 @@ import ru.yahoofinance.quotes.QuoteSource
  * Date: 04/09/2012
  */
 class IndicatorService {
+  private static final String FROM = "01/01/2000"
+  private static final String TO = "01/01/2001"
   private final QuoteSource quoteSource
 
   IndicatorService(QuoteSource quoteSource) {
@@ -22,30 +24,30 @@ class IndicatorService {
   }
 
   def quotesFor(String symbol) {
-    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse()
+    quoteSource.quotesFor(symbol, FROM, TO)
   }
 
   def varianceOf(String symbol, int period = 7) {
     def variance = new VarianceCalc(period)
-    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(variance.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(variance.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def stdDeviationOf(String symbol, int period = 7) {
     def deviation = new StdDeviation(period)
-    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(deviation.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(deviation.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def emaOf(String symbol, int period = 7) {
     def ema = new EMACalc(period)
-    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(ema.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(ema.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 
   def macdOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
     def macd = new MACDCalc(shortPeriod, longPeriod)
-    quoteSource.quotesFor(symbol, "2000-01-01", "2001-01-01").reverse().collect { new CalcResult(macd.calc(it.close), it) }
+    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(macd.calc(it.close), it) }
             .findAll{ !Double.isNaN(it.value) }
   }
 

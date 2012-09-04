@@ -2,8 +2,11 @@ package ru.yahoofinance.quotes
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
+import static java.lang.Double.parseDouble
+
 class Quote {
-  static DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC()
+  static DATE_FORMAT = DateTimeFormat.forPattern("dd/MM/yyyy").withZoneUTC()
+  static Y_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC()
 
   final DateTime date
   final double open
@@ -14,12 +17,24 @@ class Quote {
 
   static Quote fromXmlNode(Node quoteNode) {
     new Quote(
-            parseDate(quoteNode.Date.text()),
-            Double.parseDouble(quoteNode.Open.text()),
-            Double.parseDouble(quoteNode.High.text()),
-            Double.parseDouble(quoteNode.Low.text()),
-            Double.parseDouble(quoteNode.Close.text()),
-            Double.parseDouble(quoteNode.Volume.text())
+            parseYahooDate(quoteNode.Date.text()),
+            parseDouble(quoteNode.Open.text()),
+            parseDouble(quoteNode.High.text()),
+            parseDouble(quoteNode.Low.text()),
+            parseDouble(quoteNode.Close.text()),
+            parseDouble(quoteNode.Volume.text())
+    )
+  }
+
+  static Quote fromCsv(String s) {
+    def split = s.split(",")
+    new Quote(
+            parseDate(split[0]),
+            parseDouble(split[1]),
+            parseDouble(split[2]),
+            parseDouble(split[3]),
+            parseDouble(split[4]),
+            parseDouble(split[5])
     )
   }
 
@@ -30,10 +45,6 @@ class Quote {
     this.low = low
     this.open = open
     this.volume = volume
-  }
-
-  static parseDate(String s) {
-    DATE_FORMAT.parseDateTime(s)
   }
 
   private static void csvYahooRequest() { // TODO this is just for reference
@@ -60,8 +71,16 @@ class Quote {
             "}"
   }
 
+  static parseDate(String s) {
+    DATE_FORMAT.parseDateTime(s)
+  }
+
+  static parseYahooDate(String s) {
+    Y_DATE_FORMAT.parseDateTime(s)
+  }
+
   private static String format(DateTime date) {
-    DateTimeFormat.forPattern("dd/MM/yyyy").print(date)
+    DATE_FORMAT.print(date)
   }
 
   @Override String toString() {
