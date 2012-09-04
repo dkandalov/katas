@@ -1,25 +1,16 @@
 var n = 40;
 
-function chart(interpolation, myData, myData2) {
+function chart(interpolation, allData) {
     var margin = {top: 6, right: 0, bottom: 20, left: 40},
         width = 960 - margin.right,
         height = 320 - margin.top - margin.bottom;
 
     var x = d3.time.scale()
-        .domain([myData[0].date, myData[myData.length - 1].date])
+        .domain([firstOf(firstOf(allData)).date, lastOf(firstOf(allData)).date])
         .range([0, width]);
     var y = d3.scale.linear()
-        .domain([minValueIn([myData, myData2]), maxValueIn([myData, myData2])])
+        .domain([minValueIn(allData), maxValueIn(allData)])
         .range([height, 0]);
-    var line = d3.svg.line()
-        .interpolate(interpolation)
-        .x(function(d) { return x(d.date); })
-        .y(function(d) { return y(d.value); });
-
-    var line2 = d3.svg.line()
-        .interpolate(interpolation)
-        .x(function(d) { return x(d.date); })
-        .y(function(d) { return y(d.value); });
 
     var svg = d3.select("body").append("p").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -34,18 +25,19 @@ function chart(interpolation, myData, myData2) {
         .attr("width", width)
         .attr("height", height);
 
-    svg.append("g")
-        .attr("clip-path", "url(#clip)")
-        .append("path")
-        .data([myData])
-        .attr("class", "line")
-        .attr("d", line);
-    svg.append("g")
-        .attr("clip-path", "url(#clip)")
-        .append("path")
-        .data([myData2])
-        .attr("class", "line2")
-        .attr("d", line2);
+    for (i = 0; i < allData.length; i++) {
+        var line = d3.svg.line()
+            .interpolate(interpolation)
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.value); });
+
+        svg.append("g")
+            .attr("clip-path", "url(#clip)")
+            .append("path")
+            .data([allData[i]])
+            .attr("class", "line" + i)
+            .attr("d", line);
+    }
 
     svg.append("g")
         .attr("class", "y axis")
@@ -87,6 +79,9 @@ function minValueIn(data) {
     );
 }
 
+function firstOf(data) { return data[0]; }
+function lastOf(data) { return data[data.length - 1]; }
+
 function adapt(data) {
     var parse = d3.time.format("%d/%m/%Y").parse;
     var adaptedData = data.v;
@@ -96,7 +91,8 @@ function adapt(data) {
 
 $.getJSON("/quote/YHOO", function (myData1) {
     $.getJSON("/macd/YHOO", function (myData2) {
-//        adaptedData2.forEach(function (d) { d.value = d.value; }); // TODO add separate scale?
-        chart("linear", adapt(myData1), adapt(myData2));
+        $.getJSON("/stddev/YHOO", function (myData3) {
+            chart("linear", [adapt(myData1), adapt(myData2), adapt(myData3)]);
+        });
     });
 });
