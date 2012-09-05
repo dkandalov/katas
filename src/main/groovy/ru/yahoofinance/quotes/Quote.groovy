@@ -79,6 +79,10 @@ class Quote {
     Y_DATE_FORMAT.parseDateTime(s)
   }
 
+  static String formatAsYahooDate(DateTime date) {
+    Y_DATE_FORMAT.print(date)
+  }
+
   private static String format(DateTime date) {
     DATE_FORMAT.print(date)
   }
