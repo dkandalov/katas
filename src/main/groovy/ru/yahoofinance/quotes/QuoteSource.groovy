@@ -29,40 +29,41 @@ class QuoteSource {
   }
 
   static Collection RESULT_IS_TOO_BIG = []
+  static Collection TABLE_BLOCKED = []
+  static Collection TIMED_OUT = []
 
   private static Collection<Quote> requestYahooQuotesFor(String symbol, String fromDate, String toDate) {
     requestYahooQuotesFor(symbol, Quote.parseDate(fromDate), Quote.parseDate(toDate))
   }
 
   private static Collection<Quote> requestYahooQuotesFor(String symbol, DateTime fromDate, DateTime toDate) {
-    def result = doRequestYahooQuotesFor(symbol, formatAsYahooDate(fromDate), formatAsYahooDate(toDate))
-    if (result.is(RESULT_IS_TOO_BIG)) {
-      def dates = splitIntoTwoIntervals(fromDate, toDate)
+    def intervals = splitIntoRequestableIntervals(fromDate, toDate)
 
-      sleepToAvoidRequestingYahooTooFrequently()
-      def result1 = requestYahooQuotesFor(symbol, dates[0].from, dates[0].to)
+    intervals.inject([]) { acc, interval ->
+      def result = null
+      while (result == null || result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) {
+        result = doRequestYahooQuotesFor(symbol, formatAsYahooDate(interval.from), formatAsYahooDate(interval.to))
+        if (result.is(RESULT_IS_TOO_BIG)) throw new IllegalStateException("Interval is too big: from ${interval.from}, to ${interval.to}")
+        if (result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) Thread.sleep(2000)
+      }
+      acc.addAll(result)
+      acc
+    }.sort{ it.date }
+  }
 
-      sleepToAvoidRequestingYahooTooFrequently()
-      def result2 = requestYahooQuotesFor(symbol, dates[1].from, dates[1].to)
+  private static splitIntoRequestableIntervals(DateTime fromDate, DateTime toDate) {
+    int days = Days.daysBetween(fromDate, toDate).days
+    int numberOfIntervals = days.intdiv(300)
+    int sizeOfInterval = days.intdiv(numberOfIntervals)
 
-      result1 + result2
-    } else {
+    (0..numberOfIntervals).inject([]) { result, i ->
+      def interval = [
+              from: fromDate.plusDays(i * sizeOfInterval),
+              to: fromDate.plusDays((i + 1) * sizeOfInterval)
+      ]
+      result << interval
       result
     }
-  }
-
-  private static void sleepToAvoidRequestingYahooTooFrequently() {
-    println("sleeping for Y!")
-    Thread.sleep(10)
-  }
-
-  private static splitIntoTwoIntervals(DateTime fromDate, DateTime toDate) {
-    int days = Days.daysBetween(fromDate, toDate).days
-    def midDate = fromDate.plusDays(days.intdiv(2).toInteger())
-    [
-            [from: fromDate, to: midDate],
-            [from: midDate.plusDays(1), to: toDate]
-    ]
   }
 
   private static Collection<Quote> doRequestYahooQuotesFor(String symbol, String fromDate, String toDate) {
@@ -73,6 +74,8 @@ class QuoteSource {
     println(text)
 
     if (text.contains("Too many instructions executed")) return RESULT_IS_TOO_BIG
+    if (text.contains("exceeded the allotted quotas of either time")) return TABLE_BLOCKED
+    if (text.contains("Timed out waiting")) return TABLE_BLOCKED
 
     def rootNode = new XmlParser().parseText(text)
     rootNode.results.quote.collect { Quote.fromXmlNode(it) }
@@ -81,10 +84,7 @@ class QuoteSource {
   static void main(String[] args) {
 //    requestYahooQuotesFor("YHOO", "01/01/2000", "01/01/2001").each { println it }
 //    requestYahooQuotesFor("YHOO", "01/01/2000", "01/01/2002").each { println it }
-    def quotes = []
-    while (quotes.empty) {
-      quotes = new QuoteSource().quotesFor("YHOO", "01/01/2000", "01/01/2003")
-    }
+    new QuoteSource().quotesFor("YHOO", "01/01/1998", "01/01/2000").each{ println it }
   }
 
   static class QuoteStorage {
@@ -103,14 +103,14 @@ class QuoteSource {
 
       def quotes = new ArrayList<Quote>()
       dataFile.withReader { reader ->
-        def line = reader.readLine()
-        if (line != null && !line.empty) {
-          def quote = Quote.fromCsv(line)
-          quotes << quote
+        String line
+        while ((line = reader.readLine()) != null) {
+          if (line.empty) continue
+          quotes << Quote.fromCsv(line)
         }
       }
-      if (quotes.empty) return null
       quotes.removeAll { Quote quote -> quote.date.isBefore(fromDate) || quote.date.isAfter(toDate) }
+      if (quotes.empty) return null
 
       if (hoursBetween(fromDate, quotes.first().date).hours >= 24) return null
       if (hoursBetween(toDate, quotes.last().date).hours >= 24) return null
@@ -118,15 +118,42 @@ class QuoteSource {
       quotes
     }
 
+    @SuppressWarnings("GroovyMissingReturnStatement")
+    private loadAllQuotesFor(String symbol) {
+      if (!FOLDER.exists()) return null
+      def dataFile = new File(FOLDER_PATH + "/" + symbol)
+      if (!dataFile.exists()) return null
+
+      def quotes = new ArrayList<Quote>()
+      dataFile.withReader { reader ->
+        String line
+        while ((line = reader.readLine()) != null) {
+          if (line.empty) continue
+          quotes << Quote.fromCsv(line)
+        }
+      }
+      quotes
+    }
+
     def save(String symbol, Collection<Quote> quotes) {
       if (!FOLDER.exists()) FOLDER.mkdir()
 
       def dataFile = new File(FOLDER_PATH + "/" + symbol)
-      if (dataFile.exists()) dataFile.delete()
-      dataFile.createNewFile()
+      if (!dataFile.exists()) {
+        dataFile.createNewFile()
+      } else {
+        def quotesByDate = new TreeMap()
+        def cachedQuotes = loadAllQuotesFor(symbol)
+        cachedQuotes.each { quote -> quotesByDate.put(quote.date, quote) }
+        quotes.each { quote -> quotesByDate.put(quote.date, quote) }
+        quotes = quotesByDate.values()
+
+        dataFile.delete()
+        dataFile.createNewFile()
+      }
 
       dataFile.withWriter { writer ->
-        quotes.sort { it.date }.collect{ it.toCsv() }.each { quoteAsCsv ->
+        quotes.collect{ it.toCsv() }.each { quoteAsCsv ->
           writer.write(quoteAsCsv + "\n")
         }
       }
