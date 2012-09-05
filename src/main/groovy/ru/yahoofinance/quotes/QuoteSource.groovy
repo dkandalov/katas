@@ -21,123 +21,81 @@ class QuoteSource {
       log.info("using cached quotes")
       cachedQuotes
     } else {
-      def quotes = requestYahooQuotesFor(symbol, fromDate, toDate)
+      def quotes = YahooQuotesSource.requestQuotesFor(symbol, fromDate, toDate)
       log.info("requesting quotes from Y!")
       storage.save(symbol, quotes)
       quotes
     }
   }
 
-  static Collection RESULT_IS_TOO_BIG = []
-  static Collection TABLE_BLOCKED = []
-  static Collection TIMED_OUT = []
+  static class YahooQuotesSource {
+    static Collection RESULT_IS_TOO_BIG = []
+    static Collection TABLE_BLOCKED = []
+    static Collection TIMED_OUT = []
 
-  private static Collection<Quote> requestYahooQuotesFor(String symbol, String fromDate, String toDate) {
-    requestYahooQuotesFor(symbol, Quote.parseDate(fromDate), Quote.parseDate(toDate))
-  }
-
-  private static Collection<Quote> requestYahooQuotesFor(String symbol, DateTime fromDate, DateTime toDate) {
-    def intervals = splitIntoRequestableIntervals(fromDate, toDate)
-
-    intervals.inject([]) { acc, interval ->
-      def result = null
-      while (result == null || result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) {
-        result = doRequestYahooQuotesFor(symbol, formatAsYahooDate(interval.from), formatAsYahooDate(interval.to))
-        if (result.is(RESULT_IS_TOO_BIG)) throw new IllegalStateException("Interval is too big: from ${interval.from}, to ${interval.to}")
-        if (result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) Thread.sleep(2000)
-      }
-      acc.addAll(result)
-      acc
-    }.sort{ it.date }
-  }
-
-  private static splitIntoRequestableIntervals(DateTime fromDate, DateTime toDate) {
-    int days = Days.daysBetween(fromDate, toDate).days
-    int numberOfIntervals = days.intdiv(300) + 1
-    int sizeOfInterval = days.intdiv(numberOfIntervals)
-
-    (0..numberOfIntervals).inject([]) { result, i ->
-      def from = fromDate.plusDays(i * sizeOfInterval)
-      def to = fromDate.plusDays((i + 1) * sizeOfInterval)
-      if (to.isAfter(toDate)) to = toDate
-      result << [from: from, to: to]
-      result
+    static Collection<Quote> requestQuotesFor(String symbol, String fromDate, String toDate) {
+      requestYahooQuotesFor(symbol, Quote.parseDate(fromDate), Quote.parseDate(toDate))
     }
-  }
 
-  private static Collection<Quote> doRequestYahooQuotesFor(String symbol, String fromDate, String toDate) {
-    def url = "select * from yahoo.finance.historicaldata where symbol = \"${symbol}\" and startDate = \"${fromDate}\" and endDate = \"${toDate}\""
-    def query = URLEncoder.encode(url, "UTF-8")
-    def postfix = "env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
-    String text = "http://query.yahooapis.com/v1/public/yql?q=${query}&${postfix}".toURL().text
-    println(text)
+    static Collection<Quote> requestYahooQuotesFor(String symbol, DateTime fromDate, DateTime toDate) {
+      def intervals = splitIntoRequestableIntervals(fromDate, toDate)
 
-    if (text.contains("Too many instructions executed")) return RESULT_IS_TOO_BIG
-    if (text.contains("exceeded the allotted quotas of either time")) return TABLE_BLOCKED
-    if (text.contains("Timed out waiting")) return TABLE_BLOCKED
+      intervals.inject([]) { acc, interval ->
+        def result = null
+        while (result == null || result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) {
+          result = doRequestYahooQuotesFor(symbol, formatAsYahooDate(interval.from), formatAsYahooDate(interval.to))
+          if (result.is(RESULT_IS_TOO_BIG)) throw new IllegalStateException("Interval is too big: from ${interval.from}, to ${interval.to}")
+          if (result.is(TABLE_BLOCKED) || result.is(TIMED_OUT)) Thread.sleep(2000)
+        }
+        acc.addAll(result)
+        acc
+      }.sort{ it.date }
+    }
 
-    def rootNode = new XmlParser().parseText(text)
-    rootNode.results.quote.collect { Quote.fromXmlNode(it) }
-  }
+    private static splitIntoRequestableIntervals(DateTime fromDate, DateTime toDate) {
+      int days = Days.daysBetween(fromDate, toDate).days
+      int numberOfIntervals = days.intdiv(300) + 1
+      int sizeOfInterval = days.intdiv(numberOfIntervals)
 
-  static void main(String[] args) {
-//    requestYahooQuotesFor("YHOO", "09/11/2005", "10/03/2006").each { println it }
-//    requestYahooQuotesFor("YHOO", "01/01/2000", "01/01/2002").each { println it }
-    def FTSE_symbols = """
-AAL.L
-ABF.L
-ADM.L
-ADN.L
-AGK.L
-AMEC.L
-ANTO.L
-ARM.L
-ASHM.L
-AV.L
-AZN.L
-BA.L
-BAB.L
-BARC.L
-BATS.L
-BG.L
-BLND.L
-BLT.L
-BNZL.L
-BP.L
-BRBY.L
-BSY.L
-BT-A.L
-CCL.L
-CNA.L
-CPG.L
-CPI.L
-CRDA.L
-CRH.L
-CSCG.L
-DGE.L
-ENRC.L
-EVR.L
-EXPN.L
-FRES.L
-GFS.L
-GKN.L
-GLEN.L
-GSK.L
-HL.L
-HMSO.L
-HSBA.L
-IAG.L
-IAP.L
-IHG.L
-IMI.L
-IMT.L
-ITRK.L
-ITV.L
-JMAT.L
-""".split("\n").findAll{ it != null && !it.empty }
+      (0..numberOfIntervals).inject([]) { result, i ->
+        def from = fromDate.plusDays(i * sizeOfInterval)
+        def to = fromDate.plusDays((i + 1) * sizeOfInterval)
+        if (to.isAfter(toDate)) to = toDate
+        result << [from: from, to: to]
+        result
+      }
+    }
 
-    FTSE_symbols.each { symbol ->
-      new QuoteSource().quotesFor(symbol, "01/01/1998", "01/01/2011").each{ println it }
+    private static Collection<Quote> doRequestYahooQuotesFor(String symbol, String fromDate, String toDate) {
+      def url = "select * from yahoo.finance.historicaldata where symbol = \"${symbol}\" and startDate = \"${fromDate}\" and endDate = \"${toDate}\""
+      def query = URLEncoder.encode(url, "UTF-8")
+      def postfix = "env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+      String text = "http://query.yahooapis.com/v1/public/yql?q=${query}&${postfix}".toURL().text
+
+      if (text.contains("Too many instructions executed")) return RESULT_IS_TOO_BIG
+      if (text.contains("exceeded the allotted quotas of either time")) return TABLE_BLOCKED
+      if (text.contains("Timed out waiting")) return TABLE_BLOCKED
+
+      def rootNode = new XmlParser().parseText(text)
+      rootNode.results.quote.collect { quoteNode ->
+        withDefault(null) { Quote.fromXmlNode(quoteNode) }
+      }.findAll{ it != null }
+    }
+
+    private static <T> T withDefault(value, Closure<T> closure) {
+      try {
+        closure.call()
+      } catch (IllegalArgumentException e) {
+        if (e.getMessage().contains("Invalid format:")) {
+          println("Corrupted input data: ${e.toString()}")
+        } else {
+          e.printStackTrace()
+        }
+        value
+      } catch (Exception e) {
+        e.printStackTrace()
+        value
+      }
     }
   }
 
