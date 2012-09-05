@@ -113,19 +113,12 @@ class QuoteSource {
       def dataFile = new File(FOLDER_PATH + "/" + symbol)
       if (!dataFile.exists()) return null
 
-      def quotes = new ArrayList<Quote>()
-      dataFile.withReader { reader ->
-        String line
-        while ((line = reader.readLine()) != null) {
-          if (line.empty) continue
-          quotes << Quote.fromCsv(line)
-        }
-      }
+      def quotes = dataFile.readLines().collect{ Quote.fromCsv(it) }
       quotes.removeAll { Quote quote -> quote.date.isBefore(fromDate) || quote.date.isAfter(toDate) }
       if (quotes.empty) return null
 
-      if (hoursBetween(fromDate, quotes.first().date).hours >= 24) return null
-      if (hoursBetween(toDate, quotes.last().date).hours >= 24) return null
+      if (hoursBetween(fromDate, quotes.first().date).hours >= 24 * 3) return null
+      if (hoursBetween(toDate, quotes.last().date).hours >= 24 * 3) return null
 
       quotes
     }

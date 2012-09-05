@@ -12,7 +12,7 @@ import ru.yahoofinance.quotes.QuoteSource
  */
 class IndicatorService {
   private static final String FROM = "01/01/2000"
-  private static final String TO = "01/01/2001"
+  private static final String TO = "01/01/2010"
   private final QuoteSource quoteSource
 
   IndicatorService(QuoteSource quoteSource) {
