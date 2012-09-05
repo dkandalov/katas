@@ -53,15 +53,14 @@ class QuoteSource {
 
   private static splitIntoRequestableIntervals(DateTime fromDate, DateTime toDate) {
     int days = Days.daysBetween(fromDate, toDate).days
-    int numberOfIntervals = days.intdiv(300)
+    int numberOfIntervals = days.intdiv(300) + 1
     int sizeOfInterval = days.intdiv(numberOfIntervals)
 
     (0..numberOfIntervals).inject([]) { result, i ->
-      def interval = [
-              from: fromDate.plusDays(i * sizeOfInterval),
-              to: fromDate.plusDays((i + 1) * sizeOfInterval)
-      ]
-      result << interval
+      def from = fromDate.plusDays(i * sizeOfInterval)
+      def to = fromDate.plusDays((i + 1) * sizeOfInterval)
+      if (to.isAfter(toDate)) to = toDate
+      result << [from: from, to: to]
       result
     }
   }
@@ -69,7 +68,7 @@ class QuoteSource {
   private static Collection<Quote> doRequestYahooQuotesFor(String symbol, String fromDate, String toDate) {
     def url = "select * from yahoo.finance.historicaldata where symbol = \"${symbol}\" and startDate = \"${fromDate}\" and endDate = \"${toDate}\""
     def query = URLEncoder.encode(url, "UTF-8")
-    def postfix = "diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+    def postfix = "env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
     String text = "http://query.yahooapis.com/v1/public/yql?q=${query}&${postfix}".toURL().text
     println(text)
 
@@ -82,9 +81,64 @@ class QuoteSource {
   }
 
   static void main(String[] args) {
-//    requestYahooQuotesFor("YHOO", "01/01/2000", "01/01/2001").each { println it }
+//    requestYahooQuotesFor("YHOO", "09/11/2005", "10/03/2006").each { println it }
 //    requestYahooQuotesFor("YHOO", "01/01/2000", "01/01/2002").each { println it }
-    new QuoteSource().quotesFor("YHOO", "01/01/1998", "01/01/2000").each{ println it }
+    def FTSE_symbols = """
+AAL.L
+ABF.L
+ADM.L
+ADN.L
+AGK.L
+AMEC.L
+ANTO.L
+ARM.L
+ASHM.L
+AV.L
+AZN.L
+BA.L
+BAB.L
+BARC.L
+BATS.L
+BG.L
+BLND.L
+BLT.L
+BNZL.L
+BP.L
+BRBY.L
+BSY.L
+BT-A.L
+CCL.L
+CNA.L
+CPG.L
+CPI.L
+CRDA.L
+CRH.L
+CSCG.L
+DGE.L
+ENRC.L
+EVR.L
+EXPN.L
+FRES.L
+GFS.L
+GKN.L
+GLEN.L
+GSK.L
+HL.L
+HMSO.L
+HSBA.L
+IAG.L
+IAP.L
+IHG.L
+IMI.L
+IMT.L
+ITRK.L
+ITV.L
+JMAT.L
+""".split("\n").findAll{ it != null && !it.empty }
+
+    FTSE_symbols.each { symbol ->
+      new QuoteSource().quotesFor(symbol, "01/01/1998", "01/01/2011").each{ println it }
+    }
   }
 
   static class QuoteStorage {
