@@ -47,7 +47,7 @@ class WUnion extends ShouldMatchers {
 		Range(0, 9).foreach { p =>
 			board.connect(p, p + 1)
 		}
-		board.data should equal(Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 9))
+		board.data should equal(Seq(2, 0, 3, 4, 5, 6, 7, 8, 9, 9))
 		for (i <- 0 until 10; j <- 0 until 10) {
 			board.areConnected(i, j) should equal(true)
 		}
