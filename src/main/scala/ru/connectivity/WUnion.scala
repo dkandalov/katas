@@ -78,4 +78,5 @@ class WUnion extends ShouldMatchers {
 			else rootOf(data(p1))
 		}
 	}
+
 }
