@@ -52,10 +52,13 @@ class WUnion extends ShouldMatchers {
 
 	class Board(size: Int) {
 		val data = new ArrayBuffer[Int](0)
-		val weights = new ArrayBuffer[Int](0)
+		val weightOf = ArrayBuffer.fill(size){ 1 }
 		data.insertAll(0, Range(0, size))
 
 		def connect(p1: Int, p2: Int) {
+			if (weightOf(rootOf(p1)) > weightOf(rootOf(p2))) {
+				//
+			}
 			data(rootOf(p1)) = rootOf(p2)
 		}
 
