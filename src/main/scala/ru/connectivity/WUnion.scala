@@ -2,6 +2,7 @@ package ru.connectivity
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import collection.mutable.ArrayBuffer
 
 /**
  * User: dima
@@ -22,6 +23,9 @@ class WUnion extends ShouldMatchers {
 	}
 
 	class Board(size: Int) {
+		val data = new ArrayBuffer[Int](0)
+		data.insertAll(0, Range(0, size))
+
 		def connect(p1: Int, p2: Int) {
 
 		}
