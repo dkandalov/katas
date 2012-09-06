@@ -13,10 +13,14 @@ class WUnion extends ShouldMatchers {
 		val board = new Board(2)
 
 		board.areConnected(0, 0) should equal(true)
-		board.connect(0, 0) should equal(true)
+		board.connect(0, 0)
 		board.areConnected(0, 0) should equal(true)
 
+		board.areConnected(0, 1) should equal(false)
+		board.connect(0, 1)
+		board.areConnected(0, 1) should equal(true)
 	}
+
 	class Board(size: Int) {
 		def connect(p1: Int, p2: Int) {
 
