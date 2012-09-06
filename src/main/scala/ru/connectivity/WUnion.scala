@@ -43,7 +43,11 @@ class WUnion extends ShouldMatchers {
 	}
 
 	@Test def connectingPointSequentially() {
-
+		val board = new Board(10)
+		Range(0, 9).foreach { p =>
+			board.connect(p, p + 1)
+		}
+		println(board.data)
 	}
 
 	class Board(size: Int) {
