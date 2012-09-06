@@ -23,6 +23,29 @@ class WUnion extends ShouldMatchers {
 		board.areConnected(0, 1) should equal(true)
 	}
 
+	@Test def determineIfPointsAreConnected_InSampleCase() {
+		val input = Seq((3, 4), (4, 9), (8, 0), (2, 3), (5, 6),
+			(2, 9), (5, 9), (7, 3), (4, 8), (5, 6), (0, 2), (6, 1))
+
+		val board = new Board(10)
+		val output = input.map { pair =>
+			val wereConnected = board.areConnected(pair._1, pair._2)
+			board.connect(pair._1, pair._2)
+			wereConnected
+		}
+
+		output should equal(Seq(false, false, false, false, false,
+			true, false, false, false, true, true, false))
+
+		for (i <- 0 until 10; j <- 0 until 10) {
+			board.areConnected(i, j) should equal(true)
+		}
+	}
+
+	@Test def connectingPointSequentially() {
+
+	}
+
 	class Board(size: Int) {
 		val data = new ArrayBuffer[Int](0)
 		data.insertAll(0, Range(0, size))
