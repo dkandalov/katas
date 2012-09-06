@@ -15,8 +15,8 @@ class WUnion extends ShouldMatchers {
 		board.areConnected(0, 0) should equal(true)
 		board.connect(0, 0) should equal(true)
 		board.areConnected(0, 0) should equal(true)
-	}
 
+	}
 	class Board(size: Int) {
 		def connect(p1: Int, p2: Int) {
 
