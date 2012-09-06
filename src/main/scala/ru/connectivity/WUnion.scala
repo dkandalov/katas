@@ -47,11 +47,12 @@ class WUnion extends ShouldMatchers {
 		Range(0, 9).foreach { p =>
 			board.connect(p, p + 1)
 		}
-		println(board.data)
+		board.data should equal(Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 9))
 	}
 
 	class Board(size: Int) {
 		val data = new ArrayBuffer[Int](0)
+		val weights = new ArrayBuffer[Int](0)
 		data.insertAll(0, Range(0, size))
 
 		def connect(p1: Int, p2: Int) {
