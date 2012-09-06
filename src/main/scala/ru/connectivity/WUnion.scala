@@ -57,9 +57,12 @@ class WUnion extends ShouldMatchers {
 
 		def connect(p1: Int, p2: Int) {
 			if (weightOf(rootOf(p1)) > weightOf(rootOf(p2))) {
-				//
+				data(rootOf(p1)) = rootOf(p2)
+				weightOf(rootOf(p1)) += weightOf(rootOf(p2))
+			} else {
+				data(rootOf(p2)) = rootOf(p1)
+				weightOf(rootOf(p2)) += weightOf(rootOf(p1))
 			}
-			data(rootOf(p1)) = rootOf(p2)
 		}
 
 		def areConnected(p1: Int, p2: Int) = {
