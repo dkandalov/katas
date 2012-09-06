@@ -3,6 +3,7 @@ package ru.connectivity
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import collection.mutable.ArrayBuffer
+import annotation.tailrec
 
 /**
  * User: dima
@@ -27,11 +28,17 @@ class WUnion extends ShouldMatchers {
 		data.insertAll(0, Range(0, size))
 
 		def connect(p1: Int, p2: Int) {
-
+			data(rootOf(p1)) = rootOf(p2)
 		}
 
 		def areConnected(p1: Int, p2: Int) = {
-			false
+			rootOf(p1) == rootOf(p2)
+		}
+
+		@tailrec
+		private def rootOf(p1: Int): Int = {
+			if (data(p1) == p1) p1
+			else rootOf(data(p1))
 		}
 	}
 }
