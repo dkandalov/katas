@@ -93,8 +93,16 @@ $.getJSON("/quote/YHOO", function (myData1) {
     chart("linear", [adapt(myData1)]);
 });
 
+$.getJSON("/buy/YHOO", function (myData2) {
+    $.getJSON("/sell/YHOO", function (myData3) {
+        chart("linear", [adapt(myData2), adapt(myData3)]);
+    });
+});
+
+/*
 $.getJSON("/macd/YHOO", function (myData2) {
     $.getJSON("/macdSignal/YHOO", function (myData3) {
         chart("linear", [adapt(myData2), adapt(myData3)]);
     });
 });
+*/

@@ -11,9 +11,81 @@ import static ru.yahoofinance.IndicatorService.MACDSignal
  * Date: 05/09/2012
  */
 class Playground {
+  final QuoteSource quoteSource
+  final IndicatorService indicatorService
+  int money
+  int position
+
   static void main(String[] args) {
-    Closure<LinkedHashMap<String, Integer>> process = MacdSignalIntersection.create()
-    new Playground().play(process)
+    def quoteSource = new QuoteSource()
+    def indicatorService = new IndicatorService(quoteSource)
+
+    new Playground(quoteSource, indicatorService).play("YHOO", MacdSignalIntersection.create())
+  }
+
+  Playground(QuoteSource quoteSource, IndicatorService indicatorService) {
+    this.indicatorService = indicatorService
+    this.quoteSource = quoteSource
+  }
+
+  Map<String, Collection<TradeSignal>> play(String symbol, Closure process) {
+    money = 0
+    position = 0
+
+    def result = [buy: [], sell: []]
+
+    def quotes = indicatorService.quotesFor(symbol)
+    quotes.each { Quote quote ->
+      def action = process(money, position, quote)
+      if (action?.buy != null) {
+        buy(action.buy, quote)
+        result.buy << new TradeSignal(action.buy, quote)
+        result.sell << new TradeSignal(0, quote)
+      } else if (action?.sell != null) {
+        sell(action.sell, quote)
+        result.buy << new TradeSignal(0, quote)
+        result.sell << new TradeSignal(action.sell, quote)
+      } else {
+        result.buy << new TradeSignal(0, quote)
+        result.sell << new TradeSignal(0, quote)
+      }
+    }
+    def lastQuote = quotes[quotes.size() - 1]
+    if (position < 0) {
+      buy(position.abs(), lastQuote)
+    } else {
+      sell(position.abs(), lastQuote)
+    }
+
+    println "money = $money"
+    println "position = $position"
+
+    result
+  }
+
+  def buy(int amount, Quote quote) {
+    money -= quote.close * amount
+    position += amount
+  }
+
+  def sell(int amount, Quote quote) {
+    money += quote.close * amount
+    position -= amount
+  }
+
+
+  static class TradeSignal {
+    final double value
+    final Quote quote
+
+    TradeSignal(double value, Quote quote) {
+      this.value = value
+      this.quote = quote
+    }
+
+    String toJSON() {
+      "{ \"value\": ${value}, \"date\": \"${Quote.formatDate(quote.date)}\" }"
+    }
   }
 
   static class MacdSignalIntersection {
@@ -65,44 +137,6 @@ class Playground {
     private static boolean areEqual(double d1, double d2) { (d1 - d2).abs() < 0.0000001 }
   }
 
-
-  int money = 0
-  int position = 0
-
-  void play(Closure process) {
-    def quoteSource = new QuoteSource()
-    def indicatorService = new IndicatorService(quoteSource)
-
-    def quotes = indicatorService.quotesFor("YHOO")
-    quotes.each { Quote quote ->
-      def action = process(money, position, quote)
-      if (action?.buy != null)
-        buy(action.buy, quote)
-      else if (action?.sell != null)
-        sell(action.sell, quote)
-    }
-    def lastQuote = quotes[quotes.size() - 1]
-    if (position < 0) {
-      buy(position.abs(), lastQuote)
-    } else {
-      sell(position.abs(), lastQuote)
-    }
-
-    println "money = $money"
-    println "position = $position"
-  }
-
-  def buy(int amount, Quote quote) {
-    money -= quote.close * amount
-    position += amount
-  }
-
-  def sell(int amount, Quote quote) {
-    money += quote.close * amount
-    position -= amount
-  }
-
-
   static class Window {
     private final int size
     private final List list = []
@@ -116,8 +150,6 @@ class Playground {
       if (list.size() > size) list.remove(0)
     }
 
-    boolean isFull() { list.size() == size }
-
     List values() { list }
 
     int size() { list.size() }
@@ -126,5 +158,4 @@ class Playground {
 
     def getLast() { list.empty ? null : list.last() }
   }
-
 }

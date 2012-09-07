@@ -3,6 +3,7 @@ package ru.yahoofinance.http
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
 import ru.yahoofinance.IndicatorService
+import ru.yahoofinance.Playground
 import ru.yahoofinance.quotes.QuoteSource
 
 import javax.servlet.http.HttpServletRequest
@@ -26,14 +27,17 @@ class StartServer {
     }
 
     def quoteSource = new QuoteSource()
-    def quoteService = new IndicatorService(quoteSource)
-    handlers << createHandler("/quote/") { String symbol -> quoteService.quotesFor(symbol) }
-    handlers << createHandler("/variance/") { String symbol -> quoteService.varianceOf(symbol) }
-    handlers << createHandler("/stddev/") { String symbol -> quoteService.stdDeviationOf(symbol) }
-    handlers << createHandler("/ema/") { String symbol -> quoteService.emaOf(symbol) }
-    handlers << createHandler("/macd/") { String symbol -> quoteService.macdOf(symbol) }
-    handlers << createHandler("/macdSignal/") { String symbol -> quoteService.macdSignalOf(symbol) }
-    handlers << createHandler("/macdHistogram/") { String symbol -> quoteService.macdHistogramOf(symbol) }
+    def indicatorService = new IndicatorService(quoteSource)
+    def playground = new Playground(quoteSource, indicatorService)
+    handlers << createHandler("/quote/") { String symbol -> indicatorService.quotesFor(symbol) }
+    handlers << createHandler("/variance/") { String symbol -> indicatorService.varianceOf(symbol) }
+    handlers << createHandler("/stddev/") { String symbol -> indicatorService.stdDeviationOf(symbol) }
+    handlers << createHandler("/ema/") { String symbol -> indicatorService.emaOf(symbol) }
+    handlers << createHandler("/macd/") { String symbol -> indicatorService.macdOf(symbol) }
+    handlers << createHandler("/macdSignal/") { String symbol -> indicatorService.macdSignalOf(symbol) }
+    handlers << createHandler("/macdHistogram/") { String symbol -> indicatorService.macdHistogramOf(symbol) }
+    handlers << createHandler("/buy/") { String symbol -> playground.play(symbol, Playground.MacdSignalIntersection.create()).buy }
+    handlers << createHandler("/sell/") { String symbol -> playground.play(symbol, Playground.MacdSignalIntersection.create()).sell }
 
     def server = new Server(8787)
 

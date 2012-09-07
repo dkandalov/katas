@@ -56,12 +56,12 @@ class Quote {
   }
 
   String toCsv() {
-    "${format(date)},${open},${high},${low},${close},${volume}"
+    "${formatDate(date)},${open},${high},${low},${close},${volume}"
   }
 
   String toJSON() {
     "{" +
-            "\"date\": \"${format(date)}\", " +
+            "\"date\": \"${formatDate(date)}\", " +
             "\"value\": ${close}, " +
             "\"open\": ${open}, " +
             "\"high\": ${high}, " +
@@ -83,7 +83,7 @@ class Quote {
     Y_DATE_FORMAT.print(date)
   }
 
-  private static String format(DateTime date) {
+  static String formatDate(DateTime date) {
     DATE_FORMAT.print(date)
   }
 

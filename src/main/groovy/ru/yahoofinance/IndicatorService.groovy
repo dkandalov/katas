@@ -1,13 +1,11 @@
 package ru.yahoofinance
 import org.apache.commons.math.stat.descriptive.moment.StandardDeviation
 import org.apache.commons.math.stat.descriptive.moment.Variance
-import org.joda.time.format.DateTimeFormat
 import ru.yahoofinance.quotes.Quote
 import ru.yahoofinance.quotes.QuoteSource
 
 import static java.lang.Double.NaN
 import static java.lang.Double.isNaN
-
 /**
  * User: dima
  * Date: 04/09/2012
@@ -196,7 +194,7 @@ class IndicatorService {
     String toJSON() {
       "{ " +
               "\"value\": ${value}, " +
-              "\"date\": \"${DateTimeFormat.forPattern("dd/MM/yyyy").print(quote.date)}\"" +
+              "\"date\": \"${Quote.formatDate(quote.date)}\"" +
               "}"
     }
 
