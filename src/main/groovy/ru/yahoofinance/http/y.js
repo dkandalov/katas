@@ -90,9 +90,11 @@ function adapt(data) {
 }
 
 $.getJSON("/quote/YHOO", function (myData1) {
-    $.getJSON("/macd/YHOO", function (myData2) {
-        $.getJSON("/stddev/YHOO", function (myData3) {
-            chart("linear", [adapt(myData1), adapt(myData2), adapt(myData3)]);
-        });
+    chart("linear", [adapt(myData1)]);
+});
+
+$.getJSON("/macd/YHOO", function (myData2) {
+    $.getJSON("/macdSignal/YHOO", function (myData3) {
+        chart("linear", [adapt(myData2), adapt(myData3)]);
     });
 });

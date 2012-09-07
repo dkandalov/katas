@@ -32,6 +32,8 @@ class StartServer {
     handlers << createHandler("/stddev/") { String symbol -> quoteService.stdDeviationOf(symbol) }
     handlers << createHandler("/ema/") { String symbol -> quoteService.emaOf(symbol) }
     handlers << createHandler("/macd/") { String symbol -> quoteService.macdOf(symbol) }
+    handlers << createHandler("/macdSignal/") { String symbol -> quoteService.macdSignalOf(symbol) }
+    handlers << createHandler("/macdHistogram/") { String symbol -> quoteService.macdHistogramOf(symbol) }
 
     def server = new Server(8787)
 

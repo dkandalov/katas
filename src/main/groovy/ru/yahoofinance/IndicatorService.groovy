@@ -1,17 +1,19 @@
 package ru.yahoofinance
-
 import org.apache.commons.math.stat.descriptive.moment.StandardDeviation
 import org.apache.commons.math.stat.descriptive.moment.Variance
 import org.joda.time.format.DateTimeFormat
 import ru.yahoofinance.quotes.Quote
 import ru.yahoofinance.quotes.QuoteSource
 
+import static java.lang.Double.NaN
+import static java.lang.Double.isNaN
+
 /**
  * User: dima
  * Date: 04/09/2012
  */
 class IndicatorService {
-  private static final String FROM = "01/01/2000"
+  private static final String FROM = "01/01/2002"
   private static final String TO = "01/01/2010"
   private final QuoteSource quoteSource
 
@@ -28,29 +30,63 @@ class IndicatorService {
   }
 
   def varianceOf(String symbol, int period = 7) {
-    def variance = new VarianceCalc(period)
-    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(variance.calc(it.close), it) }
-            .findAll{ !Double.isNaN(it.value) }
+    calcIndicatorFor(symbol, new VarianceCalc(period))
   }
 
   def stdDeviationOf(String symbol, int period = 7) {
-    def deviation = new StdDeviation(period)
-    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(deviation.calc(it.close), it) }
-            .findAll{ !Double.isNaN(it.value) }
+    calcIndicatorFor(symbol, new StdDeviation(period))
   }
 
   def emaOf(String symbol, int period = 7) {
-    def ema = new EMACalc(period)
-    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(ema.calc(it.close), it) }
-            .findAll{ !Double.isNaN(it.value) }
+    calcIndicatorFor(symbol, new EMACalc(period))
   }
 
   def macdOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
-    def macd = new MACDCalc(shortPeriod, longPeriod)
-    quoteSource.quotesFor(symbol, FROM, TO).collect { new CalcResult(macd.calc(it.close), it) }
-            .findAll{ !Double.isNaN(it.value) }
+    calcIndicatorFor(symbol, new MACDCalc(shortPeriod, longPeriod))
   }
 
+  def macdSignalOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
+    calcIndicatorFor(symbol, new MACDSignal(shortPeriod, longPeriod))
+  }
+
+  def macdHistogramOf(String symbol, int shortPeriod = 12, int longPeriod = 26) {
+    calcIndicatorFor(symbol, new MACDSignal(shortPeriod, longPeriod))
+  }
+
+  private def calcIndicatorFor(String symbol, indicator) {
+    quoteSource.quotesFor(symbol, FROM, TO).collect { quote ->
+      def value = indicator.calc(quote.close)
+      new CalcResult(isNaN(value) ? 0 : value, quote)
+    }
+  }
+
+
+  static class MACDHistogram {
+    private final MACDSignal macdSignal
+    private final MACDCalc macd
+
+    MACDHistogram(int shortPeriod, int longPeriod) {
+      macdSignal = new MACDSignal(shortPeriod, longPeriod)
+      macd = new MACDCalc(shortPeriod, longPeriod)
+    }
+
+    def calc(double value) {
+      macd.calc(value) - macdSignal.calc(value)
+    }
+  }
+
+  static class MACDSignal {
+    private final EMACalc ema = new EMACalc(9)
+    private final MACDCalc macd
+
+    MACDSignal(int shortPeriod, int longPeriod) {
+      macd = new MACDCalc(shortPeriod, longPeriod)
+    }
+
+    def calc(double value) {
+      ema.calc(macd.calc(value))
+    }
+  }
 
   static class MACDCalc {
     private final EMACalc emaCalcShort
@@ -78,8 +114,10 @@ class IndicatorService {
     }
 
     def calc(double value) {
+      if (isNaN(value)) return NaN
+
       ringBuffer.add(value)
-      if (!ringBuffer.full) return Double.NaN
+      if (!ringBuffer.full) return NaN
       emaOf(ringBuffer.values(), weight)
     }
 
@@ -105,7 +143,7 @@ class IndicatorService {
       if (ringBuffer.full) {
         deviation.evaluate(ringBuffer.values())
       } else {
-        Double.NaN
+        NaN
       }
     }
   }
@@ -123,7 +161,7 @@ class IndicatorService {
       if (ringBuffer.full) {
         variance.evaluate(ringBuffer.values())
       } else {
-        Double.NaN
+        NaN
       }
     }
   }
@@ -151,8 +189,8 @@ class IndicatorService {
     final Quote quote
 
     CalcResult(double value, Quote quote) {
-      this.quote = quote
       this.value = value
+      this.quote = quote
     }
 
     String toJSON() {
