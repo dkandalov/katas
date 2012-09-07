@@ -13,7 +13,7 @@ import static java.lang.Double.isNaN
  * Date: 04/09/2012
  */
 class IndicatorService {
-  private static final String FROM = "01/01/2002"
+  private static final String FROM = "01/01/2009"
   private static final String TO = "01/01/2010"
   private final QuoteSource quoteSource
 
