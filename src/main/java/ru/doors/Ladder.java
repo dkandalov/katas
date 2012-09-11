@@ -1,4 +1,4 @@
-package ru.ladder;
+package ru.doors;
 
 import java.util.Arrays;
 
