@@ -4,6 +4,7 @@ import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.AbstractHandler
 import ru.yahoofinance.IndicatorService
 import ru.yahoofinance.Playground
+import ru.yahoofinance.log.YLog
 import ru.yahoofinance.quotes.QuoteSource
 
 import javax.servlet.http.HttpServletRequest
@@ -26,7 +27,8 @@ class StartServer {
       }
     }
 
-    def quoteSource = new QuoteSource()
+    def log = new YLog()
+    def quoteSource = new QuoteSource(log)
     def indicatorService = new IndicatorService(quoteSource)
     def playground = new Playground(quoteSource, indicatorService)
     handlers << createHandler("/quote/") { String symbol -> indicatorService.quotesFor(symbol) }

@@ -6,13 +6,14 @@ import ru.yahoofinance.quotes.QuoteSource
 
 import static java.lang.Double.NaN
 import static java.lang.Double.isNaN
+
 /**
  * User: dima
  * Date: 04/09/2012
  */
 class IndicatorService {
-  private static final String FROM = "01/01/2009"
-  private static final String TO = "01/01/2010"
+  private static final String FROM = "01/01/2005"
+  private static final String TO = "01/01/2006"
   private final QuoteSource quoteSource
 
   IndicatorService(QuoteSource quoteSource) {

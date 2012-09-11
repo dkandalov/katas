@@ -99,10 +99,8 @@ $.getJSON("/buy/YHOO", function (myData2) {
     });
 });
 
-/*
 $.getJSON("/macd/YHOO", function (myData2) {
     $.getJSON("/macdSignal/YHOO", function (myData3) {
         chart("linear", [adapt(myData2), adapt(myData3)]);
     });
 });
-*/

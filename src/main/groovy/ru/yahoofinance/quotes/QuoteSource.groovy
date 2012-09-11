@@ -1,7 +1,8 @@
 package ru.yahoofinance.quotes
-import groovy.util.logging.Log4j
+
 import org.joda.time.DateTime
 import org.joda.time.Days
+import ru.yahoofinance.log.YLog
 
 import static org.joda.time.Hours.hoursBetween
 import static ru.yahoofinance.quotes.Quote.formatAsYahooDate
@@ -11,18 +12,22 @@ import static ru.yahoofinance.quotes.Quote.parseDate
  * User: dima
  * Date: 04/09/2012
  */
-@Log4j
 class QuoteSource {
+  private final YLog log
   private final QuoteStorage storage = new QuoteStorage()
+
+  QuoteSource(YLog log) {
+    this.log = log
+  }
 
   def quotesFor(String symbol, String fromDate, String toDate) {
     def cachedQuotes = storage.loadQuotesFor(symbol, fromDate, toDate)
     if (cachedQuotes != null) {
-      log.info("using cached quotes")
+      log.usingCachedQuote(symbol, fromDate, toDate)
       cachedQuotes
     } else {
       def quotes = YahooQuotesSource.requestQuotesFor(symbol, fromDate, toDate)
-      log.info("requesting quotes from Y!")
+      log.requestingQuotesFromYahoo(symbol, fromDate, toDate)
       storage.save(symbol, quotes)
       quotes
     }

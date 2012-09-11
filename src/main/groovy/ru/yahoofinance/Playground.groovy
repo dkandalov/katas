@@ -1,4 +1,6 @@
 package ru.yahoofinance
+
+import ru.yahoofinance.log.YLog
 import ru.yahoofinance.quotes.Quote
 import ru.yahoofinance.quotes.QuoteSource
 
@@ -13,14 +15,21 @@ import static ru.yahoofinance.IndicatorService.MACDSignal
 class Playground {
   final QuoteSource quoteSource
   final IndicatorService indicatorService
-  int money
+  double money
   int position
 
   static void main(String[] args) {
-    def quoteSource = new QuoteSource()
+    def log = new YLog()
+    def quoteSource = new QuoteSource(log)
     def indicatorService = new IndicatorService(quoteSource)
 
-    new Playground(quoteSource, indicatorService).play("YHOO", MacdSignalIntersection.create())
+    def total = new File("ftse_symbols.txt").readLines().inject(new TreeMap()) { map, symbol ->
+      def playground = new Playground(quoteSource, indicatorService)
+      playground.play(symbol, MacdSignalIntersection.create())
+      map.put(symbol, playground.money)
+      map
+    }
+    total.each {println it }
   }
 
   Playground(QuoteSource quoteSource, IndicatorService indicatorService) {
@@ -41,38 +50,57 @@ class Playground {
         buy(action.buy, quote)
         result.buy << new TradeSignal(action.buy, quote)
         result.sell << new TradeSignal(0, quote)
+        println "eff.money = ${effectiveMoneyAt(quote)}; position = $position; money = $money;"
       } else if (action?.sell != null) {
         sell(action.sell, quote)
         result.buy << new TradeSignal(0, quote)
         result.sell << new TradeSignal(action.sell, quote)
+        println "eff.money = ${effectiveMoneyAt(quote)}; position = $position; money = $money;"
       } else {
         result.buy << new TradeSignal(0, quote)
         result.sell << new TradeSignal(0, quote)
       }
     }
-    def lastQuote = quotes[quotes.size() - 1]
-    if (position < 0) {
-      buy(position.abs(), lastQuote)
-    } else {
-      sell(position.abs(), lastQuote)
+
+    if (!quotes.empty) {
+      def lastQuote = quotes[quotes.size() - 1]
+      closePositionAt(lastQuote)
     }
 
-    println "money = $money"
-    println "position = $position"
+    println "money = $money; position = $position"
 
     result
   }
 
   def buy(int amount, Quote quote) {
+//    println "buying at ${quote.close}"
     money -= quote.close * amount
     position += amount
   }
 
   def sell(int amount, Quote quote) {
+//    println "selling at ${quote.close}"
     money += quote.close * amount
     position -= amount
   }
 
+  def closePositionAt(Quote quote) {
+    if (position < 0) {
+      buy(position.abs(), quote)
+    } else {
+      sell(position.abs(), quote)
+    }
+  }
+
+  double effectiveMoneyAt(Quote quote) {
+    double result = money
+    if (position < 0) {
+      result -= position.abs() * quote.close
+    } else {
+      result += position.abs() * quote.close
+    }
+    result
+  }
 
   static class TradeSignal {
     final double value
@@ -94,7 +122,7 @@ class Playground {
       def macdSignalCalc = new MACDSignal(12, 26)
       def window = new Window(10)
 
-      def process = { int money, int position, Quote quote ->
+      def process = { double money, int position, Quote quote ->
         window.add([
                 macd: macdCalc.calc(quote.close),
                 macdSignal: macdSignalCalc.calc(quote.close),
@@ -125,11 +153,10 @@ class Playground {
       }
 
       if (areEqual(macd, signal)) return null
-      if (macd == signal) return null
       if (prevMacd > prevSignal && macd > signal) return null
       if (prevMacd < prevSignal && macd < signal) return null
-      if (macd > signal) return "macdCrossesUp"
-      if (macd < signal) return "macdCrossesDown"
+      if (prevMacd > prevSignal && macd < signal) return "macdCrossesDown"
+      if (prevMacd < prevSignal && macd > signal) return "macdCrossesUp"
 
       throw new IllegalStateException("prevMacd: $prevMacd, prevSignal: $prevSignal, macd: $macd, signal: $signal")
     }

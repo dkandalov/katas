@@ -1,5 +1,6 @@
 package ru.yahoofinance
 
+import ru.yahoofinance.log.YLog
 import ru.yahoofinance.quotes.Quote
 import ru.yahoofinance.quotes.QuoteSource
 
@@ -26,7 +27,8 @@ class Y2 {
       println(quote)
     }
 
-    def quoteSource = new QuoteSource()
+    def log = new YLog()
+    def quoteSource = new QuoteSource(log)
     println(position + " " + money)
     quoteSource.quotesFor("YHOO", "2000-01-01", "2001-01-01").reverse().each { Quote quote ->
       println(quote)
