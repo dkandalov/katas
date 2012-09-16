@@ -15,8 +15,8 @@
 
     <repositories>
         <repository>
-            <id>mvn</id>
-            <name>mvn</name>
+            <id>central</id>
+            <name>Maven repository</name>
             <url>http://repo1.maven.org/maven2</url>
         </repository>
 
@@ -38,6 +38,23 @@
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads</url>
         </repository>
 
+        <repository>
+            <id>oss.sonatype.org</id>
+            <name>releases</name>
+            <url>http://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+
+        <repository>
+            <id>oss.sonatype.org</id>
+            <name>snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+
+        <repository>
+            <id>ObjectWeb</id>
+            <name>ObjectWeb repository</name>
+            <url>http://maven.ow2.org/maven2</url>
+        </repository>
 <!--
         <repository>
             <id>typesafe</id>
@@ -189,6 +206,11 @@
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.9.0-1</artifactId>
             <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2_2.9.2</artifactId>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
