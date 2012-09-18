@@ -1,11 +1,11 @@
-package ru.sort.oemsort
+package ru.sort.odd_even_mergesort
 
 import org.junit.Test
 
 /**
  * User: DKandalov
  */
-class OEMSort0 {
+class OEMSort0_ {
   @Test
   public void aaa() {
     System.out.println([1, 2, 3, 4][0..1])

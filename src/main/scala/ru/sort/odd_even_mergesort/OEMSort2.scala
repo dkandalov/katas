@@ -1,4 +1,4 @@
-package ru.sort.oem_sort
+package ru.sort.odd_even_mergesort
 
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit

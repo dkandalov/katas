@@ -1,11 +1,11 @@
-package ru.sort.oemsort
+package ru.sort.odd_even_mergesort
 
 import org.junit.Test
 
  /**
  * User: DKandalov
  */
-class OEMSort1 { // TODO
+class OEMSort1_ { // TODO
   @Test
   public void shouldSortList() {
     assert sort([]) == []
