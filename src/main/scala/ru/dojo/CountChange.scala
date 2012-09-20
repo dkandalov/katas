@@ -18,7 +18,9 @@ class CountChange extends ShouldMatchers {
 		countChange(2, coins) should equal(2)
 
 		countChange(4, coins) should equal(3)
-		calculateChanges(4, coins) should equal(List(List(2, 2), List(2, 1, 1), List(1, 1, 1, 1)))
+		calculateChanges(4, coins) should equal(List(List(2, 2), List(1, 1, 2), List(1, 1, 1, 1)))
+
+		countChange(100, List(50, 25, 10, 5, 1)) should equal(292)
 	}
 
 	def countChange(money: Int, coins: List[Int]): Int = {
@@ -26,14 +28,14 @@ class CountChange extends ShouldMatchers {
 	}
 
 	def calculateChanges(money: Int, coins: List[Int]): List[List[Int]] = {
-		if (coins.isEmpty) return List()
-		calc(money, coins) ++ calculateChanges(money, coins.tail)
+		if (money == 0 || coins.isEmpty) List()
+		else calc(money, coins)
 	}
 
 	def calc(money: Int, coins: List[Int]): List[List[Int]] = {
-		if (coins.isEmpty) return List()
-		if (money == coins.head) return List(List(coins.head))
-		if (money < coins.head) calculateChanges(money, coins.tail)
-		else calculateChanges(money - coins.head, coins).map( list => coins.head +: list) ++ calculateChanges(money, coins.tail)
+		if (money == 0) List(List())
+		else if (money < 0) List()
+		else if (coins.isEmpty) List()
+		else calc(money - coins.head, coins).map(_ :+ coins.head) ++ calc(money, coins.tail)
 	}
 }
