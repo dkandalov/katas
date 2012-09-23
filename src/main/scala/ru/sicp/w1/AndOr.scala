@@ -1,4 +1,4 @@
-package ru.sisp.w1
+package ru.sicp.w1
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test

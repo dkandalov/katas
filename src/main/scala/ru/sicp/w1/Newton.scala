@@ -1,4 +1,4 @@
-package ru.sisp.w1
+package ru.sicp.w1
 
 /**
  * User: dima
