@@ -11,73 +11,38 @@ import javax.sound.sampled.SourceDataLine;
  */
 public class Tone {
 
+    public static float SAMPLE_RATE = 8000f;
+
     public static void main(String[] args) throws LineUnavailableException {
-        final AudioFormat af =
-                new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, true);
-        SourceDataLine line = AudioSystem.getSourceDataLine(af);
-        line.open(af, Note.SAMPLE_RATE);
-        line.start();
-
-        play(line, Note.A4, 1000);
-        play(line, Note.REST, 1000);
-//        play(line, Note.B4, 1000);
-        play(line, new NoteFreq(16 * 1000), 1000);
-
-        line.drain();
-        line.close();
+        Tone.sound(1000, 3000, 0.8);
     }
 
-    private static void play(SourceDataLine line, Playable playable, int ms) {
-        ms = Math.min(ms, Note.SECONDS * 1000);
-        int length = Note.SAMPLE_RATE * ms / 1000;
-        line.write(playable.data(), 0, length);
-    }
-}
+    public static void sound(int hz, int msecs, double vol) throws LineUnavailableException {
+        if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz");
+        if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs");
+        if (vol > 1.0 || vol < 0.0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0");
 
-class NoteFreq implements Playable {
-    private final byte[] sin;
+        byte[] buf = new byte[(int) SAMPLE_RATE * msecs / 1000];
 
-    NoteFreq(int frequency) {
-        sin = new byte[Note.SECONDS * frequency];
-
-        for (int i = 0; i < sin.length; i++) {
-            double f = 440d * Math.pow(2d, 1 - 1);
-            double period = (double) frequency / f;
-            double angle = 2.0 * Math.PI * i / period;
-            sin[i] = (byte) (Math.sin(angle) * 127f);
+        for (int i = 0; i < buf.length; i++) {
+            double angle = i / (SAMPLE_RATE / hz) * 2.0 * Math.PI;
+            buf[i] = (byte) (Math.sin(angle) * 127.0 * vol);
         }
-    }
 
-    @Override public byte[] data() {
-        return sin;
-    }
-}
-
-interface Playable {
-    byte[] data();
-}
-
-enum Note implements Playable {
-    REST, A4, A4$, B4, C4, C4$, D4, D4$, E4, F4, F4$, G4, G4$, A5;
-    public static final int SAMPLE_RATE = 16 * 1024; // ~16KHz
-    public static final int SECONDS = 2;
-    private byte[] sin = new byte[SECONDS * SAMPLE_RATE];
-
-    Note() {
-        int n = this.ordinal();
-        if (n > 0) {
-            double exp = ((double) n - 1) / 12d;
-            double f = 440d * Math.pow(2d, exp);
-            for (int i = 0; i < sin.length; i++) {
-                double period = (double) SAMPLE_RATE / f;
-                double angle = 2.0 * Math.PI * i / period;
-                sin[i] = (byte) (Math.sin(angle) * 127f);
-            }
+        // shape the front and back 10ms of the wave form
+        for (int i = 0; i < SAMPLE_RATE / 100.0 && i < buf.length / 2; i++) {
+            buf[i] = (byte) (buf[i] * i / (SAMPLE_RATE / 100.0));
+            buf[buf.length - 1 - i] =
+                    (byte) (buf[buf.length - 1 - i] * i / (SAMPLE_RATE / 100.0));
         }
-    }
 
-    @Override
-    public byte[] data() {
-        return sin;
+        AudioFormat af = new AudioFormat(SAMPLE_RATE, 8, 1, true, false);
+        SourceDataLine sdl = AudioSystem.getSourceDataLine(af);
+        sdl.open(af);
+        sdl.start();
+        sdl.write(buf, 0, buf.length);
+        sdl.drain();
+        sdl.close();
     }
 }
+
