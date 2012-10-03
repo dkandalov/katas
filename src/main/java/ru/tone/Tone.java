@@ -18,16 +18,11 @@ public class Tone {
         line.open(af, Note.SAMPLE_RATE);
         line.start();
 
-        play(line, Note.A4, 2500);
-//        play(line, new NoteFreq(), 2500);
-//        play(line, Note.REST, 10);
+        play(line, Note.A4, 1000);
+        play(line, Note.REST, 1000);
+//        play(line, Note.B4, 1000);
+        play(line, new NoteFreq(16 * 1000), 1000);
 
-/*
-        for  (Note n : Note.values()) {
-            play(line, n, 500);
-            play(line, Note.REST, 10);
-        }
-*/
         line.drain();
         line.close();
     }
@@ -35,7 +30,7 @@ public class Tone {
     private static void play(SourceDataLine line, Playable playable, int ms) {
         ms = Math.min(ms, Note.SECONDS * 1000);
         int length = Note.SAMPLE_RATE * ms / 1000;
-        int count = line.write(playable.data(), 0, length);
+        line.write(playable.data(), 0, length);
     }
 }
 
@@ -47,9 +42,9 @@ class NoteFreq implements Playable {
 
         for (int i = 0; i < sin.length; i++) {
             double f = 440d * Math.pow(2d, 1 - 1);
-            double period = (double)frequency / f;
+            double period = (double) frequency / f;
             double angle = 2.0 * Math.PI * i / period;
-            sin[i] = (byte)(Math.sin(angle) * 127f);
+            sin[i] = (byte) (Math.sin(angle) * 127f);
         }
     }
 
@@ -74,9 +69,9 @@ enum Note implements Playable {
             double exp = ((double) n - 1) / 12d;
             double f = 440d * Math.pow(2d, exp);
             for (int i = 0; i < sin.length; i++) {
-                double period = (double)SAMPLE_RATE / f;
+                double period = (double) SAMPLE_RATE / f;
                 double angle = 2.0 * Math.PI * i / period;
-                sin[i] = (byte)(Math.sin(angle) * 127f);
+                sin[i] = (byte) (Math.sin(angle) * 127f);
             }
         }
     }
