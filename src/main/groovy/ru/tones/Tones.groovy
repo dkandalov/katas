@@ -18,7 +18,7 @@ class Tones {
       add(new NextToneButton())
 
       50.step(501, 50) {
-        add(new JButton(it.toString()))
+        add(new GuessToneButton(it))
       }
       add(new JButton("750"))
       1000.step(5001, 500) {
@@ -30,11 +30,34 @@ class Tones {
     frame.visible = true
   }
 
+  private static class FrequencySource {
+
+  }
+
+  int lastFrequency = 0
+
+  private static class GuessToneButton extends JButton {
+    GuessToneButton(int frequency) {
+      text = frequency.toString()
+
+      addActionListener(new AbstractAction() {
+        @Override void actionPerformed(ActionEvent e) {
+
+        }
+      })
+    }
+  }
+
   private static class NextToneButton extends JButton {
     NextToneButton() {
+      text = "Play"
       addActionListener(new ActionListener() {
         @Override void actionPerformed(ActionEvent e) {
-          new Thread({ sound(1000, 3000, 0.8)}).start()
+          new Thread({
+            int frequency = new Random().nextInt()
+            sound(frequency, 3000, 0.8)
+            lastFrequency = frequency
+          }).start()
         }
       })
     }
