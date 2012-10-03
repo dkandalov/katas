@@ -34,14 +34,17 @@ class Tones {
   }
 
   private static class FrequencySource {
-    List allFrequencies = [50, 100]
+    List<Integer> allFrequencies = [500, 1000]
     int lastFrequency = 0
 
     FrequencySource() {
     }
 
     int next() {
-      1000
+      def n = new Random().nextInt(allFrequencies.size())
+      int frequency = allFrequencies[n]
+      lastFrequency = frequency
+      frequency
     }
   }
 
@@ -51,7 +54,11 @@ class Tones {
 
       addActionListener(new AbstractAction() {
         @Override void actionPerformed(ActionEvent e) {
-          JOptionPane.showMessageDialog(null, frequencySource.lastFrequency.toString())
+          if (frequencySource.lastFrequency == frequency) {
+            JOptionPane.showMessageDialog(null, "Yes! It was ${frequencySource.lastFrequency.toString()} Hz")
+          } else {
+            GuessToneButton.this.enabled = false
+          }
         }
       })
     }
