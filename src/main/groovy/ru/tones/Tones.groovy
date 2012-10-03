@@ -1,22 +1,18 @@
 package ru.tones
-
 import org.joda.time.DateTime
 
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.LineUnavailableException
-import javax.sound.sampled.SourceDataLine
 import javax.swing.*
-import java.awt.GridLayout
+import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.event.WindowEvent
-
-import org.junit.Test
+import java.util.List
 
 class Tones {
   static void main(String[] args) {
-    def model = new Model(new UIUtil())
+    def model = new Model(new RealWorld())
 
     System.addShutdownHook { model.onClose() }
 
@@ -35,7 +31,7 @@ class Tones {
   }
 
   private static class Model {
-    private final UIUtil uiUtil
+    private final RealWorld realWorld
 
     final List<Integer> allFrequencies = []
     private int lastFrequency = 0
@@ -44,8 +40,9 @@ class Tones {
     private double score = 0
     private int attempts = 0
 
-    Model(UIUtil uiUtil) {
-      this.uiUtil = uiUtil
+    Model(RealWorld realWorld) {
+      this.realWorld = realWorld
+
       50.step(501, 50) { allFrequencies << it }
       allFrequencies << 750
       1000.step(5001, 500) { allFrequencies << it }
@@ -56,7 +53,7 @@ class Tones {
       attempts++
       if (lastFrequency == frequency) {
         updateScore()
-        uiUtil.showMessage("Yes! It was ${lastFrequency.toString()} Hz")
+        realWorld.showMessage("Yes! It was ${lastFrequency.toString()} Hz")
       }
     }
 
@@ -68,7 +65,7 @@ class Tones {
       updateScore()
       roundsCount++
 
-      uiUtil.playSound(frequency)
+      realWorld.playSound(frequency)
     }
 
     private void updateScore() {
@@ -109,7 +106,7 @@ class Tones {
     }
   }
 
-  private static class UIUtil {
+  private static class RealWorld {
     def showMessage(String text) {
       JOptionPane.showMessageDialog(null, text)
     }
@@ -120,33 +117,35 @@ class Tones {
       }).start()
     }
 
-    private static void sound(int hz, int msecs, double vol) throws LineUnavailableException {
-      float SAMPLE_RATE = 8000f;
+    private static void sound(int hz, int msecs, double volume) throws LineUnavailableException {
+      def sampleRate = 8000
+      def samplesPerCycle = sampleRate / hz
 
-      if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz");
-      if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs");
-      if (vol > 1.0 || vol < 0.0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0");
+      if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz")
+      if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs")
+      if (volume > 1.0 || volume < 0.0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0")
 
-      byte[] buf = new byte[(int) SAMPLE_RATE * msecs / 1000];
+      byte[] buf = new byte[(int) sampleRate * (msecs / 1000)]
 
       for (int i = 0; i < buf.length; i++) {
-        double angle = i / (SAMPLE_RATE / hz) * 2.0 * Math.PI;
-        buf[i] = (byte) (Math.sin(angle) * 127.0 * vol);
+        double angle = i / samplesPerCycle * 2.0 * Math.PI
+        buf[i] = (byte) (Math.sin(angle) * 127.0 * volume)
       }
 
       // shape the front and back 10ms of the wave form
-      for (int i = 0; i < SAMPLE_RATE / 100.0 && i < buf.length / 2; i++) {
-        buf[i] = (byte) (buf[i] * i / (SAMPLE_RATE / 100.0));
-        buf[buf.length - 1 - i] = (byte) (buf[buf.length - 1 - i] * i / (SAMPLE_RATE / 100.0));
+      for (int i = 0; i < sampleRate / 100.0 && i < buf.length / 2; i++) {
+        buf[i] = (byte) (buf[i] * i / (sampleRate / 100.0))
+        buf[buf.length - 1 - i] = (byte) (buf[buf.length - 1 - i] * i / (sampleRate / 100.0))
       }
 
-      AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, 8, 1, true, false);
-      SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-      line.open(audioFormat);
-      line.start();
-      line.write(buf, 0, buf.length);
-      line.drain();
-      line.close();
+      AudioFormat audioFormat = new AudioFormat(sampleRate, 8, 1, true, false)
+      AudioSystem.getSourceDataLine(audioFormat).with {
+        open(audioFormat)
+        start()
+        write(buf, 0, buf.length)
+        drain()
+        close()
+      }
     }
   }
 }
