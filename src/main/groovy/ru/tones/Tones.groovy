@@ -14,8 +14,6 @@ class Tones {
   static void main(String[] args) {
     def model = new Model(new RealWorld())
 
-    System.addShutdownHook { model.onClose() }
-
     def frame = new JFrame("tones")
     def panel = new JPanel()
     panel.layout = new GridLayout(4, 4)
@@ -37,7 +35,6 @@ class Tones {
     private int lastFrequency = 0
 
     private int roundsCount = 0
-    private double score = 0
     private int attempts = 0
 
     Model(RealWorld realWorld) {
@@ -69,18 +66,20 @@ class Tones {
     }
 
     private void updateScore() {
-      if (attempts > 0) score += 1 / attempts
+      if (attempts <= 0) return
+
+      def score = 1 / attempts
       attempts = 0
+
+      saveScore(score)
     }
 
-    def onClose() {
-      if (roundsCount == 0) return
-
+    private def saveScore(score) {
       def now = new DateTime()
       def date = now.toString("dd/MM/yyyy")
       def time = now.toString("hh:mm")
 
-      realWorld.saveStats("$date,$time,$roundsCount,${score / roundsCount}\n")
+      realWorld.saveStats("$date,$time,${score}\n")
     }
   }
 
