@@ -4,10 +4,28 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.LineUnavailableException
 import javax.sound.sampled.SourceDataLine
+import javax.swing.*
+import java.awt.GridLayout
 
 class Tones {
   static void main(String[] args) {
-    sound(1000, 3000, 0.8);
+    def frame = new JFrame("tones")
+    def panel = new JPanel()
+    panel.layout = new GridLayout(4, 4)
+    panel.with {
+      50.step(501, 50) {
+        add(new JButton(it.toString()))
+      }
+      add(new JButton("750"))
+      1000.step(5001, 500) {
+        add(new JButton(it.toString()))
+      }
+    }
+    frame.add(panel)
+    frame.pack()
+    frame.visible = true
+
+//    sound(1000, 3000, 0.8);
   }
 
   public static void sound(int hz, int msecs, double vol) throws LineUnavailableException {
