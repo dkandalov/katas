@@ -118,27 +118,27 @@ class Tones {
     }
 
     private static void sound(int hz, int msecs, double volume) throws LineUnavailableException {
-      def sampleRate = 8000
-      def samplesPerCycle = sampleRate / hz
-
       if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz")
       if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs")
-      if (volume > 1.0 || volume < 0.0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0")
+      if (volume > 1 || volume < 0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0")
+
+      double sampleRate = 8000
+      double samplesPerCycle = sampleRate / hz
 
       byte[] buf = new byte[(int) sampleRate * (msecs / 1000)]
 
       for (int i = 0; i < buf.length; i++) {
-        double angle = i / samplesPerCycle * 2.0 * Math.PI
-        buf[i] = (byte) (Math.sin(angle) * 127.0 * volume)
+        double angle = (i / samplesPerCycle) * 2 * Math.PI
+        buf[i] = (byte) (Math.sin(angle) * 127 * volume)
       }
 
       // shape the front and back 10ms of the wave form
-      for (int i = 0; i < sampleRate / 100.0 && i < buf.length / 2; i++) {
-        buf[i] = (byte) (buf[i] * i / (sampleRate / 100.0))
-        buf[buf.length - 1 - i] = (byte) (buf[buf.length - 1 - i] * i / (sampleRate / 100.0))
+      for (int i = 0; i < sampleRate / 100 && i < buf.length / 2; i++) {
+        buf[i] = (byte) (buf[i] * i / (sampleRate / 100))
+        buf[buf.length - 1 - i] = (byte) (buf[buf.length - 1 - i] * i / (sampleRate / 100))
       }
 
-      AudioFormat audioFormat = new AudioFormat(sampleRate, 8, 1, true, false)
+      AudioFormat audioFormat = new AudioFormat((float) sampleRate, 8, 1, true, false)
       AudioSystem.getSourceDataLine(audioFormat).with {
         open(audioFormat)
         start()
