@@ -10,6 +10,36 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
 class Tones {
+  static void main(String[] args) {
+    def frame = new JFrame("tones")
+    def panel = new JPanel()
+    panel.layout = new GridLayout(4, 4)
+    panel.with {
+      add(new NextToneButton())
+
+      50.step(501, 50) {
+        add(new JButton(it.toString()))
+      }
+      add(new JButton("750"))
+      1000.step(5001, 500) {
+        add(new JButton(it.toString()))
+      }
+    }
+    frame.add(panel)
+    frame.pack()
+    frame.visible = true
+  }
+
+  private static class NextToneButton extends JButton {
+    NextToneButton() {
+      addActionListener(new ActionListener() {
+        @Override void actionPerformed(ActionEvent e) {
+          new Thread({ sound(1000, 3000, 0.8)}).start()
+        }
+      })
+    }
+  }
+
   public static void sound(int hz, int msecs, double vol) throws LineUnavailableException {
     float SAMPLE_RATE = 8000f;
 
@@ -37,35 +67,5 @@ class Tones {
     line.write(buf, 0, buf.length);
     line.drain();
     line.close();
-  }
-
-  private static class NextToneButton extends JButton {
-    NextToneButton() {
-      addActionListener(new ActionListener() {
-        @Override void actionPerformed(ActionEvent e) {
-          new Thread({ sound(1000, 3000, 0.8)}).start()
-        }
-      })
-    }
-  }
-
-  static void main(String[] args) {
-    def frame = new JFrame("tones")
-    def panel = new JPanel()
-    panel.layout = new GridLayout(4, 4)
-    panel.with {
-      add(new NextToneButton())
-
-      50.step(501, 50) {
-        add(new JButton(it.toString()))
-      }
-      add(new JButton("750"))
-      1000.step(5001, 500) {
-        add(new JButton(it.toString()))
-      }
-    }
-    frame.add(panel)
-    frame.pack()
-    frame.visible = true
   }
 }
