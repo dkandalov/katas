@@ -11,19 +11,22 @@ import java.awt.event.ActionListener
 
 class Tones {
   static void main(String[] args) {
+    def frequencySource = new FrequencySource()
+
     def frame = new JFrame("tones")
     def panel = new JPanel()
     panel.layout = new GridLayout(4, 4)
     panel.with {
-      add(new NextToneButton())
-
-      50.step(501, 50) {
-        add(new GuessToneButton(it))
+      add(new NextToneButton(frequencySource))
+      frequencySource.allFrequencies.each {
+        add(new GuessToneButton(it, frequencySource))
       }
-      add(new JButton("750"))
-      1000.step(5001, 500) {
-        add(new JButton(it.toString()))
-      }
+//      50.step(501, 50) {
+//      }
+//      add(new JButton("750"))
+//      1000.step(5001, 500) {
+//        add(new JButton(it.toString()))
+//      }
     }
     frame.add(panel)
     frame.pack()
@@ -31,32 +34,36 @@ class Tones {
   }
 
   private static class FrequencySource {
+    List allFrequencies = [50, 100]
+    int lastFrequency = 0
 
+    FrequencySource() {
+    }
+
+    int next() {
+      1000
+    }
   }
 
-  int lastFrequency = 0
-
   private static class GuessToneButton extends JButton {
-    GuessToneButton(int frequency) {
+    GuessToneButton(int frequency, FrequencySource frequencySource) {
       text = frequency.toString()
 
       addActionListener(new AbstractAction() {
         @Override void actionPerformed(ActionEvent e) {
-
+          JOptionPane.showMessageDialog(null, frequencySource.lastFrequency.toString())
         }
       })
     }
   }
 
   private static class NextToneButton extends JButton {
-    NextToneButton() {
+    NextToneButton(FrequencySource frequencySource) {
       text = "Play"
       addActionListener(new ActionListener() {
         @Override void actionPerformed(ActionEvent e) {
           new Thread({
-            int frequency = new Random().nextInt()
-            sound(frequency, 3000, 0.8)
-            lastFrequency = frequency
+            sound(frequencySource.next(), 3000, 0.8)
           }).start()
         }
       })
