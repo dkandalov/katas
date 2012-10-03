@@ -18,7 +18,8 @@ public class Tone {
         line.open(af, Note.SAMPLE_RATE);
         line.start();
 
-        play(line, Note.A4, 500);
+        play(line, Note.A4, 2500);
+//        play(line, new NoteFreq(), 2500);
 //        play(line, Note.REST, 10);
 
 /*
@@ -31,14 +32,37 @@ public class Tone {
         line.close();
     }
 
-    private static void play(SourceDataLine line, Note note, int ms) {
+    private static void play(SourceDataLine line, Playable playable, int ms) {
         ms = Math.min(ms, Note.SECONDS * 1000);
         int length = Note.SAMPLE_RATE * ms / 1000;
-        int count = line.write(note.data(), 0, length);
+        int count = line.write(playable.data(), 0, length);
     }
 }
 
-enum Note {
+class NoteFreq implements Playable {
+    private final byte[] sin;
+
+    NoteFreq(int frequency) {
+        sin = new byte[Note.SECONDS * frequency];
+
+        for (int i = 0; i < sin.length; i++) {
+            double f = 440d * Math.pow(2d, 1 - 1);
+            double period = (double)frequency / f;
+            double angle = 2.0 * Math.PI * i / period;
+            sin[i] = (byte)(Math.sin(angle) * 127f);
+        }
+    }
+
+    @Override public byte[] data() {
+        return sin;
+    }
+}
+
+interface Playable {
+    byte[] data();
+}
+
+enum Note implements Playable {
     REST, A4, A4$, B4, C4, C4$, D4, D4$, E4, F4, F4$, G4, G4$, A5;
     public static final int SAMPLE_RATE = 16 * 1024; // ~16KHz
     public static final int SECONDS = 2;
@@ -57,6 +81,7 @@ enum Note {
         }
     }
 
+    @Override
     public byte[] data() {
         return sin;
     }
