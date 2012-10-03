@@ -14,6 +14,8 @@ class Tones {
   static void main(String[] args) {
     def model = new Model(new RealWorld())
 
+    System.addShutdownHook { model.onExit() }
+
     def frame = new JFrame("tones")
     def panel = new JPanel()
     panel.layout = new GridLayout(4, 4)
@@ -47,36 +49,40 @@ class Tones {
     def guessed(int frequency) {
       attempts++
       if (lastFrequency == frequency) {
-        updateScore()
+        saveScore()
         realWorld.showMessage("Yes! It was ${lastFrequency.toString()} Hz")
       }
     }
 
-    void playNextFrequency() {
-      def n = new Random().nextInt(allFrequencies.size())
-      int frequency = allFrequencies[n]
+    def playNextFrequency() {
+      if (attempts > 0) saveScore()
+
+      int frequency = nextFrequency()
       lastFrequency = frequency
-
-      updateScore()
-
       realWorld.playSound(frequency)
     }
 
-    private void updateScore() {
-      if (attempts <= 0) return
-
-      def score = 1 / attempts
-      attempts = 0
-
-      saveScore(score)
+    def onExit() {
+      saveScore()
     }
 
-    private def saveScore(score) {
+    private int nextFrequency() {
+      def n = new Random().nextInt(allFrequencies.size())
+      int frequency = allFrequencies[n]
+      frequency
+    }
+
+    private void saveScore() {
+      saveStats(1 / attempts)
+      attempts = 0
+    }
+
+    private def saveStats(score) {
       def now = new DateTime()
       def date = now.toString("dd/MM/yyyy")
-      def time = now.toString("hh:mm")
+      def time = now.toString("hh:mm:ss")
 
-      realWorld.saveStats("$date,$time,${score}\n")
+      realWorld.saveStats("$date,$time,$score\n")
     }
   }
 
