@@ -33,8 +33,6 @@ class Tones {
 
     final List<Integer> allFrequencies = []
     private int lastFrequency = 0
-
-    private int roundsCount = 0
     private int attempts = 0
 
     Model(RealWorld realWorld) {
@@ -60,7 +58,6 @@ class Tones {
       lastFrequency = frequency
 
       updateScore()
-      roundsCount++
 
       realWorld.playSound(frequency)
     }
