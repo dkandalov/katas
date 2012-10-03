@@ -34,10 +34,14 @@ class Tones {
   }
 
   private static class FrequencySource {
-    List<Integer> allFrequencies = [500, 1000]
+    final List<Integer> allFrequencies = []
     int lastFrequency = 0
 
     FrequencySource() {
+      50.step(501, 50) { allFrequencies << it }
+      allFrequencies << 750
+      1000.step(5001, 500) { allFrequencies << it }
+      6000.step(10001, 2000) { allFrequencies << it }
     }
 
     int next() {
@@ -56,8 +60,6 @@ class Tones {
         @Override void actionPerformed(ActionEvent e) {
           if (frequencySource.lastFrequency == frequency) {
             JOptionPane.showMessageDialog(null, "Yes! It was ${frequencySource.lastFrequency.toString()} Hz")
-          } else {
-            GuessToneButton.this.enabled = false
           }
         }
       })
