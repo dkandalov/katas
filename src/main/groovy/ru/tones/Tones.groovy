@@ -80,7 +80,7 @@ class Tones {
       def date = now.toString("dd/MM/yyyy")
       def time = now.toString("hh:mm")
 
-      new File("tones_stats.csv").append("$date,$time,$roundsCount,${score / roundsCount}\n")
+      realWorld.saveStats("$date,$time,$roundsCount,${score / roundsCount}\n")
     }
   }
 
@@ -115,6 +115,10 @@ class Tones {
       new Thread({
         sound(frequency, 3000, 0.8)
       }).start()
+    }
+
+    def saveStats(String text) {
+      new File("tones_stats.csv").append(text)
     }
 
     private static void sound(int hz, int msecs, double volume) throws LineUnavailableException {
