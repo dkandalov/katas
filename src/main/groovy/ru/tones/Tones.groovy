@@ -55,7 +55,7 @@ class Tones {
     }
 
     def playNextFrequency() {
-      if (attempts > 0) saveScore()
+      if (attempts > 0) saveZeroScore()
 
       int frequency = nextFrequency()
       lastFrequency = frequency
@@ -63,13 +63,17 @@ class Tones {
     }
 
     def onExit() {
-      saveScore()
+      if (attempts > 0) saveZeroScore()
     }
 
     private int nextFrequency() {
       def n = new Random().nextInt(allFrequencies.size())
       int frequency = allFrequencies[n]
       frequency
+    }
+
+    private saveZeroScore() {
+      saveStats(0)
     }
 
     private void saveScore() {
