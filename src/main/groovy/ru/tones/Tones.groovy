@@ -1,5 +1,6 @@
 package ru.tones
 import org.joda.time.DateTime
+import org.junit.Test
 
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
@@ -12,22 +13,31 @@ import java.util.List
 
 class Tones {
   static void main(String[] args) {
-    def model = new Model(new RealWorld())
+    def world = new RealWorld()
+    def model = new Model(world)
 
     System.addShutdownHook { model.onExit() }
 
-    def frame = new JFrame("tones")
-    def panel = new JPanel()
-    panel.layout = new GridLayout(4, 4)
-    panel.with {
-      add(new NextToneButton(model))
-      model.allFrequencies.each {
-        add(new GuessToneButton(it, model))
-      }
+    new JFrame("guess tones").with {
+      def panel = new JPanel()
+      panel.layout = new GridLayout(4, 4)
+      panel.add(new NextToneButton(model))
+      model.allFrequencies.each { panel.add(new GuessToneButton(it, model)) }
+      add(panel)
+      pack()
+      visible = true
     }
-    frame.add(panel)
-    frame.pack()
-    frame.visible = true
+
+    new JFrame("play tones").with {
+      def panel = new JPanel()
+      panel.layout = new GridLayout(4, 4)
+      panel.add(new JButton())
+      model.allFrequencies.each { panel.add(new PlayToneButton(it, world)) }
+      add(panel)
+      pack()
+      setLocation((int) location.x, (int) location.y + height + 30)
+      visible = true
+    }
   }
 
   private static class Model {
@@ -40,10 +50,11 @@ class Tones {
     Model(RealWorld realWorld) {
       this.realWorld = realWorld
 
-      50.step(501, 50) { allFrequencies << it }
+      200.step(501, 50) { allFrequencies << it }
       allFrequencies << 750
       1000.step(5001, 500) { allFrequencies << it }
       6000.step(10001, 2000) { allFrequencies << it }
+      allFrequencies << 15000
     }
 
     def guessed(int frequency) {
@@ -90,6 +101,17 @@ class Tones {
     }
   }
 
+  private static class PlayToneButton extends JButton {
+    PlayToneButton(int frequency, RealWorld world) {
+      text = frequency.toString()
+      addActionListener(new AbstractAction() {
+        @Override void actionPerformed(ActionEvent e) {
+          world.playSound(frequency)
+        }
+      })
+    }
+  }
+
   private static class GuessToneButton extends JButton {
     GuessToneButton(int frequency, Model model) {
       text = frequency.toString()
@@ -127,12 +149,12 @@ class Tones {
       new File("tones_stats.csv").append(text)
     }
 
-    private static void sound(int hz, int msecs, double volume) throws LineUnavailableException {
+    private static void sound(double hz, int msecs, double volume) throws LineUnavailableException {
       if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz")
       if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs")
       if (volume > 1 || volume < 0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0")
 
-      double sampleRate = 8000
+      double sampleRate = 320000
       double samplesPerCycle = sampleRate / hz
 
       byte[] buf = new byte[(int) sampleRate * (msecs / 1000)]
@@ -157,5 +179,12 @@ class Tones {
         close()
       }
     }
+  }
+
+  @Test void whatFrequenciesReallySoundLike() {
+    RealWorld.sound(200, 1000, 0.7)
+    RealWorld.sound(300, 1000, 0.7)
+    RealWorld.sound(400, 1000, 0.7)
+    RealWorld.sound(500, 1000, 0.7)
   }
 }
