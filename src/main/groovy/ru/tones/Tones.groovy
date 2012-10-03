@@ -1,57 +1,41 @@
 package ru.tones
+
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.LineUnavailableException
 import javax.sound.sampled.SourceDataLine
-
 
 class Tones {
   static void main(String[] args) {
-    AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, true);
-    SourceDataLine line = AudioSystem.getSourceDataLine(af);
-    line.open(af, Note.SAMPLE_RATE);
+    sound(1000, 3000, 0.8);
+  }
+
+  public static void sound(int hz, int msecs, double vol) throws LineUnavailableException {
+    float SAMPLE_RATE = 8000f;
+
+    if (hz <= 0) throw new IllegalArgumentException("Frequency <= 0 hz");
+    if (msecs <= 0) throw new IllegalArgumentException("Duration <= 0 msecs");
+    if (vol > 1.0 || vol < 0.0) throw new IllegalArgumentException("Volume out of range 0.0 - 1.0");
+
+    byte[] buf = new byte[(int) SAMPLE_RATE * msecs / 1000];
+
+    for (int i = 0; i < buf.length; i++) {
+      double angle = i / (SAMPLE_RATE / hz) * 2.0 * Math.PI;
+      buf[i] = (byte) (Math.sin(angle) * 127.0 * vol);
+    }
+
+    // shape the front and back 10ms of the wave form
+    for (int i = 0; i < SAMPLE_RATE / 100.0 && i < buf.length / 2; i++) {
+      buf[i] = (byte) (buf[i] * i / (SAMPLE_RATE / 100.0));
+      buf[buf.length - 1 - i] = (byte) (buf[buf.length - 1 - i] * i / (SAMPLE_RATE / 100.0));
+    }
+
+    AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, 8, 1, true, false);
+    SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
+    line.open(audioFormat);
     line.start();
-
-    play(line, Note.A4, 500);
-//    play(line, Note.REST, 10);
-
-/*
-        for  (Note n : Note.values()) {
-            play(line, n, 500);
-            play(line, Note.REST, 10);
-        }
-*/
+    line.write(buf, 0, buf.length);
     line.drain();
     line.close();
   }
-
-  private static void play(SourceDataLine line, Note note, int ms) {
-    ms = Math.min(ms, Note.SECONDS * 1000);
-    int length = Note.SAMPLE_RATE * ms / 1000;
-    int count = line.write(note.data(), 0, length);
-  }
-
-  static enum Note {
-    REST, A4, A4$, B4, C4, C4$, D4, D4$, E4, F4, F4$, G4, G4$, A5;
-    public static final int SAMPLE_RATE = 16 * 1024; // ~16KHz
-    public static final int SECONDS = 2;
-    private static byte[] sin = new byte[SECONDS * SAMPLE_RATE];
-
-    Note() {
-      int n = this.ordinal();
-      if (n > 0) {
-        double exp = ((double) n - 1) / 12d;
-        double f = 440d * Math.pow(2d, exp);
-        for (int i = 0; i < sin.length; i++) {
-          double period = (double)SAMPLE_RATE / f;
-          double angle = 2.0 * Math.PI * i / period;
-          sin[i] = (byte)(Math.sin(angle) * 127f);
-        }
-      }
-    }
-
-    public byte[] data() {
-      return sin;
-    }
-  }
-
 }
