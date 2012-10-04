@@ -7,17 +7,39 @@ import org.junit.Test
  * Date: 01/10/2012
  */
 class DataMunging3 {
+  private static String BASE_PATH = "${System.getenv("HOME")}/IdeaProjects/katas/src/main/scala/ru/katas/n4"
+
   @Test void shouldFindDayWithMinTemperatureSpread() {
-    def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").readLines()
-    assert 14 == text.subList(8, text.size() - 2).collect{ it.trim().split(/[\t\s]+/) }.
-              collect{ [Integer.valueOf(it[0]), Integer.valueOf(it[1].replaceAll("\\*", "")), Integer.valueOf(it[2].replaceAll("\\*", ""))] }.
-              min{ Math.abs(it[1] - it[2]) }[0]
+    def text = new File("${BASE_PATH}/weather.dat").readLines()
+
+    def dayWithMinTemperatureSpread = process(text, 8, 2).collect { extractDataFrom(it, 0, 1, 2) }.min { diff(it) }.id
+    assert "14" == dayWithMinTemperatureSpread
   }
 
   @Test void shouldFindFootballTeam() {
-    def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    assert "Aston_Villa" == text.subList(5, text.size() - 1).collect{ it.trim().split(/[\t\s]+/) }.findAll{ it.size() >= 8 }.
-            collect{ [it[1], Integer.valueOf(it[6]), Integer.valueOf(it[8])] }.
-            min{ Math.abs(it[1] - it[2]) }[0]
+    def text = new File("${BASE_PATH}/football.dat").readLines()
+
+    def teamWithMinGoalDiff = process(text, 5, 1).collect { extractDataFrom(it, 1, 6, 8) }.min { diff(it) }.id
+    assert "Aston_Villa" == teamWithMinGoalDiff
+  }
+
+  private static diff(data) {
+    (data.value1 - data.value2).abs()
+  }
+
+  private static extractDataFrom(String[] it, int index1, int index2, int index3) {
+    [
+            id: it[index1],
+            value1: parseInt(it[index2]),
+            value2: parseInt(it[index3])
+    ]
+  }
+
+  public static int parseInt(String s) {
+    s.replaceAll("\\*", "").toInteger()
+  }
+
+  private static ArrayList<String[]> process(List<String> text, int startSkip, int endSkip) {
+    text.subList(startSkip, text.size() - endSkip).collect { it.trim().split(/[\t\s]+/) }.findAll { it.size() >= 8 }
   }
 }
