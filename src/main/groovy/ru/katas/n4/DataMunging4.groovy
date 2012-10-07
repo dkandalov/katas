@@ -10,8 +10,7 @@ class DataMunging4 {
   @Test void shouldFindDayWithMinTemperatureSpread() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").readLines()
     lines = extractDataFrom(lines, 8, 2)
-            .collect{ it.split() }.collect { [key:it[0], value1: asInt(it[1]), value2: asInt(it[2])] }
-
+    lines = convertToValues(lines, 0, 1, 2)
     def dayWithMinSpread = lines.min{ (it.value1 - it.value2).abs() }.key
 
     assert lines.size() == 30
@@ -22,7 +21,6 @@ class DataMunging4 {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
     lines = extractDataFrom(lines, 5, 1)
     lines = convertToValues(lines, 1, 6, 8)
-
     def teamWithMinGoalDiff = lines.min{ (it.value1 - it.value2).abs() }.key
 
     assert lines.size() == 20
