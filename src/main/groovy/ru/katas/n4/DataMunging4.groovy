@@ -12,9 +12,10 @@ class DataMunging4 {
     lines = lines.subList(8, lines.size() - 2).collect{ it.split() }
             .collect{ [key:it[0], value1: asInt(it[1]), value2: asInt(it[2])] }
     lines.each {println it}
+    println(lines.min{ (it.value1 - it.value2).abs() })
   }
 
   private static def asInt(String s) {
-    s
+    s.replaceAll(/\*/, "").toInteger()
   }
 }
