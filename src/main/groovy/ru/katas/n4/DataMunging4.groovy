@@ -20,13 +20,17 @@ class DataMunging4 {
 
   @Test public void shouldFindTeamWithMinGoalDifference() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    lines = lines.subList(5, lines.size() - 1).findAll{!it.trim().matches(/--+/)}.collect{ it.split() }
+    lines = extractDataFrom(lines, 5, 1).collect{ it.split() }
             .collect { [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
 
     def teamWithMinGoalDiff = lines.min{ (it.value1 - it.value2).abs() }.key
 
     assert lines.size() == 20
     assert teamWithMinGoalDiff == "Aston_Villa"
+  }
+
+  private static extractDataFrom(List<String> lines, int skipAtHead, int skipAtTail) {
+    lines.subList(5, lines.size() - 1).findAll{!it.trim().matches(/--+/)}
   }
 
   private static def asInt(String s) {
