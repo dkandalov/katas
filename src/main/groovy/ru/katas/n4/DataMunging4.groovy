@@ -20,7 +20,7 @@ class DataMunging4 {
 
   @Test public void shouldFindTeamWithMinGoalDifference() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    lines = lines.subList(5, lines.size() - 1)
+    lines = lines.subList(5, lines.size() - 1).collect{ it.split() }
 
     lines.each {println it}
   }
