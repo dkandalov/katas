@@ -9,8 +9,8 @@ import org.junit.Test
 class DataMunging4 {
   @Test void shouldFindDayWithMinTemperatureSpread() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").readLines()
-    lines = lines.subList(8, lines.size() - 2).collect{ it.split() }
-            .collect{ [key:it[0], value1: asInt(it[1]), value2: asInt(it[2])] }
+    lines = extractDataFrom(lines, 8, 2)
+            .collect{ it.split() }.collect { [key:it[0], value1: asInt(it[1]), value2: asInt(it[2])] }
 
     def dayWithMinSpread = lines.min{ (it.value1 - it.value2).abs() }.key
 
@@ -20,8 +20,8 @@ class DataMunging4 {
 
   @Test public void shouldFindTeamWithMinGoalDifference() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    lines = extractDataFrom(lines, 5, 1).collect{ it.split() }
-            .collect { [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
+    lines = extractDataFrom(lines, 5, 1)
+            .collect{ it.split() }.collect { [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
 
     def teamWithMinGoalDiff = lines.min{ (it.value1 - it.value2).abs() }.key
 
@@ -29,8 +29,12 @@ class DataMunging4 {
     assert teamWithMinGoalDiff == "Aston_Villa"
   }
 
-  private static extractDataFrom(List<String> lines, int skipAtHead, int skipAtTail) {
-    lines.subList(5, lines.size() - 1).findAll{!it.trim().matches(/--+/)}
+  private static List<String> extractDataFrom(List<String> lines, int skipAtHead, int skipAtTail) {
+    lines.subList(skipAtHead, lines.size() - skipAtTail).findAll{!it.trim().matches(/--+/)}
+  }
+
+  private static convertToValues(List<String> lines, int keyIndex, int value1Index) {
+
   }
 
   private static def asInt(String s) {
