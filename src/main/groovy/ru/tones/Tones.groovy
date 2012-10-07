@@ -50,17 +50,24 @@ class Tones {
     Model(RealWorld realWorld) {
       this.realWorld = realWorld
 
+/*
       200.step(501, 50) { allFrequencies << it }
       allFrequencies << 750
       1000.step(5001, 500) { allFrequencies << it }
       6000.step(10001, 2000) { allFrequencies << it }
       allFrequencies << 15000
+*/
+      allFrequencies = [
+              20, 25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800,
+              1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000
+      ]
     }
 
     def guessed(int frequency) {
       attempts++
       if (lastFrequency == frequency) {
         saveScore()
+//        realWorld.playSound(lastFrequency)
         realWorld.showMessage("Yes! It was ${lastFrequency.toString()} Hz")
       }
     }
@@ -182,9 +189,9 @@ class Tones {
   }
 
   @Test void whatFrequenciesReallySoundLike() {
-    RealWorld.sound(200, 1000, 0.7)
-    RealWorld.sound(300, 1000, 0.7)
-    RealWorld.sound(400, 1000, 0.7)
-    RealWorld.sound(500, 1000, 0.7)
+    RealWorld.sound(20, 1000, 0.7)
+    RealWorld.sound(30, 1000, 0.7)
+    RealWorld.sound(40, 1000, 0.7)
+    RealWorld.sound(50, 1000, 0.7)
   }
 }
