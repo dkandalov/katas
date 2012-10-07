@@ -18,6 +18,13 @@ class DataMunging4 {
     assert dayWithMinSpread == "14"
   }
 
+  @Test public void shouldFindTeamWithMinGoalDifference() {
+    def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
+    lines = lines.subList(5, lines.size() - 1)
+
+    lines.each {println it}
+  }
+
   private static def asInt(String s) {
     s.replaceAll(/\*/, "").toInteger()
   }
