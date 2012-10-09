@@ -24,10 +24,10 @@ class DataMunging5 {
 
   @Test public void findTeamWithMinGoalDifference() {
     def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    text = text.subList(5, text.size() - 1).findAll {true}.collect{ it.split() }
+    text = text.subList(5, text.size() - 1).findAll{ !it.trim().matches(/---+/) }.collect{ it.split() }
 
     text.each {println it}
-    assert text.size == 20
+    assert text.size() == 20
   }
 
   private static def asInt(String s) {
