@@ -25,8 +25,8 @@ class DataMunging5 {
 
   @Test public void findTeamWithMinGoalDifference() {
     def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    text = preProcess(text.subList(5, text.size() - 1).findAll{ !it.trim().matches(/---+/) }.collect{ it.split() }, 5, 1)
-    def data = text.collect{ [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
+    text = preProcess(text, 5, 1)
+    def data = text.collect{ it.split() }.collect{ [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
 
     def teamWithMinGoalDiff = data.min{ (it.value1 - it.value2).abs() }.key
 
@@ -39,8 +39,8 @@ class DataMunging5 {
     assert teamWithMinGoalDiff == "Aston_Villa"
   }
 
-  private static List<String> preProcess(List<String[]> text, int a, int b) {
-    text
+  private static List<String> preProcess(List<String> text, int headLinesToSkip, int tailLinesToSkip) {
+    text.subList(headLinesToSkip, text.size() - tailLinesToSkip).findAll{ !it.trim().matches(/---+/) }
   }
 
   private static def asInt(String s) {
