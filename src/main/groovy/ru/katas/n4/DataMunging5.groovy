@@ -9,8 +9,8 @@ import org.junit.Test
 class DataMunging5 {
   @Test void shouldFindDayWithMinTemperatureSpread() {
     def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").readLines()
-    text = text.subList(8, text.size() - 2).collect{ it.split() }
-    def data = text.collect{ [key: it[0], value1: asInt(it[1]), value2: asInt(it[2])] }
+    text = preProcess(text, 8, 2)
+    def data = convertToData(text, 0, 1, 2)
 
     def dayWithMinTemperatureSpread = data.min { (it.value1 - it.value2).abs() }.key
 
@@ -37,6 +37,10 @@ class DataMunging5 {
     assert data[0].value2 == 36
 
     assert teamWithMinGoalDiff == "Aston_Villa"
+  }
+
+  private static def convertToData(List<String> text, int keyIndex, int value1Index, int value2Index) {
+    text.collect{ it.split() }.collect{ [key: it[keyIndex], value1: asInt(it[value1Index]), value2: asInt(it[2])] }
   }
 
   private static List<String> preProcess(List<String> text, int headLinesToSkip, int tailLinesToSkip) {
