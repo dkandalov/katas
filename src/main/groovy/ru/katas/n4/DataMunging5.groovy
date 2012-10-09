@@ -26,7 +26,7 @@ class DataMunging5 {
   @Test public void findTeamWithMinGoalDifference() {
     def text = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
     text = preProcess(text, 5, 1)
-    def data = text.collect{ it.split() }.collect{ [key: it[1], value1: asInt(it[6]), value2: asInt(it[8])] }
+    def data = convertToData(text, 1, 6, 8)
 
     def teamWithMinGoalDiff = data.min{ (it.value1 - it.value2).abs() }.key
 
@@ -40,7 +40,7 @@ class DataMunging5 {
   }
 
   private static def convertToData(List<String> text, int keyIndex, int value1Index, int value2Index) {
-    text.collect{ it.split() }.collect{ [key: it[keyIndex], value1: asInt(it[value1Index]), value2: asInt(it[2])] }
+    text.collect{ it.split() }.collect{ [key: it[keyIndex], value1: asInt(it[value1Index]), value2: asInt(it[value2Index])] }
   }
 
   private static List<String> preProcess(List<String> text, int headLinesToSkip, int tailLinesToSkip) {
