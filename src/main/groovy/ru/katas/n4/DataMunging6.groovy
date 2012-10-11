@@ -26,11 +26,14 @@ class DataMunging6 {
 
   @Test void shouldFindTeamWithMinGoalDifference() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
-    lines = lines.subList(5, lines.size() - 1)
+    lines = lines.subList(5, lines.size() - 1).findAll{ !it.trim().matches(/--+/) }
+    def data = lines.collect{ it.split() }.collect{ [key: it[1], value1: it[1], value2: it[2]] }
 
     lines.each{ println it }
 
     assert lines.size() == 20
+    assert data.size() == 20
+    assert data[0].key == "Arsenal"
   }
 
   private static int toInt(String s) {
