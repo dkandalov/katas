@@ -10,9 +10,9 @@ class DataMunging6 {
   @Test void shouldFindDayWithMinTemperatureSpread() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").readLines()
     lines = filterLines(lines, 8, 2)
-    def data = lines.collect{ it.split() }.collect{ [key: it[0], value1: toInt(it[1]), value2: toInt(it[2])] }
+    def data = convertToData(lines, 0, 1, 2)
 
-    def dayWithMinTempSpread = data.min { (it.value1 - it.value2).abs() }.key
+    def dayWithMinTempSpread = rowWithMinDiff(data).key
 
     lines.each{println it}
 
@@ -27,7 +27,7 @@ class DataMunging6 {
   @Test void shouldFindTeamWithMinGoalDifference() {
     def lines = new File("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").readLines()
     lines = filterLines(lines, 5, 1)
-    def data = convertToData(lines)
+    def data = convertToData(lines, 1, 6, 8)
 
     def teamWithMinGoalDiff = data.min{ (it.value1 - it.value2).abs() }.key
 
@@ -41,8 +41,12 @@ class DataMunging6 {
     assert teamWithMinGoalDiff == "Aston_Villa"
   }
 
-  private static convertToData(List<String> lines) {
-    lines.collect{ it.split() }.collect{ [key: it[1], value1: toInt(it[6]), value2: toInt(it[8])] }
+  def rowWithMinDiff(List<LinkedHashMap<String, Serializable>> data) {
+    data.min { (it.value1 - it.value2).abs() }
+  }
+
+  private static convertToData(List<String> lines, int keyIndex, int value1Index, int value2Index) {
+    lines.collect{ it.split() }.collect{ [key: it[keyIndex], value1: toInt(it[value1Index]), value2: toInt(it[value2Index])] }
   }
 
   private static List<String> filterLines(List<String> lines, int headDrop, int tailDrop) {
