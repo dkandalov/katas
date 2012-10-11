@@ -18,9 +18,7 @@ class DataMunging6 {
 
     assert lines.size() == 30
     assert data.size() == 30
-    assert data[0].key == "1"
-    assert data[0].value1 == 88
-    assert data[0].value2 == 59
+    assert data[0] == [key: "1", value1: 88, value2: 59]
     assert dayWithMinTempSpread == "14"
   }
 
