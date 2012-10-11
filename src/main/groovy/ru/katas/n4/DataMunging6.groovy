@@ -29,19 +29,17 @@ class DataMunging6 {
     lines = filterLines(lines, 5, 1)
     def data = convertToData(lines, 1, 6, 8)
 
-    def teamWithMinGoalDiff = data.min{ (it.value1 - it.value2).abs() }.key
+    def teamWithMinGoalDiff = rowWithMinDiff(data).key
 
     lines.each{ println it }
 
     assert lines.size() == 20
     assert data.size() == 20
-    assert data[0].key == "Arsenal"
-    assert data[0].value1 == 79
-    assert data[0].value2 == 36
+    assert data[0] == [key: "Arsenal", value1: 79, value2: 36]
     assert teamWithMinGoalDiff == "Aston_Villa"
   }
 
-  def rowWithMinDiff(List<LinkedHashMap<String, Serializable>> data) {
+  private static rowWithMinDiff(List data) {
     data.min { (it.value1 - it.value2).abs() }
   }
 
