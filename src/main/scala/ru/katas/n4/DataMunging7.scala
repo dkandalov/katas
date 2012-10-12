@@ -28,10 +28,12 @@ class DataMunging7 extends ShouldMatchers {
 			.drop(5).dropRight(1).filterNot{ _.trim.matches("--+") }
 
 		val data = lines.map{ line => line.trim.split("\\s+") }.map{ split => (split(1), toInt(split(6)), toInt(split(8))) }
+		val teamWithMinGoalDiff = data.minBy{ entry => math.abs(entry._2 - entry._3) }._1
 
 		lines.size should equal(20)
 		data.size should equal(20)
 		data(0) should equal(("Arsenal", 79, 36))
+		teamWithMinGoalDiff should equal("Aston_Villa")
 	}
 
 	private def toInt(s: String) = s.replace("*", "").toInt
