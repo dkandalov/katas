@@ -12,7 +12,8 @@ import scala.io.Source
 class DataMunging7 extends ShouldMatchers {
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").getLines().toSeq
+			.drop(8).dropRight(2)
 
-		lines.size should equal(20)
+		lines.size should equal(30)
 	}
 }
