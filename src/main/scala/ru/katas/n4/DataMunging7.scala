@@ -23,4 +23,11 @@ class DataMunging7 extends ShouldMatchers {
 		data(0) should equal(("1", 88, 59))
 		dayWithMinTempSpread should equal("14")
 	}
+
+	@Test def shouldFindTeamWithMinGoalDifference() {
+		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").getLines().toSeq
+			.drop(5).dropRight(1)
+
+		lines.size should equal(20)
+	}
 }
