@@ -11,8 +11,7 @@ import scala.io.Source
 
 class DataMunging7 extends ShouldMatchers {
 	@Test def shouldFindDayWithMinTemperatureSpread() {
-		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").getLines().toSeq
-			.drop(8).dropRight(2)
+		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
 
 		val data = lines.map{ line => line.trim.split("\\s+") }.map{ split => Entry(split(0), toInt(split(1)), toInt(split(2))) }
 		val dayWithMinTempSpread = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
@@ -24,8 +23,7 @@ class DataMunging7 extends ShouldMatchers {
 	}
 
 	@Test def shouldFindTeamWithMinGoalDifference() {
-		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").getLines().toSeq
-			.drop(5).dropRight(1).filterNot{ _.trim.matches("--+") }
+		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 1)
 
 		val data = lines.map{ line => line.trim.split("\\s+") }.map{ split => Entry(split(1), toInt(split(6)), toInt(split(8))) }
 		val teamWithMinGoalDiff = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
@@ -34,6 +32,10 @@ class DataMunging7 extends ShouldMatchers {
 		data.size should equal(20)
 		data(0) should equal(Entry("Arsenal", 79, 36))
 		teamWithMinGoalDiff should equal("Aston_Villa")
+	}
+
+	def readLines(fileName: String, dropLeft: Int, dropRight: Int): Seq[String] = {
+		Source.fromFile(fileName).getLines().toSeq.drop(dropLeft).dropRight(dropRight).filterNot{ _.trim.matches("--+") }
 	}
 
 	case class Entry(key: String, value1: Int, value2: Int)
