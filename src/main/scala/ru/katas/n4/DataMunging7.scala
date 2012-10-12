@@ -9,7 +9,7 @@ import scala.io.Source
  * Date: 13/10/2012
  */
 
-class DataMunging7 extends ShouldMatchers {
+class DataMunging7 extends ShouldMatchers { // TODO try streaming implementation
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
 		val dayWithMinTempSpread = convertToEntries(lines, 0, 1, 2).minBy{ _.valueDifference }.key
@@ -26,12 +26,11 @@ class DataMunging7 extends ShouldMatchers {
 		teamWithMinGoalDiff should equal("Aston_Villa")
 	}
 
-
 	private def readLines(fileName: String, dropLeft: Int, dropRight: Int): Seq[String] = {
 		Source.fromFile(fileName).getLines().toSeq.drop(dropLeft).dropRight(dropRight).filterNot{ _.trim.matches("--+") }
 	}
 
-	def convertToEntries(lines: Seq[String], keyIndex: Int, value1Index: Int, value2Index: Int): Seq[Entry] = {
+	private def convertToEntries(lines: Seq[String], keyIndex: Int, value1Index: Int, value2Index: Int): Seq[Entry] = {
 		lines.map { line => line.trim.split("\\s+")}
 			.map { split => Entry(split(keyIndex), toInt(split(value1Index)), toInt(split(value2Index))) }
 	}
