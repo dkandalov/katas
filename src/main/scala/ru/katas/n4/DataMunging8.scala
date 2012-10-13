@@ -15,10 +15,12 @@ class DataMunging8 extends ShouldMatchers {
 		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").getLines().toSeq
 			.drop(8).dropRight(2)
 		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(0), toInt(split(1)), toInt(split(2))) }
+		val dayWithMinTempSpread = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
 
 		lines.size should equal(30)
-		data(0) should equal(Entry("1", 88, 59))
 		data.size should equal(30)
+		data(0) should equal(Entry("1", 88, 59))
+		dayWithMinTempSpread should equal(14)
 	}
 
 	private def toInt(s: String): Int = s.replace("*", "").toInt
