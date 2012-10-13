@@ -13,23 +13,17 @@ class DataMunging8 extends ShouldMatchers {
 
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
-		val data = convertToEntries(lines, 0, 1, 2)
-		val dayWithMinTempSpread = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
+		val dayWithMinTempSpread = convertToEntries(lines, 0, 1, 2).minBy{ _.valueDifference }.key
 
 		lines.size should equal(30)
-		data.size should equal(30)
-		data(0) should equal(Entry("1", 88, 59))
 		dayWithMinTempSpread should equal("14")
 	}
 
 	@Test def shouldFindTeamWithMinGoalDifference() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 1)
-		val data = convertToEntries(lines, 1, 6, 8)
-		val teamWithMinGoalDifference = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
+		val teamWithMinGoalDifference = convertToEntries(lines, 1, 6, 8).minBy{ _.valueDifference }.key
 
 		lines.size should equal(20)
-		data.size should equal(20)
-		data(0) should equal(Entry("Arsenal", 79, 36))
 		teamWithMinGoalDifference should equal("Aston_Villa")
 	}
 
@@ -46,5 +40,7 @@ class DataMunging8 extends ShouldMatchers {
 
 	private def toInt(s: String): Int = s.replace("*", "").toInt
 
-	case class Entry(key: String, value1: Int, value2: Int)
+	case class Entry(key: String, value1: Int, value2: Int) {
+		def valueDifference = math.abs(value1 - value2)
+	}
 }
