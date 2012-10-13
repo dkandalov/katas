@@ -12,8 +12,7 @@ import org.scalatest.matchers.ShouldMatchers
 class DataMunging8 extends ShouldMatchers {
 
 	@Test def shouldFindDayWithMinTemperatureSpread() {
-		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat").getLines().toSeq
-			.drop(8).dropRight(2)
+		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
 		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(0), toInt(split(1)), toInt(split(2))) }
 		val dayWithMinTempSpread = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
 
@@ -26,10 +25,12 @@ class DataMunging8 extends ShouldMatchers {
 	@Test def shouldFindTeamWithMinGoalDifference() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 1)
 		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(1), toInt(split(6)), toInt(split(8))) }
+		val teamWithMinGoalDifference = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
 
 		lines.size should equal(20)
 		data.size should equal(20)
 		data(0) should equal(Entry("Arsenal", 79, 36))
+		teamWithMinGoalDifference should equal("Aston_Villa")
 	}
 
 	private def readLines(fileName: String, dropLeft: Int, dropRight: Int): Seq[String] = {
