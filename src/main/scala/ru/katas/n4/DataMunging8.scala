@@ -13,7 +13,7 @@ class DataMunging8 extends ShouldMatchers {
 
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
-		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(0), toInt(split(1)), toInt(split(2))) }
+		val data = convertToEntries(lines, 0, 1, 2)
 		val dayWithMinTempSpread = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
 
 		lines.size should equal(30)
@@ -24,13 +24,19 @@ class DataMunging8 extends ShouldMatchers {
 
 	@Test def shouldFindTeamWithMinGoalDifference() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 1)
-		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(1), toInt(split(6)), toInt(split(8))) }
+		val data = convertToEntries(lines, 1, 6, 8)
 		val teamWithMinGoalDifference = data.minBy{ entry => math.abs(entry.value1 - entry.value2) }.key
 
 		lines.size should equal(20)
 		data.size should equal(20)
 		data(0) should equal(Entry("Arsenal", 79, 36))
 		teamWithMinGoalDifference should equal("Aston_Villa")
+	}
+
+	private def convertToEntries(lines: Seq[String], keyIndex: Int, value1Index: Int, value2Index: Int): Seq[Entry] = {
+		lines.map { _.trim.split("\\s+")}.map { split =>
+			Entry(split(keyIndex), toInt(split(value1Index)), toInt(split(value2Index)))
+		}
 	}
 
 	private def readLines(fileName: String, dropLeft: Int, dropRight: Int): Seq[String] = {
