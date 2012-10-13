@@ -17,6 +17,7 @@ class DataMunging8 extends ShouldMatchers {
 		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(0), toInt(split(1)), toInt(split(2))) }
 
 		lines.size should equal(30)
+		data(0) should equal(Entry("1", 88, 59))
 		data.size should equal(30)
 	}
 
