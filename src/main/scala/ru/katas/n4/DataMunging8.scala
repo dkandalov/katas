@@ -26,8 +26,11 @@ class DataMunging8 extends ShouldMatchers {
 	@Test def shouldFindTeamWithMinGoalDifference() {
 		val lines = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat").getLines().toSeq
 			.drop(5).dropRight(1).filterNot{ _.trim.matches("--+") }
+		val data = lines.map{ _.trim.split("\\s+") }.map{ split => Entry(split(1), toInt(split(6)), toInt(split(8))) }
 
 		lines.size should equal(20)
+		data.size should equal(20)
+		data(0) should equal(Entry("Arsenal", 79, 36))
 	}
 
 	private def toInt(s: String): Int = s.replace("*", "").toInt
