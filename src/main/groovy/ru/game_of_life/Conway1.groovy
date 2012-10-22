@@ -47,11 +47,16 @@ class Conway1 {
     private final List<List> data
 
     Field(String s) {
-      data = s.split("\n").collect{ it.toList() }
+      data = s.trim().split("\n").collect{ it.toList() }
+    }
+
+    Field(List<List> data) {
+      this.data = data
     }
 
     Field next() {
-      this
+      List<List> newData = (0..<data.size()).collect { (0..<data.size()).collect { NONE }}
+      new Field(newData)
     }
 
     def cellAt(int row, int col) {
