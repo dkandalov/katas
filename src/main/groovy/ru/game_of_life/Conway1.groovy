@@ -72,7 +72,9 @@ class Conway1 {
     private Collection neighboursOf(row, col) {
       def left = [-1, 0]; def right = [1, 0];
       def up = [0, -1]; def down = [0, 1];
-      def leftUp = [-1, -1];
+      def leftUp = [-1, -1]; def rightUp = [1, -1];
+      def leftDown = [-1, 1]; def rightDown = [1, 1];
+//      [left, right, up, down, leftUp, rightUp, leftDown, rightDown].collect { cellAt(row + it[0], col + it[1]) }
       []
     }
 
