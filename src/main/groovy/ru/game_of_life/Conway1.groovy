@@ -55,7 +55,12 @@ class Conway1 {
     }
 
     Field next() {
-      List<List> newData = (0..<data.size()).collect { (0..<data.size()).collect { NONE }}
+      List<List> newData = (0..<data.size()).collect { (0..<data.size()).collect { NONE } }
+      for (int row : (0..<data.size())) {
+        for (int col : (0..<data.size())) {
+          newData[row][col] = data[row][col]
+        }
+      }
       new Field(newData)
     }
 
