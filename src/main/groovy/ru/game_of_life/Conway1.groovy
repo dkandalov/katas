@@ -59,6 +59,20 @@ class Conway1 {
     assert [[-1, -1], [2, 2]].collect{ field.cellAt(it[0], it[1]) } == [ALIVE, ALIVE]
   }
 
+  @Test void simplePatterns() {
+    def field = new Field("""
+-----
+-000-
+-000-
+-----
+-----
+""")
+    10.times {
+      println(field)
+      field = field.next()
+    }
+  }
+
   static class Field {
     static DEAD = "-"
     static ALIVE = "0"
