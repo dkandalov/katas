@@ -58,10 +58,16 @@ class Conway1 {
       List<List> newData = (0..<data.size()).collect { (0..<data.size()).collect { NONE } }
       for (int row : (0..<data.size())) {
         for (int col : (0..<data.size())) {
+          if (isLonelyCell(row, col)) newData[row][col] = DEAD
           newData[row][col] = data[row][col]
         }
       }
       new Field(newData)
+    }
+
+    private boolean isLonelyCell(row, col) {
+//      neighboursOf(row, col)
+      false
     }
 
     def cellAt(int row, int col) {
