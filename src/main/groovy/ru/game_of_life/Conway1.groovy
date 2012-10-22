@@ -75,6 +75,9 @@ class Conway1 {
     }
 
     Field next() {
+      def isOverpopulatedCell = { row, col -> neighboursOf(row, col).count { it == ALIVE } > 3 }
+      def isLonelyCell = { row, col -> neighboursOf(row, col).count { it == ALIVE } < 2 }
+
       List<List> newData = (0..<data.size()).collect { (0..<data.size()).collect { NONE } }
       for (int row : (0..<data.size())) {
         for (int col : (0..<data.size())) {
@@ -84,14 +87,6 @@ class Conway1 {
         }
       }
       new Field(newData)
-    }
-
-    private boolean isOverpopulatedCell(row, col) {
-      neighboursOf(row, col).count { it == ALIVE } > 3
-    }
-
-    private boolean isLonelyCell(row, col) {
-      neighboursOf(row, col).count { it == ALIVE } < 2
     }
 
     private Collection neighboursOf(row, col) {
