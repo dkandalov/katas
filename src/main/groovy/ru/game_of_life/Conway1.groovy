@@ -11,14 +11,32 @@ class Conway1 {
     assert new Field("""
 ---
 ---
----""").next() == new Field("""
+---
+""").next() == new Field("""
 ---
 ---
 ---
 """)
   }
 
+  @Test void lonelyCellDies() {
+    assert new Field("""
+---
+-0-
+---
+""").next() == new Field("""
+---
+---
+---
+""")
+
+  }
+
   static class Field {
+    static DEAD = "-"
+    static ALIVE = "0"
+    static NONE = " "
+
     List<List> data
 
     Field(String s) {
