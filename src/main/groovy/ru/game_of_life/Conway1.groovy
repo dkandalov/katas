@@ -71,7 +71,7 @@ class Conway1 {
       for (int row : (0..<data.size())) {
         for (int col : (0..<data.size())) {
           if (isLonelyCell(row, col)) newData[row][col] = DEAD
-          newData[row][col] = data[row][col]
+          else newData[row][col] = data[row][col]
         }
       }
       new Field(newData)
@@ -86,8 +86,7 @@ class Conway1 {
       def up = [0, -1]; def down = [0, 1];
       def leftUp = [-1, -1]; def rightUp = [1, -1];
       def leftDown = [-1, 1]; def rightDown = [1, 1];
-//      [left, right, up, down, leftUp, rightUp, leftDown, rightDown].collect { cellAt(row + it[0], col + it[1]) }
-      []
+      [left, right, up, down, leftUp, rightUp, leftDown, rightDown].collect { cellAt(row + it[0], col + it[1]) }
     }
 
     def cellAt(int row, int col) {
