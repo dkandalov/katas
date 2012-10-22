@@ -29,7 +29,14 @@ class Conway1 {
 ---
 ---
 """)
+  }
 
+  @Test public void deadCellWithEnoughNeighboursBecomesAlive() {
+    assert new Field("""
+0-0
+---
+0--
+""").next().cellAt(1, 1) == Field.ALIVE
   }
 
   static class Field {
