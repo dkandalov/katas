@@ -44,13 +44,25 @@ class Conway1 {
     static ALIVE = "0"
     static NONE = " "
 
-    List<List> data
+    private final List<List> data
 
     Field(String s) {
+      data = s.split("\n").collect{ it.toList() }
     }
 
     Field next() {
       this
+    }
+
+    def cellAt(int row, int col) {
+      data[row][col]
+    }
+
+    @Override
+    public String toString() {
+      return "Field{" +
+              "data=" + data +
+              '}';
     }
 
     boolean equals(o) {
