@@ -66,8 +66,11 @@ class Conway1 {
     }
 
     private boolean isLonelyCell(row, col) {
-//      neighboursOf(row, col)
-      false
+      neighboursOf(row, col).count { it == ALIVE } < 2
+    }
+
+    private Collection neighboursOf(row, col) {
+      []
     }
 
     def cellAt(int row, int col) {
