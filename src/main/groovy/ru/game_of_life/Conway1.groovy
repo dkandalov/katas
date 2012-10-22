@@ -2,6 +2,8 @@ package ru.game_of_life
 
 import org.junit.Test
 
+import static ru.game_of_life.Conway1.Field.*
+
 /**
  * User: dima
  * Date: 23/10/2012
@@ -36,7 +38,7 @@ class Conway1 {
 0-0
 ---
 0--
-""").next().cellAt(1, 1) == Field.ALIVE
+""").next().cellAt(1, 1) == ALIVE
   }
 
   @Test void shouldBeAbleToGetCellWrappingAroundBorder() {
@@ -45,7 +47,8 @@ class Conway1 {
 ---
 --0
 """)
-    assert [[0, 0], [1, 1], [3, 3], [4, 4]].collect{ field.cellAt(it[0], it[1]) } == []
+    assert [[0, 0], [1, 1], [3, 3], [4, 4]].collect{ field.cellAt(it[0], it[1]) } == [DEAD, DEAD, DEAD, DEAD]
+    assert [[-1, -1], [2, 2]].collect{ field.cellAt(it[0], it[1]) } == [ALIVE, ALIVE]
   }
 
   static class Field {
@@ -88,6 +91,7 @@ class Conway1 {
     }
 
     def cellAt(int row, int col) {
+      def wrap = {}
       data[row][col]
     }
 
