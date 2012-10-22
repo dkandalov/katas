@@ -6,7 +6,7 @@ import org.junit.Test
  * User: dima
  * Date: 21/10/2012
  */
-class GOL0 {
+class Conway0 {
   @Test void withoutCellsNothingHappens() {
     assert nextRound(asField("""
 ---
