@@ -33,6 +33,14 @@ class Conway1 {
 """)
   }
 
+  @Test void overpopulatedCellDies() {
+    assert new Field("""
+0-0
+-0-
+0--
+""").next().cellAt(1, 1) == DEAD
+  }
+
   @Test void deadCellWithEnoughNeighboursBecomesAlive() {
     assert new Field("""
 0-0
@@ -71,10 +79,15 @@ class Conway1 {
       for (int row : (0..<data.size())) {
         for (int col : (0..<data.size())) {
           if (isLonelyCell(row, col)) newData[row][col] = DEAD
+          else if (isOverpopulatedCell(row, col)) newData[row][col] = DEAD
           else newData[row][col] = data[row][col]
         }
       }
       new Field(newData)
+    }
+
+    private boolean isOverpopulatedCell(row, col) {
+      neighboursOf(row, col).count { it == ALIVE } > 3
     }
 
     private boolean isLonelyCell(row, col) {
