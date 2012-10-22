@@ -91,8 +91,8 @@ class Conway1 {
     }
 
     def cellAt(int row, int col) {
-      def wrap = {}
-      data[row][col]
+      def wrap = { (it + data.size()) % data.size() }
+      data[wrap(row)][wrap(col)]
     }
 
     @Override
