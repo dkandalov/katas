@@ -7,7 +7,40 @@ import org.junit.Test
  * Date: 23/10/2012
  */
 class Conway1 {
-  @Test void aaa() {
-    assert false
+  @Test void whenAllCellsAreDeadNothingHappens() {
+    assert new Field("""
+---
+---
+---""").next() == new Field("""
+---
+---
+---
+""")
+  }
+
+  static class Field {
+    List<List> data
+
+    Field(String s) {
+    }
+
+    Field next() {
+      this
+    }
+
+    boolean equals(o) {
+      if (is(o)) return true
+      if (getClass() != o.class) return false
+
+      Field field = (Field) o
+
+      if (data != field.data) return false
+
+      return true
+    }
+
+    int hashCode() {
+      return (data != null ? data.hashCode() : 0)
+    }
   }
 }
