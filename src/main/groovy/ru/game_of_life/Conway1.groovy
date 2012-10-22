@@ -59,7 +59,7 @@ class Conway1 {
     assert [[-1, -1], [2, 2]].collect{ field.cellAt(it[0], it[1]) } == [ALIVE, ALIVE]
   }
 
-  @Test void simplePatterns() {
+  @Test void simplePattern() {
     def field = new Field("""
 -----
 -000-
@@ -67,8 +67,9 @@ class Conway1 {
 -----
 -----
 """)
-    10.times {
+    20.times {
       println(field)
+      println("=============")
       field = field.next()
     }
   }
@@ -116,14 +117,11 @@ class Conway1 {
       data[wrap(row)][wrap(col)]
     }
 
-    @Override
-    public String toString() {
-      return "Field{" +
-              "data=" + data +
-              '}';
+    @Override String toString() {
+      data.collect{ it.join("") }.join("\n")
     }
 
-    boolean equals(o) {
+    @Override boolean equals(o) {
       if (is(o)) return true
       if (getClass() != o.class) return false
 
@@ -134,7 +132,7 @@ class Conway1 {
       return true
     }
 
-    int hashCode() {
+    @Override int hashCode() {
       return (data != null ? data.hashCode() : 0)
     }
   }
