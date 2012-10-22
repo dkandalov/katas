@@ -31,12 +31,21 @@ class Conway1 {
 """)
   }
 
-  @Test public void deadCellWithEnoughNeighboursBecomesAlive() {
+  @Test void deadCellWithEnoughNeighboursBecomesAlive() {
     assert new Field("""
 0-0
 ---
 0--
 """).next().cellAt(1, 1) == Field.ALIVE
+  }
+
+  @Test void shouldBeAbleToGetCellWrappingAroundBorder() {
+    def field = new Field("""
+---
+---
+--0
+""")
+    assert [[0, 0], [1, 1], [3, 3], [4, 4]].collect{ field.cellAt(it[0], it[1]) } == []
   }
 
   static class Field {
