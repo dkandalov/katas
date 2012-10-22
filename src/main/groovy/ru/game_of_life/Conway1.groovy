@@ -37,7 +37,7 @@ class Conway1 {
     assert new Field("""
 0-0
 -0-
-0--
+0-0
 """).next().cellAt(1, 1) == DEAD
   }
 
@@ -80,7 +80,7 @@ class Conway1 {
         for (int col : (0..<data.size())) {
           if (isLonelyCell(row, col)) newData[row][col] = DEAD
           else if (isOverpopulatedCell(row, col)) newData[row][col] = DEAD
-          else newData[row][col] = data[row][col]
+          else newData[row][col] = ALIVE
         }
       }
       new Field(newData)
