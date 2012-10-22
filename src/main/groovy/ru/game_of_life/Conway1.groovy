@@ -70,6 +70,9 @@ class Conway1 {
     }
 
     private Collection neighboursOf(row, col) {
+      def left = [-1, 0]; def right = [1, 0];
+      def up = [0, -1]; def down = [0, 1];
+      def leftUp = [-1, -1];
       []
     }
 
