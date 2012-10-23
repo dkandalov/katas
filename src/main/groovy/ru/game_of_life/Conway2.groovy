@@ -2,6 +2,8 @@ package ru.game_of_life
 
 import org.junit.Test
 
+import static ru.game_of_life.Conway2.Field.*
+
 /**
  * User: dima
  * Date: 23/10/2012
@@ -31,12 +33,20 @@ class Conway2 {
 """)
   }
 
+  @Test void crowdedCellDies() {
+    assert new Field("""
+0-0
+-0-
+0-0
+""").next().cellAt(1, 1) == DEAD_CELL
+  }
+
   static class Field {
     static NONE = " "
     static DEAD_CELL = "-"
     static ALIVE_CELL = "0"
 
-    private List<List> data
+    private final List<List> data
 
     Field(String s) {
       data = s.trim().split("\n").collect{ it.toList() }
@@ -57,6 +67,10 @@ class Conway2 {
         }
       }
       new Field(newData)
+    }
+
+    def cellAt(int row, int col) {
+      data[row][col]
     }
 
     @Override String toString() {
