@@ -83,7 +83,7 @@ class Conway2 {
         for (int col = 0; col < data.size; col++) {
           if (isLonelyCell(row, col)) newData[row][col] = DEAD_CELL
           else if (isOverCrowded(row, col)) newData[row][col] = DEAD_CELL
-          else ALIVE_CELL // just enough neighbours
+          else newData[row][col] = ALIVE_CELL // just enough neighbours
         }
       }
       new Field(newData)
