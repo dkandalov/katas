@@ -77,13 +77,16 @@ class Conway2 {
     Field next() {
       def isLonelyCell = { row, col -> neighbourCellsOf(row, col).count{ it == ALIVE_CELL } < 2 }
       def isOverCrowded = { row, col -> neighbourCellsOf(row, col).count{ it == ALIVE_CELL } > 3 }
+      def stateOfCell = { row, col ->
+        if (isLonelyCell(row, col)) DEAD_CELL
+        else if (isOverCrowded(row, col)) DEAD_CELL
+        else ALIVE_CELL // just enough neighbours
+      }
 
       def newData = (0..<data.size()).collect{ (0..<data.size()).collect{ NONE }}
       for (int row = 0; row < data.size; row++) {
         for (int col = 0; col < data.size; col++) {
-          if (isLonelyCell(row, col)) newData[row][col] = DEAD_CELL
-          else if (isOverCrowded(row, col)) newData[row][col] = DEAD_CELL
-          else newData[row][col] = ALIVE_CELL // just enough neighbours
+          newData[row][col] = stateOfCell(row, col)
         }
       }
       new Field(newData)
