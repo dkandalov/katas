@@ -32,14 +32,24 @@ class Conway2 {
   }
 
   static class Field {
+    static NONE = " "
+    static DEAD_CELL = "-"
+    static ALIVE_CELL = "0"
+
     private List<List> data
 
     Field(String s) {
       data = s.trim().split("\n").collect{ it.toList() }
     }
 
+    Field(List<List> data) {
+      this.data = data
+    }
+
     Field next() {
-      this
+      def newData = (0..<data.size()).collect{ (0..<data.size()).collect{ NONE }}
+
+      new Field(newData)
     }
 
     @Override String toString() {
