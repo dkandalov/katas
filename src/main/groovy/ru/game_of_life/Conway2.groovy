@@ -49,6 +49,15 @@ class Conway2 {
 """).next().cellAt(1, 1) == ALIVE_CELL
   }
 
+  @Test void fieldBordersShouldWrap() {
+    def field = new Field("""
+---
+---
+--0
+""")
+    assert [[0, 0], [1, 1], [3, 3], [-2, -2]].collect {field.cellAt(it[0], it[1])} == [DEAD_CELL, DEAD_CELL, DEAD_CELL, DEAD_CELL]
+  }
+
   static class Field {
     static NONE = " "
     static DEAD_CELL = "-"
@@ -81,7 +90,7 @@ class Conway2 {
 
     private def neighbourCellsOf(row, col) {
       [[-1, 0], [0, -1], [1, 0], [0, 1],
-      [-1, -1], [1, -1], [1, 1], [-1, 1]].collect{ data[row + it[0]][col + it[1]] }
+      [-1, -1], [1, -1], [1, 1], [-1, 1]].collect{ cellAt(row + it[0], col + it[1]) }
     }
 
     def cellAt(int row, int col) {
