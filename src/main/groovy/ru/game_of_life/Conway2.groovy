@@ -66,12 +66,14 @@ class Conway2 {
 
     Field next() {
       def isLonelyCell = { row, col -> true }
+      def hasJustEnoughNeighbours = { row, col -> true }
 
       def newData = (0..<data.size()).collect{ (0..<data.size()).collect{ NONE }}
       for (int row = 0; row < data.size; row++) {
         for (int col = 0; col < data.size; col++) {
           if (isLonelyCell(row, col)) newData[row][col] = DEAD_CELL
-          else newData[row][col] = data[row][col]
+          else if (hasJustEnoughNeighbours(row, col)) newData[row][col] = ALIVE_CELL
+          else DEAD_CELL // over crowded
         }
       }
       new Field(newData)
