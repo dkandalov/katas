@@ -79,9 +79,11 @@ class Conway2 {
       new Field(newData)
     }
 
-    def neighbourCellsOf() {
-
+    private def neighbourCellsOf(row, col) {
+      [[-1, 0], [0, -1], [1, 0], [0, 1],
+      [-1, -1], [1, -1], [1, 1], [-1, 1]].collect{ data[row + it[0]][col + it[1]] }
     }
+
     def cellAt(int row, int col) {
       data[row][col]
     }
