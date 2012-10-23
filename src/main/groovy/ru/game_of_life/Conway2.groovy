@@ -56,6 +56,7 @@ class Conway2 {
 --0
 """)
     assert [[0, 0], [1, 1], [3, 3], [-2, -2]].collect {field.cellAt(it[0], it[1])} == [DEAD_CELL, DEAD_CELL, DEAD_CELL, DEAD_CELL]
+    assert [[-1, -1], [2, 2]].collect {field.cellAt(it[0], it[1])} == [ALIVE_CELL, ALIVE_CELL]
   }
 
   static class Field {
@@ -94,7 +95,8 @@ class Conway2 {
     }
 
     def cellAt(int row, int col) {
-      data[row][col]
+      def wrap = { (it + data.size()) % data.size() }
+      data[wrap(row)][wrap(col)]
     }
 
     @Override String toString() {
