@@ -9,7 +9,25 @@ import org.junit.Test
 class Conway2 {
   @Test void whenAllCellsAreDeadNothingHappens() {
     assert new Field("""
+---
+---
+---
 """).next() == new Field("""
+---
+---
+---
+""")
+  }
+
+  @Test void lonelyCellDies() {
+    assert new Field("""
+---
+-0-
+---
+""").next() == new Field("""
+---
+---
+---
 """)
   }
 
