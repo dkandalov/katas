@@ -14,7 +14,10 @@ class Conway2 {
   }
 
   static class Field {
+    private List<List> data
+
     Field(String s) {
+      data = s.trim().split("\n").collect{ it.toList }
     }
 
     Field next() {
