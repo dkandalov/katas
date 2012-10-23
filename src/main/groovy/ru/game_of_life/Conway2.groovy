@@ -2,6 +2,10 @@ package ru.game_of_life
 
 import org.junit.Test
 
+import javax.swing.JFrame
+import java.awt.Dimension
+import java.awt.Graphics
+
 import static ru.game_of_life.Conway2.Field.*
 
 /**
@@ -59,6 +63,61 @@ class Conway2 {
     assert [[-1, -1], [2, 2]].collect {field.cellAt(it[0], it[1])} == [ALIVE_CELL, ALIVE_CELL]
   }
 
+  @Test void simplePattern() {
+    def field = new Field("""
+-----
+-000-
+-000-
+-----
+-----
+""")
+    20.times {
+      println(field)
+      println("=========")
+      field = field.next()
+    }
+  }
+
+  static void main(String[] args) {
+    def panel = new ConwayGamePanel(new Field("""
+-----
+--0--
+-0-0-
+--0--
+-----
+"""))
+
+    def frame = new javax.swing.JFrame()
+    frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+    frame.preferredSize = new Dimension(800, 800)
+    frame.add(panel)
+
+    frame.pack()
+    frame.visible = true
+
+    new Thread({
+      20.times {
+        frame.repaint()
+        Thread.sleep(500)
+      }
+    }).start()
+  }
+
+  static class ConwayGamePanel extends javax.swing.JPanel {
+    private Field field
+
+    ConwayGamePanel(Field field) {
+      this.field = field
+    }
+
+    @Override protected void paintComponent(Graphics g) {
+      field.toString().split("\n").eachWithIndex { line, i ->
+        g.drawChars(line.toCharArray(), 0, line.size(), 100, 100 + i * 15)
+      }
+      field = field.next()
+    }
+  }
+
   static class Field {
     static NONE = " "
     static DEAD_CELL = "-"
@@ -82,7 +141,7 @@ class Conway2 {
         else ALIVE_CELL // just enough neighbours
       }
 
-      def newData = (0..<data.size()).collect{ (0..<data.size()).collect{ NONE }}
+      def newData = (1..data.size()).collect{ (1..data.size()).collect{ NONE } }
       for (int row = 0; row < data.size; row++) {
         for (int col = 0; col < data.size; col++) {
           newData[row][col] = stateOfCell(row, col)
@@ -102,7 +161,7 @@ class Conway2 {
     }
 
     @Override String toString() {
-      data
+      data.collect{ row -> row.join("") }.join("\n")
     }
 
     @Override boolean equals(o) {
