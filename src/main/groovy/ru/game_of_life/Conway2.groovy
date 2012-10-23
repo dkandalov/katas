@@ -17,12 +17,30 @@ class Conway2 {
     private List<List> data
 
     Field(String s) {
-      data = s.trim().split("\n").collect{ it.toList }
+      data = s.trim().split("\n").collect{ it.toList() }
     }
 
     Field next() {
       this
     }
 
+    @Override String toString() {
+      data
+    }
+
+    @Override boolean equals(o) {
+      if (is(o)) return true
+      if (getClass() != o.class) return false
+
+      Field field = (Field) o
+
+      if (data != field.data) return false
+
+      return true
+    }
+
+    @Override int hashCode() {
+      return (data != null ? data.hashCode() : 0)
+    }
   }
 }
