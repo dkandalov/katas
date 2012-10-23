@@ -41,6 +41,14 @@ class Conway2 {
 """).next().cellAt(1, 1) == DEAD_CELL
   }
 
+  @Test void cellWithJustEnoughNeighborsBecomesAlive() {
+    assert new Field("""
+0-0
+---
+---
+""").next().cellAt(1, 1) == ALIVE_CELL
+  }
+
   static class Field {
     static NONE = " "
     static DEAD_CELL = "-"
