@@ -22,8 +22,21 @@ class Conway3 extends ShouldMatchers {
       """))
 	}
 
+	@Test def lonelyCellDies() {
+		new Field(
+			"""
+			  |---
+			  |-0-
+			  |---
+			""").next() should equal(new Field("""
+        |---
+        |---
+        |---
+      """))
+	}
+
 	class Field(s: String) {
-		val data = s.stripMargin.trim
+		val data = s.stripMargin.trim.split("\n").map{_.toList}
 
 		def next(): Field = {
 			this
