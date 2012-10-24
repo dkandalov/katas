@@ -78,15 +78,15 @@ class Conway3 extends ShouldMatchers {
 		field.cellAt(0, 5) should equal('0')
 	}
 
-	case class Cell()
-	case object LivingCell extends Cell {
-		override def toString = "0"
+	case class Cell(c: Char)
+	case object LivingCell extends Cell('0') {
+		override def toString = c.toString
 	}
-	case object DeadCell extends Cell {
-		override def toString = "-"
+	case object DeadCell extends Cell('-') {
+		override def toString = c.toString
 	}
-	case object UndefinedCell extends Cell {
-		override def toString = " "
+	case object UndefinedCell extends Cell(' ') {
+		override def toString = c.toString
 	}
 
 	class Field(private val data: List[List[Char]]) {
