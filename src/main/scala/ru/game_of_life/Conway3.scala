@@ -89,7 +89,7 @@ class Conway3 extends ShouldMatchers {
 			for (row <- 0 until data.size; col <- 0 until data.size) {
 				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val newCellState =
-					if (isLonelyCell(row, col) || isOverpopulated(row, col)) '-'
+					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
 					else '0'
 				newData = newData.updated(row, newData(row).updated(col, newCellState))
 			}
@@ -99,19 +99,6 @@ class Conway3 extends ShouldMatchers {
 		def cellAt(row: Int, col: Int): Char = {
 			def wrap(n: Int) = (n + data.size) % data.size
 			data(wrap(row))(wrap(col))
-		}
-
-		private def isLonelyCell(row: Int, col: Int): Boolean = {
-			cellsAround(row, col).count{_ == '0'} < 2
-		}
-
-		private def hasEnoughNeighbours(row: Int, col: Int): Boolean = {
-			val count = cellsAround(row, col).count{_ == '0'}
-			count >= 2 && count <= 3
-		}
-
-		private def isOverpopulated(row: Int, col: Int): Boolean = {
-			cellsAround(row, col).count{_ == '0'} > 3
 		}
 
 		private def cellsAround(row: Int, col: Int): Seq[Char] = {
