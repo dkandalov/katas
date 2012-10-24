@@ -42,10 +42,10 @@ class Conway3 extends ShouldMatchers {
 			  |---
 			  |---
 			""").next() should equal(new Field("""
-		                                           |---
-		                                           |---
-		                                           |---
-		                                         """))
+				|---
+				|-0-
+				|-0-
+			"""))
 	}
 
 	@Test def gettingCellShouldWrapAroundFieldBorder() {
@@ -55,6 +55,7 @@ class Conway3 extends ShouldMatchers {
 			  |-0-
 			  |0--
 			""")
+		field.cellAt(0, 0) should equal('-')
 		field.cellAt(-1, -1) should equal('-')
 		field.cellAt(-2, -2) should equal('0')
 		field.cellAt(0, 5) should equal('0')
