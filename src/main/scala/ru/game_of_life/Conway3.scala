@@ -82,6 +82,12 @@ class Conway3 extends ShouldMatchers {
 	case object LivingCell extends Cell {
 		override def toString = "0"
 	}
+	case object DeadCell extends Cell {
+		override def toString = "-"
+	}
+	case object UndefinedCell extends Cell {
+		override def toString = " "
+	}
 
 	class Field(private val data: List[List[Char]]) {
 
