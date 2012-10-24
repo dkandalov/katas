@@ -43,7 +43,9 @@ class Conway3 extends ShouldMatchers {
 
 		def next(): Field = {
 			var newData: List[List[Char]] = List.fill(data.size){ List.fill(data.size){' '} }
-//			for (row <- Range(0, data.size), col <- Range(0, data.size))
+			for (row <- 0 until data.size; col <- 0 until data.size) {
+				newData = newData.updated(row, newData(row).updated(col, data(row)(col)))
+			}
 			new Field(newData)
 		}
 
