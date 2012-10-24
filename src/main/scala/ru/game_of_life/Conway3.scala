@@ -42,7 +42,7 @@ class Conway3 extends ShouldMatchers {
 			this
 		}
 
-		override def toString = data.mkString
+		override def toString = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
 
 		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
 	}
