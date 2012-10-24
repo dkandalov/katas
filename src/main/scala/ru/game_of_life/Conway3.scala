@@ -35,6 +35,15 @@ class Conway3 extends ShouldMatchers {
       """))
 	}
 
+	@Test def cellWithEnoughNeighboursBecomesAlive() {
+		new Field(
+			"""
+			  |0-0
+			  |---
+			  |---
+			""").next().cellAt(1, 1) should equal('0')
+	}
+
 	class Field(private val data: List[List[Char]]) {
 
 		def this(s: String) {
@@ -50,6 +59,10 @@ class Conway3 extends ShouldMatchers {
 				newData = newData.updated(row, newData(row).updated(col, newCellState))
 			}
 			new Field(newData)
+		}
+
+		def cellAt(row: Int, col: Int): Char = {
+			' '
 		}
 
 		private def isLonelyCell(row: Int, col: Int): Boolean = {
