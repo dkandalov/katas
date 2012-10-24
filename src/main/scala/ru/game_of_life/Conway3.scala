@@ -62,7 +62,7 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		def cellAt(row: Int, col: Int): Char = {
-			' '
+			data(row)(col)
 		}
 
 		private def isLonelyCell(row: Int, col: Int): Boolean = {
