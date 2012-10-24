@@ -66,53 +66,49 @@ class Conway3 extends ShouldMatchers {
 			  |-0-
 			  |0--
 			""")
-		field.cellAt(0, 0) should equal('-')
-		field.cellAt(0, 1) should equal('-')
-		field.cellAt(0, 2) should equal('0')
-		field.cellAt(-1, 0) should equal('0')
-		field.cellAt(-2, 0) should equal('-')
-		field.cellAt(-3, 0) should equal('-')
+		field.cellAt(0, 0) should equal(DeadCell)
+		field.cellAt(0, 1) should equal(DeadCell)
+		field.cellAt(0, 2) should equal(LivingCell)
+		field.cellAt(-1, 0) should equal(LivingCell)
+		field.cellAt(-2, 0) should equal(DeadCell)
+		field.cellAt(-3, 0) should equal(DeadCell)
 
-		field.cellAt(-1, -1) should equal('-')
-		field.cellAt(-2, -2) should equal('0')
-		field.cellAt(0, 5) should equal('0')
-	}
-
-	case class Cell(c: Char)
-	case object LivingCell extends Cell('0') {
-		override def toString = c.toString
-	}
-	case object DeadCell extends Cell('-') {
-		override def toString = c.toString
-	}
-	case object UndefinedCell extends Cell(' ') {
-		override def toString = c.toString
+		field.cellAt(-1, -1) should equal(DeadCell)
+		field.cellAt(-2, -2) should equal(LivingCell)
+		field.cellAt(0, 5) should equal(LivingCell)
 	}
 
-	class Field(private val data: List[List[Char]]) {
+	case class Cell(c: Char) {
+		override def toString = c.toString
+	}
+	object LivingCell extends Cell('0')
+	object DeadCell extends Cell('-')
+	object UndefinedCell extends Cell(' ')
+
+	class Field(private val data: List[List[Cell]]) {
 
 		def this(s: String) {
-			this(s.stripMargin.trim.split("\n").map{_.toList}.toList)
+			this(s.stripMargin.trim.split("\n").map{_.toList.map{ Cell(_) }}.toList)
 		}
 
 		def next(): Field = {
-			var newData: List[List[Char]] = List.fill(data.size){ List.fill(data.size){' '} }
+			var newData: List[List[Cell]] = List.fill(data.size){ List.fill(data.size){ UndefinedCell } }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
-				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
+				val liveCellsAround = cellsAround(row, col).count{_ == LivingCell}
 				val newCellState =
-					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
-					else '0'
+					if (liveCellsAround < 2 || liveCellsAround > 3) DeadCell
+					else LivingCell
 				newData = newData.updated(row, newData(row).updated(col, newCellState))
 			}
 			new Field(newData)
 		}
 
-		def cellAt(row: Int, col: Int): Char = {
+		def cellAt(row: Int, col: Int): Cell = {
 			def wrap(n: Int) = (n + data.size) % data.size
 			data(wrap(row))(wrap(col))
 		}
 
-		private def cellsAround(row: Int, col: Int): Seq[Char] = {
+		private def cellsAround(row: Int, col: Int): Seq[Cell] = {
 			List((-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1)).map{ point =>
 				cellAt(row + point._1, col + point._2)
 			}
