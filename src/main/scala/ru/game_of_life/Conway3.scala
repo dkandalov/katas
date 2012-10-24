@@ -35,8 +35,10 @@ class Conway3 extends ShouldMatchers {
       """))
 	}
 
-	class Field(s: String) {
-		val data = s.stripMargin.trim.split("\n").map{_.toList}.toList
+	class Field(val data: List[List[Char]]) {
+		def this(s: String) {
+			this(s.stripMargin.trim.split("\n").map{_.toList}.toList)
+		}
 
 		def next(): Field = {
 			this
