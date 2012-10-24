@@ -74,8 +74,8 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		def cellAt(row: Int, col: Int): Char = {
-			def wrap(n: Int) = n % data.size
-			data(row)(col)
+			def wrap(n: Int) = (n + data.size) % data.size
+			data(wrap(row))(wrap(col))
 		}
 
 		private def isLonelyCell(row: Int, col: Int): Boolean = {
