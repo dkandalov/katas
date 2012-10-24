@@ -41,7 +41,11 @@ class Conway3 extends ShouldMatchers {
 			  |0-0
 			  |---
 			  |---
-			""").next().cellAt(1, 1).toString should equal("0")
+			""").next() should equal(new Field("""
+		                                           |---
+		                                           |---
+		                                           |---
+		                                         """))
 	}
 
 	@Test def gettingCellShouldWrapAroundFieldBorder() {
@@ -80,11 +84,11 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		private def isLonelyCell(row: Int, col: Int): Boolean = {
-			cellsAround(row, col).count{ _ == '0' } < 2
+			cellsAround(row, col).count{_ == '0'} < 2
 		}
 
 		private def hasEnoughNeighbours(row: Int, col: Int): Boolean = {
-			val count = cellsAround(row, col).count { _ == '0'}
+			val count = cellsAround(row, col).count{_ == '0'}
 			count >= 2 && count <= 3
 		}
 
