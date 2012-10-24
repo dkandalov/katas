@@ -70,8 +70,7 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		private def cellsAround(row: Int, col: Int): List[Char] = {
-//			List((-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1)).map{ data(_._1)(_._2) }
-			List()
+			List((-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1)).map{ point => cellAt(point._1, point._2) }
 		}
 
 		override def toString = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
