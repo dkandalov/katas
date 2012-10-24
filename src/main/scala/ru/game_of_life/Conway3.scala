@@ -41,10 +41,14 @@ class Conway3 extends ShouldMatchers {
 			this(s.stripMargin.trim.split("\n").map{_.toList}.toList)
 		}
 
+		def isLonelyCell(row: Int, col: Int): Boolean = false
+
 		def next(): Field = {
 			var newData: List[List[Char]] = List.fill(data.size){ List.fill(data.size){' '} }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
-				newData = newData.updated(row, newData(row).updated(col, data(row)(col)))
+				val newCellState: Char = if (isLonelyCell(row, col)) '-'
+					else data(row)(col)
+				newData = newData.updated(row, newData(row).updated(col, newCellState))
 			}
 			new Field(newData)
 		}
