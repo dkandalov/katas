@@ -51,8 +51,9 @@ class Conway3 extends ShouldMatchers {
 			  |-0-
 			  |0--
 			""")
-		field.cellAt(0, 0) should equal('-')
 		field.cellAt(-1, -1) should equal('-')
+		field.cellAt(-2, -2) should equal('0')
+		field.cellAt(0, 5) should equal('0')
 	}
 
 	class Field(private val data: List[List[Char]]) {
@@ -73,6 +74,7 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		def cellAt(row: Int, col: Int): Char = {
+			def wrap(n: Int) = n % data.size
 			data(row)(col)
 		}
 
