@@ -9,7 +9,20 @@ import org.junit.Test
  */
 
 class Conway3 extends ShouldMatchers {
-	@Test def aa() {
+	@Test def whenAllCellsAreDeadNothingHappens() {
+		new Field(
+			"""
+			  |---
+			  |---
+			  |---
+			""".stripMargin) should equal(new Field("""
+		                                                |---
+		                                                |---
+		                                                |---
+		                                              """.stripMargin))
+	}
+
+	class Field(s: String) {
 
 	}
 }
