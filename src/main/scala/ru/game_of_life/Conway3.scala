@@ -15,14 +15,18 @@ class Conway3 extends ShouldMatchers {
 			  |---
 			  |---
 			  |---
-			""".stripMargin) should equal(new Field("""
-		                                                |---
-		                                                |---
-		                                                |---
-		                                              """.stripMargin))
+			""").next() should equal(new Field("""
+        |---
+        |---
+        |---
+      """))
 	}
 
 	class Field(s: String) {
+		def next(): Field = {
+			this
+		}
 
+		override def equals(obj: Any) = super.equals(obj)
 	}
 }
