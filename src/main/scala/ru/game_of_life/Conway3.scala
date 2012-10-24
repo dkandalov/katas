@@ -70,6 +70,7 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		private def cellsAround(row: Int, col: Int): List[Char] = {
+//			List((-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1)).map{ data(_._1)(_._2) }
 			List()
 		}
 
