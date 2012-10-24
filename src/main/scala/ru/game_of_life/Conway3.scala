@@ -50,6 +50,15 @@ class Conway3 extends ShouldMatchers {
 			"""))
 	}
 
+	@Test def overPopulatedCellDies() {
+		new Field(
+			"""
+			  |-0-
+			  |000
+			  |-0-
+			""").next().cellAt(1, 1).toString should equal("-")
+	}
+
 	@Test def gettingCellShouldWrapAroundFieldBorder() {
 		val field = new Field(
 			"""
