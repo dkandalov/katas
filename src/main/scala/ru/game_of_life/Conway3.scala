@@ -23,11 +23,13 @@ class Conway3 extends ShouldMatchers {
 	}
 
 	class Field(s: String) {
-		val data = s
+		val data = s.stripMargin.trim
 
 		def next(): Field = {
 			this
 		}
+
+		override def toString = data.mkString
 
 		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
 	}
