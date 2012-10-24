@@ -38,13 +38,15 @@ class Conway3 extends ShouldMatchers {
 	@Test def cellWithEnoughNeighboursBecomesAlive() {
 		new Field(
 			"""
-			  |0-0
-			  |---
-			  |---
+			  |----
+			  |-00-
+			  |----
+			  |----
 			""").next() should equal(new Field("""
-				|---
-				|-0-
-				|-0-
+				|-00-
+				|----
+				|-00-
+				|----
 			"""))
 	}
 
