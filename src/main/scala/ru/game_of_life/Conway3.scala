@@ -41,7 +41,7 @@ class Conway3 extends ShouldMatchers {
 			  |0-0
 			  |---
 			  |---
-			""").next().cellAt(1, 1) should equal('0')
+			""").next().cellAt(1, 1).toString should equal("0")
 	}
 
 	@Test def gettingCellShouldWrapAroundFieldBorder() {
