@@ -53,8 +53,7 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		private def isLonelyCell(row: Int, col: Int): Boolean = {
-//			cellsAround(row, col).count{false} < 2
-			false
+			cellsAround(row, col).count{ _ == '0' } < 2
 		}
 
 		private def cellsAround(row: Int, col: Int): List[Char] = {
