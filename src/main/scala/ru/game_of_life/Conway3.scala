@@ -87,11 +87,10 @@ class Conway3 extends ShouldMatchers {
 		def next(): Field = {
 			var newData: List[List[Char]] = List.fill(data.size){ List.fill(data.size){' '} }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
+				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val newCellState =
-					if (isLonelyCell(row, col)) '-'
-					else if (hasEnoughNeighbours(row, col)) '0'
-					else if (isOverpopulated(row, col)) '-'
-					else data(row)(col)
+					if (isLonelyCell(row, col) || isOverpopulated(row, col)) '-'
+					else '0'
 				newData = newData.updated(row, newData(row).updated(col, newCellState))
 			}
 			new Field(newData)
