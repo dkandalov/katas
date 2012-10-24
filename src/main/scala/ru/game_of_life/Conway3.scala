@@ -42,8 +42,8 @@ class Conway3 extends ShouldMatchers {
 		}
 
 		def next(): Field = {
-			var data: List[List[Char]] = List()
-			new Field(data)
+			var newData: List[List[Char]] = List.fill(data.size) {List()}
+			new Field(newData)
 		}
 
 		override def toString = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
