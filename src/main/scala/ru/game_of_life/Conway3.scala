@@ -35,13 +35,15 @@ class Conway3 extends ShouldMatchers {
       """))
 	}
 
-	class Field(val data: List[List[Char]]) {
+	class Field(private val data: List[List[Char]]) {
+
 		def this(s: String) {
 			this(s.stripMargin.trim.split("\n").map{_.toList}.toList)
 		}
 
 		def next(): Field = {
-			this
+			var data: List[List[Char]] = List()
+			new Field(data)
 		}
 
 		override def toString = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
