@@ -16,18 +16,20 @@ class Conway4 extends ShouldMatchers {
 			  |-0-
 			  |--0
 			""")
-		field.cellAt(0, 0) should equal("0")
-		field.cellAt(0, 1) should equal("-")
-		field.cellAt(0, 2) should equal("-")
+		field.cellAt(0, 0) should equal('0')
+		field.cellAt(0, 1) should equal('-')
+		field.cellAt(0, 2) should equal('-')
 
-		field.cellAt(1, 0) should equal("-")
-		field.cellAt(1, 1) should equal("0")
-		field.cellAt(1, 2) should equal("-")
+		field.cellAt(1, 0) should equal('-')
+		field.cellAt(1, 1) should equal('0')
+		field.cellAt(1, 2) should equal('-')
 	}
 
 	class Field(s: String) {
-		def cellAt(row: Int, col: Int): String = {
-			"0"
+		def data = s.trim.stripMargin.split("\n").map{ _.toList }
+
+		def cellAt(row: Int, col: Int): Char = {
+			data(row)(col)
 		}
 	}
 }
