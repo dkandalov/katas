@@ -48,7 +48,8 @@ class Conway4 extends ShouldMatchers {
 		def data = s.trim.stripMargin.split("\n").map{ _.toList }
 
 		def cellAt(row: Int, col: Int): Char = {
-			data(row)(col)
+			def wrap = { n: Int => (n + data.size) % data.size}
+			data(wrap(row))(wrap(col))
 		}
 	}
 }
