@@ -67,6 +67,14 @@ class Conway4 extends ShouldMatchers {
 			data(wrap(row))(wrap(col))
 		}
 
+		def next(): Field = {
+			this
+		}
 
+		override def toString = data.mkString
+
+		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
+
+		override def hashCode() = data.hashCode()
 	}
 }
