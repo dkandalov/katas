@@ -9,6 +9,7 @@ import org.junit.Test
  */
 
 class Conway4 extends ShouldMatchers {
+
 	@Test def fieldShouldReturnCellState() {
 		def field = new Field(
 			"""
@@ -44,6 +45,20 @@ class Conway4 extends ShouldMatchers {
 		field.cellAt(0, -3) should equal('0')
 	}
 
+	@Test def whenFieldIsEmptyNothingHappens() {
+		new Field(
+			"""
+			  |---
+			  |---
+			  |---
+			""").next() should equal(new Field(
+			"""
+			  |---
+			  |---
+			  |---
+			"""))
+	}
+
 	class Field(s: String) {
 		def data = s.trim.stripMargin.split("\n").map{ _.toList }
 
@@ -51,5 +66,7 @@ class Conway4 extends ShouldMatchers {
 			def wrap = { n: Int => (n + data.size) % data.size}
 			data(wrap(row))(wrap(col))
 		}
+
+
 	}
 }
