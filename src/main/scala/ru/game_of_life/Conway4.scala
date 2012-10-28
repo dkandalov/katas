@@ -59,6 +59,20 @@ class Conway4 extends ShouldMatchers {
 			"""))
 	}
 
+	@Test def lonelyCellDies() {
+		new Field(
+			"""
+			  |---
+			  |-0-
+			  |---
+			""").next() should equal(new Field(
+			"""
+			  |---
+			  |---
+			  |---
+			"""))
+	}
+
 	class Field(s: String) {
 		val data = s.trim.stripMargin.split("\n").toList.map{ _.toList }
 
