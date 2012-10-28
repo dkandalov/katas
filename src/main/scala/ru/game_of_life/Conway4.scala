@@ -60,7 +60,7 @@ class Conway4 extends ShouldMatchers {
 	}
 
 	class Field(s: String) {
-		def data = s.trim.stripMargin.split("\n").map{ _.toList }
+		val data = s.trim.stripMargin.split("\n").toList.map{ _.toList }
 
 		def cellAt(row: Int, col: Int): Char = {
 			def wrap = { n: Int => (n + data.size) % data.size}
