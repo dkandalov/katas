@@ -82,6 +82,8 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		def next(): Field = {
+			val newData = List.fill(data.size, data.size){ ' ' }
+//			new Field(newData)
 			this
 		}
 
