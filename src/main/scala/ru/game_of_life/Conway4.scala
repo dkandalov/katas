@@ -2,6 +2,7 @@ package ru.game_of_life
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import collection.mutable.ListBuffer
 
 /**
  * User: dima
@@ -103,6 +104,7 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		def next(): Field = {
+//			val newData = ListBuffer.fill(data.size, data.size){ ' ' }
 			var newData = List.fill(data.size, data.size){ ' ' }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
 				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
