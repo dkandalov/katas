@@ -96,7 +96,9 @@ class Conway4 extends ShouldMatchers {
 		def next(): Field = {
 			var newData = List.fill(data.size, data.size){ ' ' }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
-				val cellState = if (isLonelyCell(row, col)) '-' else data(row)(col)
+				val cellState =
+					if (isLonelyCell(row, col)) '-'
+					else data(row)(col)
 				newData = newData.updated(row, newData(row).updated(col, cellState))
 			}
 			new Field(newData)
@@ -107,7 +109,7 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		private def cellsAround(row: Int, col: Int): Seq[Char] = {
-			Seq((-1, 0)).map{point => data(point._1)(point._2)}
+			Seq((-1, 0), (0, 1), (0, 1), (0, -1), (-1, -1), (1, -1), (1, 1), (-1, 1)).map{point => cellAt(point._1, point._2)}
 		}
 
 		override def toString = data.mkString
