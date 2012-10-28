@@ -2,7 +2,8 @@ package ru.game_of_life
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
-import collection.mutable.ListBuffer
+import collection.mutable.Buffer
+import collection.mutable
 
 /**
  * User: dima
@@ -92,10 +93,10 @@ class Conway4 extends ShouldMatchers {
 			""").next().cellAt(1, 1) should equal('-')
 	}
 
-	class Field(val data: List[List[Char]]) {
+	class Field(val data: mutable.Buffer[mutable.Buffer[Char]]) {
 
 		def this(s : String) {
-			this(s.trim.stripMargin.split("\n").toList.map{ _.toList })
+			this(s.trim.stripMargin.split("\n").toBuffer[String].map{ _.toBuffer[Char] })
 		}
 
 		def cellAt(row: Int, col: Int): Char = {
@@ -104,14 +105,14 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		def next(): Field = {
-//			val newData = ListBuffer.fill(data.size, data.size){ ' ' }
-			var newData = List.fill(data.size, data.size){ ' ' }
+			val newData = mutable.Buffer.fill(data.size, data.size){ ' ' }
+
 			for (row <- 0 until data.size; col <- 0 until data.size) {
 				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val cellState =
 					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
 					else '0'
-				newData = newData.updated(row, newData(row).updated(col, cellState))
+				newData(row)(col) = cellState
 			}
 			new Field(newData)
 		}
