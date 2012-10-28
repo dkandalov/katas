@@ -87,9 +87,14 @@ class Conway4 extends ShouldMatchers {
 		def next(): Field = {
 			var newData = List.fill(data.size, data.size){ ' ' }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
-				newData = newData.updated(row, newData(row).updated(col, data(row)(col)))
+				val cellState = if (isLonelyCell(row, col)) '-' else data(row)(col)
+				newData = newData.updated(row, newData(row).updated(col, cellState))
 			}
 			new Field(newData)
+		}
+
+		private def isLonelyCell(row: Int, col: Int) = {
+			true
 		}
 
 		override def toString = data.mkString
