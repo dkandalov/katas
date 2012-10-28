@@ -82,6 +82,15 @@ class Conway4 extends ShouldMatchers {
 			""").next().cellAt(1, 1) should equal('0')
 	}
 
+	@Test def overpopulatedCellDies() {
+		new Field(
+			"""
+			  |0-0
+			  |-0-
+			  |0-0
+			""").next().cellAt(1, 1) should equal('-')
+	}
+
 	class Field(val data: List[List[Char]]) {
 
 		def this(s : String) {
@@ -98,8 +107,8 @@ class Conway4 extends ShouldMatchers {
 			for (row <- 0 until data.size; col <- 0 until data.size) {
 				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val cellState =
-					if (liveCellsAround < 2) '-'
-					else data(row)(col)
+					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
+					else '0'
 				newData = newData.updated(row, newData(row).updated(col, cellState))
 			}
 			new Field(newData)
