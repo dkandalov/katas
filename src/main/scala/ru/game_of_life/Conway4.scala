@@ -73,8 +73,11 @@ class Conway4 extends ShouldMatchers {
 			"""))
 	}
 
-	class Field(s: String) {
-		val data = s.trim.stripMargin.split("\n").toList.map{ _.toList }
+	class Field(val data: List[List[Char]]) {
+
+		def this(s : String) {
+			this(s.trim.stripMargin.split("\n").toList.map{ _.toList })
+		}
 
 		def cellAt(row: Int, col: Int): Char = {
 			def wrap = { n: Int => (n + data.size) % data.size}
@@ -83,8 +86,10 @@ class Conway4 extends ShouldMatchers {
 
 		def next(): Field = {
 			val newData = List.fill(data.size, data.size){ ' ' }
-//			new Field(newData)
-			this
+			for (row <- 0 until data.size; col <- 0 until data.size) {
+
+			}
+			new Field(newData)
 		}
 
 		override def toString = data.mkString
