@@ -96,16 +96,13 @@ class Conway4 extends ShouldMatchers {
 		def next(): Field = {
 			var newData = List.fill(data.size, data.size){ ' ' }
 			for (row <- 0 until data.size; col <- 0 until data.size) {
+				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val cellState =
-					if (isLonelyCell(row, col)) '-'
+					if (liveCellsAround < 2) '-'
 					else data(row)(col)
 				newData = newData.updated(row, newData(row).updated(col, cellState))
 			}
 			new Field(newData)
-		}
-
-		private def isLonelyCell(row: Int, col: Int) = {
-			cellsAround(row, col).count{ _ == '0' } < 2
 		}
 
 		private def cellsAround(row: Int, col: Int): Seq[Char] = {
