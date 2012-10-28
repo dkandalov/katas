@@ -73,6 +73,15 @@ class Conway4 extends ShouldMatchers {
 			"""))
 	}
 
+	@Test def withEnoughNeighboursCellBecomesAlive() {
+		new Field(
+			"""
+			  |0-0
+			  |---
+			  |0--
+			""").next().cellAt(1, 1) should equal('0')
+	}
+
 	class Field(val data: List[List[Char]]) {
 
 		def this(s : String) {
