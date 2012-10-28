@@ -118,7 +118,7 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		private def cellsAround(row: Int, col: Int): Seq[Char] = {
-			Seq((-1, 0), (0, 1), (0, 1), (0, -1), (-1, -1), (1, -1), (1, 1), (-1, 1)).map{point => cellAt(point._1, point._2)}
+			Seq((-1, 0), (0, 1), (0, 1), (0, -1), (-1, -1), (1, -1), (1, 1), (-1, 1)).map{point => cellAt(row + point._1, col + point._2)}
 		}
 
 		override def toString = data.mkString
