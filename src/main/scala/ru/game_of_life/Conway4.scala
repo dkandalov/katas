@@ -103,7 +103,13 @@ class Conway4 extends ShouldMatchers {
 		}
 
 		private def isLonelyCell(row: Int, col: Int) = {
-			true
+//			cellsAround(row, col)
+			false
+		}
+
+		private def cellsAround(row: Int, col: Int): List[Char] = {
+//			Seq((-1, 0)).map{data(_._1, _._2)}
+			List()
 		}
 
 		override def toString = data.mkString
