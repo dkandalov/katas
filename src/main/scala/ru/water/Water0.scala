@@ -21,7 +21,7 @@ class Water0 extends ShouldMatchers {
 			(for (from <- glasses; to <- glasses if (from != to)) yield Pour(from, to))
 
 		val initialPath = new Path(Nil)
-		val pathSets = from(Set(initialPath))
+		val pathSets = from(Set(initialPath), Set(initialState))
 
 		trait Move {
 			def change(state: State): State
@@ -45,14 +45,15 @@ class Water0 extends ShouldMatchers {
 			override def toString = (history.reverse mkString ", ") + "-->" + endState
 		}
 
-		def from(paths: Set[Path]): Stream[Set[Path]] = {
+		def from(paths: Set[Path], explored: Set[State]): Stream[Set[Path]] = {
 			if (paths.isEmpty) Stream.empty
 			else {
 				val more = for {
 					path <- paths
 					next <- moves map path.extend
+					if !(explored contains next.endState)
 				} yield next
-				paths #:: from(more)
+				paths #:: from(more, explored ++ (more map (_.endState)))
 			}
 		}
 
@@ -83,16 +84,22 @@ class Water0 extends ShouldMatchers {
 		val pouring = new Pouring(Vector(4, 7))
 		import pouring._
 
-		solutions(6).head should equal(new Path(List(
-			Pour(1,0), Fill(1), Pour(1,0), Empty(0), Pour(1,0), Fill(1)
-		)))
+		val solution = solutions(6).head
+		solution.endState should equal(Vector(4, 6))
+		solution should equal(Path(List(
+			Fill(1), Pour(1, 0), Empty(0), Pour(1, 0), Fill(1), Pour(1, 0)
+		).reverse))
 	}
 
-	@Test def aaa() {
-		val pouring = new Pouring(Vector(4, 7, 10))
+	@Test def shouldFindSolutionForThreeGlasses() {
+		val pouring = new Pouring(Vector(4, 9, 19))
 		import pouring._
 
-		println(solutions(11).head)
+		val solution = solutions(17).head
+		solution.endState should equal(Vector(0, 0, 17))
+		solution should equal(Path(List(
+			Fill(0), Pour(0, 2), Fill(1), Fill(0), Pour(0, 2), Pour(1, 2)
+		).reverse))
 	}
 
 }
