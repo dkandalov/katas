@@ -2,6 +2,11 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/src/main/groovy/ru/orderbook" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/src/main/java/ru/orderbook" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/src/main/scala/ru/orderbook" includeSubdirectories="true" />
+    </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />

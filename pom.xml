@@ -45,7 +45,7 @@
         </repository>
 
         <repository>
-            <id>oss.sonatype.org</id>
+            <id>oss.sonatype.org-snapshots</id>
             <name>snapshots</name>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
