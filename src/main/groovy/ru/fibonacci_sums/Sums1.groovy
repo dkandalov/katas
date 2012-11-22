@@ -7,17 +7,23 @@ import org.junit.Test
  */
 class Sums1 {
   @Test void shouldFindFibonacciRepresentationsOfANumber() {
-    (0..20).each {
-      println(fibonacciRepresentationOf(it))
-    }
-
-//    assert fibonacciRepresentationOf(0) == [""]
-//    assert fibonacciRepresentationOf(1) == ["1"]
-//    assert fibonacciRepresentationOf(2) == ["10"]
-//    assert fibonacciRepresentationOf(3) == ["100", "11"]
+    assert fibonacciRepresentationsOf(0) == [""]
+    assert fibonacciRepresentationsOf(1) == ["1"]
+    assert fibonacciRepresentationsOf(2) == ["10"]
+    assert fibonacciRepresentationsOf(3) == ["100", "11"]
+    assert fibonacciRepresentationsOf(4) == ["101"]
+    assert fibonacciRepresentationsOf(5) == ["1000", "110"]
+    assert fibonacciRepresentationsOf(6) == ["1001", "111"]
+    assert fibonacciRepresentationsOf(7) == ["1010"]
+    assert fibonacciRepresentationsOf(8) == ["10000", "1100", "1011"]
+    assert fibonacciRepresentationsOf(9) == ["10001", "1101"]
+    assert fibonacciRepresentationsOf(10) == ["10010", "1110"]
+    assert fibonacciRepresentationsOf(11) == ["10100", "10011", "1111"]
+    assert fibonacciRepresentationsOf(12) == ["10101"]
+    assert fibonacciRepresentationsOf(13) == ["100000", "11000", "10110"]
   }
 
-  def fibonacciRepresentationOf(n) {
+  def fibonacciRepresentationsOf(n) {
     f(n).collect{asString(it)}
   }
 
@@ -26,8 +32,6 @@ class Sums1 {
 
     fibs = fibs.findAll{ it <= numberAsFibonacci.first() }
     fibs.reverse().collect{ numberAsFibonacci.contains(it) ? "1" : "0" }.join("")
-
-//    numberAsFibonacci.toString()
   }
 
   def f(n, List fibs = calculateFibonacciNumbers(100)) {
