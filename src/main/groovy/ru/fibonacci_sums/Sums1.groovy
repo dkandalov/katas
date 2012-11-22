@@ -32,7 +32,7 @@ class Sums1 {
     if (fibs.empty) return []
 
     def subResults = f(n - fibs.last(), fibs.take(fibs.size() - 1))
-    subResults.collect{ [fibs.last()] + it }
+    subResults.collect{ [fibs.last()] + it } + f(n, fibs.take(fibs.size() - 1))
   }
 
   def calculateFibonacciNumbers(amount) {
