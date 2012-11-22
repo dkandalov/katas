@@ -24,7 +24,10 @@ class Sums1 {
   }
 
   @Test void shouldCalculateFibonacciNumbersSequence() {
-    assert fibonacciRepresentationsOf(5) == []
+    assert calculateFibonacciNumbers(0) == []
+    assert calculateFibonacciNumbers(1) == [1]
+    assert calculateFibonacciNumbers(2) == [1, 2]
+    assert calculateFibonacciNumbers(5) == [1, 2, 3, 5, 8]
   }
 
   def fibonacciRepresentationsOf(n) {
