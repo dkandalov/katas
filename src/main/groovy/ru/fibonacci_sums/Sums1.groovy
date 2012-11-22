@@ -30,8 +30,9 @@ class Sums1 {
     assert calculateFibonacciNumbers(5) == [1, 2, 3, 5, 8]
   }
 
-  static fibonacciRepresentationsOf(n) {
-    List fibs = calculateFibonacciNumbers(100)
+  List fibs = calculateFibonacciNumbers(100)
+
+  def fibonacciRepresentationsOf(n) {
     f(n, fibs).collect{ asString(it, fibs) }
   }
 
@@ -55,7 +56,7 @@ class Sums1 {
   private static calculateFibonacciNumbers(amount, current = 1, previous = 1) {
     if (amount == 0) []
     else
-//      [current] + calculateFibonacciNumbers(amount - 1, current + previous, current)
-    [1, 2, 3, 5, 8, 13, 21, 34, 55, 89].take(amount)
+      [current] + calculateFibonacciNumbers(amount - 1, current + previous, current)
+//    [1, 2, 3, 5, 8, 13, 21, 34, 55, 89].take(amount)
   }
 }
