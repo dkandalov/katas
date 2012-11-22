@@ -27,7 +27,9 @@ class Sums1 {
 
   def f(n, List fibs = calculateFibonacciNumbers(100)) {
     fibs = fibs.findAll{ it <= n }
+    if (fibs.empty) return []
     []
+//    fibs.last() + f(n - fibs.last(), fibs.take(fibs.size() - 1))
   }
 
   def calculateFibonacciNumbers(amount) {
