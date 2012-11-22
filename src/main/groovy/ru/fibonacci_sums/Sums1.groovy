@@ -23,6 +23,10 @@ class Sums1 {
     assert fibonacciRepresentationsOf(13) == ["100000", "11000", "10110"]
   }
 
+  @Test void shouldCalculateFibonacciNumbersSequence() {
+    assert fibonacciRepresentationsOf(5) == []
+  }
+
   def fibonacciRepresentationsOf(n) {
     List fibs = calculateFibonacciNumbers(100)
     f(n, fibs).collect{ asString(it, fibs) }
