@@ -24,17 +24,17 @@ class Sums1 {
   }
 
   def fibonacciRepresentationsOf(n) {
-    f(n).collect{asString(it)}
+    f(n).collect{ asString(it) }
   }
 
-  def asString(List numberAsFibonacci, List fibs = calculateFibonacciNumbers(100)) {
+  private def asString(List numberAsFibonacci, List fibs = calculateFibonacciNumbers(100)) {
     if (numberAsFibonacci.empty) return ""
 
     fibs = fibs.findAll{ it <= numberAsFibonacci.first() }
     fibs.reverse().collect{ numberAsFibonacci.contains(it) ? "1" : "0" }.join("")
   }
 
-  def f(n, List fibs = calculateFibonacciNumbers(100)) {
+  private def f(n, List fibs = calculateFibonacciNumbers(100)) {
     if (n == 0) return [[]]
 
     fibs = fibs.findAll{ it <= n }
@@ -44,7 +44,10 @@ class Sums1 {
     subResults.collect{ [fibs.last()] + it } + f(n, fibs.take(fibs.size() - 1))
   }
 
-  def calculateFibonacciNumbers(amount) {
+  private def calculateFibonacciNumbers(amount, current = 1, previous = 1) {
+    if (amount == 0) []
+    else
+//      [current] + calculateFibonacciNumbers(amount - 1, current + previous, current)
     [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
   }
 }
