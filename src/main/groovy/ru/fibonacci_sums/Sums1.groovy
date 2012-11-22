@@ -8,7 +8,7 @@ import org.junit.Test
 class Sums1 {
   @Test void shouldFindFibonacciRepresentationsOfANumber() {
     (0..20).each {
-      println(f(it))
+      println(fibonacciRepresentationOf(it))
     }
 
 //    assert fibonacciRepresentationOf(0) == [""]
@@ -21,8 +21,10 @@ class Sums1 {
     f(n).collect{asString(it)}
   }
 
-  def asString(List numberAsFibonacci) {
-    []
+  def asString(List numberAsFibonacci, List fibs = calculateFibonacciNumbers(100)) {
+
+
+    numberAsFibonacci.toString()
   }
 
   def f(n, List fibs = calculateFibonacciNumbers(100)) {
