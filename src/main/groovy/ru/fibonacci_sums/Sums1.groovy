@@ -26,10 +26,13 @@ class Sums1 {
   }
 
   def f(n, List fibs = calculateFibonacciNumbers(100)) {
+    if (n == 0) return [[]]
+
     fibs = fibs.findAll{ it <= n }
     if (fibs.empty) return []
 
-    [fibs.last()] + f(n - fibs.last(), fibs.take(fibs.size() - 1))
+    def subResults = f(n - fibs.last(), fibs.take(fibs.size() - 1))
+    subResults.collect{ [fibs.last()] + it }
   }
 
   def calculateFibonacciNumbers(amount) {
