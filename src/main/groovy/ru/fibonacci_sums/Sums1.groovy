@@ -22,6 +22,7 @@ class Sums1 {
   }
 
   def asString(List numberAsFibonacci, List fibs = calculateFibonacciNumbers(100)) {
+    fibs = fibs.findAll{ it <= numberAsFibonacci.first() }
 
 
     numberAsFibonacci.toString()
