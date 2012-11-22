@@ -30,19 +30,19 @@ class Sums1 {
     assert calculateFibonacciNumbers(5) == [1, 2, 3, 5, 8]
   }
 
-  def fibonacciRepresentationsOf(n) {
+  static fibonacciRepresentationsOf(n) {
     List fibs = calculateFibonacciNumbers(100)
     f(n, fibs).collect{ asString(it, fibs) }
   }
 
-  private def asString(List numberAsFibonacci, List fibs) {
+  private static asString(List numberAsFibonacci, List fibs) {
     if (numberAsFibonacci.empty) return ""
 
     fibs = fibs.findAll{ it <= numberAsFibonacci.first() }
     fibs.reverse().collect{ numberAsFibonacci.contains(it) ? "1" : "0" }.join("")
   }
 
-  private def f(n, List fibs) {
+  private static f(n, List fibs) {
     if (n == 0) return [[]]
 
     fibs = fibs.findAll{ it <= n }
@@ -52,10 +52,10 @@ class Sums1 {
     subResults.collect{ [fibs.last()] + it } + f(n, fibs.take(fibs.size() - 1))
   }
 
-  private def calculateFibonacciNumbers(amount, current = 1, previous = 1) {
+  private static calculateFibonacciNumbers(amount, current = 1, previous = 1) {
     if (amount == 0) []
     else
 //      [current] + calculateFibonacciNumbers(amount - 1, current + previous, current)
-    [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+    [1, 2, 3, 5, 8, 13, 21, 34, 55, 89].take(amount)
   }
 }
