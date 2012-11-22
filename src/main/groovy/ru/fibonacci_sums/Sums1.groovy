@@ -11,14 +11,22 @@ class Sums1 {
       println(fibonacciRepresentationOf(it))
     }
 
-    assert fibonacciRepresentationOf(0) == [""]
-    assert fibonacciRepresentationOf(1) == ["1"]
-    assert fibonacciRepresentationOf(2) == ["10"]
-    assert fibonacciRepresentationOf(3) == ["100", "11"]
+//    assert fibonacciRepresentationOf(0) == [""]
+//    assert fibonacciRepresentationOf(1) == ["1"]
+//    assert fibonacciRepresentationOf(2) == ["10"]
+//    assert fibonacciRepresentationOf(3) == ["100", "11"]
   }
 
-  def fibonacciRepresentationOf(n, List fibs = calculateFibonacciNumbers(100)) {
-    def nums = fibs.findAll{ it <= n }
+  def fibonacciRepresentationOf(n) {
+    f(n).collect{asString(it)}
+  }
+
+  def asString(List numberAsFibonacci) {
+    []
+  }
+
+  def f(n, List fibs = calculateFibonacciNumbers(100)) {
+    fibs = fibs.findAll{ it <= n }
     []
   }
 
