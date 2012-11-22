@@ -24,17 +24,18 @@ class Sums1 {
   }
 
   def fibonacciRepresentationsOf(n) {
-    f(n).collect{ asString(it) }
+    List fibs = calculateFibonacciNumbers(100)
+    f(n, fibs).collect{ asString(it, fibs) }
   }
 
-  private def asString(List numberAsFibonacci, List fibs = calculateFibonacciNumbers(100)) {
+  private def asString(List numberAsFibonacci, List fibs) {
     if (numberAsFibonacci.empty) return ""
 
     fibs = fibs.findAll{ it <= numberAsFibonacci.first() }
     fibs.reverse().collect{ numberAsFibonacci.contains(it) ? "1" : "0" }.join("")
   }
 
-  private def f(n, List fibs = calculateFibonacciNumbers(100)) {
+  private def f(n, List fibs) {
     if (n == 0) return [[]]
 
     fibs = fibs.findAll{ it <= n }
