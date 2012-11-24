@@ -11,9 +11,9 @@ import org.junit.Test
 class Sums1 extends ShouldMatchers {
 
 	@Test def output() {
-//		1 to 20 foreach{
-//			println(_)
-//		}
+		for (i <- 1 to 20) {
+			println(fibonacciRepresentationsOf(i))
+		}
 	}
 
 	@Test def givenANumberShouldFindItFibonacciRepresentaions() {
