@@ -10,6 +10,10 @@ import org.junit.Test
 
 class Sums1 extends ShouldMatchers {
 
+	@Test def givenANumberShouldFindItFibonacciRepresentaions() {
+//		fibonacciRepresentationsOf(0) should equal("")
+	}
+
 	@Test def givenANumber_shouldFindFibonacciNumbersWithSumEqualToIt() {
 		fibonacciCombinationsOf(0) should equal(Seq(Seq()))
 		fibonacciCombinationsOf(1) should equal(Seq(Seq(1)))
@@ -29,7 +33,7 @@ class Sums1 extends ShouldMatchers {
 			else {
 				val filteredFibs = fibs.takeWhile{_ <= n}
 				if (filteredFibs.isEmpty) Seq()
-				else f(n - filteredFibs.head, filteredFibs.init).map{filteredFibs.head +: _}
+				else (f(n - filteredFibs.last, filteredFibs.init).map{filteredFibs.last +: _}) ++ (f(n, filteredFibs.init))
 			}
 		}
 		f(n, calculateFibonacci(10))
