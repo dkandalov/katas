@@ -11,19 +11,26 @@ import org.junit.Test
 class Sums1 extends ShouldMatchers {
 
 	@Test def givenANumber_shouldFindFibonacciNumbersWithSumEqualToIt() {
-		combinationsOf(0) should equal(Seq(Seq()))
-		combinationsOf(1) should equal(Seq(Seq(1)))
-		combinationsOf(2) should equal(Seq(Seq(2)))
-		combinationsOf(3) should equal(Seq(Seq(3), Seq(2, 1)))
-		combinationsOf(4) should equal(Seq(Seq(3, 1)))
-		combinationsOf(5) should equal(Seq(Seq(5), Seq(3, 2)))
+		fibonacciCombinationsOf(0) should equal(Seq(Seq()))
+		fibonacciCombinationsOf(1) should equal(Seq(Seq(1)))
+		fibonacciCombinationsOf(2) should equal(Seq(Seq(2)))
+		fibonacciCombinationsOf(3) should equal(Seq(Seq(3), Seq(2, 1)))
+		fibonacciCombinationsOf(4) should equal(Seq(Seq(3, 1)))
+		fibonacciCombinationsOf(5) should equal(Seq(Seq(5), Seq(3, 2)))
 	}
 
 	@Test def shouldCalculateSequenceOfFibonacciNumbers() {
 		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
 	}
 
-	private def combinationsOf(n: Int): Seq[Int] = Seq()
+	private def fibonacciCombinationsOf(n: Int): Seq[Seq[Int]] = {
+		if (n == 0) Seq(Seq())
+		else {
+			val fibs = calculateFibonacci(10).takeWhile{_ <= n}
+			if (fibs.isEmpty) Seq()
+			else Seq()
+		}
+	}
 
 	private def calculateFibonacci(amount: Int) = Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
 }
