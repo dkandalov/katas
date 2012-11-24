@@ -29,7 +29,7 @@ class Sums1 extends ShouldMatchers {
 			else {
 				val filteredFibs = fibs.takeWhile{_ <= n}
 				if (filteredFibs.isEmpty) Seq()
-				else Seq()
+				else f(n - filteredFibs.head, filteredFibs.init).map{filteredFibs.head +: _}
 			}
 		}
 		f(n, calculateFibonacci(10))
