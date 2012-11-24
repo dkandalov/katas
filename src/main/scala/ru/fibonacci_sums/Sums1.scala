@@ -30,11 +30,14 @@ class Sums1 extends ShouldMatchers {
 		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
 	}
 
-	def fibonacciRepresentationsOf(n: Int) = {
+	def fibonacciRepresentationsOf(n: Int): Seq[String] = {
 		fibonacciCombinationsOf(n) map combinationAsString
 	}
 
 	def combinationAsString(numbers: Seq[Int]): String = {
+		val fibs = calculateFibonacci(10).takeWhile{_ <= numbers.head}.reverse
+//		fibs.map{}
+
 		""
 	}
 
