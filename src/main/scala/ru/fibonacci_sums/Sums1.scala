@@ -58,10 +58,15 @@ class Sums1 extends ShouldMatchers {
 				else (f(n - filteredFibs.last, filteredFibs.init).map{filteredFibs.last +: _}) ++ (f(n, filteredFibs.init))
 			}
 		}
-		f(n, calculateFibonacci(10))
+		f(n, fibonacciSequenceFor(10))
 	}
 
-	var fibonacci = Seq()
+	var fibonacci = Seq[Int]()
+
+	private def fibonacciSequenceFor(limit: Int): Seq[Int] = {
+		if (fibonacci.size > 0 && fibonacci.last < limit) fibonacci = calculateFibonacci(limit)
+		fibonacci
+	}
 
 	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1): Seq[Int] = {
 		if (limit < current) Seq()
