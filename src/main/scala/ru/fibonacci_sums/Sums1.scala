@@ -24,12 +24,15 @@ class Sums1 extends ShouldMatchers {
 	}
 
 	private def fibonacciCombinationsOf(n: Int): Seq[Seq[Int]] = {
-		if (n == 0) Seq(Seq())
-		else {
-			val fibs = calculateFibonacci(10).takeWhile{_ <= n}
-			if (fibs.isEmpty) Seq()
-			else Seq()
+		def f(n: Int, fibs: Seq[Int]): Seq[Seq[Int]] = {
+			if (n == 0) Seq(Seq())
+			else {
+				val filteredFibs = fibs.takeWhile{_ <= n}
+				if (filteredFibs.isEmpty) Seq()
+				else Seq()
+			}
 		}
+		f(n, calculateFibonacci(10))
 	}
 
 	private def calculateFibonacci(amount: Int) = Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
