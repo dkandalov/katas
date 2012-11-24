@@ -44,7 +44,7 @@ class Sums1 extends ShouldMatchers {
 	private def combinationAsString(combination: Seq[Int]): String = {
 		if (combination.isEmpty) ""
 		else {
-			val fibs = calculateFibonacci(10).takeWhile{_ <= combination.head}.reverse
+			val fibs = fibonacciSequenceFor(combination.head).reverse
 			fibs.map{ fibNumber => if (combination.contains(fibNumber)) "1" else "0"}.mkString
 		}
 	}
@@ -65,7 +65,7 @@ class Sums1 extends ShouldMatchers {
 
 	private def fibonacciSequenceFor(limit: Int): Seq[Int] = {
 		if (fibonacci.isEmpty || fibonacci.last < limit) fibonacci = calculateFibonacci(limit)
-		fibonacci//.takeWhile
+		fibonacci.takeWhile{_ <= limit}
 	}
 
 	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1): Seq[Int] = {
