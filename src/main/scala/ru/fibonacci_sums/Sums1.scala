@@ -34,9 +34,9 @@ class Sums1 extends ShouldMatchers {
 		fibonacciCombinationsOf(n) map combinationAsString
 	}
 
-	def combinationAsString(numbers: Seq[Int]): String = {
-		val fibs = calculateFibonacci(10).takeWhile{_ <= numbers.head}.reverse
-//		fibs.map{}
+	def combinationAsString(combination: Seq[Int]): String = {
+		val fibs = calculateFibonacci(10).takeWhile{_ <= combination.head}.reverse
+		fibs.map{ fibNumber => if (combination.contains(fibNumber)) "1" else "0"}
 
 		""
 	}
