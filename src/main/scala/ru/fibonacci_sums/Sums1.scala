@@ -33,8 +33,8 @@ class Sums1 extends ShouldMatchers {
 	}
 
 	@Test def shouldCalculateSequenceOfFibonacciNumbers() {
-		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8))
-		calculateFibonacci(100) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
+		fibonacciSequenceFor(10) should equal(Seq(1, 2, 3, 5, 8))
+		fibonacciSequenceFor(100) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
 	}
 
 	def fibonacciRepresentationsOf(n: Int): Seq[String] = {
@@ -53,9 +53,8 @@ class Sums1 extends ShouldMatchers {
 		def f(n: Int, fibs: Seq[Int]): Seq[Seq[Int]] = {
 			if (n == 0) Seq(Seq())
 			else {
-				val filteredFibs = fibs.takeWhile{_ <= n}
-				if (filteredFibs.isEmpty) Seq()
-				else (f(n - filteredFibs.last, filteredFibs.init).map{filteredFibs.last +: _}) ++ (f(n, filteredFibs.init))
+				if (fibs.isEmpty) Seq()
+				else (f(n - fibs.last, fibs.init).map{ fibs.last +: _}) ++ (f(n, fibs.init))
 			}
 		}
 		f(n, fibonacciSequenceFor(n))
