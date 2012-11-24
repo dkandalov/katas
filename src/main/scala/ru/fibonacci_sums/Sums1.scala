@@ -10,6 +10,12 @@ import org.junit.Test
 
 class Sums1 extends ShouldMatchers {
 
+	@Test def output() {
+//		1 to 20 foreach{
+//			println(_)
+//		}
+	}
+
 	@Test def givenANumberShouldFindItFibonacciRepresentaions() {
 		fibonacciRepresentationsOf(0) should equal(Seq(""))
 		fibonacciRepresentationsOf(1) should equal(Seq("1"))
@@ -34,11 +40,12 @@ class Sums1 extends ShouldMatchers {
 		fibonacciCombinationsOf(n) map combinationAsString
 	}
 
-	def combinationAsString(combination: Seq[Int]): String = {
-		val fibs = calculateFibonacci(10).takeWhile{_ <= combination.head}.reverse
-		fibs.map{ fibNumber => if (combination.contains(fibNumber)) "1" else "0"}
-
-		""
+	private def combinationAsString(combination: Seq[Int]): String = {
+		if (combination.isEmpty) ""
+		else {
+			val fibs = calculateFibonacci(10).takeWhile{_ <= combination.head}.reverse
+			fibs.map{ fibNumber => if (combination.contains(fibNumber)) "1" else "0"}.mkString
+		}
 	}
 
 	private def fibonacciCombinationsOf(n: Int): Seq[Seq[Int]] = {
