@@ -31,7 +31,11 @@ class Sums1 extends ShouldMatchers {
 	}
 
 	def fibonacciRepresentationsOf(n: Int) = {
-		Seq("")
+		fibonacciCombinationsOf(n) map combinationAsString
+	}
+
+	def combinationAsString(numbers: Seq[Int]): String = {
+		""
 	}
 
 	private def fibonacciCombinationsOf(n: Int): Seq[Seq[Int]] = {
