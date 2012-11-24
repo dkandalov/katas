@@ -58,14 +58,14 @@ class Sums1 extends ShouldMatchers {
 				else (f(n - filteredFibs.last, filteredFibs.init).map{filteredFibs.last +: _}) ++ (f(n, filteredFibs.init))
 			}
 		}
-		f(n, fibonacciSequenceFor(10))
+		f(n, fibonacciSequenceFor(n))
 	}
 
 	var fibonacci = Seq[Int]()
 
 	private def fibonacciSequenceFor(limit: Int): Seq[Int] = {
-		if (fibonacci.size > 0 && fibonacci.last < limit) fibonacci = calculateFibonacci(limit)
-		fibonacci
+		if (fibonacci.isEmpty || fibonacci.last < limit) fibonacci = calculateFibonacci(limit)
+		fibonacci//.takeWhile
 	}
 
 	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1): Seq[Int] = {
