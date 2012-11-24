@@ -61,8 +61,9 @@ class Sums1 extends ShouldMatchers {
 		f(n, calculateFibonacci(10))
 	}
 
-	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1) = {
-
-		Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
+	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1): Seq[Int] = {
+		if (limit < current) Seq()
+		else current +: calculateFibonacci(limit, current + previous, current)
+//		Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
 	}
 }
