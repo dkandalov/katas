@@ -33,7 +33,8 @@ class Sums1 extends ShouldMatchers {
 	}
 
 	@Test def shouldCalculateSequenceOfFibonacciNumbers() {
-		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
+		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8))
+		calculateFibonacci(100) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
 	}
 
 	def fibonacciRepresentationsOf(n: Int): Seq[String] = {
@@ -60,5 +61,8 @@ class Sums1 extends ShouldMatchers {
 		f(n, calculateFibonacci(10))
 	}
 
-	private def calculateFibonacci(amount: Int) = Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
+	private def calculateFibonacci(limit: Int, current: Int = 1, previous: Int = 1) = {
+
+		Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89)
+	}
 }
