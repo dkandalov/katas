@@ -11,7 +11,10 @@ import org.junit.Test
 class Sums1 extends ShouldMatchers {
 
 	@Test def givenANumberShouldFindItFibonacciRepresentaions() {
-//		fibonacciRepresentationsOf(0) should equal("")
+		fibonacciRepresentationsOf(0) should equal(Seq(""))
+		fibonacciRepresentationsOf(1) should equal(Seq("1"))
+		fibonacciRepresentationsOf(2) should equal(Seq("10"))
+		fibonacciRepresentationsOf(3) should equal(Seq("100", "11"))
 	}
 
 	@Test def givenANumber_shouldFindFibonacciNumbersWithSumEqualToIt() {
@@ -25,6 +28,10 @@ class Sums1 extends ShouldMatchers {
 
 	@Test def shouldCalculateSequenceOfFibonacciNumbers() {
 		calculateFibonacci(10) should equal(Seq(1, 2, 3, 5, 8, 13, 21, 34, 55, 89))
+	}
+
+	def fibonacciRepresentationsOf(n: Int) = {
+		Seq("")
 	}
 
 	private def fibonacciCombinationsOf(n: Int): Seq[Seq[Int]] = {
