@@ -17,11 +17,12 @@ class GCD5 extends ShouldMatchers {
 		gcdOf(9, 6) should equal(3)
 	}
 
-	@Test def orderOfArgumentsSho() {
-
+	@Test def orderOfArgumentsShouldNotMatter() {
+		gcdOf(1, 2) should equal(1)
+		gcdOf(2, 1) should equal(1)
 	}
 
-	def gcdOf(a: Int, b: Int): Int = {
+	private def gcdOf(a: Int, b: Int): Int = {
 		if (a < b) gcdOf(b, a)
 		else {
 			val remainder = a % b
