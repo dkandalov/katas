@@ -20,7 +20,11 @@ class GCD5 extends ShouldMatchers {
 		gcdOf(4, 2) should equal(2)
 	}
 
-	def gcdOf(n1: Int, n2: Int): Int = {
-		1
+	def gcdOf(a: Int, b: Int): Int = {
+		if (a < b) gcdOf(b, a)
+		else {
+			val d = a / b
+			1
+		}
 	}
 }
