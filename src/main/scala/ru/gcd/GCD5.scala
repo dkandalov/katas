@@ -3,6 +3,7 @@ package ru.gcd
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import annotation.tailrec
+import org.scalacheck.Prop._
 
 /**
  * User: dima
@@ -21,6 +22,11 @@ class GCD5 extends ShouldMatchers {
 	@Test def orderOfArgumentsShouldNotMatter() {
 		gcdOf(1, 2) should equal(1)
 		gcdOf(2, 1) should equal(1)
+	}
+
+	@Test def properties() {
+		forAll{(n: Int) => gcdOf(n, 0) == n}.check
+//		forAll{(n: Int) => gcdOf(n * 3, n) == n}.check //TODO fails
 	}
 
 	@tailrec private def gcdOf(a: Int, b: Int): Int = {
