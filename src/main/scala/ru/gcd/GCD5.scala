@@ -12,20 +12,21 @@ class GCD5 extends ShouldMatchers {
 
 	@Test def shouldFindGreatestCommonDivider() {
 		gcdOf(1, 1) should equal(1)
-
 		gcdOf(2, 1) should equal(1)
-		gcdOf(1, 2) should equal(1)
-
-		gcdOf(2, 4) should equal(2)
 		gcdOf(4, 2) should equal(2)
+		gcdOf(9, 6) should equal(3)
+	}
+
+	@Test def orderOfArgumentsSho() {
+
 	}
 
 	def gcdOf(a: Int, b: Int): Int = {
 		if (a < b) gcdOf(b, a)
 		else {
-			val reminder = a % b
-			if (reminder == 0) b
-			else gcdOf(b, reminder)
+			val remainder = a % b
+			if (remainder == 0) b
+			else gcdOf(b, remainder)
 		}
 	}
 }
