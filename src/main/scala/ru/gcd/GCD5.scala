@@ -23,8 +23,9 @@ class GCD5 extends ShouldMatchers {
 	def gcdOf(a: Int, b: Int): Int = {
 		if (a < b) gcdOf(b, a)
 		else {
-			val d = a / b
-			1
+			val reminder = a % b
+			if (reminder == 0) b
+			else gcdOf(b, reminder)
 		}
 	}
 }
