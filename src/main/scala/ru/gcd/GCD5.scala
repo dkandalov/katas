@@ -2,6 +2,7 @@ package ru.gcd
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import annotation.tailrec
 
 /**
  * User: dima
@@ -22,12 +23,9 @@ class GCD5 extends ShouldMatchers {
 		gcdOf(2, 1) should equal(1)
 	}
 
-	private def gcdOf(a: Int, b: Int): Int = {
-		if (a < b) gcdOf(b, a)
-		else {
-			val remainder = a % b
-			if (remainder == 0) b
-			else gcdOf(b, remainder)
-		}
+	@tailrec private def gcdOf(a: Int, b: Int): Int = {
+		if (b == 0) a
+		else if (a < b) gcdOf(b, a)
+		else gcdOf(b, a % b)
 	}
 }
