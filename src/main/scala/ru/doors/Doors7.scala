@@ -13,10 +13,8 @@ class Doors7 extends ShouldMatchers {
 		visitDoors(0) should equal(Seq())
 		visitDoors(1) should equal(Seq(true))
 		visitDoors(2) should equal(Seq(true, false))
-	}
-
-	@Test def sliding() {
-		println(Seq(1,2,3,4,5,6,7,8).sliding(1, 3).toList)
+		visitDoors(3) should equal(Seq(true, false, false))
+		visitDoors(4) should equal(Seq(true, false, false, true))
 	}
 
 	private def visitDoors(amountOfDoors: Int): Seq[Boolean] = {
@@ -24,7 +22,7 @@ class Doors7 extends ShouldMatchers {
 			if (stepSize > amountOfDoors) doors
 			else {
 				var newDoors = doors
-				(-1 + stepSize).to(amountOfDoors, stepSize).foreach{ i => newDoors = newDoors.updated(i, !newDoors(i)) }
+				(stepSize - 1).until(amountOfDoors, stepSize).foreach{ i => newDoors = newDoors.updated(i, !newDoors(i)) }
 				walk(stepSize + 1, newDoors)
 			}
 		}
