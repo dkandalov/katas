@@ -15,6 +15,7 @@ class Doors7 extends ShouldMatchers {
 	}
 
 	private def walkDoors(amountOfDoors: Int): Seq[Boolean] = {
+		val doors = Seq.fill(amountOfDoors){ true }
 		Seq()
 	}
 }
