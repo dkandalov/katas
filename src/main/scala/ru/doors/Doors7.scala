@@ -9,18 +9,19 @@ import org.junit.Test
  */
 
 class Doors7 extends ShouldMatchers {
-	@Test def shouldWalkDoors() {
-		walkDoors(0) should equal(Seq())
-		walkDoors(1) should equal(Seq(true))
-		walkDoors(2) should equal(Seq(true, false))
+	@Test def shouldVisitDoors() {
+		visitDoors(0) should equal(Seq())
+		visitDoors(1) should equal(Seq(true))
+		visitDoors(2) should equal(Seq(true, false))
 	}
 
-	private def walkDoors(amountOfDoors: Int): Seq[Boolean] = {
+	private def visitDoors(amountOfDoors: Int): Seq[Boolean] = {
 		def walk(step: Int, doors: Seq[Boolean]): Seq[Boolean] = {
 			if (step > amountOfDoors) doors
 			else walk(step + 1, doors)
 		}
 
-		walk(1, Seq.fill(amountOfDoors){false})
+		val doors = Seq.fill(amountOfDoors) { false }
+		walk(1, doors)
 	}
 }
