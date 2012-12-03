@@ -18,16 +18,16 @@ class Doors7 extends ShouldMatchers {
 	}
 
 	private def visitDoors(amountOfDoors: Int): Seq[Boolean] = {
-		def walk(stepSize: Int, position: Int, doors: Seq[Boolean]): Seq[Boolean] = {
+		def walk(stepSize: Int, doors: Seq[Boolean]): Seq[Boolean] = {
 			if (stepSize > amountOfDoors) doors
 			else {
 				var newDoors = doors
 				(stepSize - 1).until(amountOfDoors, stepSize).foreach{ i => newDoors = newDoors.updated(i, !newDoors(i)) }
-				walk(stepSize + 1, position, newDoors)
+				walk(stepSize + 1, newDoors)
 			}
 		}
 
 		val doors = Seq.fill(amountOfDoors) { false }
-		walk(1, -1, doors)
+		walk(1, doors)
 	}
 }
