@@ -17,10 +17,10 @@ class Doors7 extends ShouldMatchers {
 
 	private def walkDoors(amountOfDoors: Int): Seq[Boolean] = {
 		def walk(step: Int, doors: Seq[Boolean]): Seq[Boolean] = {
-			if (step == amountOfDoors) doors
+			if (step > amountOfDoors) doors
 			else walk(step + 1, doors)
 		}
 
-		walk(0, Seq.fill(amountOfDoors){false})
+		walk(1, Seq.fill(amountOfDoors){false})
 	}
 }
