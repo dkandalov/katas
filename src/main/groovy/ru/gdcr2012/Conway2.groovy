@@ -15,16 +15,25 @@ class Conway2 {
 """)
   }
 
+  @Test void one_cell_should_die() {
+    assert nextStep(board("""
+      |---
+      |-0-
+      |---
+""")) == board("""
+      |---
+      |---
+      |---
+""")
+
+  }
+
   def nextStep(board) {
     board
   }
 
   def board(String s) {
     []
-  }
-
-  @Test public void one_cell_should_die() {
-    assert true
   }
 
 }
