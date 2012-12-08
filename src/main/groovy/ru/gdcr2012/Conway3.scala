@@ -36,4 +36,6 @@ class Conway3 extends ShouldMatchers {
 		isAlive should equal(false)
 	}
 
+	case class Cell(isAlive: Boolean, amountOfNeighbours: Int)
+
 }
