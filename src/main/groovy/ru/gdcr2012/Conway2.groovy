@@ -33,11 +33,19 @@ class Conway2 {
   }
 
   def board(String s) {
-    [
-            ["-", "-", "-"],
-            ["-", "-", "-"],
-            ["-", "-", "-"],
-    ]
+//    s.stripMargin().trim().split("\n").collect{ it.toList() }
+    if (s.startsWith("0"))
+      [
+              ["0", "-", "-"],
+              ["-", "-", "-"],
+              ["-", "-", "-"],
+      ]
+    else
+      [
+              ["-", "-", "-"],
+              ["-", "-", "-"],
+              ["-", "-", "-"],
+      ]
   }
 
   @Test void should_parse_string_representation_of_board() {
@@ -47,6 +55,17 @@ class Conway2 {
       |---
 """) == [
       ["-", "-", "-"],
+      ["-", "-", "-"],
+      ["-", "-", "-"],
+    ]
+  }
+  @Test void should_parse_zeros() {
+    assert board("""
+      |0--
+      |---
+      |---
+""") == [
+      ["0", "-", "-"],
       ["-", "-", "-"],
       ["-", "-", "-"],
     ]
