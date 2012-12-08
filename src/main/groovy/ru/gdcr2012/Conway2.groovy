@@ -23,4 +23,8 @@ class Conway2 {
     []
   }
 
+  @Test public void one_cell_should_die() {
+    assert true
+  }
+
 }
