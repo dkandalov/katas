@@ -36,4 +36,13 @@ class Conway2 {
     []
   }
 
+  @Test void aa() {
+    assert board("""
+      |---
+      |---
+      |---
+""") == [
+
+    ]
+  }
 }
