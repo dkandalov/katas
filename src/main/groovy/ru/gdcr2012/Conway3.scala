@@ -8,8 +8,8 @@ class Conway3 extends ShouldMatchers {
 	var amountOfNeighbours: Int = 0
 
 	@Test def newCellShouldBeAlive() {
-		isAlive = true
-		isAlive should equal(true)
+		val cell = Cell()
+		cell.isAlive should equal(true)
 	}
 
 	@Test def liveCellWithFewerThanTwoNeighboursShouldDie() {
@@ -36,6 +36,6 @@ class Conway3 extends ShouldMatchers {
 		isAlive should equal(false)
 	}
 
-	case class Cell(isAlive: Boolean, amountOfNeighbours: Int)
+	case class Cell(isAlive: Boolean = true, amountOfNeighbours: Int = 0)
 
 }
