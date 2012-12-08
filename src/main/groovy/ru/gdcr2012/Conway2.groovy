@@ -33,16 +33,22 @@ class Conway2 {
   }
 
   def board(String s) {
-    []
+    [
+            ["-", "-", "-"],
+            ["-", "-", "-"],
+            ["-", "-", "-"],
+    ]
   }
 
-  @Test void aa() {
+  @Test void should_parse_string_representation_of_board() {
     assert board("""
       |---
       |---
       |---
 """) == [
-
+      ["-", "-", "-"],
+      ["-", "-", "-"],
+      ["-", "-", "-"],
     ]
   }
 }
