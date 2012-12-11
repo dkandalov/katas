@@ -62,7 +62,7 @@ public class JuliaExample {
     private static double threshold = 1;
     // The number of times that the algorithm recurses.
     private static int iterations = 50;
-    private boolean[][] isPointInFractal;
+    private double[][] pointMagnitude;
 
 
     public static void main(String[] args) {
@@ -70,8 +70,8 @@ public class JuliaExample {
     }
 
     public JuliaExample() {
-        isPointInFractal = calculateFractalPoints();
-        image = createImage(isPointInFractal);
+        pointMagnitude = calculateFractalPoints();
+        image = createImage(pointMagnitude);
 
         final JFrame frame = new JFrame("Julia Example") {
             @Override
@@ -103,8 +103,8 @@ public class JuliaExample {
                 System.out.println("threshold = " + threshold);
                 System.out.println("juliaSetBase = " + juliaSetBase);
 
-                isPointInFractal = calculateFractalPoints();
-                image = createImage(isPointInFractal);
+                pointMagnitude = calculateFractalPoints();
+                image = createImage(pointMagnitude);
                 frame.repaint();
             }
         });
@@ -114,19 +114,29 @@ public class JuliaExample {
         frame.setVisible(true);
     }
 
-    private BufferedImage createImage(boolean[][] pointInFractal) {
+    private BufferedImage createImage(double[][] pointInFractal) {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                int color = pointInFractal[x][y] ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
-                image.setRGB(x, y, color);
+                float value = (float) (pointInFractal[x][y] - threshold * threshold);
+                if (Float.isNaN(value)) {
+                    value = 0;
+                } else {
+                    value = value < -1500 ? -1500 : value;
+                    value = value > 1500 ? 1500 : value;
+                    value = (value + 1500) * 1 / 3000;
+                }
+
+                Color color = new Color(value, value, value);
+//                int color =  ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
+                image.setRGB(x, y, color.getRGB());
             }
         }
         return image;
     }
 
-    private static boolean[][] calculateFractalPoints() {
-        boolean[][] values = new boolean[WIDTH][HEIGHT];
+    private static double[][] calculateFractalPoints() {
+        double[][] values = new double[WIDTH][HEIGHT];
 
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
@@ -152,11 +162,11 @@ public class JuliaExample {
      * This is the basic quadratic julia set.  The formula is: f(z+1) = z^2+c
      * where z is a complex number, and where c is a constant complex number.
      */
-    private static boolean isInFractal(ComplexNumber number) {
+    private static double isInFractal(ComplexNumber number) {
         for (int i = 0; i < iterations; i++) {
             number = number.square().add(juliaSetBase);
         }
-        return number.magnitude() < threshold * threshold;
+        return number.magnitude();
     }
 
     private static class ComplexNumber {
