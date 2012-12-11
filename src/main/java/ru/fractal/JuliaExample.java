@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -46,23 +48,24 @@ import java.awt.image.BufferedImage;
  * @author Neil
  */
 public class JuliaExample {
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 700;
+    private static final int WINDOW_WIDTH = 700;
+    private static final int WINDOW_HEIGHT = 700;
+
     // The ComplexNumber to base the Julia Set off of.
     private static ComplexNumber juliaSetBase = new ComplexNumber(-0.223, 0.745);
 
-    private static final double minX = -1.5;
-    private static final double maxX = 1.5;
-    private static final double minY = -1.5;
-    private static final double maxY = 1.5;
+    private static double xRange = 3;
+    private static double xShift = 0;
+    private static double yRange = 3;
+    private static double yShift = 0;
 
-    private BufferedImage image = null;
-
-    // The maximum Magnitude of the ComplexNumber to be allowed in the Set.
     private static double threshold = 1;
-    // The number of times that the algorithm recurses.
     private static int iterations = 50;
+    private static int gradientRange = 2000;
+
     private double[][] pointMagnitude;
+    private BufferedImage image = null;
+    private final JFrame frame;
 
 
     public static void main(String[] args) {
@@ -70,15 +73,29 @@ public class JuliaExample {
     }
 
     public JuliaExample() {
-        pointMagnitude = calculateFractalPoints();
-        image = createImage(pointMagnitude);
+        calculateAndRepaintImage();
 
-        final JFrame frame = new JFrame("Julia Example") {
+        frame = new JFrame("Julia Example") {
             @Override
-            public void paint(java.awt.Graphics g) {
+            public void paint(Graphics g) {
                 g.drawImage(image, 0, 0, null);
             }
         };
+        frame.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent mouseEvent) {
+                xRange /= 2;
+                yRange /= 2;
+                xShift += (((double) mouseEvent.getX() / WINDOW_WIDTH) * xRange) - xRange / 2;
+                yShift += (((double) mouseEvent.getY() / WINDOW_HEIGHT) * yRange) - yRange / 2;
+
+                System.out.println("xShift = " + xShift);
+                System.out.println("yShift = " + yShift);
+                System.out.println("xRange = " + xRange);
+                System.out.println("yRange = " + yRange);
+
+                calculateAndRepaintImage();
+            }
+        });
         frame.addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
@@ -97,38 +114,54 @@ public class JuliaExample {
                     juliaSetBase = juliaSetBase.add(new ComplexNumber(0, 0.01));
                 } else if (keyEvent.getKeyCode() == KeyEvent.VK_S) {
                     juliaSetBase = juliaSetBase.add(new ComplexNumber(0, -0.01));
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
+                    gradientRange += 100;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_F) {
+                    gradientRange -= 100;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
+                    xRange += 0.1;
+                    yRange += 0.1;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_G) {
+                    xRange -= 0.1;
+                    yRange -= 0.1;
                 }
 
                 System.out.println("iterations = " + iterations);
                 System.out.println("threshold = " + threshold);
                 System.out.println("juliaSetBase = " + juliaSetBase);
+                System.out.println("gradientRange = " + gradientRange);
+                System.out.println("xRange = " + xRange);
+                System.out.println("yRange = " + yRange);
 
-                pointMagnitude = calculateFractalPoints();
-                image = createImage(pointMagnitude);
-                frame.repaint();
+                calculateAndRepaintImage();
             }
         });
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
+        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.repaint();
         frame.setVisible(true);
     }
 
+    private void calculateAndRepaintImage() {
+        pointMagnitude = calculateFractalPoints();
+        image = createImage(pointMagnitude);
+        if (frame != null) frame.repaint();
+    }
+
     private BufferedImage createImage(double[][] pointInFractal) {
-        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
+        BufferedImage image = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < WINDOW_WIDTH; x++) {
+            for (int y = 0; y < WINDOW_HEIGHT; y++) {
                 float value = (float) (pointInFractal[x][y] - threshold * threshold);
                 if (Float.isNaN(value)) {
                     value = 0;
                 } else {
-                    value = value < -1500 ? -1500 : value;
-                    value = value > 1500 ? 1500 : value;
-                    value = (value + 1500) * 1 / 3000;
+                    value = value < -gradientRange / 2 ? -gradientRange / 2 : value;
+                    value = value > gradientRange / 2 ? gradientRange / 2 : value;
+                    value = (value + gradientRange / 2) * 1 / gradientRange;
                 }
 
                 Color color = new Color(value, value, value);
-//                int color =  ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
                 image.setRGB(x, y, color.getRGB());
             }
         }
@@ -136,10 +169,12 @@ public class JuliaExample {
     }
 
     private static double[][] calculateFractalPoints() {
-        double[][] values = new double[WIDTH][HEIGHT];
+        double[][] values = new double[WINDOW_WIDTH][WINDOW_HEIGHT];
+        double minX = -xRange / 2;
+        double minY = -yRange / 2;
 
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WINDOW_WIDTH; x++) {
+            for (int y = 0; y < WINDOW_HEIGHT; y++) {
                 /**
                  * Each pixel represents a ComplexNumber.  The pixel in the center
                  * represents 0,0 on the Complex Plane.  The following two lines
@@ -147,10 +182,10 @@ public class JuliaExample {
                  * (See min and max vars above).  They scale the numbers, and
                  * shift everything around so it lies up right.
                  */
-                double a = (double) x * (maxX - minX) / (double) WIDTH + minX;
-                double b = (double) y * (maxY - minY) / (double) HEIGHT + minY;
+                double a = ((double) x * xRange / (double) WINDOW_WIDTH + minX) + xShift;
+                double b = ((double) y * yRange / (double) WINDOW_HEIGHT + minY) + yShift;
 
-                values[x][y] = isInFractal(new ComplexNumber(a, b));
+                values[x][y] = fractalMagnitude(new ComplexNumber(a, b));
             }
         }
 
@@ -162,7 +197,7 @@ public class JuliaExample {
      * This is the basic quadratic julia set.  The formula is: f(z+1) = z^2+c
      * where z is a complex number, and where c is a constant complex number.
      */
-    private static double isInFractal(ComplexNumber number) {
+    private static double fractalMagnitude(ComplexNumber number) {
         for (int i = 0; i < iterations; i++) {
             number = number.square().add(juliaSetBase);
         }
