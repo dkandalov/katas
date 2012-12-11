@@ -44,12 +44,10 @@ import java.awt.image.BufferedImage;
  * @author Neil
  */
 public class JuliaExample {
-    private static final int WIDTH = 350;
-    private static final int HEIGHT = 350;
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 700;
     // The ComplexNumber to base the Julia Set off of.
-    private static ComplexNumber c = new ComplexNumber(-0.223, 0.745);
-
-    private boolean[][] values = null;
+    private static ComplexNumber juliaSetBase = new ComplexNumber(-0.223, 0.745);
 
     private static final double minX = -1.5;
     private static final double maxX = 1.5;
@@ -58,7 +56,7 @@ public class JuliaExample {
 
     private BufferedImage image = null;
 
-    // The maximum Magnitude of the ComplexNumer to be allowed in the Set.
+    // The maximum Magnitude of the ComplexNumber to be allowed in the Set.
     private static final double threshold = 1;
     // The number of times that the algorithm recurses.
     private static final int iterations = 50;
@@ -71,12 +69,12 @@ public class JuliaExample {
     public JuliaExample() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
-        getValues();
+        boolean[][] isPointInFractal = calculateFractalPoints();
 
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                int color = values[i][j] ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
-                image.setRGB(i, j, color);
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                int color = isPointInFractal[x][y] ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
+                image.setRGB(x, y, color);
             }
         }
 
@@ -92,11 +90,11 @@ public class JuliaExample {
         f.setVisible(true);
     }
 
-    private void getValues() {
-        values = new boolean[WIDTH][HEIGHT];
+    private static boolean[][] calculateFractalPoints() {
+        boolean[][] values = new boolean[WIDTH][HEIGHT];
 
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
                 /**
                  * Each pixel represents a ComplexNumber.  The pixel in the center
                  * represents 0,0 on the Complex Plane.  The following two lines
@@ -104,12 +102,14 @@ public class JuliaExample {
                  * (See min and max vars above).  They scale the numbers, and
                  * shift everything around so it lies up right.
                  */
-                double a = (double) i * (maxX - minX) / (double) WIDTH + minX;
-                double b = (double) j * (maxY - minY) / (double) HEIGHT + minY;
+                double a = (double) x * (maxX - minX) / (double) WIDTH + minX;
+                double b = (double) y * (maxY - minY) / (double) HEIGHT + minY;
 
-                values[i][j] = isInSet(new ComplexNumber(a, b));
+                values[x][y] = isInFractal(new ComplexNumber(a, b));
             }
         }
+
+        return values;
     }
 
     /**
@@ -117,35 +117,34 @@ public class JuliaExample {
      * This is the basic quadratic julia set.  The formula is: f(z+1) = z^2+c
      * where z is a complex number, and where c is a constant complex number.
      */
-    private boolean isInSet(ComplexNumber cn) {
+    private static boolean isInFractal(ComplexNumber number) {
         for (int i = 0; i < iterations; i++) {
-            // The basic Julia Set Algorithm.
-            cn = cn.square().add(c);
+            number = number.square().add(juliaSetBase);
         }
-        // If the threshold^2 is larger than the magnitude, return true.
-        return cn.magnitude() < threshold * threshold;
+        return number.magnitude() < threshold * threshold;
+    }
+
+    private static class ComplexNumber {
+        private final double a;
+        private final double b;
+
+        public ComplexNumber(double a, double b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public ComplexNumber square() {
+            return new ComplexNumber(a * a - b * b, 2 * a * b);
+        }
+
+        public ComplexNumber add(ComplexNumber number) {
+            return new ComplexNumber(a + number.a, b + number.b);
+        }
+
+        public double magnitude() {
+            return a * a + b * b;
+        }
     }
 }
 
 
-class ComplexNumber {
-    private final double a;
-    private final double b;
-
-    public ComplexNumber(double a, double b) {
-        this.a = a;
-        this.b = b;
-    }
-
-    public ComplexNumber square() {
-        return new ComplexNumber(a * a - b * b, 2 * a * b);
-    }
-
-    public ComplexNumber add(ComplexNumber number) {
-        return new ComplexNumber(a + number.a, b + number.b);
-    }
-
-    public double magnitude() {
-        return a * a + b * b;
-    }
-}
