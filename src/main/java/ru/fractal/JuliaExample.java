@@ -2,6 +2,8 @@ package ru.fractal;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -57,9 +59,10 @@ public class JuliaExample {
     private BufferedImage image = null;
 
     // The maximum Magnitude of the ComplexNumber to be allowed in the Set.
-    private static final double threshold = 1;
+    private static double threshold = 1;
     // The number of times that the algorithm recurses.
-    private static final int iterations = 50;
+    private static int iterations = 50;
+    private boolean[][] isPointInFractal;
 
 
     public static void main(String[] args) {
@@ -67,27 +70,59 @@ public class JuliaExample {
     }
 
     public JuliaExample() {
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        isPointInFractal = calculateFractalPoints();
+        image = createImage(isPointInFractal);
 
-        boolean[][] isPointInFractal = calculateFractalPoints();
-
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                int color = isPointInFractal[x][y] ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
-                image.setRGB(x, y, color);
-            }
-        }
-
-        JFrame f = new JFrame("Julia Example") {
+        final JFrame frame = new JFrame("Julia Example") {
             @Override
             public void paint(java.awt.Graphics g) {
                 g.drawImage(image, 0, 0, null);
             }
         };
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.setSize(WIDTH, HEIGHT);
-        f.repaint();
-        f.setVisible(true);
+        frame.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+                    iterations += 10;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+                    iterations -= 10;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    threshold += 10;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                    threshold -= 10;
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_D) {
+                    juliaSetBase = juliaSetBase.add(new ComplexNumber(0.01, 0));
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_A) {
+                    juliaSetBase = juliaSetBase.add(new ComplexNumber(-0.01, 0));
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_W) {
+                    juliaSetBase = juliaSetBase.add(new ComplexNumber(0, 0.01));
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_S) {
+                    juliaSetBase = juliaSetBase.add(new ComplexNumber(0, -0.01));
+                }
+
+                System.out.println("iterations = " + iterations);
+                System.out.println("threshold = " + threshold);
+                System.out.println("juliaSetBase = " + juliaSetBase);
+
+                isPointInFractal = calculateFractalPoints();
+                image = createImage(isPointInFractal);
+                frame.repaint();
+            }
+        });
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.repaint();
+        frame.setVisible(true);
+    }
+
+    private BufferedImage createImage(boolean[][] pointInFractal) {
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                int color = pointInFractal[x][y] ? Color.WHITE.getRGB() : Color.BLACK.getRGB();
+                image.setRGB(x, y, color);
+            }
+        }
+        return image;
     }
 
     private static boolean[][] calculateFractalPoints() {
@@ -143,6 +178,10 @@ public class JuliaExample {
 
         public double magnitude() {
             return a * a + b * b;
+        }
+
+        @Override public String toString() {
+            return "ComplexNumber{a=" + a + ", b=" + b + '}';
         }
     }
 }
