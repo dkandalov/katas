@@ -1,16 +1,16 @@
 package ru.fractal;
 
 
-import java.applet.Applet;
+import javax.swing.*;
 import java.awt.*;
 
 import static java.lang.Math.*;
 
 
 /**
- * Mandelbrot and Julia Set Fractal Java Applet, 6/9/01
+ * Originally: Mandelbrot and Julia Set Fractal Java Applet, 6/9/01
  */
-public class Mandelbrot extends Applet {
+public class Mandelbrot extends JPanel {
     Graphics graphics;
     boolean isJuliaSet;
 
@@ -44,9 +44,17 @@ public class Mandelbrot extends Applet {
     Choice choice3 = new Choice();
     Button button1 = new Button("Generate Image");
 
-    @Override public void init() {
-        imageWidth = getSize().width - 20;
-        imageHeight = getSize().height - 160;
+    public static void main(String[] args) {
+        JFrame jFrame = new JFrame();
+        jFrame.add(new Mandelbrot());
+        jFrame.setSize(1000, 1000);
+        jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        jFrame.setVisible(true);
+    }
+
+    public Mandelbrot() {
+        imageWidth = 1000 - 20;
+        imageHeight = 1000 - 180;
         dpi = imageWidth / 3;
 
         setLayout(null);
@@ -59,7 +67,7 @@ public class Mandelbrot extends Applet {
 
         tf4 = editbox("xc", xc, 122, imageHeight + 20, 20);
         tf5 = editbox("yc", yc, 228, imageHeight + 20, 20);
-        tf1 = editbox("dpi", dpi, 10, imageHeight + 55, 50); // max dpi: x=8.93E15, y=1.79E16
+        tf1 = editbox("dpi", dpi, 10, imageHeight + 55, 50);
         tf6 = editbox("centerX", centerX, 122, imageHeight + 55, 20);
         tf7 = editbox("centerY", centerY, 228, imageHeight + 55, 20);
 
