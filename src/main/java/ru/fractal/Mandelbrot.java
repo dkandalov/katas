@@ -4,16 +4,21 @@ package ru.fractal;
 import java.applet.Applet;
 import java.awt.*;
 
+import static java.lang.Math.*;
+
 
 /**
  * Mandelbrot and Julia Set Fractal Java Applet, 6/9/01
  */
 public class Mandelbrot extends Applet {
     Graphics graphics;
-    boolean julia;
+    boolean isJuliaSet;
 
     int imageWidth;
     int imageHeight;
+    private int imageXShift = 10;
+    private int imageYShift = 10;
+
     int maxIterations = 50;
     int coloringMethod = 0;
     int color = 0;
@@ -24,6 +29,8 @@ public class Mandelbrot extends Applet {
     double power = 2;
     double xc = 0;
     double yc = 0;
+
+    double threshold = 4.0;
 
     // Initial Layout
     TextField tf1, tf2, tf3, tf4, tf5, tf6, tf7;
@@ -103,15 +110,15 @@ public class Mandelbrot extends Applet {
             str = tf7.getText();
             if (str != null && str.length() != 0) y0 = Double.valueOf(str);
             generate();
-        } else if (event1.target == choice1) julia = (choice1.getSelectedIndex() == 1);
+        } else if (event1.target == choice1) isJuliaSet = (choice1.getSelectedIndex() == 1);
         else if (event1.target == choice2) coloringMethod = choice2.getSelectedIndex();
         else if (event1.target == choice3) color = choice3.getSelectedIndex();
         return true;
     }
 
     public boolean mouseUp(Event event1, int x, int y) {
-        x -= 10;
-        y -= 10;
+        x -= imageXShift;
+        y -= imageYShift;
         tf6.setText(String.valueOf(x0 + (x - 0.5 * imageWidth) / dpi));
         tf7.setText(String.valueOf(y0 - (y - 0.5 * imageHeight) / dpi));
         graphics = getGraphics();
@@ -122,33 +129,28 @@ public class Mandelbrot extends Applet {
     public void generate() {
         graphics = getGraphics();
         graphics.setColor(Color.black); // clear previous image
-        graphics.fillRect(10, 10, imageWidth, imageHeight);
+        graphics.fillRect(imageXShift, imageYShift, imageWidth, imageHeight);
 
-        boolean unbounded;
-        int c1;
-        int c2;
-        int r = 0;
-        int g = 0;
-        int b = 0;
-        int i;
-        int n = (int) power / 2 - ((power % 2 != 0) ? 1 : 0);
+        final int n = (int) power / 2 - ((power % 2 != 0) ? 1 : 0);
+
+        final double dx = 1 / dpi;
+
+        final double x1 = x0 - 0.5 * imageWidth / dpi;
+        final double x2 = x0 + 0.5 * imageWidth / dpi;
+        final double y1 = y0 - imageHeight * dx / 2;
+        final double y2 = y0 + imageHeight * dx / 2;
+
+        final double maxX = max(abs(x1), abs(x2));
+        final double maxY = max(abs(y1), abs(y2));
+        final double zm = sqrt(maxX * maxX + maxY * maxY);
 
         double x;
         double y;
-        double dx = 1 / dpi;
-        double x1 = x0 - 0.5 * imageWidth / dpi;
-        double x2 = x0 + 0.5 * imageWidth / dpi;
-        double y1 = y0 - imageHeight * dx / 2;
-        double y2 = y0 + imageHeight * dx / 2;
-        double t1 = Math.max(Math.abs(x1), Math.abs(x2));
-        double t2 = Math.max(Math.abs(y1), Math.abs(y2));
-        double zm = Math.sqrt(t1 * t1 + t2 * t2);
+        for (int iy = 0; iy <= imageHeight; iy++) {
+            if (!isJuliaSet) yc = y2 - iy * dx;
 
-        for (int iy = 0; iy <= imageHeight; ++iy) {
-            if (!julia) yc = y2 - iy * dx;
-
-            for (int ix = 0; ix <= imageWidth; ++ix) {
-                if (julia) {
+            for (int ix = 0; ix <= imageWidth; ix++) {
+                if (isJuliaSet) {
                     x = x1 + ix * dx;
                     y = y2 - iy * dx;
                 } else {
@@ -156,25 +158,28 @@ public class Mandelbrot extends Applet {
                     x = 0;
                     y = 0;
                 }
-                unbounded = false;
-                for (i = 0; (i < maxIterations) && (!unbounded); ++i) {
+
+                int iteration = 0;
+                boolean unbounded = false;
+
+                while (iteration < maxIterations && !unbounded) {
                     if (power >= 2 && power <= 25 && power % 1 == 0) { // faster logic
-                        for (int j = 0; j < n; ++j) {
-                            t1 = x * x - y * y;
+                        for (int i = 0; i < n; i++) {
+                            double tmp = x * x - y * y;
                             y = 2 * x * y;
-                            x = t1;
+                            x = tmp;
                         }
                         // z^2
                         if (power % 2 != 0) {
-                            t1 = x * (x * x - 3 * y * y);
+                            double tmp = x * (x * x - 3 * y * y);
                             y = y * (3 * x * x - y * y);
-                            x = t1;
+                            x = tmp;
                         } // z^3
                     } else {
-                        t1 = Math.atan2(y, x);
-                        t2 = Math.pow(x * x + y * y, power / 2.0);
-                        x = t2 * Math.cos(power * t1);
-                        y = t2 * Math.sin(power * t1);
+                        double tmp1 = pow(x * x + y * y, power / 2.0);
+                        double tmp2 = atan2(y, x);
+                        x = tmp1 * cos(power * tmp2);
+                        y = tmp1 * sin(power * tmp2);
                     } // z^n
 //   t1=x*x+y*y; x=x/t1; y=-y/t1; // z^-1
 //   t1=Math.atan(y/x); t2=Math.pow(x*x+y*y,0.25); x=t2*Math.cos(t1/2); y=t2*Math.sin(t1/2); // sqrt(z)
@@ -185,20 +190,27 @@ public class Mandelbrot extends Applet {
 //   t1=Math.log(x*x+y*y)/2; y=Math.atan(y/x); x=t1; // ln(z)
                     x += xc;
                     y += yc;
-                    if (x * x + y * y >= 4.0) unbounded = true;
+                    if (x * x + y * y >= threshold) unbounded = true;
+
+                    iteration++;
                 }
 
                 if (unbounded) {
-                    if (coloringMethod == 0) t1 = 1.0 * i / maxIterations; // iterations
-                    else if (coloringMethod == 1) t1 = Math.min(1, Math.sqrt(x * x + y * y) / zm); // magnitude
-                    else t1 = Math.min(1, Math.abs((coloringMethod == 2) ? x : y) / zm); // recenter: don't use abs
+                    double colorScale;
+                    if (coloringMethod == 0) colorScale = (double) iteration / maxIterations; // iterations
+                    else if (coloringMethod == 1) colorScale = min(1, sqrt(x * x + y * y) / zm); // magnitude
+                    else colorScale = min(1, abs((coloringMethod == 2) ? x : y) / zm); // recenter: don't use abs
+
+                    int r = 0;
+                    int g = 0;
+                    int b = 0;
                     if (color == 6) {
-                        r = (int) (255 * t1);
+                        r = (int) (255 * colorScale);
                         g = r;
                         b = r;
                     } else {
-                        c1 = (int) Math.min(255 * 2 * t1, 255);
-                        c2 = (int) Math.max(255 * (2 * t1 - 1), 0);
+                        int c1 = (int) min(255 * 2 * colorScale, 255);
+                        int c2 = (int) max(255 * (2 * colorScale - 1), 0);
                         switch (color) {
                             case 0:
                                 r = c1;
@@ -236,36 +248,21 @@ public class Mandelbrot extends Applet {
                 }
             }
         }
-
-        // Label Drawing
-        graphics.setColor(Color.white);
-        graphics.setFont(new Font("Serif", Font.BOLD, 12));
-        int sc = 9;
-        int sc2 = 9 * 5 / 3;
-        int ytxt = imageHeight + 10 - 5 + sc2;
-
-        if (imageWidth <= 1.0 * dpi) graphics.drawString("" + dpi + " dpi, Origin: " + x0 + "+" + y0 + "i", 15, ytxt -= sc2);
-        graphics.drawString("Max iterations: " + maxIterations, 15, ytxt -= sc2);
-
-        if (julia) graphics.drawString("Julia Set: z^" + power + "+" + xc + "+" + yc + "i", 15, ytxt -= sc2);
-        else graphics.drawString("Mandelbrot Set: z^" + power + "+zc", 15, ytxt -= sc2);
     }
 
-    // Generate Image
     public void pixel(int x, int y, int r, int g, int b) {
         Color color1 = new Color(r, g, b);
         graphics.setColor(color1);
-        graphics.fillRect(x + 10, y + 10, 1, 1);
+        graphics.fillRect(x + imageXShift, y + imageYShift, 1, 1);
     }
 
-    // Calculations
     public double sinh(double x) {
-        double t1 = Math.exp(x);
+        double t1 = exp(x);
         return (t1 - 1.0 / t1) / 2.0;
     }
 
     public double cosh(double x) {
-        double t1 = Math.exp(x);
+        double t1 = exp(x);
         return (t1 + 1.0 / t1) / 2.0;
     }
 }
