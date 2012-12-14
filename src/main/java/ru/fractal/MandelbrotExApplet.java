@@ -10,7 +10,7 @@ import static java.lang.Math.*;
 /**
  * Originally: Mandelbrot and Julia Set Fractal Java Applet, 6/9/01
  */
-public class Mandelbrot extends JPanel {
+public class MandelbrotExApplet extends JPanel {
     Graphics graphics;
     boolean isJuliaSet;
 
@@ -46,13 +46,13 @@ public class Mandelbrot extends JPanel {
 
     public static void main(String[] args) {
         JFrame jFrame = new JFrame();
-        jFrame.add(new Mandelbrot());
+        jFrame.add(new MandelbrotExApplet());
         jFrame.setSize(1000, 1000);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setVisible(true);
     }
 
-    public Mandelbrot() {
+    public MandelbrotExApplet() {
         imageWidth = 1000 - 20;
         imageHeight = 1000 - 180;
         dpi = imageWidth / 3;

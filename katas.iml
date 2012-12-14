@@ -4,7 +4,7 @@
     <facet type="scala" name="Scala">
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.1" />
+        <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.2" />
         <option name="vmOptions" value="" />
       </configuration>
     </facet>
@@ -109,12 +109,13 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.jcraft:jsch:0.1.23" level="project" />
     <orderEntry type="library" name="Maven: org.spockframework:spock-core:0.6-groovy-1.8" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: asm:asm:3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.9.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scalatest:scalatest_2.9.0-1:1.8" level="project" />
-    <orderEntry type="library" name="Maven: org.specs2:specs2_2.9.2:1.12.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-swing:2.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.scalatest:scalatest_2.9.2:1.8" level="project" />
+    <orderEntry type="library" name="Maven: org.specs2:specs2_2.9.2:1.12.3" level="project" />
     <orderEntry type="library" name="Maven: org.specs2:specs2-scalaz-core_2.9.2:6.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-tools.testing:scalacheck_2.8.0:1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-tools.testing:test-interface:0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-tools.testing:scalacheck_2.9.1:1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-tools.testing:test-interface:0.5" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor:2.0" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-remote:2.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:3.3.0.Final" level="project" />
