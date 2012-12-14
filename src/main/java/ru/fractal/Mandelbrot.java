@@ -65,13 +65,13 @@ public class Mandelbrot extends JPanel {
         choice1.setBounds(10, imageHeight + 20, 102, 25);
         add(choice1);
 
-        tf4 = editbox("xc", xc, 122, imageHeight + 20, 20);
-        tf5 = editbox("yc", yc, 228, imageHeight + 20, 20);
-        tf1 = editbox("dpi", dpi, 10, imageHeight + 55, 50);
-        tf6 = editbox("centerX", centerX, 122, imageHeight + 55, 20);
-        tf7 = editbox("centerY", centerY, 228, imageHeight + 55, 20);
+        tf4 = createEditbox("xc", xc, 122, imageHeight + 20, 20);
+        tf5 = createEditbox("yc", yc, 228, imageHeight + 20, 20);
+        tf1 = createEditbox("dpi", dpi, 10, imageHeight + 55, 50);
+        tf6 = createEditbox("centerX", centerX, 122, imageHeight + 55, 20);
+        tf7 = createEditbox("centerY", centerY, 228, imageHeight + 55, 20);
 
-        tf2 = editbox("max iterations", 0.0, 10, imageHeight + 90, 72);
+        tf2 = createEditbox("max iterations", 0.0, 10, imageHeight + 90, 72);
         tf2.setText(String.valueOf(maxIterations));
 
         choice2.addItem("iterations");
@@ -91,12 +91,12 @@ public class Mandelbrot extends JPanel {
         choice3.setBounds(228, imageHeight + 90, 102, 25);
         add(choice3);
 
-        tf3 = editbox("power", power, 10, imageHeight + 125, 50);
+        tf3 = createEditbox("power", power, 10, imageHeight + 125, 50);
         button1.setBounds(228, imageHeight + 125, 102, 25);
         add(button1);
     }
 
-    private TextField editbox(String str, double value, int x, int y, int w) {
+    private TextField createEditbox(String str, double value, int x, int y, int w) {
         Label label = new Label(str + ":");
         label.setBounds(x, y, w, 25);
         add(label);
@@ -144,7 +144,7 @@ public class Mandelbrot extends JPanel {
         return true;
     }
 
-    public void generate() {
+    private void generate() {
         final int n = (int) power / 2 - ((power % 2 != 0) ? 1 : 0);
 
         final double dx = 3.0 / imageWidth;
@@ -280,17 +280,17 @@ public class Mandelbrot extends JPanel {
         return new Color(r, g, b);
     }
 
-    public void drawPixelAt(int x, int y, Color color) {
+    private void drawPixelAt(int x, int y, Color color) {
         graphics.setColor(color);
         graphics.fillRect(x + imageXShift, y + imageYShift, 1, 1);
     }
 
-    public double sinh(double x) {
+    private static double sinh(double x) {
         double t1 = exp(x);
         return (t1 - 1.0 / t1) / 2.0;
     }
 
-    public double cosh(double x) {
+    private static double cosh(double x) {
         double t1 = exp(x);
         return (t1 + 1.0 / t1) / 2.0;
     }

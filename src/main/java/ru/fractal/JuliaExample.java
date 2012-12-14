@@ -152,7 +152,7 @@ public class JuliaExample {
         BufferedImage image = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < WINDOW_WIDTH; x++) {
             for (int y = 0; y < WINDOW_HEIGHT; y++) {
-                float value = (float) (pointInFractal[x][y] - threshold * threshold);
+                float value = (float) (pointInFractal[x][y] - threshold);
                 if (Float.isNaN(value)) {
                     value = 0;
                 } else {
