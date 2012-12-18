@@ -36,52 +36,73 @@ object Mandelbrot0 extends SimpleSwingApplication {
   }
 }
 
-case class FractalSettings() // TODO use it
+case class FractalSettings(
+  imageWidth: Int = 800,
+  imageHeight: Int = 600,
+  maxIterations: Int = 50,
+  iterationThreshold: Double = 4.0,
+  scaleByWidth: Double = 3.0,
+  leftX: Double = -0.5,
+  topY: Double = 0.0
+) {
+  val pixelScale: Double = scaleByWidth / imageWidth
+  val topLeftCorner: Complex = Complex(
+    leftX - 0.5 * (imageWidth * pixelScale),
+    topY - 0.5 * (imageHeight * pixelScale)
+  )
+}
 
 case class Complex(a: Double, b: Double) {
   def +(that: Complex) =  Complex(a + that.a, b + that.b)
   def square = Complex(a * a - b * b, 2 * a * b)
   def squareOfAbs = a * a + b * b
+  def abs = math.sqrt(a * a + b * b)
 }
 
 class Mandelbrot0 {
-  val imageWidth = 800
-  val imageHeight = 600
-
   def calculateFractal(settings: FractalSettings): Array[Array[Int]] = {
-    val pixelScale = 3.0 / imageWidth
-    val topLeftCorner = Complex(
-      -0.5 - 0.5 * (imageWidth * pixelScale),
-      0 - 0.5 * (imageHeight * pixelScale)
-    )
-
-    val maxIterations = 50
-    val threshold = 4.0
-
+    import settings._
     val result = Array.ofDim[Int](imageWidth, imageHeight)
-    for (xPixel <- 0 until imageWidth; yPixel <- 0 until imageHeight) {
-      val pointC = topLeftCorner + Complex(xPixel * pixelScale, yPixel * pixelScale)
-      val point = Complex(0, 0)
 
-      iterate(point, pointC, threshold, maxIterations) match {
-        case Some(iteration) =>
-          result(xPixel)(yPixel) = rgbColorFromIteration(iteration, maxIterations)
+    for (xPixel <- 0 until imageWidth; yPixel <- 0 until imageHeight) {
+      val constant = topLeftCorner + Complex(xPixel * pixelScale, yPixel * pixelScale)
+      val value = Complex(0, 0)
+      iterateOver(value, constant, iterationThreshold, maxIterations) match {
+        case Some((resultValue, iteration)) =>
+          result(xPixel)(yPixel) = grayScaleColorByIteration(iteration, maxIterations)
+//          result(xPixel)(yPixel) = grayScaleColorByMagnitude(resultValue, maxIterations)
+//          result(xPixel)(yPixel) = redColorByMagnitude(resultValue, maxIterations)
         case None => // do nothing
       }
     }
     result
   }
 
-  private def rgbColorFromIteration(iteration: Int, maxIterations: Int): Int = {
+  private def grayScaleColorByIteration(iteration: Int, maxIterations: Int): Int = {
     val colorScale = iteration.toDouble / maxIterations
     val color = (255 * colorScale).toInt
     new Color(color, color, color).getRGB
   }
 
-  @tailrec private def iterate(point: Complex, pointC: Complex, threshold: Double, maxIterations: Int, iteration: Int = 0): Option[Int] = {
+  val zm = math.sqrt(3 * 3 + 2 * 2) // this is based on approximate max x, y values but does it really have to be?
+
+  private def grayScaleColorByMagnitude(value: Complex, maxIterations: Int): Int = {
+    val colorScale = math.min(1, value.abs / zm)
+    val color = (255 * colorScale).toInt
+    new Color(color, color, color).getRGB
+  }
+
+  private def redColorByMagnitude(value: Complex, maxIterations: Int): Int = {
+    val colorScale = math.min(1, value.a.abs / zm)
+    val color1 = math.min(255, 255 * 2 * colorScale).toInt
+    val color2 = math.max(0, (255 * colorScale - 1)).toInt
+    new Color(color1, color2, color2).getRGB
+  }
+
+  @tailrec private def iterateOver(value: Complex, constant: Complex, threshold: Double, maxIterations: Int, iteration: Int = 0): Option[(Complex, Int)] = {
     if (iteration >= maxIterations) None
-    else if (point.squareOfAbs >= threshold) Some(iteration)
-    else iterate(point.square + pointC, pointC, threshold, maxIterations, iteration + 1)
+    else if (value.squareOfAbs >= threshold) Some((value, iteration))
+    else iterateOver(value.square + constant, constant, threshold, maxIterations, iteration + 1)
   }
 }
 
