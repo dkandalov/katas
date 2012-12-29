@@ -2,8 +2,9 @@
   (:use clojure.test))
 
 (defn merge-sort [values]
+  (if (< (count values) 2) values
   values
-)
+))
 
 (deftest given-a-vector-should-sort-it
   (is (= (merge-sort []) []))
