@@ -5,12 +5,12 @@
   (defn do-merge [part1 part2]
     part1
   )
-  (defn mid-index-of [value] (/ (count values) 2))
+  (defn mid-index-of [values] (quot (count values) 2))
   (defn first-part-of [values] (subvec values 0 (mid-index-of values)))
   (defn second-part-of [values] (subvec values (mid-index-of values)))
 
   (if (< (count values) 2) values
-  (do-merge (first-part-of values) (second-part-of values))
+  (do-merge (merge-sort (first-part-of values)) (merge-sort (second-part-of values)))
 ))
 
 (deftest given-a-vector-should-sort-it
