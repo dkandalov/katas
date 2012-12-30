@@ -5,8 +5,9 @@
   (defn do-merge [part1 part2]
     part1
   )
-  (defn firstPartOf [values] values)
-  (defn secondPartOf [values] values)
+  (defn mid-index-of [value] (/ (count values) 2))
+  (defn firstPartOf [values] (subvec values 0 (mid-index-of values)))
+  (defn secondPartOf [values] (subvec values (mid-index-of values)))
 
   (if (< (count values) 2) values
   (do-merge (firstPartOf values) (secondPartOf values))
