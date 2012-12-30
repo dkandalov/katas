@@ -5,16 +5,6 @@
 #include <string.h>
 
 
-#define TUTORIAL_PART 7
-
-char fakeInput[] = "asdf ghjkl!!\nanother line\nohh!!";
-int fakeInputPosition = 0;
-// fake function to avoid real input
-char getchar_fake() {
-	if (fakeInputPosition == sizeof(fakeInput)) return EOF;
-	else return fakeInput[fakeInputPosition++];
-}
-
 #define with_args(values...) values
 #define format_as(resultVar, format, formatArgs) char *resultVar = (char *) malloc(10000); sprintf(resultVar, format, formatArgs);
 
@@ -39,7 +29,47 @@ int my_power(int base, int n) {
 	return p;
 }
 
+void part_1_1() {
+	printf("hello, !!!! ooooa aaa ");
+	printf("world");
+	printf("\n");
+}
+
+void part_1_2() {
+	#define LOWER  0
+    #define UPPER  300
+    #define STEP   20
+
+    int fahr = LOWER;
+    while (fahr <= UPPER) {
+        int celsius = 5 * (fahr-32) / 9;
+        printf("%d\t%d\n", fahr, celsius);
+        fahr = fahr + STEP;
+    }
+
+    for (fahr = LOWER; fahr <= UPPER; fahr = fahr + STEP)
+        printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
+}
+
+
+char fakeInput[] = "asdf ghjkl!!\nanother line\nohh!!";
+int fakeInputPosition = 0;
+// fake function to avoid real input
+char getchar_fake() {
+	if (fakeInputPosition == sizeof(fakeInput)) return EOF;
+	else return fakeInput[fakeInputPosition++];
+}
+
+void part_1_5_1() {
+	fakeInputPosition = 0;
+
+    char c;
+    while ((c = getchar_fake()) != EOF) putchar(c);
+}
+
 void part_1_5_2() {
+	fakeInputPosition = 0;
+
     long nc = 0;
 //    while (getchar_fake() != EOF) ++nc;
     for (nc = 0; getchar_fake() != EOF; ++nc);
@@ -49,6 +79,8 @@ void part_1_5_2() {
 }
 
 void part_1_5_3() {
+	fakeInputPosition = 0;
+
     int c, nl;
     nl = 0;
     while ((c = getchar_fake()) != EOF) {
@@ -60,6 +92,8 @@ void part_1_5_3() {
 }
 
 void part_1_5_4() {
+	fakeInputPosition = 0;
+
     #define IN   1  /* inside a word */
     #define OUT  0  /* outside a word */
 
@@ -82,55 +116,31 @@ void part_1_5_4() {
 	stringShouldEqual("2 5 32\n", actual);
 }
 
+void part_1_6() {
+    int ndigit[10];
+    ndigit[0] = 12;
+    ndigit[1] = 14;
+
+    int i;
+    for (i = 0; i < 10; ++i) {
+        printf(" %d", ndigit[i]);
+    }
+}
+
+void part_1_7() {
+	int i;
+	for (i = 0; i < 10; ++i)
+	    printf("%d %d %d\n", i, my_power(2,i), my_power(-3,i));
+}
+
 
 int main() {
-    if (TUTORIAL_PART == 0) {
-        printf("hello, !!!! ooooa aaa ");
-        printf("world");
-        printf("\n");
-
-    } else if (TUTORIAL_PART == 1) {
-	    #define LOWER  0
-	    #define UPPER  300
-	    #define STEP   20
-
-        int fahr = LOWER;
-        while (fahr <= UPPER) {
-            int celsius = 5 * (fahr-32) / 9;
-            printf("%d\t%d\n", fahr, celsius);
-            fahr = fahr + STEP;
-        }
-
-        for (fahr = LOWER; fahr <= UPPER; fahr = fahr + STEP)
-            printf("%3d %6.1f\n", fahr, (5.0/9.0)*(fahr-32));
-
-    } else if (TUTORIAL_PART == 2) {
-        int ndigit[10];
-        ndigit[0] = 12;
-        ndigit[1] = 14;
-
-        int i;
-        for (i = 0; i < 10; ++i) {
-            printf(" %d", ndigit[i]);
-        }
-
-    } else if (TUTORIAL_PART == 3) {
-        int i;
-    	for (i = 0; i < 10; ++i)
-            printf("%d %d %d\n", i, my_power(2,i), my_power(-3,i));
-
-    } else if (TUTORIAL_PART == 4) {
-        char c;
-        while ((c = getchar_fake()) != EOF) putchar(c);
-
-    } else if (TUTORIAL_PART == 5) {
-        part_1_5_2();
-
-    } else if (TUTORIAL_PART == 6) {
-        part_1_5_3();
-
-    } else if (TUTORIAL_PART == 7) {
-        part_1_5_4();
-    }
-
+    part_1_1();
+    part_1_2();
+    part_1_5_1();
+    part_1_5_2();
+    part_1_5_3();
+    part_1_5_4();
+    part_1_6();
+    part_1_7();
 }
