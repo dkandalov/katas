@@ -133,6 +133,46 @@ void part_1_7() {
 	    printf("%d %d %d\n", i, my_power(2,i), my_power(-3,i));
 }
 
+/* getline:  read a line into s, return length  */
+int getline_1_8(char s[],int lim) {
+	int c, i;
+	for (i=0; i < lim-1 && (c=getchar_fake())!=EOF && c!='\n'; ++i)
+		s[i] = c;
+	if (c == '\n') {
+        s[i] = c;
+		++i;
+	}
+	s[i] = '\0';
+	return i;
+}
+
+/* copy:  copy ÕfromÕ into ÕtoÕ; assume to is big enough */
+void copy(char to[], char from[]) {
+	int i;
+    i = 0;
+    while ((to[i] = from[i]) != '\0') ++i;
+}
+
+void part_1_8() {
+	#define MAXLINE 1000   /* maximum input line length */
+
+	fakeInputPosition = 0;
+
+	int len; /* longest line saved here */
+	int max; /* current line length */
+	char line[MAXLINE]; /* maximum length seen so far */
+	char longest[MAXLINE]; /* current input line */
+
+	max = 0;
+	while ((len = getline_1_8(line, MAXLINE)) > 0)
+	   if (len > max) {
+	       max = len;
+	       copy(longest, line);
+	   }
+	if (max > 0) /* there was a line */
+	   printf("%s", longest);
+}
+
 
 int main() {
     part_1_1();
@@ -143,4 +183,5 @@ int main() {
     part_1_5_4();
     part_1_6();
     part_1_7();
+    part_1_8();
 }
