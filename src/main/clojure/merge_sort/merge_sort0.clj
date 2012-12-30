@@ -7,7 +7,7 @@
       (empty? part1) part2
       (empty? part2) part1
       (<= (first part1) (first part2)) (cons (first part1) (do-merge (rest part1) part2))
-      :else (cons (first part1) (do-merge part1 (rest part2)))
+      :else (cons (first part2) (do-merge part1 (rest part2)))
   ))
   (defn mid-index-of [values] (quot (count values) 2))
   (defn first-part-of [values] (subvec values 0 (mid-index-of values)))
