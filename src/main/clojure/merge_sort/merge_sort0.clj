@@ -2,8 +2,14 @@
   (:use clojure.test))
 
 (defn merge-sort [values]
+  (defn do-merge [part1 part2]
+    part1
+  )
+  (defn firstPartOf [values] values)
+  (defn secondPartOf [values] values)
+
   (if (< (count values) 2) values
-  values
+  (do-merge (firstPartOf values) (secondPartOf values))
 ))
 
 (deftest given-a-vector-should-sort-it
