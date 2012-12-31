@@ -173,6 +173,29 @@ void part_1_8() {
 	   printf("%s", longest);
 }
 
+void part_2_2() {
+    short int shortInt;
+    long int longInt;
+    // short float short Float;  // error
+    // long float longFloat;     // error
+    // short double shortDouble; // error
+    long double longDouble;
+
+    signed char signedChar;
+    unsigned char unsignedChar;
+    signed int signedInt;
+    unsigned int unsignedInt;
+    // signed double signedDouble; // error
+    // unsigned double unsignedDouble; // error
+}
+
+void part_2_3() {
+    #define A_LONG 12345L
+    #define AN_UNSIGNED_LONG 12345UL
+
+    enum months { JAN = 1, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC };
+    printf("%d, %d, %d", JAN, FEB, MAR);
+}
 
 int main() {
     part_1_1();
@@ -184,4 +207,7 @@ int main() {
     part_1_6();
     part_1_7();
     part_1_8();
+
+    part_2_2();
+    part_2_3();
 }
