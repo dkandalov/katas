@@ -8,7 +8,7 @@
 #define with_args(values...) values
 #define format_as(resultVar, format, formatArgs) char *resultVar = (char *) malloc(10000); sprintf(resultVar, format, formatArgs);
 
-void stringShouldEqual(char expected[], char actual[]) {
+void stringShouldEqual(const char expected[], const char actual[]) {
 	int result = strcmp(expected, actual);
 	if (result == 0) return;
 
@@ -197,6 +197,30 @@ void part_2_3() {
     printf("%d, %d, %d", JAN, FEB, MAR);
 }
 
+int my_atoi(char s[]) {
+	int i, n;
+	n = 0;
+	for (i = 0; s[i] >= '0' && s[i] <= '9'; ++i)
+	   n = 10 * n + (s[i] - '0');
+	return n;
+}
+
+int my_lower(int c) {
+	if (c >= 'A' && c <= 'Z')
+	   return c + 'a' - 'A';
+	else
+	   return c;
+}
+
+void part_2_7() {
+	printf("%d\n", my_atoi("12345"));
+	printf("%d\n", my_atoi("12345qwerty"));
+	printf("%c", my_lower('P'));
+	printf("%c", my_lower('I'));
+	printf("%c", my_lower('g'));
+}
+
+
 int main() {
     part_1_1();
     part_1_2();
@@ -210,4 +234,5 @@ int main() {
 
     part_2_2();
     part_2_3();
+    part_2_7();
 }
