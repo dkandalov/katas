@@ -415,6 +415,68 @@ void part_5_1() {
     (*ip)++;
 }
 
+void swap_5_2(int *a, int *b) {
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+/* getint:  get next integer from input into *pn */
+int getint(int *pn) {
+	int c, sign;
+	while (isspace(c = getch()));
+	if (!isdigit(c) && c != EOF && c != '+' && c != '-') {
+		ungetch(c);  /* it is not a number */
+		return 0;
+	}
+
+	sign = (c == '-') ? -1 : 1;
+	if (c == '+' || c == '-') c = getch();
+
+	for (*pn = 0; isdigit(c); c = getch())
+		*pn = 10 * *pn + (c - '0');
+	*pn *= sign;
+	if (c != EOF) ungetch(c);
+	return c;
+}
+
+void part_5_2() {
+	int a = 12;
+	int b = 23;
+	swap_5_2(&a, &b);
+	printf("%d, %d\n", a, b);
+
+	init_fake_input_to("123 234 -345");
+	int result;
+	getint(&result); printf("%d\n", result);
+	getint(&result); printf("%d\n", result);
+	getint(&result); printf("%d\n", result);
+}
+
+#define ALLOCSIZE 10000 /* size of available space */
+static char allocbuf[ALLOCSIZE]; /* storage for alloc */
+static char *allocp = allocbuf;  /* next free position */
+
+char *alloc(int n) {    /* return pointer to n characters */
+	if (allocbuf + ALLOCSIZE - allocp >= n) {  /* it fits */
+		allocp += n;
+		return allocp - n; /* old p */
+	} else {     /* not enough room */
+		return 0;
+	}
+}
+void afree(char *p) {  /* free storage pointed to by p */
+	if (p >= allocbuf && p < allocbuf + ALLOCSIZE)
+		allocp = p;
+}
+
+void part_5_4() {
+	char *s1 = alloc(20);
+	char *s2 = alloc(10);
+	afree(s2);
+	afree(s1);
+}
+
 
 int main() {
 //    part_1_1();
@@ -432,9 +494,10 @@ int main() {
 //    part_2_7();
 
 //    part_4_3();
-    part_4_6();
-    part_4_10();
-    part_4_11();
+//    part_4_6();
+//    part_4_10();
+//    part_4_11();
 
     part_5_1();
+    part_5_2();
 }
