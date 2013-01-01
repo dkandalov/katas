@@ -330,20 +330,78 @@ void part_4_3() {
 	}
 }
 
+void increaseCounter() {
+	static int internalStaticCounter;
+	printf("%d\n", internalStaticCounter++);
+}
+
+void part_4_6() {
+	increaseCounter();
+	increaseCounter();
+	increaseCounter();
+}
+
+void printDecimal(int n) {
+	if (n < 0) {
+		putchar('-');
+		n = -n;
+	}
+	if (n / 10) printDecimal(n / 10);
+	putchar(n % 10 + '0');
+}
+
+void my_swap(int v[], int i, int j) {
+	int temp = v[i];
+	v[i] = v[j];
+	v[j] = temp;
+}
+
+void my_qsort(int v[], int left, int right) {
+	int i, last;
+
+	if (left >= right) return;
+
+	my_swap(v, left, (left + right) / 2); /* move partition elem */
+	last = left;                          /* to v[0] */
+	for (i = left + 1; i <= right; i++)  /* partition */
+		if (v[i] < v[left]) my_swap(v, ++last, i);
+
+	my_swap(v, left, last); /* restore partition  elem */
+	my_qsort(v, left, last-1);
+	my_qsort(v, last+1, right);
+}
+
+void part_4_10() {
+	printDecimal(1234);
+	printf("\n");
+
+	int values[] = {2, 1, 4, 3};
+	my_qsort(values, 0, 4);
+
+	int i;
+	for (i = 0; i < 4; i++) {
+		printDecimal(values[i]);
+		printf(" ");
+	}
+}
+
+
 int main() {
-    part_1_1();
-    part_1_2();
-    part_1_5_1();
-    part_1_5_2();
-    part_1_5_3();
-    part_1_5_4();
-    part_1_6();
-    part_1_7();
-    part_1_8();
+//    part_1_1();
+//    part_1_2();
+//    part_1_5_1();
+//    part_1_5_2();
+//    part_1_5_3();
+//    part_1_5_4();
+//    part_1_6();
+//    part_1_7();
+//    part_1_8();
+//
+//    part_2_2();
+//    part_2_3();
+//    part_2_7();
 
-    part_2_2();
-    part_2_3();
-    part_2_7();
-
-    part_4_3();
+//    part_4_3();
+    part_4_6();
+    part_4_10();
 }
