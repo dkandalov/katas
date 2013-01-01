@@ -383,6 +383,36 @@ void part_4_10() {
 		printDecimal(values[i]);
 		printf(" ");
 	}
+	printf("\n");
+}
+
+// to see preprocessor output: gcc -E <filename>
+void part_4_11() {
+	#define  dprint(expr)   printf(#expr " = %g\n", expr)
+	double x = 12;
+	double y = 24;
+    dprint(x/y);
+
+    #define paste(front, back) front ## back
+    double paste(x, 11) = 123;
+    dprint(x11);
+}
+
+void part_5_1() {
+	int x = 1, y = 2, z[10];
+	int *ip; /* ip is a pointer to int */
+
+    ip = &x; /* ip now points to x */
+    y = *ip; /* y is now 1 */
+    *ip = 0; /* x is now 0 */
+    ip = &z[0]; /* ip now points to z[0] */
+
+	*ip = *ip + 10; // increments *ip by 10
+    y = *ip + 1; // takes whatever ip points at, adds 1, and assigns the result to y
+    *ip += 1; // increments what ip points to, as do
+    ++*ip;
+    //and
+    (*ip)++;
 }
 
 
@@ -404,4 +434,7 @@ int main() {
 //    part_4_3();
     part_4_6();
     part_4_10();
+    part_4_11();
+
+    part_5_1();
 }
