@@ -52,13 +52,21 @@ void part_1_2() {
 }
 
 
-char fakeInput[] = "asdf ghjkl!!\nanother line\nohh!!";
+char* fakeInput = "asdf ghjkl!!\nanother line\nohh!!";
+int fakeInputSize = 0;
 int fakeInputPosition = 0;
 // fake function to avoid real input
 char getchar_fake() {
-	if (fakeInputPosition == sizeof(fakeInput)) return EOF;
+	if (fakeInputPosition == strlen(fakeInput)) return EOF;
 	else return fakeInput[fakeInputPosition++];
 }
+
+void init_fake_input_to(char s[]) {
+	fakeInput = s;
+	fakeInputSize = strlen(s);
+	fakeInputPosition = 0;
+}
+
 
 void part_1_5_1() {
 	fakeInputPosition = 0;
@@ -68,14 +76,14 @@ void part_1_5_1() {
 }
 
 void part_1_5_2() {
-	fakeInputPosition = 0;
+	init_fake_input_to("asdf ghjkl!!\nanother line\nohh!!");
 
     long nc = 0;
 //    while (getchar_fake() != EOF) ++nc;
     for (nc = 0; getchar_fake() != EOF; ++nc);
 
     format_as(actual, "%ld\n", nc);
-    stringShouldEqual("32\n", actual);
+    stringShouldEqual("31\n", actual);
 }
 
 void part_1_5_3() {
@@ -113,7 +121,7 @@ void part_1_5_4() {
 	}
 
 	format_as(actual, "%d %d %d\n", with_args(nl, nw, nc));
-	stringShouldEqual("2 5 32\n", actual);
+	stringShouldEqual("2 5 31\n", actual);
 }
 
 void part_1_6() {
@@ -220,6 +228,107 @@ void part_2_7() {
 	printf("%c", my_lower('g'));
 }
 
+#define MAXOP   100  /* max size of operand or operator */
+#define NUMBER  '0'  /* signal that a number was found */
+
+#define MAXVAL 100  /* maximum depth of val stack */
+int sp = 0;         /* next free stack position */
+double val[MAXVAL]; /* value stack */
+
+/* push:  push f onto value stack */
+void push(double f) {
+	if (sp < MAXVAL)
+		val[sp++] = f;
+	else
+		printf("error: stack full, canÕt push %g\n", f);
+}
+
+/* pop:  pop and return top value from stack */
+double pop(void) {
+	if (sp > 0) {
+		return val[--sp];
+	} else {
+		printf("error: stack empty\n");
+		return 0.0;
+	}
+}
+
+#define BUFSIZE 100
+char buf[BUFSIZE];    /* buffer for ungetch */
+int bufp = 0;         /* next free position in buf */
+
+/* get a (possibly pushed-back) character */
+int getch(void) {
+	return (bufp > 0) ? buf[--bufp] : getchar_fake();
+}
+
+/* push character back on input */
+void ungetch(int c) {
+	if (bufp >= BUFSIZE)
+		printf("ungetch: too many characters\n");
+	else
+		buf[bufp++] = c;
+}
+
+int getop(char s[]) {
+	int i, c;
+	while ((s[0] = c = getch()) == ' ' || c == '\t');
+
+	s[1] = '\0';
+	if (!isdigit(c) && c != '.') return c; /* not a number */
+
+	i = 0;
+	if (isdigit(c)) /* collect integer part */
+		while (isdigit(s[++i] = c = getch()));
+
+	if (c == '.') /* collect fraction part */
+		while (isdigit(s[++i] = c = getch()));
+
+	s[i] = '\0';
+	if (c != EOF) ungetch(c);
+	return NUMBER;
+}
+
+void part_4_3() {
+    init_fake_input_to("2 2 3 + *\n");
+
+	int type;
+	double op2;
+	char s[MAXOP];
+
+	while ((type = getop(s)) != EOF) {
+		printf("%s\n", s);
+
+		switch (type) {
+			case NUMBER:
+				push(atof(s));
+				break;
+			case '+':
+				push(pop() + pop());
+				break;
+			case '*':
+				push(pop() * pop());
+				break;
+			case '-':
+				op2 = pop();
+				push(pop() - op2);
+				break;
+			case '/':
+				op2 = pop();
+				if (op2 != 0.0)
+				   push(pop() / op2);
+				else
+				   printf("error: zero divisor\n");
+				break;
+			case '\n':
+				printf("\t%.8g\n", pop());
+				break;
+			default:
+				printf("error: unknown command %s\n", s);
+			break;
+		}
+	}
+}
 
 int main() {
     part_1_1();
@@ -235,4 +344,6 @@ int main() {
     part_2_2();
     part_2_3();
     part_2_7();
+
+    part_4_3();
 }
