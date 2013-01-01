@@ -52,7 +52,7 @@ void part_1_2() {
 }
 
 
-char* fakeInput = "asdf ghjkl!!\nanother line\nohh!!";
+char *fakeInput = "asdf ghjkl!!\nanother line\nohh!!";
 int fakeInputSize = 0;
 int fakeInputPosition = 0;
 // fake function to avoid real input
@@ -477,6 +477,68 @@ void part_5_4() {
 	afree(s1);
 }
 
+/* strcpy:  copy t to s; array subscript version */
+void strcpy_1(char *s, char *t) {
+	int i;
+	i = 0;
+	while ((s[i] = t[i]) != '\0') i++;
+}
+/* strcpy:  copy t to s; pointer version */
+void strcpy_2(char *s, char *t) {
+	int i;
+	i = 0;
+	while ((*s = *t) != '\0') {
+		s++;
+		t++;
+	}
+}
+/* strcpy:  copy t to s; pointer version 2 */
+void strcpy_3(char *s, char *t) {
+	while ((*s++ = *t++) != '\0');
+}
+/* strcpy:  copy t to s; pointer version 3 */
+void strcpy_4(char *s, char *t) {
+	while (*s++ = *t++);
+}
+/* array version */
+int strcmp_1(char *s, char *t) {
+	int i;
+	for (i = 0; s[i] == t[i]; i++)
+		if (s[i] == '\0') return 0;
+	return s[i] - t[i];
+}
+/* pointer version */
+int strcmp_2(char *s, char *t) {
+	for (; *s == *t; s++, t++)
+		if (*s == '\0') return 0;
+	return *s - *t;
+}
+
+void part_5_5() {
+	char abc[] = "abc";
+	char xyz[] = "xyz";
+	char s[] = "---";
+
+	strcpy_1(s, abc);
+	printf("s: %s\n", s);
+
+	strcpy_2(s, xyz);
+	printf("s: %s\n", s);
+
+	strcpy_3(s, "cde"); // can also use string literals (!)
+	printf("s: %s\n", s);
+
+	strcpy_4(s, "fgh");
+	printf("s: %s\n", s);
+
+	int result = 0;
+	result = strcmp_1("abc", "abc"); printf("%d\n", result);
+	result = strcmp_1("abc", "abd"); printf("%d\n", result);
+	result = strcmp_2("abc", "abc"); printf("%d\n", result);
+	result = strcmp_2("abc", "abd"); printf("%d\n", result);
+}
+
+
 
 int main() {
 //    part_1_1();
@@ -500,4 +562,6 @@ int main() {
 
     part_5_1();
     part_5_2();
+    part_5_4();
+    part_5_5();
 }
