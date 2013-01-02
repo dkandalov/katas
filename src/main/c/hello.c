@@ -154,7 +154,7 @@ int getline_1_8(char s[], int lim) {
 	return i;
 }
 
-/* copy:  copy ÕfromÕ into ÕtoÕ; assume to is big enough */
+/* copy:  copy ï¿½fromï¿½ into ï¿½toï¿½; assume to is big enough */
 void copy(char to[], char from[]) {
 	int i;
     i = 0;
@@ -240,7 +240,7 @@ void push(double f) {
 	if (sp < MAXVAL)
 		val[sp++] = f;
 	else
-		printf("error: stack full, canÕt push %g\n", f);
+		printf("error: stack full, canï¿½t push %g\n", f);
 }
 
 /* pop:  pop and return top value from stack */
@@ -587,7 +587,7 @@ void qsort_5_6(char *v[], int left, int right) {
 }
 
 void part_5_6() {
-	init_fake_input_to("hoho\nunsorted\nlines\n");
+	init_fake_input_to("hoho\nunsorted\nlines\naaa\nzzz\n");
 
 	int nlines;     /* number of input lines read */
 	if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
@@ -647,6 +647,53 @@ void part_5_8() {
 	printf("%s\n", month_name(2));
 }
 
+/* numcmp:  compare s1 and s2 numerically */
+int numcmp(char *s1, char *s2) {
+	double v1, v2;
+	v1 = atof(s1);
+	v2 = atof(s2);
+
+	if (v1 < v2) return -1;
+	else if (v1 > v2) return 1;
+	else return 0;
+}
+void swap_5_11(void *v[], int i, int j) {
+	void *temp;
+	temp = v[i];
+	v[i] = v[j];
+	v[j] = temp;
+}
+void qsort_5_11(void *v[], int left, int right, int (*comp)(void *, void *)) {
+	int i, last;
+
+	if (left >= right) return;
+
+	swap_5_11(v, left, (left + right) / 2);
+	last = left;
+	for (i = left + 1; i <= right;  i++)
+		if ((*comp)(v[i], v[left]) < 0)
+			swap_5_11(v, ++last, i);
+
+	swap_5_11(v, left, last);
+	qsort_5_11(v, left, last-1, comp);
+	qsort_5_11(v, last+1, right, comp);
+}
+void part_5_11() {
+	init_fake_input_to("hoho\nunsorted\nlines\naaa\nzzz\n");
+
+	int nlines;     /* number of input lines read */
+	int numeric = 0;   /* 1 if numeric sort */
+
+	if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
+		qsort_5_11((void**) lineptr, 0, nlines - 1,
+                   (int (*)(void*, void*))(numeric ? numcmp : strcmp_1));
+		writelines(lineptr, nlines);
+	} else {
+		printf("error: input too big to sort\n");
+    }
+}
+
+
 int main() {
 //    part_1_1();
 //    part_1_2();
@@ -671,7 +718,8 @@ int main() {
 //    part_5_2();
 //    part_5_4();
 //    part_5_5();
-    part_5_6();
-    part_5_7();
-    part_5_8();
+//    part_5_6();
+//    part_5_7();
+//    part_5_8();
+    part_5_11();
 }
