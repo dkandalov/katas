@@ -598,6 +598,55 @@ void part_5_6() {
     }
 }
 
+static char daytab[2][13] = {
+	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+};
+/* day_of_year:  set day of year from month & day */
+int day_of_year(int year, int month, int day) {
+	int i, leap;
+	leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
+	for (i = 1; i < month; i++)
+		day += daytab[leap][i];
+	return day;
+}
+/* month_day:  set month, day from day of year */
+void month_day(int year, int yearday, int *pmonth, int *pday) {
+	int i, leap;
+	leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
+	for (i = 1; yearday > daytab[leap][i]; i++)
+		yearday -= daytab[leap][i];
+	*pmonth = i;
+	*pday = yearday;
+}
+void part_5_7() {
+    int dayOfYear = day_of_year(2012, 2, 27);
+    printf("dayOfYear: %d\n", dayOfYear);
+
+    int month;
+    int day;
+    month_day(2012, 58, &month, &day);
+    printf("month: %d, day: %d\n", month, day);
+
+	// f(int (*daytab)[13]); // which says that the parameter is a pointer to an array of 13 integers. Without parentheses, the declaration
+    // int *daytab[13]; // is an array of 13 pointers to integers
+}
+
+/* month_name:  return name of n-th month */
+char *month_name(int n) {
+	static char *name[] = {
+		"Illegal month",
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+	};
+	return (n < 1 || n > 12) ? name[0] : name[n];
+}
+void part_5_8() {
+	printf("%s\n", month_name(0));
+	printf("%s\n", month_name(1));
+	printf("%s\n", month_name(2));
+}
+
 int main() {
 //    part_1_1();
 //    part_1_2();
@@ -623,4 +672,6 @@ int main() {
 //    part_5_4();
 //    part_5_5();
     part_5_6();
+    part_5_7();
+    part_5_8();
 }
