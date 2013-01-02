@@ -142,7 +142,7 @@ void part_1_7() {
 }
 
 /* getline:  read a line into s, return length  */
-int getline_1_8(char s[],int lim) {
+int getline_1_8(char s[], int lim) {
 	int c, i;
 	for (i=0; i < lim-1 && (c=getchar_fake())!=EOF && c!='\n'; ++i)
 		s[i] = c;
@@ -538,7 +538,65 @@ void part_5_5() {
 	result = strcmp_2("abc", "abd"); printf("%d\n", result);
 }
 
+#define MAXLINES 5000     /* max #lines to be sorted */
+char *lineptr[MAXLINES];  /* pointers to text lines */
+#define MAXLEN 1000  /* max length of any input line */
 
+/* readlines:  read input lines */
+int readlines(char *lineptr[], int maxlines) {
+	int len, nlines;
+	char *p, line[MAXLEN];
+	nlines = 0;
+	while ((len = getline_1_8(line, MAXLEN)) > 0)
+		if (nlines >= maxlines || (p = alloc(len)) == NULL) {
+			return -1;
+		} else {
+			line[len-1] = '\0';  /* delete newline */
+			strcpy(p, line);
+			lineptr[nlines++] = p;
+		}
+	return nlines;
+}
+/* writelines:  write output lines */
+void writelines(char *lineptr[], int nlines) {
+	int i;
+	for (i = 0; i < nlines; i++)
+		printf("%s\n", lineptr[i]);
+}
+void swap_5_6(char *v[], int i, int j) {
+	char *temp;
+	temp = v[i];
+	v[i] = v[j];
+	v[j] = temp;
+}
+/* qsort:  sort v[left]...v[right] into increasing order */
+void qsort_5_6(char *v[], int left, int right) {
+	int i, last;
+
+	if (left >= right) return;
+
+	swap_5_6(v, left, (left + right) / 2);
+	last = left;
+	for (i = left + 1; i <= right; i++)
+		if (strcmp(v[i], v[left]) < 0)
+			swap_5_6(v, ++last, i);
+
+	swap_5_6(v, left, last);
+	qsort_5_6(v, left, last - 1);
+	qsort_5_6(v, last + 1, right);
+}
+
+void part_5_6() {
+	init_fake_input_to("hoho\nunsorted\nlines\n");
+
+	int nlines;     /* number of input lines read */
+	if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
+		qsort_5_6(lineptr, 0, nlines-1);
+		writelines(lineptr, nlines);
+	} else {
+		printf("error: input too big to sort\n");
+    }
+}
 
 int main() {
 //    part_1_1();
@@ -560,8 +618,9 @@ int main() {
 //    part_4_10();
 //    part_4_11();
 
-    part_5_1();
-    part_5_2();
-    part_5_4();
-    part_5_5();
+//    part_5_1();
+//    part_5_2();
+//    part_5_4();
+//    part_5_5();
+    part_5_6();
 }
