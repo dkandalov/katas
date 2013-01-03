@@ -827,19 +827,6 @@ void part_6_2() {
 struct key {
 	char *word;
 	int count;
-} keytab[] = {
-	"auto", 0,
-	"break", 0,
-	"case", 0,
-	"char", 0,
-	"const", 0,
-	"continue", 0,
-	"default", 0,
-	/* ... */
-	"unsigned", 0,
-	"void", 0,
-	"volatile", 0,
-	"while", 0
 };
 /* getword:  get next word or character from input */
 int getword(char *word, int lim) {
@@ -867,7 +854,7 @@ int binsearch(char *word, struct key tab[], int n) {
 	low = 0;
 	high = n - 1;
 	while (low <= high) {
-		mid = (low+high) / 2;
+		mid = (low + high) / 2;
 		if ((cond = strcmp(word, tab[mid].word)) < 0)
 			high = mid - 1;
 		else if (cond > 0)
@@ -881,6 +868,20 @@ int binsearch(char *word, struct key tab[], int n) {
 void part_6_3() {
 	init_fake_input_to("const aaa;\nvoid void;");
 
+	struct key keytab[] = {
+		"auto", 0,
+		"break", 0,
+		"case", 0,
+		"char", 0,
+		"const", 0,
+		"continue", 0,
+		"default", 0,
+		/* ... */
+		"unsigned", 0,
+		"void", 0,
+		"volatile", 0,
+		"while", 0
+	};
 	#define MAXWORD 100
 	#define NKEYS (sizeof keytab / sizeof(keytab[0]))
 
@@ -893,6 +894,56 @@ void part_6_3() {
 	for (n = 0; n < NKEYS; n++)
 		if (keytab[n].count > 0)
 			printf("%4d %s\n", keytab[n].count, keytab[n].word);
+	printf("\n");
+}
+
+struct key *binsearch_6_4(char *word, struct key *tab, int n) {
+	int cond;
+	struct key *low = &tab[0];
+	struct key *high = &tab[n];
+	struct key *mid;
+	while (low < high) {
+		mid = low + (high - low) / 2; // (low+high) / 2 is illegal pointer operation
+		if ((cond = strcmp(word, mid->word)) < 0)
+			high = mid;
+		else if (cond > 0)
+			low = mid + 1;
+		else
+			return mid;
+	}
+	return NULL;
+}
+void part_6_4() {
+	init_fake_input_to("volatile void;\n auto auto; !!\n");
+
+	struct key keytab[] = {
+		"auto", 0,
+		"break", 0,
+		"case", 0,
+		"char", 0,
+		"const", 0,
+		"continue", 0,
+		"default", 0,
+		/* ... */
+		"unsigned", 0,
+		"void", 0,
+		"volatile", 0,
+		"while", 0
+	};
+	#define MAXWORD 100
+    #define NKEYS (sizeof keytab / sizeof(keytab[0]))
+
+	char word[MAXWORD];
+	struct key *p;
+
+	while (getword(word, MAXWORD) != EOF)
+		if (isalpha(word[0]))
+			if ((p = binsearch_6_4(word, keytab, NKEYS)) != NULL)
+				p->count++;
+	for (p = keytab; p < keytab + NKEYS; p++)
+		if (p->count > 0)
+			printf("%4d %s\n", p->count, p->word);
+	printf("\n");
 }
 
 
@@ -928,6 +979,7 @@ int main() {
 //    part_5_11();
 //    part_5_12();
 
-    part_6_2();
-    part_6_3();
+//    part_6_2();
+//    part_6_3();
+    part_6_4();
 }
