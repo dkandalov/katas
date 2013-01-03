@@ -946,6 +946,60 @@ void part_6_4() {
 	printf("\n");
 }
 
+struct tnode {
+    char *word;
+	int count;
+	struct tnode *left;
+	struct tnode *right;
+};
+/* talloc:  make a tnode */
+struct tnode *talloc(void) {
+	return (struct tnode *) malloc(sizeof(struct tnode));
+}
+/* make a duplicate of s */
+char *strdup_6_5(char *s) {
+	char *p;
+	p = (char *) malloc(strlen(s)+1); /* +1 for ’\0’ */
+	if (p != NULL) strcpy(p, s);
+	return p;
+}
+/* addtree:  add a node with w, at or below p */
+struct tnode *addtree(struct tnode *p, char *w) {
+	int cond;
+	if (p == NULL) {     /* a new word has arrived */
+		p = talloc();    /* make a new node */
+		p->word = strdup_6_5(w);
+		p->count = 1;
+		p->left = p->right = NULL;
+	} else if ((cond = strcmp(w, p->word)) == 0) {
+		p->count++;      /* repeated word */
+	} else if (cond < 0) {   /* less than into left subtree */
+		p->left = addtree(p->left, w);
+	} else {            /* greater than into right subtree */
+		p->right = addtree(p->right, w);
+	}
+	return p;
+}
+/* treeprint:  in-order print of tree p */
+void treeprint(struct tnode *p) {
+	if (p != NULL) {
+		treeprint(p->left);
+		printf("%4d %s\n", p->count, p->word);
+		treeprint(p->right);
+	}
+}
+void part_6_5() {
+	init_fake_input_to("now is the time for all good men to come to the aid of their party... now now now");
+
+	#define MAXWORD 100
+
+	char word[MAXWORD];
+	struct tnode *root = NULL;
+	while (getword(word, MAXWORD) != EOF)
+		if (isalpha(word[0]))
+			root = addtree(root, word);
+	treeprint(root);
+}
 
 int main() {
 // TODO try /usr/local/Cellar/check/0.9.8
@@ -982,4 +1036,5 @@ int main() {
 //    part_6_2();
 //    part_6_3();
     part_6_4();
+    part_6_5();
 }
