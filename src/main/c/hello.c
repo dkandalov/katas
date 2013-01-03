@@ -776,8 +776,58 @@ void part_5_12() {
 	}
 }
 
+struct point {
+	int x;
+	int y;
+};
+struct rect {
+	struct point pt1;
+	struct point pt2;
+};
+struct point makepoint(int x, int y) {
+	struct point temp;
+	temp.x = x;
+	temp.y = y;
+	return temp; // seems that local struct is "copied" on method return
+}
+struct point addpoint(struct point p1, struct point p2) {
+	p1.x += p2.x; // this doesn't modify point outside of this method, because it's all passed by-value and here is local copy
+	p1.y += p2.y;
+	return p1;
+}
+int isPointInRect(struct point p, struct rect r) {
+	return p.x >= r.pt1.x && p.x < r.pt2.x
+		&& p.y >= r.pt1.y && p.y < r.pt2.y;
+}
+void part_6_2() {
+	struct point pt;
+	struct rect screen;
+
+    printf("pt: %d,%d\n", pt.x, pt.y);
+
+	screen.pt1 = makepoint(0, 0);
+	screen.pt2 = makepoint(1234, 1234);
+
+	struct point middle = makepoint((screen.pt1.x + screen.pt2.x) / 2, (screen.pt1.y + screen.pt2.y) / 2);
+	printf("middle: %d,%d\n", middle.x, middle.y);
+
+	struct point newMiddle = addpoint(middle, makepoint(10, 10));
+	printf("middle: %d,%d\n", middle.x, middle.y);
+	printf("newMiddle: %d,%d\n", newMiddle.x, newMiddle.y);
+
+	printf("is within screen: %s\n", isPointInRect(makepoint(100, 100), screen) == 0 ? "false" : "true");
+	printf("is within screen: %s\n", isPointInRect(makepoint(2000, 100), screen) == 0 ? "false" : "true");
+
+	struct point origin = makepoint(111, 222);
+	struct point *pp = &origin;
+    printf("origin is (%d,%d)\n", (*pp).x, (*pp).y);
+    printf("origin is (%d,%d)\n", pp->x, pp->y);
+}
+
 
 int main() {
+// TODO try /usr/local/Cellar/check/0.9.8
+
 //    part_1_1();
 //    part_1_2();
 //    part_1_5_1();
@@ -806,4 +856,6 @@ int main() {
 //    part_5_8();
 //    part_5_11();
     part_5_12();
+
+    part_6_2();
 }
