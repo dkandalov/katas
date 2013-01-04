@@ -1001,6 +1001,59 @@ void part_6_5() {
 	treeprint(root);
 }
 
+
+struct nlist {
+	struct nlist *next;
+	char *name;
+	char *defn;
+};
+#define HASHSIZE 101
+static struct nlist *hashtab[HASHSIZE];
+
+unsigned hash(char *s) {
+	unsigned hashval;
+	for (hashval = 0; *s != '\0'; s++)
+		hashval = *s + 31 * hashval;
+	return hashval % HASHSIZE;
+}
+/* lookup:  look for s in hashtab */
+struct nlist *lookup(char *s) {
+	struct nlist *np;
+	for (np = hashtab[hash(s)];  np != NULL; np = np->next)
+		if (strcmp(s, np->name) == 0)
+			return np;     /* found */
+	return NULL;           /* not found */
+}
+/* install:  put (name, defn) in hashtab */
+struct nlist *install(char *name, char *defn) {
+	struct nlist *np;
+	unsigned hashval;
+	if ((np = lookup(name)) == NULL) { /* not found */
+		np = (struct nlist *) malloc(sizeof(*np));
+		if (np == NULL || (np->name = strdup(name)) == NULL)
+		return NULL;
+		hashval = hash(name);
+		np->next = hashtab[hashval];
+		hashtab[hashval] = np;
+	} else       /* already there */
+		free((void *) np->defn);   /*free previous defn */
+	if ((np->defn = strdup(defn)) == NULL)
+		return NULL;
+	return np;
+}
+void part_6_6() {
+    struct nlist *result;
+
+    result = lookup("MY_VAR");
+    printf("MY_VAR: %s\n", result == NULL ? "null" : result->defn);
+
+    result = install("MY_VAR", "a value");
+    printf("MY_VAR: %s\n", result == NULL ? "null" : result->defn);
+
+    result = install("MY_VAR", "a value 2");
+    printf("MY_VAR: %s\n", result == NULL ? "null" : result->defn);
+}
+
 int main() {
 // TODO try /usr/local/Cellar/check/0.9.8
 
@@ -1035,6 +1088,7 @@ int main() {
 
 //    part_6_2();
 //    part_6_3();
-    part_6_4();
-    part_6_5();
+//    part_6_4();
+//    part_6_5();
+    part_6_6();
 }
