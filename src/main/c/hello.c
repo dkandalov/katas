@@ -1019,7 +1019,7 @@ unsigned hash(char *s) {
 /* lookup:  look for s in hashtab */
 struct nlist *lookup(char *s) {
 	struct nlist *np;
-	for (np = hashtab[hash(s)];  np != NULL; np = np->next)
+	for (np = hashtab[hash(s)]; np != NULL; np = np->next)
 		if (strcmp(s, np->name) == 0)
 			return np;     /* found */
 	return NULL;           /* not found */
@@ -1031,7 +1031,7 @@ struct nlist *install(char *name, char *defn) {
 	if ((np = lookup(name)) == NULL) { /* not found */
 		np = (struct nlist *) malloc(sizeof(*np));
 		if (np == NULL || (np->name = strdup(name)) == NULL)
-		return NULL;
+			return NULL;
 		hashval = hash(name);
 		np->next = hashtab[hashval];
 		hashtab[hashval] = np;
@@ -1053,6 +1053,19 @@ void part_6_6() {
     result = install("MY_VAR", "a value 2");
     printf("MY_VAR: %s\n", result == NULL ? "null" : result->defn);
 }
+
+struct {
+	unsigned int is_keyword : 1;
+	unsigned int is_extern  : 1;
+	unsigned int is_static  : 1;
+} flags;
+void part_6_7() {
+	flags.is_extern = flags.is_static = 1; // turn bits on  (instead of "flags |= EXTERNAL | STATIC;")
+	flags.is_extern = flags.is_static = 0; // turn bits off (instead of "flags &= ~(EXTERNAL | STATIC);")
+	if (flags.is_extern == 0 && flags.is_static == 0) // instead of "if ((flags & (EXTERNAL | STATIC)) == 0)"
+		printf("not extern and not static\n");
+}
+
 
 int main() {
 // TODO try /usr/local/Cellar/check/0.9.8
@@ -1091,4 +1104,5 @@ int main() {
 //    part_6_4();
 //    part_6_5();
     part_6_6();
+    part_6_7();
 }
