@@ -22,19 +22,24 @@
     (:id row-with-min-values-diff)
 ))
 
-(deftest should-find-team-with-min-goall-diff
-  (def football-file "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat")
+(defn find-team-with-min-goall-diff [file-name]
   (defn remove-non-data [lines] (filter #(not (.contains % "----")) (drop 5 (drop-last 1 lines))))
   (defn take-columns-with-data [lines] (map #(vector (nth % 1) (nth % 6) (nth % 8)) lines))
-
-  (is (= "Aston_Villa" (find-entity-with-min-diff football-file remove-non-data take-columns-with-data)))
+  (find-entity-with-min-diff file-name remove-non-data take-columns-with-data)
 )
+
+(defn find-day-with-min-temperature-spread [file-name]
+  (defn remove-non-data [lines] (drop 8 (drop-last 2 lines)))
+  (defn take-columns-with-data [lines] (map #(vector (nth % 0) (nth % 1) (nth % 2)) lines))
+  (find-entity-with-min-diff file-name remove-non-data take-columns-with-data)
+)
+
+(deftest should-find-team-with-min-goall-diff
+  (def football-file "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat")
+  (is (= "Aston_Villa" (find-team-with-min-goall-diff football-file))))
 
 (deftest should-find-day-with-min-temperature-spread
   (def weather-file "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat")
-  (defn remove-non-data [lines] (drop 8 (drop-last 2 lines)))
-  (defn take-columns-with-data [lines] (map #(vector (nth % 0) (nth % 1) (nth % 2)) lines))
+  (is (= "14" (find-day-with-min-temperature-spread weather-file))))
 
-  (is (= "14" (find-entity-with-min-diff weather-file remove-non-data take-columns-with-data)))
-)
 (run-tests)
