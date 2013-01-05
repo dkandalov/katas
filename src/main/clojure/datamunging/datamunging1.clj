@@ -4,7 +4,7 @@
 (defrecord Entry [id value1 value2])
 
 (defn read-lines-from [file-name] (.split (slurp file-name) "\n"))
-(defn split-lines [lines] (vec (map #(vec (.split (.trim %) "\\s+")) lines)))
+(defn split-each-line [lines] (vec (map #(vec (.split (.trim %) "\\s+")) lines)))
 (defn remove-non-digits [s] (.replaceAll s "\\*" ""))
 (defn parse-row [row]
   (let [key (first row)
@@ -12,60 +12,29 @@
         value2 (remove-non-digits (nth row 2))]
     (Entry. key (Integer/parseInt value1) (Integer/parseInt value2))
 ))
+(defn find-row-with-min-diff [columns-with-data]
+  (let [parsed-lines (map parse-row columns-with-data)]
+    (apply min-key #(Math/abs (- (:value1 %) (:value2 %))) parsed-lines)
+))
+(defn find-entity-with-min-diff [file-name filter-data extract-columns]
+  (let [columns-with-data (extract-columns (split-each-line (filter-data (read-lines-from file-name))))
+        row-with-min-values-diff (find-row-with-min-diff columns-with-data)]
+    (:id row-with-min-values-diff)
+))
 
 (deftest should-find-team-with-min-goall-diff
   (def football-file "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat")
   (defn remove-non-data [lines] (filter #(not (.contains % "----")) (drop 5 (drop-last 1 lines))))
   (defn take-columns-with-data [lines] (map #(vector (nth % 1) (nth % 6) (nth % 8)) lines))
 
-  (let [
-         columns-with-data (take-columns-with-data (split-lines (remove-non-data (read-lines-from football-file))))
-         parsed-lines (map parse-row columns-with-data)
-         row-with-min-values-diff (apply min-key #(Math/abs (- (:value1 %) (:value2 %))) parsed-lines)
-         team-with-min-goall-diff (:id row-with-min-values-diff)
-         ]
-    (is (= "Aston_Villa" team-with-min-goall-diff))
-    (is (= (Entry. "Aston_Villa" 46 47) row-with-min-values-diff))
-
-    (is (= (Entry. "Arsenal" 79 36) (nth parsed-lines 0)))
-    (is (= (Entry. "Leicester" 30, 64) (nth parsed-lines 19)))
-    (is (= 20 (count parsed-lines)))
-
-    (is (= (list "Arsenal" "79" "36") (nth columns-with-data 0)))
-    (is (= (list "Leicester" "30" "64") (nth columns-with-data 19)))
-    (is (= 20 (count columns-with-data)))
-
-    (is (= 20 (count (remove-non-data (read-lines-from football-file)))))
-    (is (= 27 (count (read-lines-from football-file))))
-))
+  (is (= "Aston_Villa" (find-entity-with-min-diff football-file remove-non-data take-columns-with-data)))
+)
 
 (deftest should-find-day-with-min-temperature-spread
   (def weather-file "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat")
-
   (defn remove-non-data [lines] (drop 8 (drop-last 2 lines)))
   (defn take-columns-with-data [lines] (map #(vector (nth % 0) (nth % 1) (nth % 2)) lines))
 
-  (let [
-        columns-with-data (take-columns-with-data (split-lines (remove-non-data (read-lines-from weather-file))))
-        parsed-lines (map parse-row columns-with-data)
-        row-with-min-values-diff (apply min-key #(Math/abs (- (:value1 %) (:value2 %))) parsed-lines)
-        find-day-with-min-temperature-spread (:id row-with-min-values-diff)
-    ]
-
-    (is (= "14" find-day-with-min-temperature-spread))
-    (is (= (Entry. "14" 61 59) row-with-min-values-diff))
-
-    (is (= (Entry. "1" 88 59) (nth parsed-lines 0)))
-    (is (= (Entry. "9" 86 32) (nth parsed-lines 8)))
-    (is (= (Entry. "30" 90 45) (nth parsed-lines 29)))
-    (is (= 30 (count parsed-lines)))
-
-    (is (= (list "1" "88" "59") (nth columns-with-data 0)))
-    (is (= (list "9" "86" "32*") (nth columns-with-data 8)))
-    (is (= (list "30" "90" "45") (nth columns-with-data 29)))
-    (is (= 30 (count columns-with-data)))
-
-    (is (= 30 (count (remove-non-data (read-lines-from weather-file)))))
-    (is (= 40 (count (read-lines-from weather-file))))
-))
+  (is (= "14" (find-entity-with-min-diff weather-file remove-non-data take-columns-with-data)))
+)
 (run-tests)
