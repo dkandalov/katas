@@ -1066,6 +1066,9 @@ void part_6_7() {
 		printf("not extern and not static\n");
 }
 
+void part_7_4() {
+
+}
 
 int main() {
 // TODO try /usr/local/Cellar/check/0.9.8
@@ -1103,6 +1106,8 @@ int main() {
 //    part_6_3();
 //    part_6_4();
 //    part_6_5();
-    part_6_6();
-    part_6_7();
+//    part_6_6();
+//    part_6_7();
+
+    part_7_4();
 }
