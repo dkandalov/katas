@@ -1066,8 +1066,29 @@ void part_6_7() {
 		printf("not extern and not static\n");
 }
 
-void part_7_4() {
+void resetDate(int *day, int *month, char monthname[], int *year) {
+	*day = 0;
+	*month = 0;
+	monthname[0] = '-';
+	monthname[1] = '\0';
+	*year = 0;
+}
 
+void part_7_4() {
+    int day, month, year;
+    char monthname[20];
+
+    resetDate(&day, &month, monthname, &year);
+    sscanf("", "%d %s %d", &day, monthname, &year);
+    printf("day: %d; month: %d (%s); year %d\n", day, month, monthname, year);
+
+    resetDate(&day, &month, monthname, &year);
+    sscanf("25 Dec 1988", "%d %s %d", &day, monthname, &year);
+    printf("day: %d; month: %d (%s); year %d\n", day, month, monthname, year);
+
+    resetDate(&day, &month, monthname, &year);
+    sscanf("21 01 1989", "%d %d %d", &day, &month, &year);
+    printf("day: %d; month: %d (%s); year %d\n", day, month, monthname, year);
 }
 
 int main() {
