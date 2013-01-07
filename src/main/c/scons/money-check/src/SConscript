@@ -1,1 +1,3 @@
-Program(['main.c', 'money.c'])
+Program(['check_money.c', 'money.c'],
+		LIBS = 'libcheck',
+		LIBPATH = ['/usr/lib', '/usr/local/lib'])
