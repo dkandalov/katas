@@ -1091,6 +1091,26 @@ void part_7_4() {
     printf("day: %d; month: %d (%s); year %d\n", day, month, monthname, year);
 }
 
+void part_7_5() {
+	FILE *fp;
+	fp = fopen("/Users/dima/IdeaProjects/katas/src/main/c/hello_read.txt", "r");
+	if (fp == NULL) {
+		printf("Failed to open file\n");
+		return;
+	}
+
+	char c;
+	while ((c = getc(fp)) != EOF) {
+		printf("%c", c);
+	}
+
+	int result;
+	result = fclose(fp);
+	if (result == EOF) {
+		printf("Failed to close file\n");
+	}
+}
+
 int main() {
 // TODO try /usr/local/Cellar/check/0.9.8
 
@@ -1130,5 +1150,6 @@ int main() {
 //    part_6_6();
 //    part_6_7();
 
-    part_7_4();
+//    part_7_4();
+    part_7_5();
 }
