@@ -17,18 +17,22 @@
     words))
 (defn anagrams-of [word, frequencies-map]
   (let [word-char-map (word-to-char-map word)
-        anagrams (get frequencies-map word-to-char-map)]
+        anagrams (get frequencies-map word-char-map)]
   (remove #(= % word) anagrams)
 ))
 
 ;(println (count (read-words)))
 ;(println (count (build-word-frequencies-map (read-words))))
 (let [frequencies-map (build-word-frequencies-map (read-words))]
-  (println (anagrams-of "kinship"))
-  (println (anagrams-of "enlist"))
-  (println (anagrams-of "sort"))
+  (println (anagrams-of "kinship" frequencies-map))
+  (println (anagrams-of "enlist" frequencies-map))
+  (println (anagrams-of "sort" frequencies-map))
 )
 
+(deftest should-find-anagrams-of-a-word
+  (let [frequencies-map (build-word-frequencies-map (set ["cat" "tac"]))]
+    (is (= (list "tac") (anagrams-of "cat" frequencies-map)))
+))
 (deftest should-build-word-frequencies-map
   (is (= {} (build-word-frequencies-map (set []))))
   (is (= {{\a 1} ["a"]} (build-word-frequencies-map (set ["a"]))))
