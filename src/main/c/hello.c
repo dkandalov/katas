@@ -1124,9 +1124,48 @@ typedef union header Header;
 static Header base; /* empty list to get started */
 static Header *freep = NULL; /* start of free list */
 
+#define NALLOC  1024   /* minimum #units to request */
+
+/* free:  put block ap in free list */
+void free_(void *ap) {
+	Header *bp, *p;
+
+	bp = (Header *)ap - 1; /* point to  block header */
+	for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
+		if (p >= p->s.ptr && (bp > p || bp < p->s.ptr))
+			break; /* freed block at start or end of arena */
+
+	if (bp + bp->s.size == p->s.ptr) { /* join to upper nbr */
+		bp->s.size += p->s.ptr->s.size;
+		bp->s.ptr = p->s.ptr->s.ptr;
+	} else {
+		bp->s.ptr = p->s.ptr;
+	}
+
+	if (p + p->s.size == bp) { /* join to lower nbr */
+		p->s.size += bp->s.size;
+		p->s.ptr = bp->s.ptr;
+	} else {
+		p->s.ptr = bp;
+	}
+	freep = p;
+}
+
+/* morecore:  ask system for more memory */
 static Header *morecore(unsigned nu) {
-	// TODO
-	return 0;
+	char *cp, *sbrk(int);
+	Header *up;
+
+	if (nu < NALLOC) nu = NALLOC;
+
+	cp = sbrk(nu * sizeof(Header));
+	if (cp == (char *) -1) /* no space at all */
+		return NULL;
+
+	up = (Header *) cp;
+	up->s.size = nu;
+	free_((void *)(up+1));
+	return freep;
 }
 
 /* malloc:  general-purpose storage allocator */
@@ -1159,7 +1198,8 @@ void *malloc_(unsigned nbytes) {
 }
 
 void part_8_7() {
-
+	void *p = malloc_(5000);
+	free_(p);
 }
 
 
