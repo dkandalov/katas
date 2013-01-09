@@ -1111,8 +1111,60 @@ void part_7_5() {
 	}
 }
 
+typedef long Align;    /* for alignment to long boundary */
+union header {         /* block header */
+	struct {
+		union header *ptr; /* next block if on free list */
+		unsigned size;     /* size of this block */
+	} s;
+	Align x;           /* force alignment of blocks */
+};
+typedef union header Header;
+
+static Header base; /* empty list to get started */
+static Header *freep = NULL; /* start of free list */
+
+static Header *morecore(unsigned nu) {
+	// TODO
+	return 0;
+}
+
+/* malloc:  general-purpose storage allocator */
+void *malloc_(unsigned nbytes) {
+	Header *p, *prevp;
+	Header *moreroce(unsigned);
+	unsigned nunits;
+
+	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
+	if ((prevp = freep) == NULL) {   /* no free list yet */
+		base.s.ptr = freep = prevp = &base;
+		base.s.size = 0;
+	}
+	for (p = prevp->s.ptr; ; prevp = p, p = p->s.ptr) {
+		if (p->s.size >= nunits) {  /* big enough */
+			if (p->s.size == nunits) { /* exactly */
+				prevp->s.ptr = p->s.ptr;
+			} else {              /* allocate tail end */
+				p->s.size -= nunits;
+				p += p->s.size;
+				p->s.size = nunits;
+			}
+			freep = prevp;
+			return (void *)(p+1);
+		}
+		if (p == freep)  /* wrapped around free list */
+			if ((p = morecore(nunits)) == NULL)
+				return NULL;    /* none left */
+	}
+}
+
+void part_8_7() {
+
+}
+
+
 int main() {
-// TODO try /usr/local/Cellar/check/0.9.8
+// TODO try using /usr/local/Cellar/check/0.9.8
 
 //    part_1_1();
 //    part_1_2();
@@ -1151,5 +1203,7 @@ int main() {
 //    part_6_7();
 
 //    part_7_4();
-    part_7_5();
+//    part_7_5();
+
+	part_8_7();
 }
