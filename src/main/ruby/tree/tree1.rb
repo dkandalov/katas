@@ -1,7 +1,7 @@
 class Node
   attr_reader :name, :left, :right
 
-  def initialize name, left, right
+  def initialize(name, left, right)
     @name, @left, @right = name, left, right
   end
 
@@ -10,7 +10,7 @@ class Node
   end
 end
 
-def walk_tree node
+def walk_tree(node)
   return if node.nil?
 
   p node.name
