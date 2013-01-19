@@ -66,10 +66,11 @@ describe "binary search tree" do
     bst.contains?(1).should == true
     bst.contains?(2).should == false
 
-    bst = BST.new(1, BST.new(0)).add(2).remove(0)
-    bst.contains?(0).should == false
+
+    bst = BST.new(2, BST.new(1, BST.new(0))).remove(2)
+    bst.contains?(0).should == true
     bst.contains?(1).should == true
-    bst.contains?(2).should == true
+    bst.contains?(2).should == false
   end
 
   it "should satisfy property based assertions" do
@@ -156,7 +157,7 @@ describe "binary search tree" do
 
     def remove_biggest
       if @right == EMPTY
-        [@value, EMPTY]
+        [@value, @left]
       else
         result, new_right = @right.remove_biggest
         [result, BST.new(@value, @left, new_right)]
@@ -165,7 +166,7 @@ describe "binary search tree" do
 
     def remove_smallest
       if @left == EMPTY
-        [@value, EMPTY]
+        [@value, @right]
       else
         result, new_left = @left.remove_smallest
         [result, BST.new(@value, new_left, @right)]
