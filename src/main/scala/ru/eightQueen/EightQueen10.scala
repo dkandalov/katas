@@ -15,11 +15,32 @@ class EightQueen10 extends ShouldMatchers {
 		solveForBoardSize(3).size should equal(0)
 		solveForBoardSize(4).size should equal(2)
 		solveForBoardSize(5).size should equal(10)
-
-		// TODO print solutions
+		solveForBoardSize(8).size should equal(92)
 	}
 
-	def solveForBoardSize(boardSize: Int, fromCol: Int = 0, solution: Seq[(Int, Int)] = Seq()): Seq[Seq[(Int, Int)]] = {
+	@Test def printingSolutions() {
+		solveForBoardSize(4).map{ asBoard(_) }.mkString("\n=====\n") should equal("""
+		  |-Q--
+		  |---Q
+		  |Q---
+		  |--Q-
+ 		  |=====
+		  |--Q-
+		  |Q---
+		  |---Q
+		  |-Q--
+		""".trim.stripMargin)
+	}
+
+	private def asBoard(solution: Seq[(Int, Int)]): String = {
+		val boardSize = math.max(solution.maxBy{_._1}._1, solution.maxBy{_._2}._2) + 1
+		(for (col <- Range(0, boardSize))
+			yield (for (row <- Range(0, boardSize))
+				yield if (solution.contains((col, row))) "Q" else "-").mkString("")
+		).mkString("\n")
+	}
+
+	private def solveForBoardSize(boardSize: Int, fromCol: Int = 0, solution: Seq[(Int, Int)] = Seq()): Seq[Seq[(Int, Int)]] = {
 		if (fromCol == boardSize && solution.size == boardSize) return Seq(solution)
 
 		var result = Seq[Seq[(Int, Int)]]()
@@ -32,7 +53,7 @@ class EightQueen10 extends ShouldMatchers {
 		result
 	}
 
-	def isValidMove(newQueen: (Int, Int), solution: Seq[(Int, Int)]): Boolean = {
+	private def isValidMove(newQueen: (Int, Int), solution: Seq[(Int, Int)]): Boolean = {
 		solution.forall{ queen => queen._1 != newQueen._1 && queen._2 != newQueen._2 } &&
 		solution.forall{ queen => math.abs(queen._1 - newQueen._1) != math.abs(queen._2 - newQueen._2) }
 	}
