@@ -21,10 +21,10 @@ class QUnion5 extends ShouldMatchers {
 
 	@Test def exampleFromTheBook() {
 		val board = new Board(10)
-		val input: Seq[(Int, Int)] = Seq((3, 4), (4, 9), (8, 0), (2, 3), (5, 6), (2, 9), (5, 9), (7, 3), (4, 8), (5, 6), (0, 2), (6, 1))
+		val input = Seq((3, 4), (4, 9), (8, 0), (2, 3), (5, 6), (2, 9), (5, 9), (7, 3), (4, 8), (5, 6), (0, 2), (6, 1))
 		val output = Seq(false, false, false, false, false, true, false, false, false, true, true, false)
 
-		val actualOutput:Seq[Boolean] = input.map{ p => board.connect(p._1, p._2) }
+		val actualOutput = input.map{ p => board.connect(p._1, p._2) }
 		actualOutput should equal(output)
 	}
 
