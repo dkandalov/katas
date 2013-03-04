@@ -54,7 +54,8 @@ class FizzBuzz extends ShouldMatchers {
 	val WOOF_MULTIPLE = 7
 
 	def fizzBuzzWoof(input: Int): String = {
-		if (input % FIZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzWoof"
+		if (input % FIZZ_MULTIPLE == 0 && input % BUZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzBuzzWoof"
+		else if (input % FIZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzWoof"
 		else if (input % BUZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "BuzzWoof"
 		else if (input % WOOF_MULTIPLE == 0) "Woof"
 		else fizzBuzz(input)
