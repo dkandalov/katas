@@ -5,39 +5,27 @@ import org.junit.Test
 
 class FizzBuzz extends ShouldMatchers {
 	@Test def given_number_one_should_produce_one() {
-		val input = 1
-		val output = fizzBuzz(input)
-		output should equal("1")
+		fizzBuzz(1) should equal("1")
 	}
 
 	@Test def given_number_two_should_produce_two() {
-		val input = 2
-		val output = fizzBuzz(input)
-		output should equal("2")
+		fizzBuzz(2) should equal("2")
 	}
 
 	@Test def given_number_three_should_produce_fizz() {
-		val input = 3
-		val output = fizzBuzz(input)
-		output should equal("Fizz")
+		fizzBuzz(3) should equal("Fizz")
 	}
 
 	@Test def given_number_four_should_produce_four() {
-		val input = 4
-		val output = fizzBuzz(input)
-		output should equal("4")
+		fizzBuzz(4) should equal("4")
 	}
 
 	@Test def given_number_five_should_produce_buzz() {
-		val input = 5
-		val output = fizzBuzz(input)
-		output should equal("Buzz")
+		fizzBuzz(5) should equal("Buzz")
 	}
 
 	@Test def given_number_fifteen_should_produce_fizzBuzz() {
-		val input = 15
-		val output = fizzBuzz(input)
-		output should equal("FizzBuzz")
+		fizzBuzz(15) should equal("FizzBuzz")
 	}
 
 	def fizzBuzz(input: Int): String = {
