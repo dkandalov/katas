@@ -15,4 +15,10 @@ class FizzBuzz extends ShouldMatchers {
 		val output = "2"
 		input.toString should equal(output)
 	}
+
+	@Test def given_number_three_should_produce_fizz() {
+		val input = 3
+		val output = "Fizz"
+		input.toString should equal(output)
+	}
 }
