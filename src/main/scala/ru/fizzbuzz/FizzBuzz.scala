@@ -49,22 +49,23 @@ class FizzBuzz extends ShouldMatchers {
 		Range(1, 101).map(fizzBuzz).toList.toString should equal("List(1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz, 16, 17, Fizz, 19, Buzz, Fizz, 22, 23, Fizz, Buzz, 26, Fizz, 28, 29, FizzBuzz, 31, 32, Fizz, 34, Buzz, Fizz, 37, 38, Fizz, Buzz, 41, Fizz, 43, 44, FizzBuzz, 46, 47, Fizz, 49, Buzz, Fizz, 52, 53, Fizz, Buzz, 56, Fizz, 58, 59, FizzBuzz, 61, 62, Fizz, 64, Buzz, Fizz, 67, 68, Fizz, Buzz, 71, Fizz, 73, 74, FizzBuzz, 76, 77, Fizz, 79, Buzz, Fizz, 82, 83, Fizz, Buzz, 86, Fizz, 88, 89, FizzBuzz, 91, 92, Fizz, 94, Buzz, Fizz, 97, 98, Fizz, Buzz)")
 	}
 
-	@Test def output_from_one_to_ten_thousand() {
-		Range(1, 10001).map(fizzBuzzWoof).toList.toString should equal("")
+	abstract case class Multiple(n: Int, name: String) {
+		def matches(n: Int) = (n % this.n == 0)
 	}
+	case class Fizz() extends Multiple(3, "Fizz")
+	case class Buzz() extends Multiple(5, "Buzz")
+	case class Woof() extends Multiple(7, "Woof")
 
+	def fizzBuzzWoof(n: Int, multiples: Seq[Multiple] = Seq(Fizz(), Buzz(), Woof())): String = {
+		multiples.filter{_.matches(n)} match {
+			case Seq() => n.toString
+			case xs => xs.map{_.name}.mkString("")
+		}
+	}
 
 	val FIZZ_MULTIPLE = 3
 	val BUZZ_MULTIPLE = 5
 	val WOOF_MULTIPLE = 7
-
-	def fizzBuzzWoof(input: Int): String = {
-		if (input % FIZZ_MULTIPLE == 0 && input % BUZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzBuzzWoof"
-		else if (input % FIZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzWoof"
-		else if (input % BUZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "BuzzWoof"
-		else if (input % WOOF_MULTIPLE == 0) "Woof"
-		else fizzBuzz(input)
-	}
 
 	def fizzBuzz(input: Int): String = {
 		if (input % FIZZ_MULTIPLE == 0 && input % BUZZ_MULTIPLE == 0) "FizzBuzz"
