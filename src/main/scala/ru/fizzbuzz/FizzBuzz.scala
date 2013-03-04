@@ -5,8 +5,6 @@ import org.junit.Test
 
 class FizzBuzz extends ShouldMatchers {
 
-
-
 	@Test def given_number_one_should_produce_one() {
 		fizzBuzz(1) should equal("1")
 	}
@@ -27,6 +25,10 @@ class FizzBuzz extends ShouldMatchers {
 		fizzBuzz(5) should equal("Buzz")
 	}
 
+	@Test def given_number_seven_should_produce_woof() {
+		fizzBuzzWoof(7) should equal("woof")
+	}
+
 	@Test def given_number_fifteen_should_produce_fizzBuzz() {
 		fizzBuzz(15) should equal("FizzBuzz")
 	}
@@ -37,6 +39,10 @@ class FizzBuzz extends ShouldMatchers {
 
 	val FIZZ_MULTIPLE = 3
 	val BUZZ_MULTIPLE = 5
+
+	def fizzBuzzWoof(input: Int): String = {
+		fizzBuzz(input)
+	}
 
 	def fizzBuzz(input: Int): String = {
 		if (input % FIZZ_MULTIPLE == 0 && input % BUZZ_MULTIPLE == 0) "FizzBuzz"
