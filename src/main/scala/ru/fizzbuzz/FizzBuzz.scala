@@ -34,7 +34,7 @@ class FizzBuzz extends ShouldMatchers {
 	}
 
 	@Test def given_number_twenty_one_should_produce_fizzWoof() {
-		fizzBuzz(21) should equal("FizzWoof")
+		fizzBuzzWoof(21) should equal("FizzWoof")
 	}
 
 	@Test def output {
@@ -46,7 +46,8 @@ class FizzBuzz extends ShouldMatchers {
 	val WOOF_MULTIPLE = 7
 
 	def fizzBuzzWoof(input: Int): String = {
-		if (input % WOOF_MULTIPLE == 0) "Woof"
+		if (input % FIZZ_MULTIPLE == 0 && input % WOOF_MULTIPLE == 0) "FizzWoof"
+		else if (input % WOOF_MULTIPLE == 0) "Woof"
 		else fizzBuzz(input)
 	}
 
