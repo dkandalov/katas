@@ -22,6 +22,18 @@ class FizzBuzz extends ShouldMatchers {
 		output should equal("Fizz")
 	}
 
+	@Test def given_number_four_should_produce_four() {
+		val input = 4
+		val output = fizzBuzz(input)
+		output should equal("4")
+	}
+
+	@Test def given_number_five_should_produce_buzz() {
+		val input = 5
+		val output = fizzBuzz(input)
+		output should equal("Buzz")
+	}
+
 	def fizzBuzz(input: Int): String = {
 		if (input % 3 == 0) "Fizz" else input.toString
 	}
