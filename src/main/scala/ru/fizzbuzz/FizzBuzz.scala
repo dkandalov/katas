@@ -31,6 +31,10 @@ class FizzBuzz extends ShouldMatchers {
 		fizzBuzz(15) should equal("FizzBuzz")
 	}
 
+	@Test def output {
+
+	}
+
 	val FIZZ_MULTIPLE = 3
 	val BUZZ_MULTIPLE = 5
 
@@ -40,4 +44,6 @@ class FizzBuzz extends ShouldMatchers {
 		else if (input % BUZZ_MULTIPLE == 0) "Buzz"
 		else input.toString
 	}
+
+
 }
