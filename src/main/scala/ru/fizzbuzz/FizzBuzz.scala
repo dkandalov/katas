@@ -32,7 +32,7 @@ class FizzBuzz extends ShouldMatchers {
 	}
 
 	@Test def output {
-
+		Range(1, 101).map(fizzBuzz).toList should equal(List())
 	}
 
 	val FIZZ_MULTIPLE = 3
