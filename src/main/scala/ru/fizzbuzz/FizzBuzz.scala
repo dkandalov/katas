@@ -4,6 +4,9 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 
 class FizzBuzz extends ShouldMatchers {
+
+
+
 	@Test def given_number_one_should_produce_one() {
 		fizzBuzz(1) should equal("1")
 	}
@@ -28,8 +31,11 @@ class FizzBuzz extends ShouldMatchers {
 		fizzBuzz(15) should equal("FizzBuzz")
 	}
 
+	val FIZZ_MULTIPLE = 3
+
 	def fizzBuzz(input: Int): String = {
-		if (input % 3 == 0 && input % 5 == 0) "FizzBuzz"
+
+		if (input % FIZZ_MULTIPLE == 0 && input % 5 == 0) "FizzBuzz"
 		else if (input % 3 == 0) "Fizz"
 		else if (input % 5 == 0) "Buzz"
 		else input.toString
