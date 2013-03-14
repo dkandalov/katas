@@ -1,4 +1,22 @@
 describe("quick find", function () {
+    function Connections(size) {
+        this.connections = new Array(size);
+        for (var i = 0; i < this.connections.length; i++) {
+            this.connections[i] = i;
+        }
+    }
+    Connections.prototype.connect =  function (p1, p2) {
+        var value = this.connections[p1];
+        for (var i = 0; i < this.connections.length; i++) {
+            if (this.connections[i] == value) {
+                this.connections[i] = this.connections[p2];
+            }
+        }
+    };
+    Connections.prototype.areConnected = function(p1, p2) {
+        return this.connections[p1] == this.connections[p2];
+    };
+
     var connections;
 
     beforeEach(function () {
