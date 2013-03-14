@@ -22,6 +22,12 @@ describe("quick find", function () {
         expect(areConnected(0, 1)).toEqual(true);
     });
 
+    it("should know that connections are transitive", function () {
+        connect(0, 1);
+        connect(1, 2);
+        expect(areConnected(0, 2)).toEqual(true);
+    });
+
     function connect(p1, p2) {
         var value = connections[p1];
         for (var i = 0; i < connections.length; i++) {
