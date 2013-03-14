@@ -3,6 +3,9 @@ describe("quick find", function () {
 
     beforeEach(function () {
         connections = new Array(10);
+        for (var i = 0; i < connections.length; i++) {
+            connections[i] = i;
+        }
     });
 
     it("should know that points are connected to themselves", function () {
@@ -20,11 +23,15 @@ describe("quick find", function () {
     });
 
     function connect(p1, p2) {
-
+        var value = connections[p1];
+        for (var i = 0; i < connections.length; i++) {
+            if (connections[i] == value) {
+                connections[i] = connections[p2];
+            }
+        }
     }
 
     function areConnected(p1, p2) {
-        if (p1 == p2) return true;
-        return false;
+        return connections[p1] == connections[p2];
     }
 });
