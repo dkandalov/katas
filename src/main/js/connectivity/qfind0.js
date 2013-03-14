@@ -28,6 +28,31 @@ describe("quick find", function () {
         expect(areConnected(0, 2)).toEqual(true);
     });
 
+    it("should on complex example", function () {
+        connect(3, 4);
+        connect(4, 9);
+        connect(8, 0);
+        connect(2, 3);
+        connect(5, 6);
+
+        expect(areConnected(2, 9)).toEqual(true);
+        connect(2, 9);
+        connect(5, 9);
+        connect(7, 3);
+        connect(4, 8);
+
+        expect(areConnected(5, 6)).toEqual(true);
+        connect(5, 6);
+        connect(0, 2);
+        connect(6, 1);
+
+        for (var i = 0; i < connections.length; i++) {
+            for (var j = 0; j < connections.length; j++) {
+                expect(areConnected(i, j)).toEqual(true);
+            }
+        }
+    });
+
     function connect(p1, p2) {
         var value = connections[p1];
         for (var i = 0; i < connections.length; i++) {
