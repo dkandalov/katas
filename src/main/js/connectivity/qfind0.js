@@ -1,11 +1,12 @@
 describe("quick find", function () {
-    function Connections(size) {
+    function QuickFind(size) {
+        this.size = size;
         this.connections = new Array(size);
         for (var i = 0; i < this.connections.length; i++) {
             this.connections[i] = i;
         }
     }
-    Connections.prototype.connect =  function (p1, p2) {
+    QuickFind.prototype.connect =  function (p1, p2) {
         var value = this.connections[p1];
         for (var i = 0; i < this.connections.length; i++) {
             if (this.connections[i] == value) {
@@ -13,17 +14,14 @@ describe("quick find", function () {
             }
         }
     };
-    Connections.prototype.areConnected = function(p1, p2) {
+    QuickFind.prototype.areConnected = function(p1, p2) {
         return this.connections[p1] == this.connections[p2];
     };
 
-    var connections;
+    var quickFind;
 
     beforeEach(function () {
-        connections = new Array(10);
-        for (var i = 0; i < connections.length; i++) {
-            connections[i] = i;
-        }
+        quickFind = new QuickFind(10);
     });
 
     it("should know that points are connected to themselves", function () {
@@ -47,6 +45,16 @@ describe("quick find", function () {
     });
 
     it("should on complex example", function () {
+        function assertAllPointsAreConnected(value) {
+            for (var i = 0; i < quickFind.size; i++) {
+                for (var j = 0; j < quickFind.size; j++) {
+                    if (i == j) continue;
+                    expect(areConnected(i, j)).toEqual(value);
+                }
+            }
+        }
+        assertAllPointsAreConnected(false);
+
         connect(3, 4);
         connect(4, 9);
         connect(8, 0);
@@ -64,23 +72,14 @@ describe("quick find", function () {
         connect(0, 2);
         connect(6, 1);
 
-        for (var i = 0; i < connections.length; i++) {
-            for (var j = 0; j < connections.length; j++) {
-                expect(areConnected(i, j)).toEqual(true);
-            }
-        }
+        assertAllPointsAreConnected(true);
     });
 
     function connect(p1, p2) {
-        var value = connections[p1];
-        for (var i = 0; i < connections.length; i++) {
-            if (connections[i] == value) {
-                connections[i] = connections[p2];
-            }
-        }
+        quickFind.connect(p1, p2);
     }
 
     function areConnected(p1, p2) {
-        return connections[p1] == connections[p2];
+        return quickFind.areConnected(p1, p2);
     }
 });
