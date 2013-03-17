@@ -25,13 +25,17 @@ describe("merge sort(v1)", function() {
     }
 
     function merge(part1, part2) {
-        if (part1.length == 0) return part2;
-        if (part2.length == 0) return part1;
-
-        if (part1[0] < part2[0]) {
-            return [part1[0]].concat(merge(part1.slice(1, part1.length), part2));
-        } else {
-            return [part2[0]].concat(merge(part1, part2.slice(1, part2.length)));
+        var result = [];
+        var i1 = 0, i2 = 0;
+        while (i1 < part1.length && i2 < part2.length) {
+            if (part1[i1] <= part2[i2]) {
+                result = result.concat(part1[i1++]);
+            } else {
+                result = result.concat(part2[i2++]);
+            }
         }
+        while (i1 < part1.length) result = result.concat(part1[i1++]);
+        while (i2 < part2.length) result = result.concat(part2[i2++]);
+        return result;
     }
 });
