@@ -44,7 +44,7 @@ describe("quick find", function () {
         expect(areConnected(0, 2)).toEqual(true);
     });
 
-    it("should on complex example", function () {
+    it("should work on complex example", function () {
         function assertAllPointsAreConnected(value) {
             for (var i = 0; i < quickFind.size; i++) {
                 for (var j = 0; j < quickFind.size; j++) {
