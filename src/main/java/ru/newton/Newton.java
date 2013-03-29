@@ -1,4 +1,4 @@
-package ru;
+package ru.newton;
 
 import org.junit.Test;
 
