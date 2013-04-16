@@ -49,13 +49,18 @@ class Sudoku4 extends ShouldMatchers {
 			squares.foreach{ peers(_).size should equal(20) }
 		}
 
-		def parseGrid(grid: String): Option[Map[String, String]] = {
+		def parseGrid(grid: String): Option[mutable.Map[String, String]] = {
 			val values = mutable.Map[String, String]((for (square <- squares) yield (square -> digits.mkString(""))) : _*)
 			for (entry <- gridValues(grid)) {
 				if (digits.contains(entry._2) && assign(values, entry._1, entry._2) == None)
 					return None
 			}
 			Some(values)
+		}
+
+		def gridValues(grid: String): Map[String, Char] = {
+			val chars = (for (char <- grid; if (digits.contains(char) || "0.".contains(char)))  yield char)
+			squares.zip(chars).toMap
 		}
 
 		def assign(values: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
@@ -66,15 +71,45 @@ class Sudoku4 extends ShouldMatchers {
 				None
 		}
 
-		def eliminate(map: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
-			// TODO
-			None
+		def eliminate(values: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
+			if (!values(square).contains(digit)) return Some(values)
+			values(square).replace(digit.toString, "")
+
+			// (1) If a square s is reduced to one value d2, then eliminate d2 from the peers.
+			if (values(square).isEmpty)
+				return None // Contradiction: removed last value
+			else if (values(square).size == 1) {
+				val lastDigit = values(square).head
+				if (!(for (peer <- peers(square)) yield eliminate(values, peer, lastDigit)).forall(_ != None))
+					return None
+			}
+
+			// (2) If a unit u is reduced to only one place for a value d, then put it there.
+			for (unit <- units(square)) {
+				val dplaces = (for (s <- unit; if (values(s).contains(digit))) yield s)
+				if (dplaces.isEmpty)
+					return None // Contradiction: no place for this value
+				else if (dplaces.size == 1) {
+					// d can only be in one place in unit; assign it there
+					if (assign(values, dplaces.head, digit) == None)
+						return None
+				}
+			}
+
+			Some(values)
 		}
 
+		def display(values: mutable.Map[String, String]) {
+			val width = 1 + squares.map{values(_).size}.max
+			println(width)
+			val line = Seq.fill(3){ Seq.fill(width * 3){'-'}.mkString("") }.mkString("+")
+			for (r <- rows) {
+				println((for (c <- cols) yield values(r.toString + c).formatted("%" + width + "s") + (if ("36".contains(c)) "|" else "")).mkString(""))
+				if ("CF".contains(r)) println(line)
+			}
 
-		def gridValues(grid: String): Map[String, Char] = {
-			val chars = (for (char <- grid; if (digits.contains(char) || "0.".contains(char)))  yield char)
-			squares.zip(chars).toMap
 		}
+
+		display(parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300").get)
 	}
 }
