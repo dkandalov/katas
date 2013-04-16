@@ -73,7 +73,7 @@ class Sudoku4 extends ShouldMatchers {
 
 		def eliminate(values: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
 			if (!values(square).contains(digit)) return Some(values)
-			values(square).replace(digit.toString, "")
+			values(square) = values(square).replace(digit.toString, "")
 
 			// (1) If a square s is reduced to one value d2, then eliminate d2 from the peers.
 			if (values(square).isEmpty)
@@ -101,7 +101,6 @@ class Sudoku4 extends ShouldMatchers {
 
 		def display(values: mutable.Map[String, String]) {
 			val width = 1 + squares.map{values(_).size}.max
-			println(width)
 			val line = Seq.fill(3){ Seq.fill(width * 3){'-'}.mkString("") }.mkString("+")
 			for (r <- rows) {
 				println((for (c <- cols) yield values(r.toString + c).formatted("%" + width + "s") + (if ("36".contains(c)) "|" else "")).mkString(""))
