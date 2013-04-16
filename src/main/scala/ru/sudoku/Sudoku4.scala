@@ -18,9 +18,9 @@ class Sudoku4 extends ShouldMatchers {
 			for (a <- seq1; b <- seq2) yield "" + a + b
 		}
 
-		val digits = "123456789".toList
+		val digits = "123456789"
 		val rows = "ABCDEFGHI".toList
-		val cols = digits
+		val cols = digits.toList
 		val squares = cross(rows, cols)
 
 		val unitlist =
@@ -50,48 +50,48 @@ class Sudoku4 extends ShouldMatchers {
 		}
 
 		def parseGrid(grid: String): Option[mutable.Map[String, String]] = {
-			val values = mutable.Map[String, String]((for (square <- squares) yield (square -> digits.mkString(""))) : _*)
-			for (entry <- gridValues(grid)) {
-				if (digits.contains(entry._2) && assign(values, entry._1, entry._2) == None)
+			val values = mutable.Map[String, String]((for (s <- squares) yield (s -> digits)) : _*)
+			for ((s, d) <- gridValues(grid)) {
+				if (digits.contains(d) && assign(values, s, d) == None)
 					return None
 			}
 			Some(values)
 		}
 
 		def gridValues(grid: String): Map[String, Char] = {
-			val chars = (for (char <- grid; if (digits.contains(char) || "0.".contains(char)))  yield char)
+			val chars = (for (c <- grid; if (digits.contains(c) || "0.".contains(c)))  yield c)
 			squares.zip(chars).toMap
 		}
 
-		def assign(values: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
-			val otherValues = values(square).replace(digit.toString, "")
-			if ((for (otherDigit <- otherValues) yield eliminate(values, square, otherDigit)).forall{_ != None})
+		def assign(values: mutable.Map[String, String], s: String, d: Char): Option[mutable.Map[String, String]] = {
+			val otherValues = values(s).replace(d.toString, "")
+			if ((for (otherDigit <- otherValues) yield eliminate(values, s, otherDigit)).forall{_ != None})
 				Some(values)
 			else
 				None
 		}
 
-		def eliminate(values: mutable.Map[String, String], square: String, digit: Char): Option[mutable.Map[String, String]] = {
-			if (!values(square).contains(digit)) return Some(values)
-			values(square) = values(square).replace(digit.toString, "")
+		def eliminate(values: mutable.Map[String, String], s: String, d: Char): Option[mutable.Map[String, String]] = {
+			if (!values(s).contains(d)) return Some(values)
+			values(s) = values(s).replace(d.toString, "")
 
 			// (1) If a square s is reduced to one value d2, then eliminate d2 from the peers.
-			if (values(square).isEmpty)
+			if (values(s).isEmpty)
 				return None // Contradiction: removed last value
-			else if (values(square).size == 1) {
-				val lastDigit = values(square).head
-				if (!(for (peer <- peers(square)) yield eliminate(values, peer, lastDigit)).forall(_ != None))
+			else if (values(s).size == 1) {
+				val d2 = values(s).head
+				if (!(for (s2 <- peers(s)) yield eliminate(values, s2, d2)).forall(_ != None))
 					return None
 			}
 
 			// (2) If a unit u is reduced to only one place for a value d, then put it there.
-			for (unit <- units(square)) {
-				val dplaces = (for (s <- unit; if (values(s).contains(digit))) yield s)
+			for (u <- units(s)) {
+				val dplaces = (for (s <- u; if (values(s).contains(d))) yield s)
 				if (dplaces.isEmpty)
 					return None // Contradiction: no place for this value
 				else if (dplaces.size == 1) {
 					// d can only be in one place in unit; assign it there
-					if (assign(values, dplaces.head, digit) == None)
+					if (assign(values, dplaces(0), d) == None)
 						return None
 				}
 			}
@@ -100,13 +100,12 @@ class Sudoku4 extends ShouldMatchers {
 		}
 
 		def display(values: mutable.Map[String, String]) {
-			val width = 1 + squares.map{values(_).size}.max
+			val width = 1 + (for (s <- squares) yield values(s).size).max
 			val line = Seq.fill(3){ Seq.fill(width * 3){'-'}.mkString("") }.mkString("+")
 			for (r <- rows) {
 				println((for (c <- cols) yield values(r.toString + c).formatted("%" + width + "s") + (if ("36".contains(c)) "|" else "")).mkString(""))
 				if ("CF".contains(r)) println(line)
 			}
-
 		}
 
 		display(parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300").get)
