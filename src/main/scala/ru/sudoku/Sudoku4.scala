@@ -4,7 +4,6 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.collection._
 import scala.Some
-import scala.Some
 
 /**
  * User: dima
@@ -32,7 +31,6 @@ class Sudoku4 extends ShouldMatchers {
 		val units = (for (square <- squares) yield (square -> unitlist.filter{_.contains(square)})).toMap
 		val peers = (for (square <- squares) yield (square -> units(square).flatten.filter{_ != square}.toSet)).toMap
 
-		test()
 		def test() {
 			squares.mkString(", ") should startWith("A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5, B6, B7, B8, B9")
 			squares.size should equal(81)
@@ -108,6 +106,42 @@ class Sudoku4 extends ShouldMatchers {
 			}
 		}
 
-		display(parseGrid("003020600900305001001806400008102900700000008006708200002609500800203009005010300").get)
+		def solve(grid: String): Option[mutable.Map[String, String]] = {
+			search(parseGrid(grid))
+		}
+
+		def search(values: Option[mutable.Map[String, String]]): Option[mutable.Map[String, String]] = {
+			if (values == None)
+				return None // Failed earlier
+			if ((for (s <- squares) yield values.get(s)).forall{_.size == 1})
+				return values // Solved!
+
+			// Chose the unfilled square s with the fewest possibilities
+			val (n, s) = (for (s <- squares; if (values.get(s).size > 1)) yield (values.get(s).size, s)).minBy{_._1}
+			val result = (for (d <- values.get(s)) yield search(assign(values.get.clone(), s, d))).find{_ != None}
+			if (result == None) None else result.get
+		}
+
+		test()
+		println(parseGrid("""
+4 . . |. . . |8 . 5
+. 3 . |. . . |. . .
+. . . |7 . . |. . .
+------+------+------
+. 2 . |. . . |. 6 .
+. . . |. 8 . |4 . .
+. . . |. 1 . |. . .
+------+------+------
+. . . |6 . 3 |. 7 .
+5 . . |2 . . |. . .
+1 . 4 |. . . |. . .
+"""))
+
+		val easy_puzzle_grid = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+		display(parseGrid(easy_puzzle_grid).get)
+
+		val hard_puzzle_grid = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......"
+		display(parseGrid(hard_puzzle_grid).get)
+		display(solve(hard_puzzle_grid).get)
 	}
 }
