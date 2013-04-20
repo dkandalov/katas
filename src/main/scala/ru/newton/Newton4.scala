@@ -18,7 +18,7 @@ class Newton4 extends ShouldMatchers {
 
 	def squareRootOf(n: Double, guess: Double = 1, threshold: Double = 0.0001): Double = {
 		def guessIsGoodEnough = (n - guess * guess).abs < threshold
-		def improvedGuess = guess - ((guess * guess - n) / (2 * guess))
+		def improvedGuess = guess - ((guess * guess - n) / (2 * guess))v
 
 		if (guessIsGoodEnough) guess else squareRootOf(n, improvedGuess)
 	}
