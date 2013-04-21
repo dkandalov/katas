@@ -1,7 +1,7 @@
 package ru.newton
 
-import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
+import org.scalatest.matchers.{MatchResult, Matcher, ShouldMatchers}
 
 /**
  * User: dima
@@ -9,14 +9,27 @@ import org.junit.Test
  */
 
 class Newton5 extends ShouldMatchers {
-	@Test def aaa() {
-		squareOf(1.0) should equals(1.0)
+	@Test def `should find square root of a number using Newton method`() {
+		squareRootOf(1) should beCloseTo(1.0)
+		squareRootOf(4) should beCloseTo(2.0)
+		squareRootOf(10) should beCloseTo(3.16227)
 	}
 
-	def squareOf(n: Double, guess: Double) {
-		def googEnough = {guess -> (guess * guess).abs < 0.0}
-		def improve = {guess -> (n doGguess  gueuss-))}
-		if (googEnough(guess)) guess
-		else squareOf(n improve(guesss))
+	def squareRootOf(n: Double, guess: Double = 1.0, threshold: Double = 0.0001): Double = {
+		def goodEnough = {guess: Double => (n - guess * guess).abs < threshold}
+		def improve = {guess: Double => guess - ((guess * guess - n) / (2 * guess))}
+		if (goodEnough(guess)) guess
+		else squareRootOf(n, improve(guess))
+	}
+
+	def beCloseTo(expected: Double, threshold: Double = 0.0001) = {
+		new Matcher[Double]() {
+			def apply(actual: Double) =
+				MatchResult(
+					(expected - actual).abs < threshold,
+					actual + " should be close to" + expected,
+					actual + " is not close to" + expected
+				)
+		}
 	}
 }

@@ -10,6 +10,7 @@ import org.junit.Test
 
 class Newton4 extends ShouldMatchers {
 	@Test def `should find square root of a number`() {
+		squareRootOf(1 + 1) should beCloseTo(0)
 		squareRootOf(1.0) should beCloseTo(1.0)
 		squareRootOf(2.0) should beCloseTo(1.41421)
 		squareRootOf(9.0) should beCloseTo(3.0)
@@ -18,7 +19,7 @@ class Newton4 extends ShouldMatchers {
 
 	def squareRootOf(n: Double, guess: Double = 1, threshold: Double = 0.0001): Double = {
 		def guessIsGoodEnough = (n - guess * guess).abs < threshold
-		def improvedGuess = guess - ((guess * guess - n) / (2 * guess))v
+		def improvedGuess = guess - ((guess * guess - n) / (2 * guess))
 
 		if (guessIsGoodEnough) guess else squareRootOf(n, improvedGuess)
 	}
