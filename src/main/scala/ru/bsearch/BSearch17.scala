@@ -40,8 +40,8 @@ class BSearch17 extends ShouldMatchers {
 		val midIndex = values.size / 2
 		val midValue = values(midIndex)
 		if (n == midValue) midIndex + shift
-		else if (n < midValue) binarySearch(values.take(midValue - 1), n, shift)
-		else binarySearch(values.drop(midValue), n, shift + midValue)
+		else if (n < midValue) binarySearch(values.take(midIndex), n, shift)
+		else binarySearch(values.drop(midIndex + 1), n, shift + midIndex + 1)
 	}
 
 }
