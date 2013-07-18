@@ -173,11 +173,11 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library name="LivePlugin">
         <CLASSES>
-          <root url="jar://$USER_HOME$/Library/Application Support/IntelliJIdea12/live-plugin.jar!/" />
+          <root url="jar://$USER_HOME$/Library/Application Support/IntelliJIdea12/LivePlugin/lib/LivePlugin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/Library/Application Support/IntelliJIdea12/live-plugin.jar!/src" />
+          <root url="jar://$USER_HOME$/Library/Application Support/IntelliJIdea12/LivePlugin/lib/LivePlugin.jar!/src" />
         </SOURCES>
       </library>
     </orderEntry>
