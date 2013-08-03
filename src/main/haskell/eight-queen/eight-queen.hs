@@ -4,14 +4,15 @@ import Data.String.Utils
 type Solution = [(Int, Int)]
 
 solveForBoardOf :: Int -> [Solution]
-solveForBoardOf size = [] -- TODO
+solveForBoardOf size = [[]] -- TODO
 
 asPrintableBoard :: Int -> Solution -> String
 asPrintableBoard boardSize solution =
     let range = [0..boardSize-1]
-        charAt = \pos -> if pos `elem` solution then "Q" else "x"
+        cellAsString = \pos -> if pos `elem` solution then "Q" else "x"
+        rowAsString = \col -> join "" ((\row -> cellAsString (row, col)) `map` range)
     in
-        (join "\n" ((\row -> (join "" ((\col -> (charAt (row, col))) `map` range))) `map` range))
+        join "\n" (rowAsString `map` range)
 
 testConvertingSolutionIntoPrintableBoard = TestList[
     "" ~: (assertEqual "" "xxx\nxxx\nxxx" (asPrintableBoard 3 [])),
@@ -34,6 +35,6 @@ myJoinShouldCreateListFromList = TestList[
     ]
 
 main = do
-    putStrLn (join "\n" ((\row -> (join "" ((\col -> "x") `map` [1..3]))) `map` [1..3]))
+    putStrLn $ join "----\n" (asPrintableBoard 5 `map`(solveForBoardOf 5))
     runTestTT myJoinShouldCreateListFromList
     runTestTT testConvertingSolutionIntoPrintableBoard
