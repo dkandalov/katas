@@ -1,15 +1,16 @@
+\l /Users/dima/IdeaProjects/katas/src/main/q/assert.q
+
 / ":" is assignment
 show "1) -------------"
 x:2 5 4 7 5
-show x
-show count x
-show 2 * 5 - 3
-show (2 * 5) - 3
+expect[count x; toEqual[5]]
+expect[2 * 5 - 3; toEqual[4]]
+expect[(2 * 5) - 3; toEqual[7]]
 
 show "2) -------------"
-f:{2+3*x} / x,y,z - are default names for funciton parameters
-show f 10
-show til 5
+f:{2+3*x} / x,y,z - are default names for function parameters
+expect[f 10; toEqual[32]]
+expect[til 5; toEqual[0 1 2 3 4]]  / <-- great error message by Q, just says "type" not sure what's wrong with it
 show f til 5
 
 addtax:{[rate;sale] sale * 1 + rate % 100}
@@ -40,4 +41,5 @@ show r
 
 show "x) -------------"
 show "hello Q"
+
 exit 0
