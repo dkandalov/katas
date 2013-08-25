@@ -8,27 +8,42 @@ import Data.Ord
 skipHeader listOfLines = drop 8 listOfLines
 skipFooter listOfLines = take ((length listOfLines) - 2) listOfLines
 
-parse :: [String] -> [(Int, Int, Int)]
+parse :: [String] -> [(String, Int, Int)]
 parse listOfLines =
     map (\ line -> asTuple $ take 3 (words line)) listOfLines
     where
         asInt s = read $ Strings.replace "*" "" s
-        asTuple [a,b,c] = (asInt a, asInt b, asInt c)
+        asTuple [a,b,c] = (a, asInt b, asInt c)
 
-valuesDiffIn :: [(Int, Int, Int)] -> [(Int, Int)]
+valuesDiffIn :: [(String, Int, Int)] -> [(String, Int)]
 valuesDiffIn parsedLines = map (\(key, value1, value2) -> (key, value1 - value2)) parsedLines
+
+goalsDiff parsedLines = map (\(key, value1, value2) -> (key, abs $ value1 - value2)) parsedLines
 
 findDayWithMinTemperatureDiff listOfLines = minDiff
      where stringLines = skipHeader $ skipFooter listOfLines
            diffs = valuesDiffIn $ parse stringLines
            minDiff = minimumBy (\ (key1, value1) (key2, value2) -> compare value1 value2) diffs
 
-
-main = do
+processDataFile :: String -> (String -> (String, Int)) -> IO()
+processDataFile fileName callback = do
     home <- getEnv "HOME"
-    handle <- openFile (home ++ "/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat") ReadMode
+    handle <- openFile (home ++ "/IdeaProjects/katas/src/main/scala/ru/katas/n4/" ++ fileName) ReadMode
     fileContent <- hGetContents handle
 
-    putStr $ show $ findDayWithMinTemperatureDiff $ lines fileContent
+    putStr $ show $ callback fileContent
 
     hClose handle
+
+main =
+--    processDataFile "weather.dat" (\fileContent -> findDayWithMinTemperatureDiff $ lines fileContent)
+    processDataFile "football.dat" (\fileContent -> minDiff $ goalsDiff $ parse $ skipHeader $ skipFooter $ lines fileContent)
+    where
+        skipHeader listOfLines = drop 5 listOfLines
+        skipFooter listOfLines = take ((length listOfLines) - 1) listOfLines
+        parse listOfLines = map (\line ->
+            let lineWords = words line
+                asInt s = read s
+            in if ((length lineWords) < 2) then ("", 1000, 0)
+               else (lineWords !! 1, asInt $ lineWords !! 6, asInt $ lineWords !! 8) ) listOfLines
+        minDiff parsedLines = minimumBy (\ (key1, value1) (key2, value2) -> compare value1 value2) parsedLines
