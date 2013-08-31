@@ -43,9 +43,8 @@ processDataFile fileName callback = do
 
     hClose handle
 
-main = do
-    processDataFile "football.dat" (\fileContent -> minDiff $ goalsDiff $ parse $ skipHeader $ skipFooter $ lines fileContent)
-    processDataFile "weather.dat" (\fileContent -> findDayWithMinTemperatureDiff $ lines fileContent)
+findTeamWithMinGoalDifference :: [String] -> Diff
+findTeamWithMinGoalDifference listOfLines = minDiff $ goalsDiff $ parse $ skipHeader $ skipFooter listOfLines
     where
         skipHeader listOfLines = drop 5 listOfLines
         skipFooter listOfLines = take ((length listOfLines) - 1) listOfLines
@@ -55,3 +54,8 @@ main = do
             in if ((length lineWords) < 2) then Entry "" 1000 0
                else Entry (lineWords !! 1) (asInt $ lineWords !! 6) (asInt $ lineWords !! 8) ) listOfLines
         minDiff parsedLines = minimumBy (\ (Diff key1 value1) (Diff key2 value2) -> compare value1 value2) parsedLines
+
+
+main = do
+    processDataFile "football.dat" (\fileContent -> findTeamWithMinGoalDifference $ lines fileContent)
+    processDataFile "weather.dat" (\fileContent -> findDayWithMinTemperatureDiff $ lines fileContent)
