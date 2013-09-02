@@ -4,30 +4,31 @@ import Data.String.Utils as Strings
 import System.Environment
 import Data.List
 import Data.Ord
+import Data.Function
+import Data.Maybe
 
 data Entry = Entry String Int Int
-data Diff = Diff String Int
+data Diff = Diff{ key :: String, value :: Int }
+
+diff (Entry key value1 value2) = Diff key (abs $ value1 - value2)
 
 instance Show Diff where
-    show (Diff key difference) = (show key) ++ ", " ++ (show difference)
+    show (Diff key value) = (show key) ++ ", " ++ (show value)
 
 
 skipHeader amountToSkip listOfLines = drop amountToSkip listOfLines
 skipFooter amountToSkip listOfLines = take ((length listOfLines) - amountToSkip) listOfLines
 
-parse :: [String] -> [Entry]
-parse listOfLines =
-    map (\ line -> asTuple $ take 3 (words line)) listOfLines
+parse :: Int -> Int -> Int -> [String] -> [Entry]
+parse keyIndex index1 index2 listOfLines =
+    mapMaybe id $ (\ line ->
+        if ((length $ words line) < 2) then Nothing
+        else Just(parseLine $ words line)
+    ) `map` listOfLines
     where
-        asTuple [a,b,c] = Entry a (asInt b) (asInt c)
+        asInt s = read $ Strings.replace "*" "" s
+        parseLine line = Entry (line !! keyIndex) (asInt $ line !! index1) (asInt $ line !! index2)
 
-asInt s = read $ Strings.replace "*" "" s
-
-valuesDiffIn :: [Entry] -> [Diff]
-valuesDiffIn parsedLines = map (\(Entry key value1 value2) -> Diff key (value1 - value2)) parsedLines
-
-goalsDiff :: [Entry] -> [Diff]
-goalsDiff parsedLines = map (\(Entry key value1 value2) -> Diff key (abs $ value1 - value2)) parsedLines
 
 processDataFile :: String -> (String -> Diff) -> IO()
 processDataFile fileName callback = do
@@ -41,19 +42,12 @@ processDataFile fileName callback = do
 
 
 findDayWithMinTemperatureDiff :: [String] -> Diff
-findDayWithMinTemperatureDiff listOfLines = minDiff
-     where stringLines = skipHeader 8 $ skipFooter 2 listOfLines
-           diffs = valuesDiffIn $ parse stringLines
-           minDiff = minimumBy (\ (Diff key1 value1) (Diff key2 value2) -> compare value1 value2) diffs
+findDayWithMinTemperatureDiff listOfLines =
+     minimumBy (compare `on` value) $ map diff $ parse 0 1 2 $ skipHeader 8 $ skipFooter 2 listOfLines
 
 findTeamWithMinGoalDifference :: [String] -> Diff
-findTeamWithMinGoalDifference listOfLines = minDiff $ goalsDiff $ parse $ skipHeader 5 $ skipFooter 1 listOfLines
-    where
-        parse listOfLines = map (\line ->
-            let lineWords = words line
-            in if ((length lineWords) < 2) then Entry "" 1000 0
-               else Entry (lineWords !! 1) (asInt $ lineWords !! 6) (asInt $ lineWords !! 8) ) listOfLines
-        minDiff parsedLines = minimumBy (\ (Diff key1 value1) (Diff key2 value2) -> compare value1 value2) parsedLines
+findTeamWithMinGoalDifference listOfLines =
+    minimumBy (compare `on` value) $ map diff $ parse 1 6 8 $ skipHeader 5 $ skipFooter 1 listOfLines
 
 
 main = do
