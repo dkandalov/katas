@@ -25,9 +25,7 @@ class HeapSort9 {
   static sort(List values) {
     def heap = new Heap(values)
     def result = []
-    while (!heap.empty) {
-      result << heap.takeTop()
-    }
+    while (!heap.empty) result << heap.takeTop()
     result
   }
 
@@ -68,13 +66,14 @@ class HeapSort9 {
       int leftChild = leftChildOf(index)
       int rightChild = rightChildOf(index)
 
-      if (leftChild < data.size() && rightChild >= data.size()) {
-        exchange(index, leftChild)
-        return sink(leftChild)
-      }
       if (leftChild >= data.size() && rightChild >= data.size()) return index // compared index with 0
 
-      int childIndex = data[leftChild] < data[rightChild] ? leftChild : rightChild
+      int childIndex
+      if (leftChild < data.size() && rightChild >= data.size()) {
+        childIndex = leftChild
+      } else {
+        childIndex = data[leftChild] < data[rightChild] ? leftChild : rightChild
+      }
       exchange(index, childIndex)
       sink(childIndex)
     }
