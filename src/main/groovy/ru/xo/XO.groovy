@@ -14,26 +14,72 @@ class XO {
     }
   }
 
+  private static treeOfMoves(Game game = new Game(), Tree tree = new Tree(null, [])) {
+    if (game.over) return tree
+
+    def children = []
+    for (int move : availableMoves(game.board)) {
+      Game updatedGame = game.clone() as Game
+      updatedGame.makeMove(move)
+      children << treeOfMoves(updatedGame, new Tree(new MoveState(move, game.winner), []))
+    }
+    tree.withChildren(children)
+  }
+
+  private static List<Integer> availableMoves(String board) {
+    def result = []
+    int fromIndex = 0
+    int index = -2
+    while (index != -1) {
+      index = board.indexOf("-", fromIndex)
+      if (index != -1) result << index
+    }
+    result
+  }
+
+
+  @groovy.transform.Immutable
+  private static class Tree {
+    MoveState move
+    List<Tree> children
+
+    Tree withChildren(List children) {
+      new Tree(move, children)
+    }
+  }
+
+  @groovy.transform.Immutable
+  private static class MoveState {
+    int move
+    String winner = ""
+  }
+
   private static class Game {
     boolean over
     String board = "-" * 9
     String message = ""
+    String winner = ""
     private String player = "X"
 
     def makeMove(int move) {
-      if (move < 0 || move >= board.length()) return finishGame("Move by player '$player' is out of range")
-      if (board[move] != "-") return finishGame("Illegal move by player '$player'")
+      if (move < 0 || move >= board.length()) return playerLoose(player, "Move by player '$player' is out of range")
+      if (board[move] != "-") return playerLoose(player, "Illegal move by player '$player'")
 
       def list = board.toList()
       list[move] = player
       board = list.join("")
 
-      if (hasWinner(board)) return finishGame("Player '$player' wins")
+      if (hasWinner(board)) return playerWins(player, "Player '$player' wins")
 
       player = other(player)
     }
 
-    private finishGame(String message) {
+    private playerLoose(String player, String message) {
+      playerWins(other(player), message)
+    }
+
+    private playerWins(String player, String message) {
+      winner = player
       this.message = message
       over = true
     }
@@ -45,7 +91,7 @@ class XO {
     }
 
     private static String other(String player) {
-      player == "X" ? "0" : "X"
+      player == "0" ? "X" : "0"
     }
   }
 
