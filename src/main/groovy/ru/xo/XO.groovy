@@ -7,11 +7,14 @@ import static ru.xo.XO.*
 class XO {
 
   public static void main(String[] args) {
-    def game = new Game()
-    while (!game.over) {
-      game.makeMove(nextMove(game.board))
-      println(game.message)
-    }
+    def tree = treeOfMoves()
+    println(tree.size())
+    println(tree.find{ it.move != null })
+//    def game = new Game()
+//    while (!game.over) {
+//      game.makeMove(nextMove(game.board))
+//      println(game.message)
+//    }
   }
 
   private static treeOfMoves(Game game = new Game(), Tree tree = new Tree(null, [])) {
@@ -19,7 +22,7 @@ class XO {
 
     def children = []
     for (int move : availableMoves(game.board)) {
-      Game updatedGame = game.clone() as Game
+      Game updatedGame = game.copy()
       updatedGame.makeMove(move)
       children << treeOfMoves(updatedGame, new Tree(new MoveState(move, game.winner), []))
     }
@@ -32,7 +35,10 @@ class XO {
     int index = -2
     while (index != -1) {
       index = board.indexOf("-", fromIndex)
-      if (index != -1) result << index
+      if (index != -1) {
+        result << index
+        fromIndex = index + 1
+      }
     }
     result
   }
@@ -46,12 +52,41 @@ class XO {
     Tree withChildren(List children) {
       new Tree(move, children)
     }
+
+    int size() {
+      children.size() + children.sum(0) { it.size() }
+    }
+
+    List<Tree> find(Closure match) {
+      def queue = [this]
+      while (!queue.empty) {
+        def tree = queue.remove(0)
+        if (match(tree)) {
+          return pathTo(tree)
+        }
+        queue.addAll(tree.children)
+      }
+      []
+    }
+
+    private List<Tree> pathTo(Tree tree) {
+      if (this == tree) [this]
+      else {
+        def path = tree.children.find{ pathTo(tree) != null }
+        path != null ? [this] + path : null
+      }
+    }
   }
 
   @groovy.transform.Immutable
   private static class MoveState {
     int move
     String winner = ""
+
+
+    @Override String toString() {
+      "MoveState{" + "move=" + move + ", winner='" + winner + '\'' + '}'
+    }
   }
 
   private static class Game {
@@ -60,6 +95,17 @@ class XO {
     String message = ""
     String winner = ""
     private String player = "X"
+
+    Game copy() {
+      new Game().with {
+        over = this.over
+        board = this.board
+        message = this.message
+        winner = this.winner
+        player = this.player
+        it
+      }
+    }
 
     def makeMove(int move) {
       if (move < 0 || move >= board.length()) return playerLoose(player, "Move by player '$player' is out of range")
