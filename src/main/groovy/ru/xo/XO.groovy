@@ -10,6 +10,7 @@ class XO {
     def tree = treeOfMoves()
     println(tree.size())
     println(tree.find{ it.move != null })
+    println(tree.find{ it.move?.winner == "X" })
 //    def game = new Game()
 //    while (!game.over) {
 //      game.makeMove(nextMove(game.board))
@@ -24,7 +25,7 @@ class XO {
     for (int move : availableMoves(game.board)) {
       Game updatedGame = game.copy()
       updatedGame.makeMove(move)
-      children << treeOfMoves(updatedGame, new Tree(new MoveState(move, game.winner), []))
+      children << treeOfMoves(updatedGame, new Tree(new MoveState(move, updatedGame.winner), []))
     }
     tree.withChildren(children)
   }
@@ -72,9 +73,13 @@ class XO {
     private List<Tree> pathTo(Tree tree) {
       if (this == tree) [this]
       else {
-        def path = tree.children.find{ pathTo(tree) != null }
-        path != null ? [this] + path : null
+        def path = children.findResult{ it.pathTo(tree) }
+        path == null ? null : [this] + path
       }
+    }
+
+    @Override String toString() {
+      "Tree{move=${move}, children=${children.size()}"
     }
   }
 
@@ -97,14 +102,13 @@ class XO {
     private String player = "X"
 
     Game copy() {
-      new Game().with {
-        over = this.over
-        board = this.board
-        message = this.message
-        winner = this.winner
-        player = this.player
-        it
-      }
+      def game = new Game()
+      game.over = over
+      game.board = board
+      game.message = message
+      game.winner = winner
+      game.player = player
+      game
     }
 
     def makeMove(int move) {
