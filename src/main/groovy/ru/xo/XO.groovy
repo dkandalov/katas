@@ -11,11 +11,48 @@ class XO {
     println(tree.size())
     println(tree.find{ it.move != null })
     println(tree.find{ it.move?.winner == "X" })
+
+    println(nextMove(trimmed("""
+        |X-0
+        |---
+        |--X
+      """).replaceAll("\n", ""), tree))
+    println(nextMove(trimmed("""
+        |X-0
+        |-0-
+        |-XX
+      """).replaceAll("\n", ""), tree))
+    println(nextMove(trimmed("""
+        |X-0
+        |-0-
+        |X-X
+      """).replaceAll("\n", ""), tree))
+    println(nextMove(trimmed("""
+        |X-X
+        |-00
+        |--X
+      """).replaceAll("\n", ""), tree))
+
 //    def game = new Game()
 //    while (!game.over) {
 //      game.makeMove(nextMove(game.board))
 //      println(game.message)
 //    }
+  }
+
+  static int nextMove(String board, Tree treeOfMoves) {
+    def tree = treeOfMoves.findCurrentState(asMoves(board))
+    def player = board.count("X") > board.count("0") ? "0" : "X"
+    def otherPlayer = Game.other(player)
+
+    def immediateWin = tree.children.find {it.move.winner == player}
+    if (immediateWin != null) return immediateWin.move.move
+
+    def winPaths = tree.children.collect{ child -> child.find{ it.move.winner == player }}
+    def loosePaths = tree.children.collect{ child -> child.find{ it.move.winner == otherPlayer }}
+    def moveWeights = [loosePaths, winPaths].transpose().collect{ it[0].size() - it[1].size() }
+
+    tree.children[moveWeights.indexOf(moveWeights.max())].move.move
   }
 
   private static treeOfMoves(Game game = new Game(), Tree tree = new Tree(null, [])) {
@@ -75,6 +112,14 @@ class XO {
       else {
         def path = children.findResult{ it.pathTo(tree) }
         path == null ? null : [this] + path
+      }
+    }
+
+    Tree findCurrentState(List<Integer> moves) {
+      if (moves.empty) this
+      else {
+        def child = children.find{ it.move.move == moves.first() }
+        child?.findCurrentState(moves.tail())
       }
     }
 
@@ -152,8 +197,26 @@ class XO {
     horizontal + vertical + diagonals
   }
 
-  static int nextMove(String board) {
-    0
+  static List<Integer> asMoves(String board, String player = "X", List<Integer> result = []) {
+    def i = board.indexOf(player)
+    if (i == -1) result
+    else {
+      result.add(i)
+      asMoves(board.replaceFirst(player, "-"), Game.other(player), result)
+    }
+  }
+
+  @Test void shouldConvertBoardToMoves() {
+    assert [] == asMoves(trimmed("""
+        |---
+        |---
+        |---
+      """).replaceAll("\n", ""))
+    assert [0, 1, 4, 2, 8] == asMoves(trimmed("""
+        |X00
+        |-X-
+        |--X
+      """).replaceAll("\n", ""))
   }
 
   static String asPrintableBoard(String board) {
