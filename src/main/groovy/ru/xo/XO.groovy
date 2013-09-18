@@ -8,36 +8,13 @@ class XO {
 
   public static void main(String[] args) {
     def tree = treeOfMoves()
-    println(tree.size())
-    println(tree.find{ it.move != null })
-    println(tree.find{ it.move?.winner == "X" })
 
-    println(nextMove(trimmed("""
-        |X-0
-        |---
-        |--X
-      """).replaceAll("\n", ""), tree))
-    println(nextMove(trimmed("""
-        |X-0
-        |-0-
-        |-XX
-      """).replaceAll("\n", ""), tree))
-    println(nextMove(trimmed("""
-        |X-0
-        |-0-
-        |X-X
-      """).replaceAll("\n", ""), tree))
-    println(nextMove(trimmed("""
-        |X-X
-        |-00
-        |--X
-      """).replaceAll("\n", ""), tree))
-
-//    def game = new Game()
-//    while (!game.over) {
-//      game.makeMove(nextMove(game.board))
-//      println(game.message)
-//    }
+    def game = new Game()
+    while (!game.over) {
+      game.makeMove(nextMove(game.board, tree))
+      println(asPrintableBoard(game.board) + "\n")
+    }
+    println(game.message)
   }
 
   static int nextMove(String board, Tree treeOfMoves) {
@@ -48,9 +25,11 @@ class XO {
     def immediateWin = tree.children.find {it.move.winner == player}
     if (immediateWin != null) return immediateWin.move.move
 
+    // TODO draw
     def winPaths = tree.children.collect{ child -> child.find{ it.move.winner == player }}
     def loosePaths = tree.children.collect{ child -> child.find{ it.move.winner == otherPlayer }}
-    def moveWeights = [loosePaths, winPaths].transpose().collect{ it[0].size() - it[1].size() }
+    def valueOfPath = { it.empty ? 1000000 : it.size() }
+    def moveWeights = [loosePaths, winPaths].transpose().collect{ valueOfPath(it[0]) - valueOfPath(it[1]) }
 
     tree.children[moveWeights.indexOf(moveWeights.max())].move.move
   }
@@ -222,6 +201,45 @@ class XO {
   static String asPrintableBoard(String board) {
     def list = board.toList()
     list[0..2].join("") + "\n" + list[3..5].join("") + "\n" + list[6..8].join("")
+  }
+
+  @Test void someMoves() {
+    def tree = treeOfMoves()
+
+    assert tree.size() == 549945
+    assert tree.find{ it.move != null } != null
+    assert tree.find{ it.move?.winner == "X" } != null
+
+    assert nextMove(trimmed("""
+        |---
+        |---
+        |---
+      """).replaceAll("\n", ""), tree) == 0
+    assert nextMove(trimmed("""
+        |X0X
+        |0--
+        |X--
+      """).replaceAll("\n", ""), tree) == 4
+    assert nextMove(trimmed("""
+        |X-0
+        |---
+        |--X
+      """).replaceAll("\n", ""), tree) == 4
+    assert nextMove(trimmed("""
+        |X-0
+        |-0-
+        |-XX
+      """).replaceAll("\n", ""), tree) == 6
+    assert nextMove(trimmed("""
+        |X-0
+        |-0-
+        |X-X
+      """).replaceAll("\n", ""), tree) == 3
+    assert nextMove(trimmed("""
+        |X-X
+        |-00
+        |--X
+      """).replaceAll("\n", ""), tree) == 3
   }
 
   @Test void gameShouldDetectWinner() {
