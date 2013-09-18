@@ -34,14 +34,14 @@ class XO {
     tree.children[moveWeights.indexOf(moveWeights.max())].move.move
   }
 
-  private static treeOfMoves(Game game = new Game(), Tree tree = new Tree(null, [])) {
+  private static treeOfMoves(Game game = new Game(), Tree tree = new Tree()) {
     if (game.over) return tree
 
     def children = []
     for (int move : availableMoves(game.board)) {
       Game updatedGame = game.copy()
       updatedGame.makeMove(move)
-      children << treeOfMoves(updatedGame, new Tree(new MoveState(move, updatedGame.winner), []))
+      children << treeOfMoves(updatedGame, new Tree(tree, new MoveState(move, updatedGame.winner), []))
     }
     tree.withChildren(children)
   }
@@ -61,13 +61,24 @@ class XO {
   }
 
 
-  @groovy.transform.Immutable
   private static class Tree {
+    Tree parent
     MoveState move
     List<Tree> children
 
+    Tree() {
+      this(null, null, [])
+    }
+
+    Tree(Tree parent, MoveState move, List<Tree> children) {
+      this.parent = parent
+      this.move = move
+      this.children = children
+    }
+
     Tree withChildren(List children) {
-      new Tree(move, children)
+      this.children = children
+      this
     }
 
     int size() {
@@ -79,19 +90,16 @@ class XO {
       while (!queue.empty) {
         def tree = queue.remove(0)
         if (match(tree)) {
-          return pathTo(tree)
+          return tree.pathTo(this)
         }
         queue.addAll(tree.children)
       }
       []
     }
 
-    private List<Tree> pathTo(Tree tree) {
-      if (this == tree) [this]
-      else {
-        def path = children.findResult{ it.pathTo(tree) }
-        path == null ? null : [this] + path
-      }
+    private List<Tree> pathTo(Tree tree, Collection<Tree> path = []) {
+      if (this.is(tree)) [this] + path
+      else parent.pathTo(tree, [this] + path)
     }
 
     Tree findCurrentState(List<Integer> moves) {
@@ -100,6 +108,25 @@ class XO {
         def child = children.find{ it.move.move == moves.first() }
         child?.findCurrentState(moves.tail())
       }
+    }
+
+    @Override boolean equals(o) {
+      if (this.is(o)) return true
+      if (getClass() != o.class) return false
+
+      Tree tree = (Tree) o
+
+      if (children != tree.children) return false
+      if (move != tree.move) return false
+
+      return true
+    }
+
+    @Override int hashCode() {
+      int result
+      result = (move != null ? move.hashCode() : 0)
+      result = 31 * result + (children != null ? children.hashCode() : 0)
+      return result
     }
 
     @Override String toString() {
@@ -234,7 +261,7 @@ class XO {
         |X-0
         |-0-
         |X-X
-      """).replaceAll("\n", ""), tree) == 3
+      """).replaceAll("\n", ""), tree) == 1
     assert nextMove(trimmed("""
         |X-X
         |-00
