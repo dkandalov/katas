@@ -8,30 +8,48 @@ class XO {
 
   public static void main(String[] args) {
     def tree = treeOfMoves()
+    def movesScore = buildMovesScore(tree)
 
     def game = new Game()
     while (!game.over) {
-      game.makeMove(nextMove(game.board, tree))
+      game.makeMove(nextMove(game.board, tree, movesScore))
       println(asPrintableBoard(game.board) + "\n")
     }
     println(game.message)
   }
 
-  static int nextMove(String board, Tree treeOfMoves) {
+  static int nextMove(String board, Tree treeOfMoves, Map movesScore) {
     def tree = treeOfMoves.findCurrentState(asMoves(board))
-    def player = board.count("X") > board.count("0") ? "0" : "X"
-    def otherPlayer = Game.other(player)
+    def myPlayer = board.count("X") > board.count("0") ? "0" : "X"
+    def otherPlayer = Game.other(myPlayer)
 
-    def immediateWin = tree.children.find {it.move.winner == player}
+    def immediateWin = tree.children.find {it.move.winner == myPlayer}
     if (immediateWin != null) return immediateWin.move.move
 
-    // TODO draw
-    def winPaths = tree.children.collect{ child -> child.find{ it.move.winner == player }}
+    def winPaths = tree.children.collect{ child -> child.find{ it.move.winner == myPlayer }}
     def loosePaths = tree.children.collect{ child -> child.find{ it.move.winner == otherPlayer }}
     def valueOfPath = { it.empty ? 1000000 : it.size() }
-    def moveWeights = [loosePaths, winPaths].transpose().collect{ valueOfPath(it[0]) - valueOfPath(it[1]) }
+    def pathPairsByValue = [loosePaths, winPaths].transpose().groupBy{ valueOfPath(it[0]) - valueOfPath(it[1]) }
+    def bestPathPairs = pathPairsByValue[pathPairsByValue.keySet().max()]
 
-    tree.children[moveWeights.indexOf(moveWeights.max())].move.move
+    bestPathPairs.max{ pathPair ->
+      movesScore[myPlayer][pathPair.first().first().board] - movesScore[otherPlayer][pathPair.first().first().board]
+    }.first().first().move.move
+  }
+
+  private static Map<String, Map<String, Integer>> buildMovesScore(Tree tree) {
+    def scoresByBoards = { new HashMap().withDefault{0} }
+    def boardsByWinner = ["X": scoresByBoards(), "0": scoresByBoards(), "-": scoresByBoards()]
+
+    tree.eachNode { Tree node ->
+      if (node.move != null && node.move.winner != "") {
+        def path = node.pathTo(tree)
+        path.each {
+          boardsByWinner[node.move.winner][it.board] += 1
+        }
+      }
+    }
+    boardsByWinner
   }
 
   private static treeOfMoves(Game game = new Game(), Tree tree = new Tree()) {
@@ -41,7 +59,7 @@ class XO {
     for (int move : availableMoves(game.board)) {
       Game updatedGame = game.copy()
       updatedGame.makeMove(move)
-      children << treeOfMoves(updatedGame, new Tree(tree, new MoveState(move, updatedGame.winner), []))
+      children << treeOfMoves(updatedGame, new Tree(tree, updatedGame.board, new MoveState(move, updatedGame.winner), []))
     }
     tree.withChildren(children)
   }
@@ -63,15 +81,17 @@ class XO {
 
   private static class Tree {
     Tree parent
+    String board
     MoveState move
     List<Tree> children
 
     Tree() {
-      this(null, null, [])
+      this(null, null, null, [])
     }
 
-    Tree(Tree parent, MoveState move, List<Tree> children) {
+    Tree(Tree parent, String board, MoveState move, List<Tree> children) {
       this.parent = parent
+      this.board = board
       this.move = move
       this.children = children
     }
@@ -83,6 +103,11 @@ class XO {
 
     int size() {
       children.size() + children.sum(0) { it.size() }
+    }
+
+    def eachNode(Closure callback) {
+      callback(this)
+      children?.each{ it.eachNode(callback) }
     }
 
     List<Tree> find(Closure match) {
@@ -97,7 +122,7 @@ class XO {
       []
     }
 
-    private List<Tree> pathTo(Tree tree, Collection<Tree> path = []) {
+    List<Tree> pathTo(Tree tree, Collection<Tree> path = []) {
       if (this.is(tree)) [this] + path
       else parent.pathTo(tree, [this] + path)
     }
@@ -116,6 +141,7 @@ class XO {
 
       Tree tree = (Tree) o
 
+      if (board != tree.board) return false
       if (children != tree.children) return false
       if (move != tree.move) return false
 
@@ -124,7 +150,8 @@ class XO {
 
     @Override int hashCode() {
       int result
-      result = (move != null ? move.hashCode() : 0)
+      result = (board != null ? board.hashCode() : 0)
+      result = 31 * result + (move != null ? move.hashCode() : 0)
       result = 31 * result + (children != null ? children.hashCode() : 0)
       return result
     }
@@ -171,8 +198,13 @@ class XO {
       board = list.join("")
 
       if (hasWinner(board)) return playerWins(player, "Player '$player' wins")
+      if (hasNoMoves(board)) return draw("This is a draw")
 
       player = other(player)
+    }
+
+    private draw(String message) {
+      playerWins("-", message)
     }
 
     private playerLoose(String player, String message) {
@@ -185,7 +217,11 @@ class XO {
       over = true
     }
 
-    private static boolean hasWinner(board) {
+    private static boolean hasNoMoves(String board) {
+      board.indexOf("-") == -1
+    }
+
+    private static boolean hasWinner(String board) {
       boardProjections().find { List projection ->
         projection.every{ board[it] != "-" && board[it] == board[projection.first()] }
       } != null
