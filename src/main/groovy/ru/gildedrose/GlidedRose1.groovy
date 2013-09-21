@@ -1,28 +1,30 @@
 package ru.gildedrose
 
 import static java.lang.Integer.MIN_VALUE
-/**
- * User: dima
- * Date: 25/01/2012
- */
+
 class GlidedRose1 {
   static void main(String[] args) {
-    println "OMGHAI!"
+    println gildedRose()
+  }
+
+  static String gildedRose() {
+    def result = "OMGHAI!\n"
 
     def items = [
-        new Item("+5 Dexterity Vest", 10, 20),
-        new Item("Aged Brie", 2, 0),
-        new Item("Elixir of the Mongoose", 5, 7),
-        new Item("Sulfuras, Hand of Ragnaros", 0, 80),
-        new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-        new Item("Conjured Mana Cake", 3, 6),
+            new Item("+5 Dexterity Vest", 10, 20),
+            new Item("Aged Brie", 2, 0),
+            new Item("Elixir of the Mongoose", 5, 7),
+            new Item("Sulfuras, Hand of Ragnaros", 0, 80),
+            new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+            new Item("Conjured Mana Cake", 3, 6),
     ]
 
     100.times {
       updateQuality(items)
-      items.each { println("$it.name $it.sellIn $it.quality") }
-      println "---------------------"
+      items.each { result += "$it.name $it.sellIn $it.quality\n" }
+      result += "---------------------\n"
     }
+    result
   }
 
   static List<Item> updateQuality(List<Item> items) {
