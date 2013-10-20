@@ -120,14 +120,14 @@ class P0 extends ShouldMatchers {
 	}
 
 	@Test def `P09 (**) Pack consecutive duplicates of list elements into sublists.`() {
-		def pack[T](sequence: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
-			if (sequence.isEmpty) {
+		def pack[T](seq: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
+			if (seq.isEmpty) {
 				if (group.isEmpty) Seq() else Seq(group)
 			} else {
-				if (group.isEmpty || group.head == sequence.head) {
-					pack(sequence.tail, group :+ sequence.head)
+				if (group.isEmpty || group.head == seq.head) {
+					pack(seq.tail, group :+ seq.head)
 				} else {
-					group +: pack(sequence.tail, Seq(sequence.head))
+					group +: pack(seq.tail, Seq(seq.head))
 				}
 			}
 		}
