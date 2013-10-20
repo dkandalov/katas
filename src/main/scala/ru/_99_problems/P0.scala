@@ -4,7 +4,9 @@ import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.annotation.tailrec
 
-
+/**
+ * http://aperiodic.net/phil/scala/s-99/
+ */
 class P0 extends ShouldMatchers {
 	@Test def `should find last element of a list`() {
 		last(List[Int]()) should equal(None)
@@ -83,15 +85,15 @@ class P0 extends ShouldMatchers {
 	}
 
 	def flatten[T](lists: List[Any]): List[Any] = {
+		def flatMap(list: List[Any])(f: Any => List[Any]): List[Any] = list match {
+			case List() => List()
+			case x :: xs => f(x) ++ flatMap(xs)(f)
+		}
+
 		flatMap(lists) {
 			case subList: List[Any] => flatten(subList)
 			case it => List(it)
 		}
-	}
-
-	def flatMap(list: List[Any])(f: Any => List[Any]): List[Any] = list match {
-		case List() => List()
-		case x :: xs => f(x) ++ flatMap(xs)(f)
 	}
 
 	@Test def `should flatten a list`() {
@@ -100,6 +102,40 @@ class P0 extends ShouldMatchers {
 		flatten(List(1, List(2))) should equal(List(1, 2))
 
 		flatten(List(List(List(1, 1), 2, List(3, List(5, 8))))) should equal(List(1, 1, 2, 3, 5, 8))
+	}
+
+	@Test def `should remove the duplicate symbols`() {
+		def compress[T](sequence: Seq[T], last: T = Nil): Seq[T] = {
+			if (sequence.isEmpty) Seq()
+			else {
+				if (sequence.head != last) sequence.head +: compress(sequence.tail, sequence.head)
+				else compress(sequence.tail, last)
+			}
+		}
+
+		compress(List()) should equal(List())
+		compress(List('a)) should equal(List('a))
+		compress(List('a, 'b)) should equal(List('a, 'b))
+		compress(List('a, 'a, 'b, 'a)) should equal(List('a, 'b, 'a))
+	}
+
+	@Test def `P09 (**) Pack consecutive duplicates of list elements into sublists.`() {
+		def pack[T](sequence: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
+			if (sequence.isEmpty) {
+				if (group.isEmpty) Seq() else Seq(group)
+			} else {
+				if (group.isEmpty || group.head == sequence.head) {
+					pack(sequence.tail, group :+ sequence.head)
+				} else {
+					group +: pack(sequence.tail, Seq(sequence.head))
+				}
+			}
+		}
+
+		pack(Seq()) should equal(Seq())
+		pack(Seq('a)) should equal(Seq(Seq('a)))
+		pack(Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
+		pack(Seq('a, 'a, 'b, 'b, 'a)) should equal(Seq(Seq('a, 'a), Seq('b, 'b), Seq('a)))
 	}
 
 }
