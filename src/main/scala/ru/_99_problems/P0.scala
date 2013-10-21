@@ -119,19 +119,19 @@ class P0 extends ShouldMatchers {
 		compress(List('a, 'a, 'b, 'a)) should equal(List('a, 'b, 'a))
 	}
 
-	@Test def `P09 (**) Pack consecutive duplicates of list elements into sublists.`() {
-		def pack[T](seq: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
-			if (seq.isEmpty) {
-				if (group.isEmpty) Seq() else Seq(group)
+	def pack[T](seq: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
+		if (seq.isEmpty) {
+			if (group.isEmpty) Seq() else Seq(group)
+		} else {
+			if (group.isEmpty || group.head == seq.head) {
+				pack(seq.tail, group :+ seq.head)
 			} else {
-				if (group.isEmpty || group.head == seq.head) {
-					pack(seq.tail, group :+ seq.head)
-				} else {
-					group +: pack(seq.tail, Seq(seq.head))
-				}
+				group +: pack(seq.tail, Seq(seq.head))
 			}
 		}
+	}
 
+	@Test def `P09 (**) Pack consecutive duplicates of list elements into sublists.`() {
 		pack(Seq()) should equal(Seq())
 		pack(Seq('a)) should equal(Seq(Seq('a)))
 		pack(Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
