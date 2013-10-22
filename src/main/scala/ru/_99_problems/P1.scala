@@ -56,4 +56,57 @@ class P1 extends ShouldMatchers {
 		encodeDirect(Seq('a)) should equal(Seq((1, 'a)))
 		encodeDirect(Seq('a, 'a, 'b)) should equal(Seq((2, 'a), (1, 'b)))
 	}
+
+	@Test def `P14 (*) Duplicate the elements of a list.`() {
+		def duplicate[T](seq: Seq[T]): Seq[T] = seq match {
+			case Seq() => Seq()
+			case x :: xs => Seq(x, x) ++ duplicate(xs)
+		}
+		duplicate(Seq()) should equal(Seq())
+		duplicate(Seq('a)) should equal(Seq('a, 'a))
+		duplicate(Seq('a, 'b)) should equal(Seq('a, 'a, 'b, 'b))
+	}
+
+	@Test def `P15 (**) Duplicate the elements of a list a given number of times.`() {
+		def nTimes[T](value: T, n: Int): Seq[T] = n match {
+			case 0 => Seq()
+			case _ => value +: nTimes(value, n -1)
+		}
+		def duplicateN[T](times: Int, seq: Seq[T]): Seq[T] = seq match {
+			case Seq() => Seq()
+			case x :: xs => nTimes(x, times) ++ duplicateN(times, xs)
+		}
+		duplicateN(1, Seq()) should equal(Seq())
+		duplicateN(1, Seq('a)) should equal(Seq('a))
+		duplicateN(2, Seq('a)) should equal(Seq('a, 'a))
+		duplicateN(2, Seq('a, 'b)) should equal(Seq('a, 'a, 'b, 'b))
+	}
+
+	@Test def `P16 (**) Drop every Nth element from a list.`() {
+		def dropEvery[T](step: Int, seq: Seq[T], counter: Int = 1): Seq[T] = seq match {
+			case Seq() => Seq()
+			case x :: xs =>
+				if (counter < step) x +: dropEvery(step, xs, counter + 1)
+				else dropEvery(step, xs)
+		}
+		dropEvery(2, Seq()) should equal(Seq())
+		dropEvery(1, Seq('a)) should equal(Seq())
+		dropEvery(2, Seq('a)) should equal(Seq('a))
+		dropEvery(1, Seq('a, 'b)) should equal(Seq())
+		dropEvery(2, Seq('a, 'b)) should equal(Seq('a))
+		dropEvery(2, Seq('a, 'b, 'c)) should equal(Seq('a, 'c))
+	}
+
+	@Test def `P17 (*) Split a list into two parts.`() {
+		def split[T](size: Int, seq: Seq[T], firstPart: Seq[T] = Seq()): (Seq[T], Seq[T]) = {
+			if (size == 0) (firstPart, seq)
+			else split(size - 1, seq.tail, firstPart :+ seq.head)
+		}
+		split(0, Seq()) should equal(Seq(), Seq())
+		split(0, Seq('a)) should equal(Seq(), Seq('a))
+		split(1, Seq('a)) should equal(Seq('a), Seq())
+		split(1, Seq('a, 'b)) should equal((Seq('a), Seq('b)))
+		split(2, Seq('a, 'b)) should equal(Seq('a, 'b), Seq())
+		split(2, Seq('a, 'b, 'c)) should equal((Seq('a, 'b), Seq('c)))
+	}
 }
