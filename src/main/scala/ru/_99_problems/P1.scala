@@ -109,4 +109,53 @@ class P1 extends ShouldMatchers {
 		split(2, Seq('a, 'b)) should equal(Seq('a, 'b), Seq())
 		split(2, Seq('a, 'b, 'c)) should equal((Seq('a, 'b), Seq('c)))
 	}
+
+	@Test def `P18 (**) Extract a slice from a list.`() {
+		def slice[T](from: Int, to: Int, seq: Seq[T], result: Seq[T] = Seq()): Seq[T] = {
+			if (from > 0) slice(from - 1, to - 1, seq.tail, result)
+			else if (to > 0) slice(from, to - 1, seq.tail, result :+ seq.head)
+			else result
+		}
+		slice(0, 0, Seq()) should equal(Seq())
+		slice(0, 0, Seq('a)) should equal(Seq())
+		slice(0, 1, Seq('a)) should equal(Seq('a))
+		slice(0, 1, Seq('a, 'b)) should equal(Seq('a))
+		slice(0, 2, Seq('a, 'b)) should equal(Seq('a, 'b))
+		slice(1, 2, Seq('a, 'b)) should equal(Seq('b))
+		slice(1, 2, Seq('a, 'b, 'c)) should equal(Seq('b))
+		slice(1, 3, Seq('a, 'b, 'c)) should equal(Seq('b, 'c))
+		slice(0, 3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
+		slice(3, 7, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('d, 'e, 'f, 'g))
+	}
+
+	@Test def `P19 (**) Rotate a list N places to the left.`() {
+		def rotate[T](shift: Int, seq: Seq[T]): Seq[T] = {
+			if (seq.size < 2) seq
+			else if (shift.abs > seq.size) rotate(shift % seq.size, seq)
+			else if (shift < 0) rotate(seq.size + shift, seq)
+			else {
+				val split = seq.splitAt(shift)
+				split._2 ++ split._1
+			}
+		}
+		rotate(0, Seq()) should equal(Seq())
+		rotate(1, Seq()) should equal(Seq())
+		rotate(0, Seq('a)) should equal(Seq('a))
+		rotate(1, Seq('a)) should equal(Seq('a))
+		rotate(2, Seq('a)) should equal(Seq('a))
+
+		rotate(-1, Seq('a, 'b)) should equal(Seq('b, 'a))
+		rotate(0, Seq('a, 'b)) should equal(Seq('a, 'b))
+		rotate(1, Seq('a, 'b)) should equal(Seq('b, 'a))
+		rotate(2, Seq('a, 'b)) should equal(Seq('a, 'b))
+
+		rotate(0, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
+		rotate(3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
+		rotate(4, Seq('a, 'b, 'c)) should equal(Seq('b, 'c, 'a))
+		rotate(-1, Seq('a, 'b, 'c)) should equal(Seq('c, 'a, 'b))
+		rotate(-3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
+		rotate(-4, Seq('a, 'b, 'c)) should equal(Seq('c, 'a, 'b))
+
+		rotate(-2, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i))
+	}
 }
