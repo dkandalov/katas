@@ -1,6 +1,6 @@
 package ru._99_problems
 
-import org.scalatest.matchers.{MatchResult, BeMatcher, ShouldMatchers}
+import org.scalatest.matchers._
 import org.junit.Test
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
@@ -194,9 +194,9 @@ class P1 extends ShouldMatchers {
 	}
 
 	@Test def `P22 (*) Create a list containing all integers within a given range.`() {
-		def range_(start: Int, end: Int): List[Int] = {
-			(for (i <- start to end) yield i).toList
-		}
+//		def range_(start: Int, end: Int): List[Int] = {
+//			(for (i <- start to end) yield i).toList
+//		}
 		def range(start: Int, end: Int): List[Int] = {
 			if (start > end) range(end, start)
 			else if (start == end) List(end)
@@ -208,35 +208,74 @@ class P1 extends ShouldMatchers {
 		range(-1, 2) should equal(List(-1, 0, 1, 2))
 	}
 
-	@Test def `P23 (**) Extract a given number of randomly selected elements from a list.`() {
-		def randomSelect[T](n: Int, seq: Seq[T], random: (Int => Int) = Random.nextInt(_)): Seq[T] = {
-			if (n == 0 || seq.isEmpty) Seq()
-			else {
-				removeAt(random(seq.size), seq) match {
-					case (restOfSeq, element) => element +: randomSelect(n - 1, restOfSeq)
-				}
+	def randomSelect[T](n: Int, seq: Seq[T], random: (Int => Int) = Random.nextInt): Seq[T] = {
+		if (n == 0 || seq.isEmpty) Seq()
+		else {
+			removeAt(random(seq.size), seq) match {
+				case (restOfSeq, element) => element +: randomSelect(n - 1, restOfSeq)
 			}
 		}
+	}
 
+	@Test def `P23 (**) Extract a given number of randomly selected elements from a list.`() {
 		randomSelect(0, Seq()) should equal(Seq())
 		randomSelect(1, Seq('a)) should equal(Seq('a))
 		randomSelect(1, Seq('a, 'b)) should be(oneOf(Seq('a), Seq('b)))
 		randomSelect(2, Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
 	}
+
+	@Test def `P24 (*) Lotto: Draw N different random numbers from the set 1..M.`() {
+		def lotto(amount: Int, upTo: Int): Seq[Int] = {
+			randomSelect(amount, Range(1, upTo).toSeq)
+		}
+
+		lotto(0, 5) should equal(Seq())
+		lotto(1, 5) should be(oneOf(Seq(1), Seq(2), Seq(3), Seq(4), Seq(5)))
+
+		for (i <- 0 to 100) {
+			lotto(6, 49) should have(noDuplicates)
+			lotto(6, 49) should be(subSetOf(Range(1, 49)))
+		}
+	}
 }
 
 object CustomMatchers extends CustomMatchers
 trait CustomMatchers {
-	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = {
-		new OneOfMatcher(acceptedValues :_*)
+	val noDuplicates = new NoDuplicates()
+
+	class NoDuplicates extends HavePropertyMatcher[Seq[Any], Any] {
+		def apply(seq: Seq[Any]) = {
+			val hasDuplicates = seq.toSet.size == seq.size
+			HavePropertyMatchResult(
+				hasDuplicates,
+				"has no duplicates",
+			  "true",
+				hasDuplicates
+			)
+		} 
+		
 	}
+
+	def subSetOf[T](seq: Seq[T]): SubSetOf[T] = new SubSetOf(seq)
+
+	class SubSetOf[T](seq: Seq[T]) extends BeMatcher[Seq[T]] {
+		def apply(left: Seq[T]) =
+			MatchResult(
+				left.forall{seq.contains(_)},
+				left.toString + " was not subset of expected values",
+				left.toString + " was subset of expected values"
+			)
+	}
+
+
+	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = new OneOfMatcher(acceptedValues :_*)
 
 	class OneOfMatcher[T](values: T*) extends BeMatcher[T] {
 		def apply(left: T) =
 			MatchResult(
 				values.contains(left),
-				left.toString + " was one of values",
-				left.toString + " was not one of values"
+				left.toString + " was not one of expected values",
+				left.toString + " was one of expected values"
 			)
 	}
 }
