@@ -1,7 +1,9 @@
 package ru._99_problems
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.matchers.{MatchResult, BeMatcher, ShouldMatchers}
 import org.junit.Test
+import scala.util.Random
+import ru._99_problems.CustomMatchers._
 
 
 class P1 extends ShouldMatchers {
@@ -160,12 +162,13 @@ class P1 extends ShouldMatchers {
 		rotate(-2, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i))
 	}
 
+	def removeAt[T](k: Int, seq: Seq[T]): (Seq[T], T) = {
+		if (k >= seq.size) throw new IndexOutOfBoundsException
+		val splitted = split(k, seq)
+		(splitted._1 ++ splitted._2.tail, splitted._2.head)
+	}
+
 	@Test def `P20 (*) Remove the Kth element from a list.`() {
-		def removeAt[T](k: Int, seq: Seq[T]): (Seq[T], T) = {
-			if (k >= seq.size) throw new IndexOutOfBoundsException
-			val splitted = split(k, seq)
-			(splitted._1 ++ splitted._2.tail, splitted._2.head)
-		}
 		evaluating{ removeAt(0, Seq()) } should produce [IndexOutOfBoundsException]
 		removeAt(0, Seq('a)) should equal((Seq(), 'a))
 		removeAt(0, Seq('a, 'b)) should equal((Seq('b), 'a))
@@ -181,9 +184,59 @@ class P1 extends ShouldMatchers {
 			val splitted = split(position, seq)
 			splitted._1 ++ Seq(value) ++ splitted._2
 		}
+
 		insertAt('a, 0, Seq()) should equal(Seq('a))
 		insertAt('a, 0, Seq('b)) should equal(Seq('a, 'b))
 		insertAt('a, 1, Seq('b)) should equal(Seq('b, 'a))
 		evaluating{ insertAt('a, 1, Seq()) } should produce[IndexOutOfBoundsException]
+
+		insertAt('new, 1, List('a, 'b, 'c, 'd)) should equal(List('a, 'new, 'b, 'c, 'd))
+	}
+
+	@Test def `P22 (*) Create a list containing all integers within a given range.`() {
+		def range_(start: Int, end: Int): List[Int] = {
+			(for (i <- start to end) yield i).toList
+		}
+		def range(start: Int, end: Int): List[Int] = {
+			if (start > end) range(end, start)
+			else if (start == end) List(end)
+			else start :: range(start + 1, end)
+		}
+		range(0, 0) should equal(List(0))
+		range(0, 1) should equal(List(0, 1))
+		range(4, 9) should equal(List(4, 5, 6, 7, 8, 9))
+		range(-1, 2) should equal(List(-1, 0, 1, 2))
+	}
+
+	@Test def `P23 (**) Extract a given number of randomly selected elements from a list.`() {
+		def randomSelect[T](n: Int, seq: Seq[T], random: (Int => Int) = Random.nextInt(_)): Seq[T] = {
+			if (n == 0 || seq.isEmpty) Seq()
+			else {
+				removeAt(random(seq.size), seq) match {
+					case (restOfSeq, element) => element +: randomSelect(n - 1, restOfSeq)
+				}
+			}
+		}
+
+		randomSelect(0, Seq()) should equal(Seq())
+		randomSelect(1, Seq('a)) should equal(Seq('a))
+		randomSelect(1, Seq('a, 'b)) should be(oneOf(Seq('a), Seq('b)))
+		randomSelect(2, Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
+	}
+}
+
+object CustomMatchers extends CustomMatchers
+trait CustomMatchers {
+	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = {
+		new OneOfMatcher(acceptedValues :_*)
+	}
+
+	class OneOfMatcher[T](values: T*) extends BeMatcher[T] {
+		def apply(left: T) =
+			MatchResult(
+				values.contains(left),
+				left.toString + " was one of values",
+				left.toString + " was not one of values"
+			)
 	}
 }
