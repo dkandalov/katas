@@ -97,11 +97,12 @@ class P1 extends ShouldMatchers {
 		dropEvery(2, Seq('a, 'b, 'c)) should equal(Seq('a, 'c))
 	}
 
+	def split[T](size: Int, seq: Seq[T], firstPart: Seq[T] = Seq()): (Seq[T], Seq[T]) = {
+		if (size == 0) (firstPart, seq)
+		else split(size - 1, seq.tail, firstPart :+ seq.head)
+	}
+
 	@Test def `P17 (*) Split a list into two parts.`() {
-		def split[T](size: Int, seq: Seq[T], firstPart: Seq[T] = Seq()): (Seq[T], Seq[T]) = {
-			if (size == 0) (firstPart, seq)
-			else split(size - 1, seq.tail, firstPart :+ seq.head)
-		}
 		split(0, Seq()) should equal(Seq(), Seq())
 		split(0, Seq('a)) should equal(Seq(), Seq('a))
 		split(1, Seq('a)) should equal(Seq('a), Seq())
@@ -157,5 +158,32 @@ class P1 extends ShouldMatchers {
 		rotate(-4, Seq('a, 'b, 'c)) should equal(Seq('c, 'a, 'b))
 
 		rotate(-2, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i))
+	}
+
+	@Test def `P20 (*) Remove the Kth element from a list.`() {
+		def removeAt[T](k: Int, seq: Seq[T]): (Seq[T], T) = {
+			if (k >= seq.size) throw new IndexOutOfBoundsException
+			val splitted = split(k, seq)
+			(splitted._1 ++ splitted._2.tail, splitted._2.head)
+		}
+		evaluating{ removeAt(0, Seq()) } should produce [IndexOutOfBoundsException]
+		removeAt(0, Seq('a)) should equal((Seq(), 'a))
+		removeAt(0, Seq('a, 'b)) should equal((Seq('b), 'a))
+		removeAt(1, Seq('a, 'b)) should equal((Seq('a), 'b))
+		removeAt(1, Seq('a, 'b, 'c)) should equal((Seq('a, 'c), 'b))
+
+		removeAt(1, List('a, 'b, 'c, 'd)) should equal((List('a, 'c, 'd),'b))
+	}
+
+	@Test def `P21 (*) Insert an element at a given position into a list.`() {
+		def insertAt[T](value: T, position: Int, seq: Seq[T]): Seq[T] = {
+			if (position > seq.size) throw new IndexOutOfBoundsException
+			val splitted = split(position, seq)
+			splitted._1 ++ Seq(value) ++ splitted._2
+		}
+		insertAt('a, 0, Seq()) should equal(Seq('a))
+		insertAt('a, 0, Seq('b)) should equal(Seq('a, 'b))
+		insertAt('a, 1, Seq('b)) should equal(Seq('b, 'a))
+		evaluating{ insertAt('a, 1, Seq()) } should produce[IndexOutOfBoundsException]
 	}
 }
