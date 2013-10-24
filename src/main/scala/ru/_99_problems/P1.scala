@@ -237,6 +237,37 @@ class P1 extends ShouldMatchers {
 			lotto(6, 49) should be(subSetOf(Range(1, 49)))
 		}
 	}
+
+	@Test def `P25 (*) Generate a random permutation of the elements of a list.`() {
+		def randomPermute[T](seq: Seq[T]): Seq[T] = {
+			randomSelect(seq.size, seq)
+		}
+		randomPermute(Seq()) should equal(Seq())
+		randomPermute(Seq('a)) should equal(Seq('a))
+		randomPermute(Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
+		randomPermute(Seq('a, 'b, 'c)) should be(oneOf(Seq('a, 'b, 'c).permutations))
+	}
+
+	@Test def `P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.`() {
+		def combinations[T](k: Int, seq: Seq[T], subSet: Seq[T] = Seq()): Seq[Seq[T]] = {
+			if (k == 0) Seq(subSet)
+			else if (seq.isEmpty) Seq()
+			else {
+				combinations(k - 1, seq.tail, subSet :+ seq.head) ++ combinations(k, seq.tail, subSet)
+			}
+		}
+		combinations(1, Seq()) should equal(Seq())
+		combinations(1, Seq('a)) should equal(Seq(Seq('a)))
+		combinations(1, Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
+		combinations(2, Seq('a, 'b)) should equal(Seq(Seq('a, 'b)))
+		combinations(1, Seq('a, 'b, 'c)) should equal(Seq(Seq('a), Seq('b), Seq('c)))
+		combinations(2, Seq('a, 'b, 'c)) should equal(Seq(Seq('a, 'b), Seq('a, 'c), Seq('b, 'c)))
+		combinations(3, Range(1, 13).toList).size should equal(220)
+	}
+
+	@Test def `P27 (**) Group the elements of a set into disjoint subsets.`() {
+		// TODO
+	}
 }
 
 object CustomMatchers extends CustomMatchers
@@ -268,9 +299,10 @@ trait CustomMatchers {
 	}
 
 
-	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = new OneOfMatcher(acceptedValues :_*)
+	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = new OneOfMatcher(acceptedValues.toSeq)
+	def oneOf[T](i: Iterator[T]): OneOfMatcher[T] = new OneOfMatcher(i.toSeq)
 
-	class OneOfMatcher[T](values: T*) extends BeMatcher[T] {
+	class OneOfMatcher[T](values: Seq[T]) extends BeMatcher[T] {
 		def apply(left: T) =
 			MatchResult(
 				values.contains(left),
