@@ -248,14 +248,15 @@ class P1 extends ShouldMatchers {
 		randomPermute(Seq('a, 'b, 'c)) should be(oneOf(Seq('a, 'b, 'c).permutations))
 	}
 
-	@Test def `P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.`() {
-		def combinations[T](k: Int, seq: Seq[T], subSet: Seq[T] = Seq()): Seq[Seq[T]] = {
-			if (k == 0) Seq(subSet)
-			else if (seq.isEmpty) Seq()
-			else {
-				combinations(k - 1, seq.tail, subSet :+ seq.head) ++ combinations(k, seq.tail, subSet)
-			}
+	def combinations[T](k: Int, seq: Seq[T], subSet: Seq[T] = Seq()): Seq[Seq[T]] = {
+		if (k == 0) Seq(subSet)
+		else if (seq.isEmpty) Seq()
+		else {
+			combinations(k - 1, seq.tail, subSet :+ seq.head) ++ combinations(k, seq.tail, subSet)
 		}
+	}
+
+	@Test def `P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.`() {
 		combinations(1, Seq()) should equal(Seq())
 		combinations(1, Seq('a)) should equal(Seq(Seq('a)))
 		combinations(1, Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
@@ -266,7 +267,21 @@ class P1 extends ShouldMatchers {
 	}
 
 	@Test def `P27 (**) Group the elements of a set into disjoint subsets.`() {
-		// TODO
+		// a) In how many ways can a group of 9 people work in 3 disjoint subgroups of 2, 3 and 4 persons?
+		type Group[T] = Seq[T]
+		def group3[T](seq: Seq[T]): Seq[Seq[Group[T]]] = {
+			val groupsOf2 = combinations(2, seq)
+			val groupsOf3 = groupsOf2.map{ it => combinations(3, seq.filterNot{it.contains(_)}) }
+			val groupsOf4 = groupsOf3.map{ it => combinations(4, seq.filterNot{it.contains(_)}) }
+			groupsOf2.flatMap { groupOf2 =>
+				groupsOf3.flatMap{ groupOf3 =>
+					groupsOf4.map{ groupOf4 =>
+						Seq[T](groupOf2, groupOf3, groupOf4)
+					}
+				}
+			}
+		}
+		println(group3(Range(1, 10).toSeq))
 	}
 }
 
