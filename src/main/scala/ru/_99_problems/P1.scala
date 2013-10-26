@@ -270,18 +270,47 @@ class P1 extends ShouldMatchers {
 		// a) In how many ways can a group of 9 people work in 3 disjoint subgroups of 2, 3 and 4 persons?
 		type Group[T] = Seq[T]
 		def group3[T](seq: Seq[T]): Seq[Seq[Group[T]]] = {
+
 			val groupsOf2 = combinations(2, seq)
-			val groupsOf3 = groupsOf2.map{ it => combinations(3, seq.filterNot{it.contains(_)}) }
-			val groupsOf4 = groupsOf3.map{ it => combinations(4, seq.filterNot{it.contains(_)}) }
 			groupsOf2.flatMap { groupOf2 =>
+
+				val filteredSeq = seq.filterNot { groupOf2.contains(_)}
+				val groupsOf3 = combinations(3, filteredSeq)
 				groupsOf3.flatMap{ groupOf3 =>
+
+					val groupsOf4 = combinations(4, filteredSeq.filterNot{groupOf3.contains(_)})
 					groupsOf4.map{ groupOf4 =>
-						Seq[T](groupOf2, groupOf3, groupOf4)
+						Seq(groupOf2, groupOf3, groupOf4)
 					}
 				}
 			}
 		}
-		println(group3(Range(1, 10).toSeq))
+//		println(group3(Range(1, 10)).mkString("\n"))
+		group3(Range(1, 10)).size should equal(1260)
+
+
+		// b) Generalize the above predicate in a way that we can specify a list of group sizes and the predicate will return a list of groups.
+		def group[T](groupSizes: Seq[Int], seq: Seq[T]): Seq[Seq[Group[T]]] = {
+			if (groupSizes.isEmpty || seq.isEmpty) Seq(Seq())
+			else {
+				val groups = combinations(groupSizes.head, seq)
+				groups.flatMap { aGroup =>
+					val filteredSeq = seq.filterNot{ aGroup.contains(_) }
+					group(groupSizes.tail, filteredSeq).map{ aGroup +: _ }
+				}
+			}
+		}
+		group(Seq(1), Seq()) should equal(Seq(Seq()))
+		group(Seq(1), Seq('a)) should equal(Seq(Seq(Seq('a))))
+		group(Seq(1), Seq('a, 'b)) should equal(Seq(
+			Seq(Seq('a)),
+			Seq(Seq('b))
+		))
+		group(Seq(1, 1), Seq('a, 'b)) should equal(Seq(
+			Seq(Seq('a), Seq('b)),
+			Seq(Seq('b), Seq('a))
+		))
+		group(Seq(2, 3, 4), Range(1, 10)) should equal(group3(Range(1, 10)))
 	}
 }
 
