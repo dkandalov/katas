@@ -325,6 +325,58 @@ class P1 extends ShouldMatchers {
 		lsortFreq(Seq(Seq('c), Seq('a, 'b))) should equal(Seq(Seq('c), Seq('a, 'b)))
 		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equal(Seq(Seq('a, 'b), Seq('c), Seq('c)))
 	}
+
+	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
+		class IntWithPrime(n: Int) {
+			def isPrime: Boolean = Range(2, n).forall{ i => n % i != 0 }
+		}
+		implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
+
+		1.isPrime should be(true)
+		2.isPrime should be(true)
+		3.isPrime should be(true)
+		4.isPrime should be(false)
+		5.isPrime should be(true)
+		6.isPrime should be(false)
+		7.isPrime should be(true)
+	}
+
+	private def gcd(a: Int, b: Int): Int = {
+		if (a > b) gcd(b, a)
+		else {
+			val reminder = b % a
+			if (reminder == 0) a
+			else gcd(reminder, a)
+		}
+	}
+
+	@Test def `(**) Determine the greatest common divisor of two positive integer numbers.`() {
+		gcd(1, 1) should be(1)
+		gcd(1, 2) should be(1)
+		gcd(2, 2) should be(2)
+		gcd(36, 63) should be(9)
+	}
+
+	private class IntWithCoPrime(n: Int) {
+		def isCoprimeTo(m: Int): Boolean = gcd(n, m) == 1
+	}
+	private implicit def intToIntWithCoPrime(n: Int) = new IntWithCoPrime(n)
+
+	@Test def `P33 (*) Determine whether two positive integer numbers are coprime.`() {
+		1.isCoprimeTo(2) should be(true)
+		2.isCoprimeTo(2) should be(false)
+		4.isCoprimeTo(2) should be(false)
+		4.isCoprimeTo(5) should be(true)
+		35.isCoprimeTo(64) should be(true)
+	}
+
+	@Test def `P34 (**) Calculate Euler's totient function phi(m).`() {
+		class IntWithTotient(n: Int) {
+			def totient(): Int = Range(1, n + 1).count(n.isCoprimeTo(_))
+		}
+		implicit def intToIntWithTotient(n: Int) = new IntWithTotient(n)
+		10.totient should be(4)
+	}
 }
 
 object CustomMatchers extends CustomMatchers
