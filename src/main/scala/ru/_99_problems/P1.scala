@@ -312,6 +312,19 @@ class P1 extends ShouldMatchers {
 		))
 		group(Seq(2, 3, 4), Range(1, 10)) should equal(group3(Range(1, 10)))
 	}
+
+	@Test def `P28 (**) Sorting a list of lists according to length of sublists.`() {
+		def lsort[T](seq: Seq[Seq[T]]): Seq[Seq[T]] = seq.sortBy(_.size)
+		lsort(Seq()) should equal(Seq())
+		lsort(Seq(Seq('a))) should equal(Seq(Seq('a)))
+		lsort(Seq(Seq('a, 'b), Seq('c))) should equal(Seq(Seq('c), Seq('a, 'b)))
+		lsort(Seq(Seq('c), Seq('a, 'b))) should equal(Seq(Seq('c), Seq('a, 'b)))
+
+		def frequencyOf[T](size: Int, seq: Seq[Seq[T]]): Int = seq.count{_.size == size}
+		def lsortFreq[T](seq: Seq[Seq[T]]): Seq[Seq[T]] = seq.sortBy{ subSeq => frequencyOf(subSeq.size, seq) }
+		lsortFreq(Seq(Seq('c), Seq('a, 'b))) should equal(Seq(Seq('c), Seq('a, 'b)))
+		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equal(Seq(Seq('a, 'b), Seq('c), Seq('c)))
+	}
 }
 
 object CustomMatchers extends CustomMatchers
