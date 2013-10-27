@@ -377,6 +377,36 @@ class P1 extends ShouldMatchers {
 		implicit def intToIntWithTotient(n: Int) = new IntWithTotient(n)
 		10.totient should be(4)
 	}
+
+	def primeFactorsOf(n: Int): Seq[Int] = {
+		if (n == 1) Seq()
+		else {
+			val i = Range(2, n + 1).find{ i => n % i == 0 }.get
+			i +: primeFactorsOf(n / i)
+		}
+	}
+	class IntWithPrimeFactors(n: Int) {
+		def primeFactors: Seq[Int] = if (n == 1) Seq(1) else primeFactorsOf(n)
+	}
+	implicit def intToIntWithPrimeFactors(n: Int) = new IntWithPrimeFactors(n)
+
+	@Test def `P35 (**) Determine the prime factors of a given positive integer.`() {
+		1.primeFactors should equal(Seq(1))
+		2.primeFactors should equal(Seq(2))
+		3.primeFactors should equal(Seq(3))
+		4.primeFactors should equal(Seq(2, 2))
+		315.primeFactors should equal(Seq(3, 3, 5, 7))
+	}
+
+	@Test def `P36 (**) Determine the prime factors of a given positive integer (2).`() {
+		class IntWithPrimeFactors2(n: Int) {
+			def primeFactorMultiplicity: Map[Int, Int] =
+				primeFactorsOf(n).groupBy{it => it}.map{ it => it._1 -> it._2.size }
+		}
+		implicit def intToIntWithPrimeFactors(n: Int) = new IntWithPrimeFactors2(n)
+
+		315.primeFactorMultiplicity should equal(Map(3 -> 2, 5 -> 1, 7 -> 1))
+	}
 }
 
 object CustomMatchers extends CustomMatchers
