@@ -326,12 +326,12 @@ class P1 extends ShouldMatchers {
 		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equal(Seq(Seq('a, 'b), Seq('c), Seq('c)))
 	}
 
-	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
-		class IntWithPrime(n: Int) {
-			def isPrime: Boolean = Range(2, n).forall{ i => n % i != 0 }
-		}
-		implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
+	class IntWithPrime(n: Int) {
+		def isPrime: Boolean = Range(2, n).forall{ i => n % i != 0 }
+	}
+	implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
 
+	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
 		1.isPrime should be(true)
 		2.isPrime should be(true)
 		3.isPrime should be(true)
@@ -398,14 +398,36 @@ class P1 extends ShouldMatchers {
 		315.primeFactors should equal(Seq(3, 3, 5, 7))
 	}
 
-	@Test def `P36 (**) Determine the prime factors of a given positive integer (2).`() {
-		class IntWithPrimeFactors2(n: Int) {
-			def primeFactorMultiplicity: Map[Int, Int] =
-				primeFactorsOf(n).groupBy{it => it}.map{ it => it._1 -> it._2.size }
-		}
-		implicit def intToIntWithPrimeFactors(n: Int) = new IntWithPrimeFactors2(n)
+	private class IntWithPrimeFactors2(n: Int) {
+		def primeFactorMultiplicity: Map[Int, Int] =
+			primeFactorsOf(n).groupBy{it => it}.map{ it => it._1 -> it._2.size }
+	}
+	private implicit def intToIntWithPrimeFactors2(n: Int) = new IntWithPrimeFactors2(n)
 
+	@Test def `P36 (**) Determine the prime factors of a given positive integer (2).`() {
 		315.primeFactorMultiplicity should equal(Map(3 -> 2, 5 -> 1, 7 -> 1))
+	}
+
+	@Test def `P37 (**) Calculate Euler's totient function phi(m) (improved).`() {
+		def totientOf(n: Int): Int = {
+			n.primeFactorMultiplicity.foldLeft(1) { (result, entry) =>
+				val p = entry._1
+				val m = entry._2
+				result * (p - 1) * math.pow(p, m - 1).toInt
+			}
+		}
+		totientOf(10) should be(4)
+		totientOf(10090) should be(4032)
+	}
+
+	@Test def `P39 (*) A list of prime numbers.`() {
+		def listPrimes(range: Range): Seq[Int] = {
+			if (range.isEmpty) Seq()
+			else if (range.head.isPrime) range.head +: listPrimes(range.tail)
+			else listPrimes(range.tail)
+		}
+		listPrimes(1 to 1) should be(Seq(1))
+		listPrimes(7 to 31) should be(Seq(7, 11, 13, 17, 19, 23, 29, 31))
 	}
 }
 
