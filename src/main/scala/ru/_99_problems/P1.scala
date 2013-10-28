@@ -4,6 +4,7 @@ import org.scalatest.matchers._
 import org.junit.Test
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
+import clojure.lang.Compiler.MaybePrimitiveExpr
 
 
 class P1 extends ShouldMatchers {
@@ -420,14 +421,36 @@ class P1 extends ShouldMatchers {
 		totientOf(10090) should be(4032)
 	}
 
+	def listPrimes(range: Range): Seq[Int] = {
+		if (range.isEmpty) Seq()
+		else if (range.head.isPrime) range.head +: listPrimes(range.tail)
+		else listPrimes(range.tail)
+	}
+
 	@Test def `P39 (*) A list of prime numbers.`() {
-		def listPrimes(range: Range): Seq[Int] = {
-			if (range.isEmpty) Seq()
-			else if (range.head.isPrime) range.head +: listPrimes(range.tail)
-			else listPrimes(range.tail)
-		}
 		listPrimes(1 to 1) should be(Seq(1))
 		listPrimes(7 to 31) should be(Seq(7, 11, 13, 17, 19, 23, 29, 31))
+	}
+
+	@Test def `P40 (**) Goldbach's conjecture.`() {
+		class IntWithGoldbach(n: Int) {
+			def goldbach: (Int, Int) = {
+				if (n % 2 != 0) throw new IllegalArgumentException()
+				if (n < 2) throw new IllegalArgumentException()
+
+				val primes = listPrimes(1 to (n + 1))
+				(for{ p1 <- primes
+					    p2 <- primes
+							if p1 + p2 == n } yield (p1, p2)).take(1)(0)
+			}
+		}
+		implicit def intToIntWithGoldbach(n: Int) = new IntWithGoldbach(n)
+
+		2.goldbach should be((1, 1))
+		4.goldbach should be((1, 3))
+		6.goldbach should be((1, 5))
+		8.goldbach should be((1, 7))
+		28.goldbach should be(5, 23)
 	}
 }
 
