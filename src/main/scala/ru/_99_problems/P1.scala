@@ -327,13 +327,13 @@ class P1 extends ShouldMatchers {
 		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equal(Seq(Seq('a, 'b), Seq('c), Seq('c)))
 	}
 
-	class IntWithPrime(n: Int) {
-		def isPrime: Boolean = Range(2, n).forall{ i => n % i != 0 }
+	private class IntWithPrime(n: Int) {
+		def isPrime: Boolean = n > 1 && Range(2, n).forall{ i => n % i != 0 }
 	}
-	implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
+	private implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
 
 	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
-		1.isPrime should be(true)
+		1.isPrime should be(false)
 		2.isPrime should be(true)
 		3.isPrime should be(true)
 		4.isPrime should be(false)
@@ -428,29 +428,44 @@ class P1 extends ShouldMatchers {
 	}
 
 	@Test def `P39 (*) A list of prime numbers.`() {
-		listPrimes(1 to 1) should be(Seq(1))
+		listPrimes(1 to 2) should be(Seq(2))
 		listPrimes(7 to 31) should be(Seq(7, 11, 13, 17, 19, 23, 29, 31))
 	}
 
-	@Test def `P40 (**) Goldbach's conjecture.`() {
-		class IntWithGoldbach(n: Int) {
-			def goldbach: (Int, Int) = {
-				if (n % 2 != 0) throw new IllegalArgumentException()
-				if (n < 2) throw new IllegalArgumentException()
+	private class IntWithGoldbach(n: Int) {
+		def goldbach: (Int, Int) = {
+			if (n % 2 != 0) throw new IllegalArgumentException()
+			if (n <= 2) throw new IllegalArgumentException()
 
-				val primes = listPrimes(1 to (n + 1))
-				(for{ p1 <- primes
-					    p2 <- primes
-							if p1 + p2 == n } yield (p1, p2)).take(1)(0)
-			}
+			val primes = listPrimes(1 to (n + 1))
+			(for{ p1 <- primes
+			      p2 <- primes
+			      if p1 + p2 == n } yield (p1, p2)).take(1)(0)
 		}
-		implicit def intToIntWithGoldbach(n: Int) = new IntWithGoldbach(n)
+	}
+	private implicit def intToIntWithGoldbach(n: Int) = new IntWithGoldbach(n)
 
-		2.goldbach should be((1, 1))
-		4.goldbach should be((1, 3))
-		6.goldbach should be((1, 5))
-		8.goldbach should be((1, 7))
-		28.goldbach should be(5, 23)
+	@Test def `P40 (**) Goldbach's conjecture.`() {
+		evaluating{ 2.goldbach } should produce[IllegalArgumentException]
+		4.goldbach should be((2, 2))
+		6.goldbach should be((3, 3))
+		8.goldbach should be((3, 5))
+		28.goldbach should be((5, 23))
+	}
+
+	@Test def `P41 (**) A list of Goldbach compositions.`() {
+		def goldbachList(range: Range): Seq[(Int, (Int, Int))] = {
+			range.filter{ _ % 2 == 0 }.map{ it => it -> it.goldbach }
+		}
+		goldbachList(9 to 20) should equal(Seq((10, (3, 7)), (12, (5, 7)), (14, (3, 11)), (16, (3, 13)), (18, (5, 13)), (20, (3, 17))))
+
+		def golbachListLimited(range: Range, limit: Int): Seq[(Int, (Int, Int))] = {
+			goldbachList(range).filter{ it => it._2._1 > limit && it._2._2 > limit }
+		}
+		golbachListLimited(3 to 3000, 50) should equal(Seq(
+			(992, (73, 919)), (1382, (61, 1321)), (1856, (67, 1789)), (1928, (61, 1867)), (2078, (61, 2017)),
+			(2438, (61, 2377)), (2512, (53, 2459)), (2530, (53, 2477)), (2618, (61, 2557)), (2642, (103, 2539)))
+		)
 	}
 }
 
