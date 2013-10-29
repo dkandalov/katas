@@ -467,6 +467,23 @@ class P1 extends ShouldMatchers {
 			(2438, (61, 2377)), (2512, (53, 2459)), (2530, (53, 2477)), (2618, (61, 2557)), (2642, (103, 2539)))
 		)
 	}
+
+	@Test def `P49 (**) Gray code.`() {
+		def gray(n: Int): Seq[String] = {
+			def doGray(count: Int, seq: Seq[String]): Seq[String] = {
+				if (count == 0) seq
+				else {
+					val updatedSeq = seq.map{"0" + _} ++ seq.reverse.map{"1" + _}
+					doGray(count - 1, updatedSeq)
+				}
+			}
+			if (n < 1) throw new IllegalArgumentException
+			doGray(n, Seq(""))
+		}
+		gray(1) should equal(Seq("0", "1"))
+		gray(2) should equal(Seq("00", "01", "11", "10"))
+		gray(3) should equal(Seq("000", "001", "011", "010", "110", "111", "101", "100"))
+	}
 }
 
 object CustomMatchers extends CustomMatchers
