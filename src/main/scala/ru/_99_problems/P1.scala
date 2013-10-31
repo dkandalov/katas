@@ -484,6 +484,28 @@ class P1 extends ShouldMatchers {
 		gray(2) should equal(Seq("00", "01", "11", "10"))
 		gray(3) should equal(Seq("000", "001", "011", "010", "110", "111", "101", "100"))
 	}
+
+	@Test def `P50 (***) Huffman code.`() {
+		type Code = (String, Int)
+
+		abstract case class Tree()
+		case class EmptyNode() extends Tree
+		case class Node(value: Code, left: Tree = EmptyNode(), right: Tree = EmptyNode()) extends Tree
+
+
+		def buildTreeFrom(nodes: Seq[Node]): Node = {
+			Node(("", 0))
+		}
+
+		def huffman(frequencies: Seq[Code]): Seq[Code] = {
+			val sortedFrequencies = frequencies.sortBy{-_._2}
+			buildTreeFrom(sortedFrequencies.map{ Node(_) })
+			Seq()
+		}
+
+		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
+		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
+	}
 }
 
 object CustomMatchers extends CustomMatchers
