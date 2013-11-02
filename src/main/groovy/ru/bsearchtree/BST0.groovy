@@ -64,7 +64,7 @@ class BST0 {
 
 }
 
-private final class Node {
+final class Node {
     int value
     Node left
     Node right

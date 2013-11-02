@@ -31,7 +31,7 @@ class Tree3 {
   }
 }
 
-private class GNode {
+class GNode {
   String s
   GNode left
   GNode right

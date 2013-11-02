@@ -494,12 +494,23 @@ class P1 extends ShouldMatchers {
 
 
 		def buildTreeFrom(nodes: Seq[Node]): Node = {
-			Node(("", 0))
+			if (nodes.size == 1) nodes.head
+			else {
+				val node1 = nodes(0)
+				val node2 = nodes(1)
+//				val node = Node(("", node1.value + node2.value), node1, node2)
+//				buildTreeFrom(sortByValue(nodes :+ node))
+				Seq()
+			}
+		}
+
+		def sortByValue(nodes: Seq[Node]): Seq[Node] = {
+			nodes.sortBy{_.value}
 		}
 
 		def huffman(frequencies: Seq[Code]): Seq[Code] = {
-			val sortedFrequencies = frequencies.sortBy{-_._2}
-			buildTreeFrom(sortedFrequencies.map{ Node(_) })
+			val nodes = frequencies.map{ Node(_) }
+			val tree = buildTreeFrom(sortByValue(nodes))
 			Seq()
 		}
 
