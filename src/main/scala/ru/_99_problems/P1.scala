@@ -488,9 +488,8 @@ class P1 extends ShouldMatchers {
 	@Test def `P50 (***) Huffman code.`() {
 		type Code = (String, Int)
 
-		abstract case class Tree()
-		case class EmptyNode() extends Tree
-		case class Node(value: Code, left: Tree = EmptyNode(), right: Tree = EmptyNode()) extends Tree
+		case class Node(weight: Int, left: Node = null, right: Node = null)
+		case class LeafNode(value: String, override val weight: Int) extends Node(weight)
 
 
 		def buildTreeFrom(nodes: Seq[Node]): Node = {
@@ -498,21 +497,32 @@ class P1 extends ShouldMatchers {
 			else {
 				val node1 = nodes(0)
 				val node2 = nodes(1)
-//				val node = Node(("", node1.value + node2.value), node1, node2)
-//				buildTreeFrom(sortByValue(nodes :+ node))
-				Seq()
+				val node = Node(node1.weight + node2.weight, node1, node2)
+				buildTreeFrom(sortByWeight(nodes.drop(2) :+ node))
 			}
 		}
 
-		def sortByValue(nodes: Seq[Node]): Seq[Node] = {
-			nodes.sortBy{_.value}
+		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{-_.weight}
+
+		def allCodesIn(tree: Node, path: String = ""): Seq[Code] = tree match {
+			case LeafNode(value, _) => {
+				println(path)
+				Seq((value, path.toInt))
+			}
+			case Node(weight, left, right) =>
+				allCodesIn(tree.left, path + "1") ++ allCodesIn(tree.right, path + "1")
 		}
 
 		def huffman(frequencies: Seq[Code]): Seq[Code] = {
-			val nodes = frequencies.map{ Node(_) }
-			val tree = buildTreeFrom(sortByValue(nodes))
-			Seq()
+			val nodes = frequencies.map{ it => LeafNode(it._1, it._2) }
+			val tree = buildTreeFrom(sortByWeight(nodes))
+			allCodesIn(tree)
 		}
+
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
+			Node(45 + 13, LeafNode("a", 45), LeafNode("b", 13))
+		)
 
 		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
