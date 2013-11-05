@@ -492,44 +492,38 @@ class P1 extends ShouldMatchers {
 		case class LeafNode(value: String, override val weight: Int) extends Node(weight)
 
 
-		def buildTreeFrom(nodes1: Seq[Node], nodes2: Seq[Node] = Seq()): Node = {
-			if (nodes1.size == 1 && nodes2.isEmpty) nodes1.head
-			else if (nodes1.isEmpty && nodes2.size == 1) nodes2.head
+		def buildTreeFrom(queue1: Seq[Node], queue2: Seq[Node] = Seq()): Node = {
+			def takeSmallest(queue1: Seq[Node], queue2: Seq[Node]): (Node, Seq[Node], Seq[Node]) = {
+				if (queue2.isEmpty) (queue1(0), queue1.drop(1), queue2)
+				else if (queue1.isEmpty || queue2(0).weight < queue1(0).weight) (queue2(0), queue1, queue2.drop(1))
+				else (queue1(0), queue1.drop(1), queue2)
+			}
+			if (queue1.size == 1 && queue2.isEmpty) queue1.head
+			else if (queue1.isEmpty && queue2.size == 1) queue2.head
 			else {
-				if (nodes2.isEmpty || nodes1(0).weight < nodes2(0).weight) {
-					val node1 = nodes1(0)
-					val node2 = nodes1(1)
-					val node = Node(node1.weight + node2.weight, node1, node2)
-					buildTreeFrom(nodes1.drop(2), nodes2 :+ node)
-				} else {
-					val node1 = nodes1(0)
-					val node2 = nodes2(0)
-					val node = Node(node1.weight + node2.weight, node1, node2)
-					buildTreeFrom(nodes1.drop(1), nodes2.drop(1) :+ node)
-				}
+				val (node1, updatedQueue1, updatedQueue2) = takeSmallest(queue1, queue2)
+				val (node2, newQueue1, newQueue2) = takeSmallest(updatedQueue1, updatedQueue2)
+				buildTreeFrom(newQueue1, newQueue2 :+ Node(node1.weight + node2.weight, node1, node2))
 			}
 		}
 
 		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{_.weight}
 
 		def allCodesIn(tree: Node, path: String = ""): Seq[Code] = tree match {
-			case LeafNode(value, _) => {
-				Seq((value, path.toInt))
-			}
-			case Node(weight, left, right) =>
-				allCodesIn(tree.left, path + "0") ++ allCodesIn(tree.right, path + "1")
+			case LeafNode(value, _) =>  Seq((value, path.toInt))
+			case Node(weight, left, right) => allCodesIn(tree.left, path + "0") ++ allCodesIn(tree.right, path + "1")
 		}
 
 		def huffman(frequencies: Seq[Code]): Seq[Code] = {
 			val nodes = frequencies.map{ it => LeafNode(it._1, it._2) }
 			val tree = buildTreeFrom(sortByWeight(nodes))
-			allCodesIn(tree)
+			allCodesIn(tree).sortBy{_._1}
 		}
 
-		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
-		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
-			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
-		)
+//		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
+//		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
+//			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
+//		)
 
 		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
