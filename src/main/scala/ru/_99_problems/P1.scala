@@ -492,25 +492,32 @@ class P1 extends ShouldMatchers {
 		case class LeafNode(value: String, override val weight: Int) extends Node(weight)
 
 
-		def buildTreeFrom(nodes: Seq[Node]): Node = {
-			if (nodes.size == 1) nodes.head
+		def buildTreeFrom(nodes1: Seq[Node], nodes2: Seq[Node] = Seq()): Node = {
+			if (nodes1.size == 1 && nodes2.isEmpty) nodes1.head
+			else if (nodes1.isEmpty && nodes2.size == 1) nodes2.head
 			else {
-				val node1 = nodes(0)
-				val node2 = nodes(1)
-				val node = Node(node1.weight + node2.weight, node1, node2)
-				buildTreeFrom(sortByWeight(nodes.drop(2) :+ node))
+				if (nodes2.isEmpty || nodes1(0).weight < nodes2(0).weight) {
+					val node1 = nodes1(0)
+					val node2 = nodes1(1)
+					val node = Node(node1.weight + node2.weight, node1, node2)
+					buildTreeFrom(nodes1.drop(2), nodes2 :+ node)
+				} else {
+					val node1 = nodes1(0)
+					val node2 = nodes2(0)
+					val node = Node(node1.weight + node2.weight, node1, node2)
+					buildTreeFrom(nodes1.drop(1), nodes2.drop(1) :+ node)
+				}
 			}
 		}
 
-		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{-_.weight}
+		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{_.weight}
 
 		def allCodesIn(tree: Node, path: String = ""): Seq[Code] = tree match {
 			case LeafNode(value, _) => {
-				println(path)
 				Seq((value, path.toInt))
 			}
 			case Node(weight, left, right) =>
-				allCodesIn(tree.left, path + "1") ++ allCodesIn(tree.right, path + "1")
+				allCodesIn(tree.left, path + "0") ++ allCodesIn(tree.right, path + "1")
 		}
 
 		def huffman(frequencies: Seq[Code]): Seq[Code] = {
@@ -521,7 +528,7 @@ class P1 extends ShouldMatchers {
 
 		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
 		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
-			Node(45 + 13, LeafNode("a", 45), LeafNode("b", 13))
+			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
 		)
 
 		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
