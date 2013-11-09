@@ -520,14 +520,51 @@ class P1 extends ShouldMatchers {
 			allCodesIn(tree).sortBy{_._1}
 		}
 
-//		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
-//		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
-//			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
-//		)
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
+			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
+		)
 
 		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
 	}
+
+	sealed abstract class Tree[+T]
+	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+		override def toString = {
+			if (left == End && right == End) "T(" + value.toString + ")"
+			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
+		}
+	}
+	case object End extends Tree[Nothing] {
+		override def toString = ""
+	}
+//	object Node {
+//		def apply[T](value: T): Node[T] = Node(value, End, End)
+//	}
+
+	@Test def `P55 (**) Construct completely balanced binary trees.`() {
+		object Tree {
+			def constructBalanced(amountOfNodes: Int, value: String, result: Tree[String] = End): List[Tree[String]] = {
+				if (amountOfNodes == 0) {
+					if (result != End) List(result) else List()
+				} else if (result == End) {
+					constructBalanced(amountOfNodes - 1, value, Node(value))
+				} else {
+					// TODO
+					List(Node(value))
+				}
+			}
+		}
+
+		Tree.constructBalanced(0, "x") should equal(List())
+		Tree.constructBalanced(1, "x") should equal(List(Node("x")))
+		Tree.constructBalanced(2, "x") should equal(List(
+			Node("x", Node("x")),
+			Node("x", End, Node("x"))
+		))
+	}
+
 }
 
 object CustomMatchers extends CustomMatchers
