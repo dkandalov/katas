@@ -539,29 +539,49 @@ class P1 extends ShouldMatchers {
 	case object End extends Tree[Nothing] {
 		override def toString = ""
 	}
-//	object Node {
-//		def apply[T](value: T): Node[T] = Node(value, End, End)
-//	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
 		object Tree {
-			def constructBalanced(amountOfNodes: Int, value: String, result: Tree[String] = End): List[Tree[String]] = {
-				if (amountOfNodes == 0) {
-					if (result != End) List(result) else List()
-				} else if (result == End) {
-					constructBalanced(amountOfNodes - 1, value, Node(value))
-				} else {
-					// TODO
-					List(Node(value))
+			def constructBalanced(amountOfNodes: Int, value: String): List[Tree[String]] = {
+				if (amountOfNodes == 0) List(End)
+				else if (amountOfNodes == 1) List(Node(value))
+				else {
+					val leftAmount = (amountOfNodes - 1) / 2
+					val rightAmount = amountOfNodes - 1 - leftAmount
+					if (leftAmount == rightAmount)
+						for (leftNode <- constructBalanced(leftAmount, value); rightNode <- constructBalanced(rightAmount, value))
+							yield Node(value, leftNode, rightNode)
+					else
+						(for (leftNode <- constructBalanced(leftAmount, value); rightNode <- constructBalanced(rightAmount, value))
+							yield Node(value, leftNode, rightNode)) ++
+						(for (leftNode <- constructBalanced(rightAmount, value); rightNode <- constructBalanced(leftAmount, value))
+							yield Node(value, leftNode, rightNode))
 				}
 			}
 		}
 
-		Tree.constructBalanced(0, "x") should equal(List())
+		Tree.constructBalanced(0, "x") should equal(List(End))
 		Tree.constructBalanced(1, "x") should equal(List(Node("x")))
 		Tree.constructBalanced(2, "x") should equal(List(
-			Node("x", Node("x")),
-			Node("x", End, Node("x"))
+			Node("x", End, Node("x")),
+			Node("x", Node("x"), End)
+		))
+		Tree.constructBalanced(3, "x") should equal(List(
+			Node("x", Node("x"), Node("x"))
+		))
+		Tree.constructBalanced(4, "x") should equal(List(
+			Node("x",
+				Node("x"),
+				Node("x", End, Node("x"))),
+			Node("x",
+				Node("x"),
+				Node("x", Node("x"))),
+			Node("x",
+				Node("x", End, Node("x")),
+				Node("x")),
+			Node("x",
+				Node("x", Node("x")),
+				Node("x"))
 		))
 	}
 
