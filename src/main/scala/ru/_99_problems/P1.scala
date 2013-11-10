@@ -529,20 +529,42 @@ class P1 extends ShouldMatchers {
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
 	}
 
-	sealed abstract class Tree[+T]
+	sealed abstract class Tree[+T] {
+		def mirror: Tree[T]
+		def isSymmetric: Boolean
+		def hasSameStructureAs(tree: Tree[Any]): Boolean
+		}
 	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
 			if (left == End && right == End) "T(" + value.toString + ")"
 			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
 		}
+
+		def mirror = Node(value, right.mirror, left.mirror)
+
+		def hasSameStructureAs(tree: Tree[Any]): Boolean = tree match {
+			case Node(_, thatLeft, thatRight) => left.hasSameStructureAs(thatLeft) && right.hasSameStructureAs(thatRight)
+			case _ => false
+		}
+
+		def isSymmetric = left.hasSameStructureAs(right.mirror)
 	}
 	case object End extends Tree[Nothing] {
 		override def toString = ""
+
+		def mirror = this
+
+		def isSymmetric = true
+
+		def hasSameStructureAs(tree: Tree[Any]) = tree match {
+			case End => true
+			case _ => false
+		}
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
 		object Tree {
-			def constructBalanced(amountOfNodes: Int, value: String): List[Tree[String]] = {
+			def constructBalanced[T](amountOfNodes: Int, value: T): List[Tree[T]] = {
 				if (amountOfNodes == 0) List(End)
 				else if (amountOfNodes == 1) List(Node(value))
 				else {
@@ -583,6 +605,29 @@ class P1 extends ShouldMatchers {
 				Node("x", Node("x")),
 				Node("x"))
 		))
+	}
+
+	@Test def `P56 (**) Symmetric binary trees.`() {
+		Node("a").mirror should equal(Node("a"))
+		Node("a", Node("b")).mirror should equal(Node("a", End, Node("b")))
+		Node("",
+			Node("0"),
+			Node("1", End, Node("11"))
+		).mirror should equal(
+			Node("",
+				Node("1", Node("11")),
+				Node("0")
+		))
+
+		Node('a', Node('b'), Node('c')).isSymmetric should be(true)
+		Node("",
+			Node("0", Node("00")),
+			Node("1", End, Node("11"))
+		).isSymmetric should be(true)
+		Node("",
+			Node("0", Node("00")),
+			Node("1", Node("11"))
+		).isSymmetric should be(false)
 	}
 
 }
