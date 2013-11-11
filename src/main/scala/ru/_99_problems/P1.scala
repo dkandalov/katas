@@ -4,7 +4,6 @@ import org.scalatest.matchers._
 import org.junit.Test
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
-import clojure.lang.Compiler.MaybePrimitiveExpr
 
 
 class P1 extends ShouldMatchers {
@@ -529,12 +528,20 @@ class P1 extends ShouldMatchers {
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
 	}
 
-	sealed abstract class Tree[+T] {
+	object Tree {
+		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
+			if (seq.isEmpty) result
+			else from(seq.tail, result.addValue(seq.head))
+		}
+	}
+
+	sealed abstract class Tree[+T <% Ordered[T]] {
 		def mirror: Tree[T]
 		def isSymmetric: Boolean
 		def hasSameStructureAs(tree: Tree[Any]): Boolean
-		}
-	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
+	}
+	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
 			if (left == End && right == End) "T(" + value.toString + ")"
 			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
@@ -548,7 +555,12 @@ class P1 extends ShouldMatchers {
 		}
 
 		def isSymmetric = left.hasSameStructureAs(right.mirror)
+
+		def addValue[T2 >: T <% Ordered[T2]](newValue: T2) =
+			if (value > newValue) Node(value, left.addValue(newValue), right)
+			else Node(value, left, right.addValue(newValue))
 	}
+
 	case object End extends Tree[Nothing] {
 		override def toString = ""
 
@@ -560,11 +572,13 @@ class P1 extends ShouldMatchers {
 			case End => true
 			case _ => false
 		}
+
+		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
 		object Tree {
-			def constructBalanced[T](amountOfNodes: Int, value: T): List[Tree[T]] = {
+			def constructBalanced[T <% Ordered[T]](amountOfNodes: Int, value: T): List[Tree[T]] = {
 				if (amountOfNodes == 0) List(End)
 				else if (amountOfNodes == 1) List(Node(value))
 				else {
@@ -630,6 +644,16 @@ class P1 extends ShouldMatchers {
 		).isSymmetric should be(false)
 	}
 
+	@Test def `P57 (**) Binary search trees (dictionaries).`() {
+		End.addValue(2) should equal(Node(2))
+		Node(2).addValue(3) should equal(Node(2, End, Node(3)))
+		Node(2, End, Node(3)).addValue(0) should equal(Node(2, Node(0), Node(3)))
+
+		Tree.from(Seq()) should equal(End)
+		Tree.from(Seq(1)) should equal(Node(1))
+		Tree.from(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric should be(true)
+		Tree.from(List(3, 2, 5, 7, 4)).isSymmetric should be(false)
+	}
 }
 
 object CustomMatchers extends CustomMatchers
