@@ -533,6 +533,18 @@ class P1 extends ShouldMatchers {
 			if (seq.isEmpty) result
 			else from(seq.tail, result.addValue(seq.head))
 		}
+
+		def allTrees(size: Int, value: String): Seq[Tree[String]] = {
+			def addOneNode(tree: Tree[String], value: String): Seq[Tree[String]] = tree match {
+				case End => Seq(Node(value))
+				case Node(nodeValue, left, right) =>
+					addOneNode(left, value).map{ it => Node(nodeValue, it, right) } ++
+						addOneNode(right, value).map{ it => Node(nodeValue, left, it) }
+			}
+
+			if (size == 1) Seq(Node(value))
+			else allTrees(size - 1, value).flatMap{ it => addOneNode(it, value) }.distinct
+		}
 	}
 
 	sealed abstract class Tree[+T <% Ordered[T]] {
@@ -653,6 +665,63 @@ class P1 extends ShouldMatchers {
 		Tree.from(Seq(1)) should equal(Node(1))
 		Tree.from(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric should be(true)
 		Tree.from(List(3, 2, 5, 7, 4)).isSymmetric should be(false)
+	}
+
+	@Test def `P58 (**) Generate-and-test paradigm.`() {
+		import Tree._
+
+		allTrees(1, "x") should equal(Seq(Node("x")))
+		allTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
+		allTrees(3, "x") should equal(Seq(
+			Node("x",
+				Node("x",
+					Node("x"))),
+			Node("x",
+				Node("x",
+					End,
+					Node("x"))),
+			Node("x",
+				Node("x"),
+				Node("x")),
+			Node("x",
+				End,
+				Node("x",
+					Node("x"))),
+			Node("x",
+				End,
+				Node("x",
+					End,
+					Node("x")))
+		))
+
+		def symmetricBalancedTrees(size: Int, value: String): Seq[Tree[String]] = {
+			allTrees(size, value).filter{ tree => tree.isSymmetric }
+		}
+
+		symmetricBalancedTrees(3, "x") should equal(Seq(
+			Node("x",
+				Node("x"),
+				Node("x"))
+		))
+		symmetricBalancedTrees(4, "x") should equal(Seq())
+		symmetricBalancedTrees(5, "x") should equal(Seq(
+			Node("x",
+				Node("x",
+					Node("x"),
+					End),
+				Node("x",
+					End,
+					Node("x"))
+			),
+			Node("x",
+				Node("x",
+					End,
+					Node("x")),
+				Node("x",
+					Node("x"),
+					End)
+			)
+		))
 	}
 }
 
