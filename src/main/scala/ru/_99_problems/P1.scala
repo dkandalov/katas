@@ -534,8 +534,8 @@ class P1 extends ShouldMatchers {
 			else from(seq.tail, result.addValue(seq.head))
 		}
 
-		def allTrees(size: Int, value: String): Seq[Tree[String]] = {
-			def addOneNode(tree: Tree[String], value: String): Seq[Tree[String]] = tree match {
+		def allTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+			def addOneNode[T <% Ordered[T]](tree: Tree[T], value: T): Seq[Tree[T]] = tree match {
 				case End => Seq(Node(value))
 				case Node(nodeValue, left, right) =>
 					addOneNode(left, value).map{ it => Node(nodeValue, it, right) } ++
@@ -544,6 +544,10 @@ class P1 extends ShouldMatchers {
 
 			if (size == 1) Seq(Node(value))
 			else allTrees(size - 1, value).flatMap{ it => addOneNode(it, value) }.distinct
+		}
+
+		def symmetricBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+			allTrees(size, value).filter{ tree => tree.isSymmetric }
 		}
 	}
 
@@ -694,9 +698,6 @@ class P1 extends ShouldMatchers {
 					Node("x")))
 		))
 
-		def symmetricBalancedTrees(size: Int, value: String): Seq[Tree[String]] = {
-			allTrees(size, value).filter{ tree => tree.isSymmetric }
-		}
 
 		symmetricBalancedTrees(3, "x") should equal(Seq(
 			Node("x",
