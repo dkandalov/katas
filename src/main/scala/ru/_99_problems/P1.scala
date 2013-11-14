@@ -556,6 +556,7 @@ class P1 extends ShouldMatchers {
 		def isSymmetric: Boolean
 		def hasSameStructureAs(tree: Tree[Any]): Boolean
 		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
+		def isHeightBalanced: Boolean
 	}
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
@@ -575,6 +576,12 @@ class P1 extends ShouldMatchers {
 		def addValue[T2 >: T <% Ordered[T2]](newValue: T2) =
 			if (value > newValue) Node(value, left.addValue(newValue), right)
 			else Node(value, left, right.addValue(newValue))
+
+		def isHeightBalanced = this match {
+			case node@Node(_, _) =>
+		}
+
+		private def height = 1 + left.height + right.height
 	}
 
 	case object End extends Tree[Nothing] {
@@ -590,6 +597,8 @@ class P1 extends ShouldMatchers {
 		}
 
 		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
+
+		def isHeightBalanced = true
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -723,6 +732,15 @@ class P1 extends ShouldMatchers {
 					End)
 			)
 		))
+	}
+
+	@Test def `P59 (**) Construct height-balanced binary trees.`() {
+		import Tree._
+		def heightBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+			allTrees(size, value).filter{ it => it.isHeightBalanced }
+		}
+		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
+		heightBalancedTrees(2, "x") should equal(Seq())
 	}
 }
 
