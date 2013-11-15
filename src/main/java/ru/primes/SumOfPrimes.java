@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
+// rbs techstock 2013
 public class SumOfPrimes {
     @Test
     public void shouldFindSumOfPrimesBelow2M() {
