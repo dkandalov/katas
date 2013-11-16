@@ -3,6 +3,13 @@ package ru.permutation;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 // rbs techstock 2013
 public class Perm8 {
     @Test
@@ -14,8 +21,30 @@ public class Perm8 {
             if (i == 1_000_000) System.out.printf("%s\n", new String(s));
         } while (permute(s, s.length));
 
+        assertThat(allPermutationsOf("abc"), equalTo(Arrays.asList(
+                "abc", "acb", "bac", "bca", "cab", "cba"
+        )));
+
+        assertThat(allPermutationsOf("abcd"), equalTo(Arrays.asList(
+                "abcd", "abdc", "acbd", "acdb", "adbc", "adcb",
+                "bacd", "badc", "bcad", "bcda", "bdac", "bdca",
+                "cabd", "cadb", "cbad", "cbda", "cdab", "cdba",
+                "dabc", "dacb", "dbac", "dbca", "dcab", "dcba"
+        )));
+
 //        List<Integer> list = asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 //        System.out.println(permutationsOf(list).get(1_000_000)); // [2, 7, 8, 3, 9, 1, 5, 6, 0, 4]
+    }
+
+    private static List<String> allPermutationsOf(String s) {
+        List<String> result = new ArrayList<>(factorialOf(s.length()));
+
+        char[] chars = s.toCharArray();
+        do {
+            result.add(new String(chars));
+        } while (permute(chars, chars.length));
+
+        return result;
     }
 
     /**
@@ -52,6 +81,11 @@ public class Perm8 {
             length--;
         }
         return true;
+    }
+
+    private static int factorialOf(int n) {
+        if (n <= 2) return n;
+        else return n * factorialOf(n - 1);
     }
 
     private static void swap(char[] s, int a, int b) {
