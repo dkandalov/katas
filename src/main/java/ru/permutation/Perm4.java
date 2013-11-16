@@ -42,6 +42,7 @@ public class Perm4 {
         )));
     }
 
+    // TODO this must be broken
     private static List<List<Integer>> perm(List<Integer> values) {
         List<List<Integer>> result = new LinkedList<List<Integer>>();
         result.add(new LinkedList<Integer>(values));
