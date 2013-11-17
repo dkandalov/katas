@@ -557,6 +557,7 @@ class P1 extends ShouldMatchers {
 		def hasSameStructureAs(tree: Tree[Any]): Boolean
 		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
 		def isHeightBalanced: Boolean
+		def height: Int
 	}
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
@@ -577,11 +578,9 @@ class P1 extends ShouldMatchers {
 			if (value > newValue) Node(value, left.addValue(newValue), right)
 			else Node(value, left, right.addValue(newValue))
 
-		def isHeightBalanced = this match {
-			case node@Node(_, _) =>
-		}
+		def isHeightBalanced = math.abs(left.height - right.height) <= 1
 
-		private def height = 1 + left.height + right.height
+		def height = 1 + math.max(left.height, right.height)
 	}
 
 	case object End extends Tree[Nothing] {
@@ -599,6 +598,8 @@ class P1 extends ShouldMatchers {
 		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
 
 		def isHeightBalanced = true
+
+		def height = 0
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -736,11 +737,17 @@ class P1 extends ShouldMatchers {
 
 	@Test def `P59 (**) Construct height-balanced binary trees.`() {
 		import Tree._
-		def heightBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
-			allTrees(size, value).filter{ it => it.isHeightBalanced }
+		def maxAmountOfNodes(height: Int): Int = {
+			if (height == 1) 1
+			else math.pow(2, height - 1).toInt + maxAmountOfNodes(height - 1)
+		}
+		def heightBalancedTrees[T <% Ordered[T]](height: Int, value: T): Seq[Tree[T]] = {
+			(for (size <- height to maxAmountOfNodes(height))
+				yield allTrees(size, value).filter{ it => it.height == height && it.isHeightBalanced }).flatten
 		}
 		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
-		heightBalancedTrees(2, "x") should equal(Seq())
+		heightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x")), Node("x", Node("x"), Node("x"))))
+		heightBalancedTrees(3, "x").size should equal(15)
 	}
 }
 
