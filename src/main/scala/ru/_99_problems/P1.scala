@@ -549,6 +549,8 @@ class P1 extends ShouldMatchers {
 		def symmetricBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
 			allTrees(size, value).filter{ tree => tree.isSymmetric }
 		}
+
+		def maxAmountOfNodes(height: Int): Int = math.pow(2, height).toInt - 1
 	}
 
 	sealed abstract class Tree[+T <% Ordered[T]] {
@@ -737,10 +739,6 @@ class P1 extends ShouldMatchers {
 
 	@Test def `P59 (**) Construct height-balanced binary trees.`() {
 		import Tree._
-		def maxAmountOfNodes(height: Int): Int = {
-			if (height == 1) 1
-			else math.pow(2, height - 1).toInt + maxAmountOfNodes(height - 1)
-		}
 		def heightBalancedTrees[T <% Ordered[T]](height: Int, value: T): Seq[Tree[T]] = {
 			(for (size <- height to maxAmountOfNodes(height))
 				yield allTrees(size, value).filter{ it => it.height == height && it.isHeightBalanced }).flatten
@@ -748,6 +746,28 @@ class P1 extends ShouldMatchers {
 		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
 		heightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x")), Node("x", Node("x"), Node("x"))))
 		heightBalancedTrees(3, "x").size should equal(15)
+	}
+
+	@Test def `P60 (**) Construct height-balanced binary trees with a given number of nodes.`() {
+		import Tree._
+
+		def minAmountOfNodes(height: Int): Int = {
+			if (height == 1) 1
+			else if (height == 2) 2
+			else minAmountOfNodes(height - 1) + 2
+		}
+		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
+
+		minAmountOfNodes(1) should equal(1)
+		minAmountOfNodes(2) should equal(2)
+		minAmountOfNodes(3) should equal(4)
+		minAmountOfNodes(4) should equal(6)
+		maxBalancedHeight(1) should equal(1)
+		maxBalancedHeight(2) should equal(2)
+		maxBalancedHeight(3) should equal(2)
+		maxBalancedHeight(4) should equal(3)
+
+//		allTrees(15, "x").filter{ it => it.isHeightBalanced }.size should equal(100)
 	}
 }
 
