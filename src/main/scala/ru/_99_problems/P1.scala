@@ -560,6 +560,7 @@ class P1 extends ShouldMatchers {
 		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
 		def isHeightBalanced: Boolean
 		def height: Int
+		def leafCount: Int
 	}
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
@@ -583,6 +584,8 @@ class P1 extends ShouldMatchers {
 		def isHeightBalanced = math.abs(left.height - right.height) <= 1
 
 		def height = 1 + math.max(left.height, right.height)
+
+		def leafCount = if (left == End && right == End) 1 else (left.leafCount + right.leafCount)
 	}
 
 	case object End extends Tree[Nothing] {
@@ -602,6 +605,8 @@ class P1 extends ShouldMatchers {
 		def isHeightBalanced = true
 
 		def height = 0
+
+		def leafCount = 0
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -767,7 +772,27 @@ class P1 extends ShouldMatchers {
 		maxBalancedHeight(3) should equal(2)
 		maxBalancedHeight(4) should equal(3)
 
+		def allHeightBalancedTrees[T <% Ordered[T]](amountOfNodes: Int, value: T): Seq[Tree[T]] = {
+			Seq() // TODO implement and make it work for N == 15
+		}
+
+		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
+		allHeightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
+		allHeightBalancedTrees(3, "x") should equal(Seq(Node("x", Node("x"), Node("x"))))
+
 //		allTrees(15, "x").filter{ it => it.isHeightBalanced }.size should equal(100)
+	}
+
+	@Test def `P61 (*) Count the leaves of a binary tree.`() {
+		End.leafCount should equal(0)
+		Node("x").leafCount should equal(1)
+		Node("x", Node("x")).leafCount should equal(1)
+		Node("x", Node("x"), Node("x")).leafCount should equal(2)
+
+		Node("x",
+			Node("x", Node("x")),
+			Node("x")
+		).leafCount should equal(2)
 	}
 }
 
