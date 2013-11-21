@@ -528,99 +528,6 @@ class P1 extends ShouldMatchers {
 		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
 	}
 
-	object Tree {
-		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
-			if (seq.isEmpty) result
-			else from(seq.tail, result.addValue(seq.head))
-		}
-
-		def allTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
-			def addOneNode[T <% Ordered[T]](tree: Tree[T], value: T): Seq[Tree[T]] = tree match {
-				case End => Seq(Node(value))
-				case Node(nodeValue, left, right) =>
-					addOneNode(left, value).map{ it => Node(nodeValue, it, right) } ++
-						addOneNode(right, value).map{ it => Node(nodeValue, left, it) }
-			}
-
-			if (size == 1) Seq(Node(value))
-			else allTrees(size - 1, value).flatMap{ it => addOneNode(it, value) }.distinct
-		}
-
-		def symmetricBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
-			allTrees(size, value).filter{ tree => tree.isSymmetric }
-		}
-
-		def maxAmountOfNodes(height: Int): Int = math.pow(2, height).toInt - 1
-	}
-
-	sealed abstract class Tree[+T <% Ordered[T]] {
-		def mirror: Tree[T]
-		def isSymmetric: Boolean
-		def hasSameStructureAs(tree: Tree[Any]): Boolean
-		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
-		def isHeightBalanced: Boolean
-		def height: Int
-		def leafCount: Int
-		def leafList: List[T]
-		def internalList: List[T]
-	}
-	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
-		override def toString = {
-			if (left == End && right == End) "T(" + value.toString + ")"
-			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
-		}
-
-		def mirror = Node(value, right.mirror, left.mirror)
-
-		def hasSameStructureAs(tree: Tree[Any]): Boolean = tree match {
-			case Node(_, thatLeft, thatRight) => left.hasSameStructureAs(thatLeft) && right.hasSameStructureAs(thatRight)
-			case _ => false
-		}
-
-		def isSymmetric = left.hasSameStructureAs(right.mirror)
-
-		def addValue[T2 >: T <% Ordered[T2]](newValue: T2) =
-			if (value > newValue) Node(value, left.addValue(newValue), right)
-			else Node(value, left, right.addValue(newValue))
-
-		def isHeightBalanced = math.abs(left.height - right.height) <= 1
-
-		def height = 1 + math.max(left.height, right.height)
-
-		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
-
-		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
-
-		def internalList = if (isLeaf) List() else left.internalList ++ List(value) ++ right.internalList
-
-		private def isLeaf: Boolean = left == End && right == End
-	}
-
-	case object End extends Tree[Nothing] {
-		override def toString = ""
-
-		def mirror = this
-
-		def isSymmetric = true
-
-		def hasSameStructureAs(tree: Tree[Any]) = tree match {
-			case End => true
-			case _ => false
-		}
-
-		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
-
-		def isHeightBalanced = true
-
-		def height = 0
-
-		def leafCount = 0
-
-		def leafList = List()
-
-		def internalList = List()
-	}
-
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
 		object Tree {
 			def constructBalanced[T <% Ordered[T]](amountOfNodes: Int, value: T): List[Tree[T]] = {
@@ -830,6 +737,120 @@ class P1 extends ShouldMatchers {
 			)
 		).internalList should equal(List("a", "c"))
 	}
+
+	@Test def `P62B (*) Collect the nodes at a given level in a list.`() {
+		End.atLevel(1) should equal(List())
+		Node("x").atLevel(1) should equal(List("x"))
+		Node("a",
+			Node("b", End, Node("b2")),
+			Node("c", Node("c1"), Node("c2")
+			)
+		).atLevel(3) should equal(List("b2", "c1", "c2"))
+	}
+
+
+	object Tree {
+		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
+			if (seq.isEmpty) result
+			else from(seq.tail, result.addValue(seq.head))
+		}
+
+		def allTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+			def addOneNode[T <% Ordered[T]](tree: Tree[T], value: T): Seq[Tree[T]] = tree match {
+				case End => Seq(Node(value))
+				case Node(nodeValue, left, right) =>
+					addOneNode(left, value).map{ it => Node(nodeValue, it, right) } ++
+						addOneNode(right, value).map{ it => Node(nodeValue, left, it) }
+			}
+
+			if (size == 1) Seq(Node(value))
+			else allTrees(size - 1, value).flatMap{ it => addOneNode(it, value) }.distinct
+		}
+
+		def symmetricBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+			allTrees(size, value).filter{ tree => tree.isSymmetric }
+		}
+
+		def maxAmountOfNodes(height: Int): Int = math.pow(2, height).toInt - 1
+	}
+
+	sealed abstract class Tree[+T <% Ordered[T]] {
+		def mirror: Tree[T]
+		def isSymmetric: Boolean
+		def hasSameStructureAs(tree: Tree[Any]): Boolean
+		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
+		def isHeightBalanced: Boolean
+		def height: Int
+		def leafCount: Int
+		def leafList: List[T]
+		def internalList: List[T]
+		def atLevel(level: Int): List[T]
+	}
+
+	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+		override def toString = {
+			if (left == End && right == End) "T(" + value.toString + ")"
+			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
+		}
+
+		def mirror = Node(value, right.mirror, left.mirror)
+
+		def hasSameStructureAs(tree: Tree[Any]): Boolean = tree match {
+			case Node(_, thatLeft, thatRight) => left.hasSameStructureAs(thatLeft) && right.hasSameStructureAs(thatRight)
+			case _ => false
+		}
+
+		def isSymmetric = left.hasSameStructureAs(right.mirror)
+
+		def addValue[T2 >: T <% Ordered[T2]](newValue: T2) =
+			if (value > newValue) Node(value, left.addValue(newValue), right)
+			else Node(value, left, right.addValue(newValue))
+
+		def isHeightBalanced = math.abs(left.height - right.height) <= 1
+
+		def height = 1 + math.max(left.height, right.height)
+
+		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
+
+		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
+
+		def internalList = if (isLeaf) List() else left.internalList ++ List(value) ++ right.internalList
+
+		def atLevel(level: Int) = {
+			if (level == 1) List(value)
+			else left.atLevel(level - 1) ++ right.atLevel(level - 1)
+		}
+
+		private def isLeaf: Boolean = left == End && right == End
+	}
+
+	case object End extends Tree[Nothing] {
+		override def toString = ""
+
+		def mirror = this
+
+		def isSymmetric = true
+
+		def hasSameStructureAs(tree: Tree[Any]) = tree match {
+			case End => true
+			case _ => false
+		}
+
+		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
+
+		def isHeightBalanced = true
+
+		def height = 0
+
+		def leafCount = 0
+
+		def leafList = List()
+
+		def internalList = List()
+
+		def atLevel(level: Int) = List()
+	}
+
 }
 
 object CustomMatchers extends CustomMatchers
