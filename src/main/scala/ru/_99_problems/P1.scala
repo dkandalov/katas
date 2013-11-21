@@ -561,6 +561,7 @@ class P1 extends ShouldMatchers {
 		def isHeightBalanced: Boolean
 		def height: Int
 		def leafCount: Int
+		def leafList: List[T]
 	}
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
@@ -585,7 +586,11 @@ class P1 extends ShouldMatchers {
 
 		def height = 1 + math.max(left.height, right.height)
 
-		def leafCount = if (left == End && right == End) 1 else (left.leafCount + right.leafCount)
+		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
+
+		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
+
+		private def isLeaf: Boolean = left == End && right == End
 	}
 
 	case object End extends Tree[Nothing] {
@@ -607,6 +612,8 @@ class P1 extends ShouldMatchers {
 		def height = 0
 
 		def leafCount = 0
+
+		def leafList = List()
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -793,6 +800,18 @@ class P1 extends ShouldMatchers {
 			Node("x", Node("x")),
 			Node("x")
 		).leafCount should equal(2)
+	}
+
+	@Test def `61A (*) Collect the leaves of a binary tree in a list.`() {
+		End.leafList should equal(List())
+		Node("a").leafList should equal(List("a"))
+		Node("a",
+			Node("b"),
+			Node("c",
+				Node("d"),
+				Node("e")
+			)
+		).leafList should equal(List("b", "d", "e"))
 	}
 }
 
