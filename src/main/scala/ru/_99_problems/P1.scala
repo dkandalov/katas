@@ -562,6 +562,7 @@ class P1 extends ShouldMatchers {
 		def height: Int
 		def leafCount: Int
 		def leafList: List[T]
+		def internalList: List[T]
 	}
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
@@ -590,6 +591,8 @@ class P1 extends ShouldMatchers {
 
 		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
 
+		def internalList = if (isLeaf) List() else left.internalList ++ List(value) ++ right.internalList
+
 		private def isLeaf: Boolean = left == End && right == End
 	}
 
@@ -614,6 +617,8 @@ class P1 extends ShouldMatchers {
 		def leafCount = 0
 
 		def leafList = List()
+
+		def internalList = List()
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -812,6 +817,18 @@ class P1 extends ShouldMatchers {
 				Node("e")
 			)
 		).leafList should equal(List("b", "d", "e"))
+	}
+
+	@Test def `P62 (*) Collect the internal nodes of a binary tree in a list.`() {
+		End.internalList should equal(List())
+		Node("x").internalList should equal(List())
+		Node("a",
+			Node("b"),
+			Node("c",
+				Node("d"),
+				Node("e")
+			)
+		).internalList should equal(List("a", "c"))
 	}
 }
 
