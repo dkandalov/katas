@@ -816,10 +816,7 @@ class P1 extends ShouldMatchers {
 
 		def internalList = if (isLeaf) List() else left.internalList ++ List(value) ++ right.internalList
 
-		def atLevel(level: Int) = {
-			if (level == 1) List(value)
-			else left.atLevel(level - 1) ++ right.atLevel(level - 1)
-		}
+		def atLevel(level: Int) = if (level == 1) List(value) else left.atLevel(level - 1) ++ right.atLevel(level - 1)
 
 		private def isLeaf: Boolean = left == End && right == End
 	}
