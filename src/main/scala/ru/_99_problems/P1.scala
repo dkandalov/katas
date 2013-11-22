@@ -748,6 +748,18 @@ class P1 extends ShouldMatchers {
 		).atLevel(3) should equal(List("b2", "c1", "c2"))
 	}
 
+	@Test def `P63 (**) Construct a complete binary tree.`() {
+		Tree.completeBinaryTree(0, "x") should equal(End)
+		Tree.completeBinaryTree(1, "x") should equal(Node("x"))
+		Tree.completeBinaryTree(2, "x") should equal(Node("x", Node("x")))
+		Tree.completeBinaryTree(3, "x") should equal(Node("x", Node("x"), Node("x")))
+		Tree.completeBinaryTree(6, "x") should equal(
+			Node("x",
+				Node("x", Node("x"), Node("x")),
+				Node("x", Node("x"))
+		))
+	}
+	
 
 	object Tree {
 		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
@@ -772,6 +784,14 @@ class P1 extends ShouldMatchers {
 		}
 
 		def maxAmountOfNodes(height: Int): Int = math.pow(2, height).toInt - 1
+
+		def completeBinaryTree[T <% Ordered[T]](size: Int, value: T): Tree[T] = {
+			def generate(count: Int): Tree[T] = {
+				if (count > size) End
+				else Node(value, generate(count * 2), generate(count * 2 + 1))
+			}
+			generate(1)
+		}
 	}
 
 	sealed abstract class Tree[+T <% Ordered[T]] {
