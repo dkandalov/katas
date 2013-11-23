@@ -680,12 +680,31 @@ class P1 extends ShouldMatchers {
 			else if (height == 2) 2
 			else minAmountOfNodes(height - 1) + 2
 		}
+		def minHbalNodes(height: Int): Int = height match {
+			case n if n < 1 => 0
+			case 1          => 1
+			case n          => minHbalNodes(n - 1) + minHbalNodes(n - 2) + 1
+		}
 		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
+
+		def maxHbalNodes(height: Int): Int = 2 * height - 1
+		def minHbalHeight(nodes: Int): Int =
+			if (nodes == 0) 0
+			else minHbalHeight(nodes / 2) + 1
+		def maxHbalHeight(nodes: Int): Int =
+			Stream.from(1).takeWhile(minHbalNodes(_) <= nodes).last
+//		def hbalTreesWithNodes[T](nodes: Int, value: T): List[Tree[T]] =
+//			(minHbalHeight(nodes) to maxHbalHeight(nodes)).flatMap(hbalTrees(_, value)).filter(_.nodeCount == nodes).toList
 
 		minAmountOfNodes(1) should equal(1)
 		minAmountOfNodes(2) should equal(2)
 		minAmountOfNodes(3) should equal(4)
 		minAmountOfNodes(4) should equal(6)
+		minHbalNodes(1) should equal(1)
+		minHbalNodes(2) should equal(2)
+		minHbalNodes(3) should equal(4)
+		minHbalNodes(4) should equal(7)
+
 		maxBalancedHeight(1) should equal(1)
 		maxBalancedHeight(2) should equal(2)
 		maxBalancedHeight(3) should equal(2)
@@ -759,7 +778,34 @@ class P1 extends ShouldMatchers {
 				Node("x", Node("x"))
 		))
 	}
-	
+
+	@Test def `P64 (**) Layout a binary tree (1).`() {
+		Node("a").layoutBinaryTree() should equal(PositionedNode("a", End, End, 1, 1))
+		Node("a", Node("b")).layoutBinaryTree() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End, End, 1, 2),
+				End,
+				2, 1)
+		)
+		Node("a", Node("b"), Node("c")).layoutBinaryTree() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End, End, 1, 2),
+				PositionedNode("c", End, End, 3, 2),
+				2, 1)
+		)
+		Node("a", Node("b", Node("b1"), Node("b2")), Node("c", Node("c1"), Node("c2"))).layoutBinaryTree() should equal(
+			PositionedNode("a",
+				PositionedNode("b",
+					PositionedNode("b1", End, End, 1, 3),
+					PositionedNode("b2", End, End, 3, 3),
+					2, 2),
+				PositionedNode("c",
+					PositionedNode("c1", End, End, 5, 3),
+					PositionedNode("c2", End, End, 7, 3),
+					6, 2),
+				4, 1)
+		)
+	}
 
 	object Tree {
 		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
@@ -801,15 +847,23 @@ class P1 extends ShouldMatchers {
 		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
 		def isHeightBalanced: Boolean
 		def height: Int
+		def width: Int
 		def leafCount: Int
 		def leafList: List[T]
 		def internalList: List[T]
 		def atLevel(level: Int): List[T]
+		def layoutBinaryTree(x: Int = 1, y: Int = 1): Tree[T]
+	}
+
+	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
+		override def toString =
+			if (isLeaf) "T[" + x.toString + "," + y.toString + "](" + value.toString + ")"
+			else "T[" + x.toString + "," + y.toString + "](" + value.toString + " " + left.toString + " " + right.toString + ")"
 	}
 
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		override def toString = {
-			if (left == End && right == End) "T(" + value.toString + ")"
+			if (isLeaf) "T(" + value.toString + ")"
 			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
 		}
 
@@ -830,6 +884,8 @@ class P1 extends ShouldMatchers {
 
 		def height = 1 + math.max(left.height, right.height)
 
+		def width = left.width + 1 + right.width
+
 		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
 
 		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
@@ -838,7 +894,13 @@ class P1 extends ShouldMatchers {
 
 		def atLevel(level: Int) = if (level == 1) List(value) else left.atLevel(level - 1) ++ right.atLevel(level - 1)
 
-		private def isLeaf: Boolean = left == End && right == End
+		def layoutBinaryTree(x: Int = 0, y: Int = 1): Tree[T] = {
+			val positionedLeft = left.layoutBinaryTree(x, y + 1)
+			val positionedRight = right.layoutBinaryTree(left.width + 1 + x, y + 1)
+			PositionedNode(value, positionedLeft, positionedRight, left.width + 1 + x, y)
+		}
+
+		protected def isLeaf: Boolean = left == End && right == End
 	}
 
 	case object End extends Tree[Nothing] {
@@ -859,6 +921,8 @@ class P1 extends ShouldMatchers {
 
 		def height = 0
 
+		def width = 0
+
 		def leafCount = 0
 
 		def leafList = List()
@@ -866,6 +930,8 @@ class P1 extends ShouldMatchers {
 		def internalList = List()
 
 		def atLevel(level: Int) = List()
+
+		def layoutBinaryTree(x: Int = 1, y: Int = 1) = End
 	}
 
 }
