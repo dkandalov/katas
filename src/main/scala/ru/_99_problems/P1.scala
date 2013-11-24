@@ -807,6 +807,44 @@ class P1 extends ShouldMatchers {
 		)
 	}
 
+	@Test def `P65 (**) Layout a binary tree (2).`() {
+		End.layoutBinaryTree2() should equal(End)
+		Node("a").layoutBinaryTree2() should equal(PositionedNode("a", End, End, 1, 1))
+
+		Node("a", Node("b"), Node("c")).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End, End, 1, 2),
+				PositionedNode("c", End, End, 3, 2),
+				2, 1))
+
+		Node("a", Node("b", Node("c"))).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				PositionedNode("b",
+					PositionedNode("c", End, End, 1, 3),
+					End, 2, 2),
+				End,
+				4, 1))
+
+		Node("a", End, Node("b", End, Node("c"))).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				End,
+				PositionedNode("b",
+					End,
+					PositionedNode("c", End, End, 4, 3),
+					3, 2),
+				1, 1))
+
+		// TODO
+//		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2() should equal(
+//			PositionedNode("n",
+//				PositionedNode("k", 7, 2),
+//				PositionedNode("u", ),
+//				15, 1
+//			)
+//		)
+	}
+
+
 	object Tree {
 		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
 			if (seq.isEmpty) result
@@ -853,6 +891,7 @@ class P1 extends ShouldMatchers {
 		def internalList: List[T]
 		def atLevel(level: Int): List[T]
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1): Tree[T]
+		def layoutBinaryTree2(shiftX: Int = 0, y: Int = 1, totalHeight: Int = height): Tree[T]
 	}
 
 	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
@@ -900,6 +939,25 @@ class P1 extends ShouldMatchers {
 			PositionedNode(value, positionedLeft, positionedRight, left.width + 1 + shiftX, y)
 		}
 
+		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height) = {
+			val positionedLeft = left.layoutBinaryTree2(0, y + 1, totalHeight)
+
+			val newX = positionedLeft match {
+				case PositionedNode(_, _, _, x, _) => {
+					val nextLevelShift = math.pow(2, totalHeight - y - 1).toInt
+					x + nextLevelShift
+				}
+				case _ => {
+					val thisLevelShift = math.pow(2, totalHeight - y).toInt
+					if (parentX == 0) 1 else parentX + thisLevelShift
+				}
+			}
+
+			val positionedRight = right.layoutBinaryTree2(newX, y + 1, totalHeight)
+
+			PositionedNode(value, positionedLeft, positionedRight, newX, y)
+		}
+
 		protected def isLeaf: Boolean = left == End && right == End
 	}
 
@@ -932,6 +990,8 @@ class P1 extends ShouldMatchers {
 		def atLevel(level: Int) = List()
 
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1) = End
+
+		def layoutBinaryTree2(shiftX: Int = 0, y: Int = 1, totalHeight: Int = height) = End
 	}
 
 }
