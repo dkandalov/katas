@@ -372,7 +372,7 @@ class P1 extends ShouldMatchers {
 
 	@Test def `P34 (**) Calculate Euler's totient function phi(m).`() {
 		class IntWithTotient(n: Int) {
-			def totient(): Int = Range(1, n + 1).count(n.isCoprimeTo(_))
+			def totient(): Int = Range(1, n + 1).count(it => n.isCoprimeTo(it))
 		}
 		implicit def intToIntWithTotient(n: Int) = new IntWithTotient(n)
 		10.totient should be(4)
@@ -509,7 +509,7 @@ class P1 extends ShouldMatchers {
 		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{_.weight}
 
 		def allCodesIn(tree: Node, path: String = ""): Seq[Code] = tree match {
-			case LeafNode(value, _) =>  Seq((value, path.toInt))
+			case LeafNode(nodeValue, _) =>  Seq((nodeValue, path.toInt))
 			case Node(weight, left, right) => allCodesIn(tree.left, path + "0") ++ allCodesIn(tree.right, path + "1")
 		}
 
@@ -663,10 +663,11 @@ class P1 extends ShouldMatchers {
 
 	@Test def `P59 (**) Construct height-balanced binary trees.`() {
 		import Tree._
-		def heightBalancedTrees[T <% Ordered[T]](height: Int, value: T): Seq[Tree[T]] = {
-			(for (size <- height to maxAmountOfNodes(height))
-				yield allTrees(size, value).filter{ it => it.height == height && it.isHeightBalanced }).flatten
-		}
+
+		hbalTrees(1, "x") should equal(Seq(Node("x")))
+		hbalTrees(2, "x") should equal(Seq(Node("x", Node("x"), Node("x")), Node("x", Node("x")), Node("x", End, Node("x"))))
+		hbalTrees(3, "x").size should equal(15)
+
 		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
 		heightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x")), Node("x", Node("x"), Node("x"))))
 		heightBalancedTrees(3, "x").size should equal(15)
@@ -875,6 +876,25 @@ class P1 extends ShouldMatchers {
 				else Node(value, generate(count * 2), generate(count * 2 + 1))
 			}
 			generate(1)
+		}
+
+		/**
+		 * From http://aperiodic.net/phil/scala/s-99/p59.scala
+		 */
+		def hbalTrees[T <% Ordered[T]](height: Int, value: T): List[Tree[T]] = height match {
+			case n if n < 1 => List(End)
+			case 1          => List(Node(value))
+			case _ => {
+				val fullHeight = hbalTrees(height - 1, value)
+				val shortHeight = hbalTrees(height - 2, value)
+				fullHeight.flatMap(left => fullHeight.map(right => Node(value, left, right))) :::
+					fullHeight.flatMap(full => shortHeight.flatMap(short => List(Node(value, full, short), Node(value, short, full))))
+			}
+		}
+
+		def heightBalancedTrees[T <% Ordered[T]](height: Int, value: T): Seq[Tree[T]] = {
+			(for (size <- height to maxAmountOfNodes(height))
+			yield allTrees(size, value).filter{ it => it.height == height && it.isHeightBalanced }).flatten
 		}
 	}
 
