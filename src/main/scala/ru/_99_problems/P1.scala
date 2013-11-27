@@ -685,13 +685,13 @@ class P1 extends ShouldMatchers {
 		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
 
 		def maxHbalNodes(height: Int): Int = 2 * height - 1
-		def minHbalHeight(nodes: Int): Int =
+		def minHbalHeight(nodes: Int): Int = // TODO refactor
 			if (nodes == 0) 0
 			else minHbalHeight(nodes / 2) + 1
 		def maxHbalHeight(nodes: Int): Int =
 			Stream.from(1).takeWhile(minHbalNodes(_) <= nodes).last
-//		def hbalTreesWithNodes[T](nodes: Int, value: T): List[Tree[T]] =
-//			(minHbalHeight(nodes) to maxHbalHeight(nodes)).flatMap(hbalTrees(_, value)).filter(_.nodeCount == nodes).toList
+		def hbalTreesWithNodes[T <% Ordered[T]](nodes: Int, value: T): List[Tree[T]] =
+			(minHbalHeight(nodes) to maxHbalHeight(nodes)).flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == nodes).toList
 
 		minAmountOfNodes(1) should equal(1)
 		minAmountOfNodes(2) should equal(2)
@@ -708,14 +708,13 @@ class P1 extends ShouldMatchers {
 		maxBalancedHeight(4) should equal(3)
 
 		def allHeightBalancedTrees[T <% Ordered[T]](amountOfNodes: Int, value: T): Seq[Tree[T]] = {
-			Seq() // TODO implement and make it work for N == 15
+			(minHbalHeight(amountOfNodes) to maxHbalHeight(amountOfNodes)).flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes).toSeq
 		}
 
-//		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
-//		allHeightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
-//		allHeightBalancedTrees(3, "x") should equal(Seq(Node("x", Node("x"), Node("x"))))
-
-//		allTrees(15, "x").filter{ it => it.isHeightBalanced }.size should equal(100)
+		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
+		allHeightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
+		allHeightBalancedTrees(3, "x") should equal(Seq(Node("x", Node("x"), Node("x"))))
+		allHeightBalancedTrees(15, "x").size should equal(1553)
 	}
 
 	@Test def `P61 (*) Count the leaves of a binary tree.`() {
@@ -896,6 +895,7 @@ class P1 extends ShouldMatchers {
 		def isHeightBalanced: Boolean
 		def height: Int
 		def width: Int
+		def nodeCount: Int
 		def leafCount: Int
 		def leafList: List[T]
 		def internalList: List[T]
@@ -933,7 +933,9 @@ class P1 extends ShouldMatchers {
 
 		def height = 1 + math.max(left.height, right.height)
 
-		def width = left.width + 1 + right.width
+		def width = left.width + 1 + right.width  // TODO this is wrong
+
+		def nodeCount = left.nodeCount + 1 + right.nodeCount
 
 		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
 
@@ -990,6 +992,8 @@ class P1 extends ShouldMatchers {
 		def height = 0
 
 		def width = 0
+
+		def nodeCount = 0
 
 		def leafCount = 0
 
