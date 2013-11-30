@@ -682,13 +682,6 @@ class P1 extends ShouldMatchers {
 			case 1          => 1
 			case n          => minHbalNodes(n - 1) + minHbalNodes(n - 2) + 1
 		}
-		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
-
-		def minHeightBalancedHeight(amountOfNodes: Int): Int = if (amountOfNodes == 0) 0 else minHeightBalancedHeight(amountOfNodes / 2) + 1
-		def maxHeightBalancedHeight(amountOfNodes: Int): Int = Stream.from(1).takeWhile(minHbalNodes(_) <= amountOfNodes).last
-		def hbalTreesWithNodes[T <% Ordered[T]](nodes: Int, value: T): List[Tree[T]] =
-			(minHeightBalancedHeight(nodes) to maxHeightBalancedHeight(nodes)).flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == nodes).toList
-
 		minAmountOfNodes(1) should equal(1)
 		minAmountOfNodes(2) should equal(2)
 		minAmountOfNodes(3) should equal(4)
@@ -698,13 +691,17 @@ class P1 extends ShouldMatchers {
 		minHbalNodes(3) should equal(4)
 		minHbalNodes(4) should equal(7)
 
+		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
 		maxBalancedHeight(1) should equal(1)
 		maxBalancedHeight(2) should equal(2)
 		maxBalancedHeight(3) should equal(2)
 		maxBalancedHeight(4) should equal(3)
 
+		def minHeightBalancedTreeHeight(amountOfNodes: Int): Int = if (amountOfNodes == 0) 0 else minHeightBalancedTreeHeight(amountOfNodes / 2) + 1
+		def maxHeightBalancedTreeHeight(amountOfNodes: Int): Int = Stream.from(1).takeWhile(height => minHbalNodes(height) <= amountOfNodes).last
 		def allHeightBalancedTrees[T <% Ordered[T]](amountOfNodes: Int, value: T): Seq[Tree[T]] = {
-			(minHeightBalancedHeight(amountOfNodes) to maxHeightBalancedHeight(amountOfNodes)).flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes).toSeq
+			(minHeightBalancedTreeHeight(amountOfNodes) to maxHeightBalancedTreeHeight(amountOfNodes))
+				.flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes).toSeq
 		}
 
 		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
