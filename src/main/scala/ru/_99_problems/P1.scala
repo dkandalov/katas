@@ -887,7 +887,6 @@ class P1 extends ShouldMatchers {
 		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
 		def isHeightBalanced: Boolean
 		def height: Int
-		def width: Int
 		def nodeCount: Int
 		def leafCount: Int
 		def leafList: List[T]
@@ -926,8 +925,6 @@ class P1 extends ShouldMatchers {
 
 		def height = 1 + math.max(left.height, right.height)
 
-		def width = left.width + 1 + right.width  // TODO this is wrong
-
 		def nodeCount = left.nodeCount + 1 + right.nodeCount
 
 		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
@@ -940,8 +937,8 @@ class P1 extends ShouldMatchers {
 
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1): Tree[T] = {
 			val positionedLeft = left.layoutBinaryTree(shiftX, y + 1)
-			val positionedRight = right.layoutBinaryTree(left.width + 1 + shiftX, y + 1)
-			PositionedNode(value, positionedLeft, positionedRight, left.width + 1 + shiftX, y)
+			val positionedRight = right.layoutBinaryTree(left.nodeCount + 1 + shiftX, y + 1)
+			PositionedNode(value, positionedLeft, positionedRight, left.nodeCount + 1 + shiftX, y)
 		}
 
 		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height) = {
@@ -983,8 +980,6 @@ class P1 extends ShouldMatchers {
 		def isHeightBalanced = true
 
 		def height = 0
-
-		def width = 0
 
 		def nodeCount = 0
 
