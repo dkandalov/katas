@@ -798,41 +798,52 @@ class P1 extends ShouldMatchers {
 
 	@Test def `P65 (**) Layout a binary tree (2).`() {
 		End.layoutBinaryTree2() should equal(End)
-//		Node("a").layoutBinaryTree2() should equal(PositionedNode("a", End, End, 1, 1))
-//
-//		Node("a", Node("b"), Node("c")).layoutBinaryTree2() should equal(
-//			PositionedNode("a",
-//				PositionedNode("b", End, End, 1, 2),
-//				PositionedNode("c", End, End, 3, 2),
-//				2, 1))
-//
-//		Node("a", Node("b", Node("c"))).layoutBinaryTree2() should equal(
-//			PositionedNode("a",
-//				PositionedNode("b",
-//					PositionedNode("c", End, End, 1, 3),
-//					End, 2, 2),
-//				End,
-//				4, 1))
-//
-//		Node("a", End, Node("b", End, Node("c"))).layoutBinaryTree2() should equal(
-//			PositionedNode("a",
-//				End,
-//				PositionedNode("b",
-//					End,
-//					PositionedNode("c", End, End, 4, 3),
-//					3, 2),
-//				1, 1))
+		Node("a").layoutBinaryTree2() should equal(PositionedNode("a", End, End, 1, 1))
 
-		// TODO
-		println(Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")))
-		println(Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2())
-//		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2() should equal(
-//			PositionedNode("n",
-//				PositionedNode("k", 7, 2),
-//				PositionedNode("u", ),
-//				15, 1
-//			)
-//		)
+		Node("a", Node("b"), Node("c")).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End, End, 1, 2),
+				PositionedNode("c", End, End, 3, 2),
+				2, 1))
+
+		Node("a", Node("b", Node("c"))).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				PositionedNode("b",
+					PositionedNode("c", End, End, 1, 3),
+					End, 2, 2),
+				End,
+				4, 1))
+
+		Node("a", End, Node("b", End, Node("c"))).layoutBinaryTree2() should equal(
+			PositionedNode("a",
+				End,
+				PositionedNode("b",
+					End,
+					PositionedNode("c", End, End, 4, 3),
+					3, 2),
+				1, 1))
+
+		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2() should equal(
+			PositionedNode("n",
+				PositionedNode("k",
+					PositionedNode("c",
+						PositionedNode("a", End, End, 1, 4),
+						PositionedNode("e",
+							PositionedNode("d", End, End, 4, 5),
+							PositionedNode("g", End, End, 6, 5),
+						5, 4),
+					3, 3),
+					PositionedNode("m", End, End, 11, 3),
+				7, 2),
+				PositionedNode("u",
+					PositionedNode("p",
+						End,
+						PositionedNode("q", End, End, 21, 4),
+					19, 3),
+					End,
+				23, 2),
+			15, 1)
+		)
 	}
 
 
@@ -944,16 +955,16 @@ class P1 extends ShouldMatchers {
 		}
 
 		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height) = {
-			val positionedLeft = left.layoutBinaryTree2(0, y + 1, totalHeight)
+			val positionedLeft = left.layoutBinaryTree2(parentX, y + 1, totalHeight)
 
 			val newX = positionedLeft match {
-				case PositionedNode(_, _, _, x, _) => {
-					val thisLevelShift = math.pow(2, totalHeight - y - 1).toInt
-					x + thisLevelShift
+				case PositionedNode(_, _, _, leftX, _) => {
+					val shiftFromChildren = math.pow(2, totalHeight - y - 1).toInt
+					leftX + shiftFromChildren
 				}
 				case _ => {
-					val parentLevelShift = math.pow(2, totalHeight - y).toInt
-					if (parentX == 0) 1 else parentX - parentLevelShift
+					val shiftFromParent = math.pow(2, totalHeight - y).toInt
+					if (parentX == 0) 1 else parentX + shiftFromParent
 				}
 			}
 
