@@ -846,6 +846,25 @@ class P1 extends ShouldMatchers {
 		)
 	}
 
+	@Test def `P66 (***) Layout a binary tree (3).`() {
+		End.layoutBinaryTree3() should equal(End)
+		Node("a").layoutBinaryTree3() should equal(PositionedNode("a", End, End, 1, 1))
+
+		Node("a", Node("b"), Node("c")).layoutBinaryTree3() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End, End, 1, 2),
+				PositionedNode("c", End, End, 3, 2),
+			2, 1))
+
+		Node("a", Node("b", End, Node("c")), Node("d")).layoutBinaryTree3() should equal(
+			PositionedNode("a",
+				PositionedNode("b", End,
+					PositionedNode("c", End, End, 2, 3),
+				1, 2),
+				PositionedNode("d", End, End, 3, 2),
+			2, 1))
+	}
+
 
 	object Tree {
 //		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
@@ -902,11 +921,13 @@ class P1 extends ShouldMatchers {
 		def height: Int
 		def nodeCount: Int
 		def leafCount: Int
+		def inject[A](accumulator: A)(f: (A, Tree[T]) => A): A
 		def leafList: List[T]
 		def internalList: List[T]
 		def atLevel(level: Int): List[T]
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1): Tree[T]
-		def layoutBinaryTree2(shiftX: Int = 0, y: Int = 1, totalHeight: Int = height): Tree[T]
+		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height): Tree[T]
+		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1): Tree[T]
 	}
 
 	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
@@ -942,6 +963,12 @@ class P1 extends ShouldMatchers {
 
 		def leafCount = if (isLeaf) 1 else left.leafCount + right.leafCount
 
+		def inject[A](accumulator: A)(f: (A, Tree[T]) => A) = {
+			val a1 = left.inject(accumulator)(f)
+			val a2 = f(a1, this)
+			right.inject(a2)(f)
+		}
+
 		def leafList = if (isLeaf) List(value) else left.leafList ++ right.leafList
 
 		def internalList = if (isLeaf) List() else left.internalList ++ List(value) ++ right.internalList
@@ -973,6 +1000,37 @@ class P1 extends ShouldMatchers {
 			PositionedNode(value, positionedLeft, positionedRight, newX, y)
 		}
 
+		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1) = {
+			def haveNoPositionOverlap(tree1: Tree[T], tree2: Tree[T]): Boolean = {
+				val xy1 = tree1.inject(List[(Int, Int)]()){ (acc, node) =>
+					if (node == End) acc
+					else {
+						val positionedNode = node.asInstanceOf[PositionedNode[T]]
+						acc :+ (positionedNode.x, positionedNode.y)
+					}
+				}
+				val xy2 = tree2.inject(List[(Int, Int)]()){ (acc, node) =>
+					if (node == End) acc
+					else {
+						val positionedNode = node.asInstanceOf[PositionedNode[T]]
+						acc :+ (positionedNode.x, positionedNode.y)
+					}
+				}
+				xy1.intersect(xy2).isEmpty
+			}
+			var x = parentX.map(_ - shiftFromParent)
+			(for (shift <- 1 to 100) yield {
+				val positionedLeft = left.layoutBinaryTree3(x.map{_ - shift}, shift, y + 1)
+
+				if (x == None && positionedLeft != End) x = Some(positionedLeft.asInstanceOf[PositionedNode[T]].x + shift)
+				else if (x == None) x = Some(1)
+
+				val positionedRight = right.layoutBinaryTree3(x, shift, y + 1)
+
+				if (haveNoPositionOverlap(positionedLeft, positionedRight)) Some(PositionedNode(value, positionedLeft, positionedRight, x.get, y)) else None
+			}).find(_ != None).get.get
+		}
+
 		protected def isLeaf: Boolean = left == End && right == End
 	}
 
@@ -998,6 +1056,8 @@ class P1 extends ShouldMatchers {
 
 		def leafCount = 0
 
+		def inject[A](accumulator: A)(f: (A, Tree[Nothing]) => A) = accumulator
+
 		def leafList = List()
 
 		def internalList = List()
@@ -1007,6 +1067,8 @@ class P1 extends ShouldMatchers {
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1) = End
 
 		def layoutBinaryTree2(shiftX: Int = 0, y: Int = 1, totalHeight: Int = height) = End
+
+		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1) = End
 	}
 
 }
