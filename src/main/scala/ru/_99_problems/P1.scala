@@ -863,6 +863,27 @@ class P1 extends ShouldMatchers {
 				1, 2),
 				PositionedNode("d", End, End, 3, 2),
 			2, 1))
+
+		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree3() should equal(
+			PositionedNode("n",
+				PositionedNode("k",
+					PositionedNode("c",
+						PositionedNode("a", End, End, 1, 4),
+						PositionedNode("e",
+							PositionedNode("d", End, End, 2, 5),
+							PositionedNode("g", End, End, 4, 5),
+							3, 4),
+						2, 3),
+					PositionedNode("m", End, End, 4, 3),
+					3, 2),
+				PositionedNode("u",
+					PositionedNode("p",
+						End,
+						PositionedNode("q", End, End, 7, 4),
+						6, 3),
+					End,
+					7, 2),
+				5, 1))
 	}
 
 
@@ -1000,7 +1021,7 @@ class P1 extends ShouldMatchers {
 			PositionedNode(value, positionedLeft, positionedRight, newX, y)
 		}
 
-		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1) = {
+		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1): Tree[T] = {
 			def haveNoPositionOverlap(tree1: Tree[T], tree2: Tree[T]): Boolean = {
 				val xy1 = tree1.inject(List[(Int, Int)]()){ (acc, node) =>
 					if (node == End) acc
@@ -1018,17 +1039,23 @@ class P1 extends ShouldMatchers {
 				}
 				xy1.intersect(xy2).isEmpty
 			}
-			var x = parentX.map(_ - shiftFromParent)
-			(for (shift <- 1 to 100) yield {
-				val positionedLeft = left.layoutBinaryTree3(x.map{_ - shift}, shift, y + 1)
 
-				if (x == None && positionedLeft != End) x = Some(positionedLeft.asInstanceOf[PositionedNode[T]].x + shift)
-				else if (x == None) x = Some(1)
+			var shift = 1
+			while (shift < 100) {
+				var x = parentX.map(_ + shiftFromParent)
+
+				val positionedLeft = left.layoutBinaryTree3(x, -shift, y + 1)
+
+				if (parentX == None && positionedLeft != End) x = Some(positionedLeft.asInstanceOf[PositionedNode[T]].x + shift)
+				else if (parentX == None) x = Some(1)
 
 				val positionedRight = right.layoutBinaryTree3(x, shift, y + 1)
 
-				if (haveNoPositionOverlap(positionedLeft, positionedRight)) Some(PositionedNode(value, positionedLeft, positionedRight, x.get, y)) else None
-			}).find(_ != None).get.get
+				if (haveNoPositionOverlap(positionedLeft, positionedRight)) return PositionedNode(value, positionedLeft, positionedRight, x.get, y)
+
+				shift += 1
+			}
+			throw new IllegalStateException()
 		}
 
 		protected def isLeaf: Boolean = left == End && right == End
