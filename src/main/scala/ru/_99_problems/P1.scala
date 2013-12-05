@@ -886,9 +886,53 @@ class P1 extends ShouldMatchers {
 				5, 1))
 	}
 
+	@Test def `P67 (**) A string representation of binary trees.`() {
+		End.asString should equal("")
+		Node("a").asString should equal("a")
+		Node("a", Node("b")).asString should equal("a(b,)")
+
+		Tree.fromString("") should equal(End)
+		Tree.fromString("a") should equal(Node("a"))
+		Tree.fromString("a(b,)") should equal(Node("a", Node("b")))
+		Tree.fromString("a(b(d,e),c(,f(g,)))") should equal(
+			Node("a",
+				Node("b",
+					Node("d"),
+					Node("e")
+				),
+				Node("c",
+					End,
+					Node("f",
+						Node("g"))
+				)
+			)
+		)
+	}
+
 
 	object Tree {
 //		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
+
+		def fromString(s: String): Tree[String] = {
+			def consume(string: String, f: Char => Boolean): (String, String) = {
+				val consumed = string.takeWhile(f)
+				val restOfString = string.drop(consumed.length)
+				(consumed, restOfString)
+			}
+
+			val (value, s2) = consume(s, { c => c != '(' && c != ')' && c != ',' })
+			if (value.isEmpty) {
+				End
+			} else if (s2.startsWith("(")) {
+				val (_, s3) = consume(s2, {_ == '('})
+				val left = fromString(s3)
+				val (_, s4) = consume(s3.drop(left.asString.length), {_ == ','})
+				val right = fromString(s4)
+				Node(value, left, right)
+			} else {
+				Node(value)
+			}
+		}
 
 		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
 			if (seq.isEmpty) result
@@ -949,6 +993,7 @@ class P1 extends ShouldMatchers {
 		def layoutBinaryTree(shiftX: Int = 0, y: Int = 1): Tree[T]
 		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height): Tree[T]
 		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1): Tree[T]
+		def asString: String
 	}
 
 	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
@@ -962,6 +1007,10 @@ class P1 extends ShouldMatchers {
 			if (isLeaf) "T(" + value.toString + ")"
 			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
 		}
+
+		def asString =
+			if (left == End && right == End) value.toString
+			else value + "(" + left.asString + "," + right.asString + ")"
 
 		def mirror = Node(value, right.mirror, left.mirror)
 
@@ -1063,6 +1112,8 @@ class P1 extends ShouldMatchers {
 
 	case object End extends Tree[Nothing] {
 		override def toString = ""
+
+		def asString = ""
 
 		def mirror = this
 
