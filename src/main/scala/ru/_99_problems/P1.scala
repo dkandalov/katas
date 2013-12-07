@@ -909,9 +909,20 @@ class P1 extends ShouldMatchers {
 		)
 	}
 
+	@Test def `P68 (**) Preorder and inorder sequences of binary trees.`() {
+		Tree.fromString("a(b(d,e),c(,f(g,)))").preorder should equal(Seq("a", "b", "d", "e", "c", "f", "g"))
+		Tree.fromString("a(b(d,e),c(,f(g,)))").inorder should equal(Seq("d", "b", "e", "a", "c", "g", "f"))
+
+		Tree.preInTree(List('a', 'b', 'd', 'e', 'c', 'f', 'g'), List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
+	}
+
 
 	object Tree {
 //		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
+
+		def preInTree[T <% Ordered[T]](preordered: Seq[T], inordered: Seq[T]): Tree[T] = {
+			End
+		}
 
 		def fromString(s: String): Tree[String] = {
 			def consume(string: String, f: Char => Boolean): (String, String) = {
@@ -994,6 +1005,8 @@ class P1 extends ShouldMatchers {
 		def layoutBinaryTree2(parentX: Int = 0, y: Int = 1, totalHeight: Int = height): Tree[T]
 		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1): Tree[T]
 		def asString: String
+		def preorder: Seq[T]
+		def inorder: Seq[T]
 	}
 
 	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
@@ -1107,6 +1120,10 @@ class P1 extends ShouldMatchers {
 			throw new IllegalStateException()
 		}
 
+		def preorder = Seq(value) ++ left.preorder ++ right.preorder
+
+		def inorder = left.inorder ++ Seq(value) ++ right.inorder
+
 		protected def isLeaf: Boolean = left == End && right == End
 	}
 
@@ -1147,6 +1164,10 @@ class P1 extends ShouldMatchers {
 		def layoutBinaryTree2(shiftX: Int = 0, y: Int = 1, totalHeight: Int = height) = End
 
 		def layoutBinaryTree3(parentX: Option[Int] = None, shiftFromParent: Int = 0, y: Int = 1) = End
+
+		def preorder = Seq()
+
+		def inorder = Seq()
 	}
 
 }
