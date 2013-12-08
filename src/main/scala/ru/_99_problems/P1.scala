@@ -913,7 +913,8 @@ class P1 extends ShouldMatchers {
 		Tree.fromString("a(b(d,e),c(,f(g,)))").preorder should equal(Seq("a", "b", "d", "e", "c", "f", "g"))
 		Tree.fromString("a(b(d,e),c(,f(g,)))").inorder should equal(Seq("d", "b", "e", "a", "c", "g", "f"))
 
-		Tree.preInTree(List('a', 'b', 'd', 'e', 'c', 'f', 'g'), List('d', 'b', 'e', 'a', 'c', 'g', 'f'))
+		Tree.preInTree(List("a", "b", "a"), List("b", "a", "a")) should equal(Tree.fromString("a(b,a)"))
+		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equal(Tree.fromString("a(b(d,e),c(,f(g,)))"))
 	}
 
 
@@ -921,7 +922,24 @@ class P1 extends ShouldMatchers {
 //		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
 
 		def preInTree[T <% Ordered[T]](preordered: Seq[T], inordered: Seq[T]): Tree[T] = {
-			End
+
+			def consume(fromSeq: Seq[T], referenceSet: Set[T]): Seq[T] = {
+				if (fromSeq.isEmpty || referenceSet.isEmpty) Seq()
+				else fromSeq.head +: consume(fromSeq.tail, referenceSet - fromSeq.head)
+			}
+
+			if (preordered.isEmpty) End
+			else {
+				val value = preordered.head
+				val inorderedForLeft = inordered.takeWhile(_ != value)
+				val inorderedForRight = inordered.drop(inorderedForLeft.size + 1)
+				val preorderedForLeft = consume(preordered.tail, inorderedForLeft.toSet)
+				val preorderedForRight = consume(preordered.tail.drop(preorderedForLeft.size), inorderedForRight.toSet)
+				Node(value,
+					Tree.preInTree(preorderedForLeft, inorderedForLeft),
+					Tree.preInTree(preorderedForRight, inorderedForRight)
+				)
+			}
 		}
 
 		def fromString(s: String): Tree[String] = {
