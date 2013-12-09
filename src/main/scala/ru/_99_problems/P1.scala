@@ -917,9 +917,28 @@ class P1 extends ShouldMatchers {
 		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equal(Tree.fromString("a(b(d,e),c(,f(g,)))"))
 	}
 
+	@Test def `P69 (**) Dotstring representation of binary trees.`() {
+		Tree.fromString("a(b(d,e),c(,f(g,)))").toDotString should equal("abd..e..c.fg...")
+		Tree.fromDotString("abd..e..c.fg...") should equal(Tree.fromString("a(b(d,e),c(,f(g,)))"))
+	}
+
 
 	object Tree {
 //		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
+
+		def fromDotString(string: String): Tree[String] = {
+			if (string.isEmpty) throw new IllegalArgumentException
+
+			def consumeOneNodeFrom(s: String): (Tree[String], String) = {
+				if (s.head == '.') (End, s.tail)
+				else {
+					val (leftTree, s2) = consumeOneNodeFrom(s.tail)
+					val (rightTree, s3) = consumeOneNodeFrom(s2)
+					(Node(s.head.toString, leftTree, rightTree), s3)
+				}
+			}
+			consumeOneNodeFrom(string)._1
+		}
 
 		def preInTree[T <% Ordered[T]](preordered: Seq[T], inordered: Seq[T]): Tree[T] = {
 
@@ -1007,6 +1026,7 @@ class P1 extends ShouldMatchers {
 	}
 
 	sealed abstract class Tree[+T <% Ordered[T]] {
+		def toDotString: String
 		def mirror: Tree[T]
 		def isSymmetric: Boolean
 		def hasSameStructureAs(tree: Tree[Any]): Boolean
@@ -1034,6 +1054,10 @@ class P1 extends ShouldMatchers {
 	}
 
 	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+		def toDotString =
+			if (value.isInstanceOf[Char] || value.toString.size == 1) value.toString + left.toDotString + right.toDotString
+			else throw new IllegalStateException
+
 		override def toString = {
 			if (isLeaf) "T(" + value.toString + ")"
 			else "T(" + value.toString + "," + left.toString + "," + right.toString + ")"
@@ -1146,6 +1170,8 @@ class P1 extends ShouldMatchers {
 	}
 
 	case object End extends Tree[Nothing] {
+		def toDotString = "."
+
 		override def toString = ""
 
 		def asString = ""
