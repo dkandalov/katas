@@ -20,7 +20,20 @@ class P7 extends ShouldMatchers {
 		MTree.string2MTree("afg^^c^bd^e^^^") should equal(MTree('a', MTree('f', MTree('g')), MTree('c'), MTree('b', MTree('d'), MTree('e'))))
 	}
 
+	@Test def `P71 (*) Determine the internal path length of a tree.`() {
+		"a^".internalPathLength should equal(0)
+		"ab^^".internalPathLength should equal(1)
+		"abc^^^".internalPathLength should equal(3)
+		"afg^^c^bd^e^^^".internalPathLength should equal(9)
+	}
+
+	implicit def stringToMTree(s: String): MTree[Char] = MTree.string2MTree(s)
+
 	case class MTree[+T](value: T, children: List[MTree[T]]) {
+		def internalPathLength: Int = {
+			children.map(_.nodeCount).sum + children.map(_.internalPathLength).sum
+		}
+
 		def nodeCount: Int = 1 + children.map(_.nodeCount).sum
 
 		override def toString = "M(" + value.toString + " {" + children.map(_.toString).mkString(",") + "})"
