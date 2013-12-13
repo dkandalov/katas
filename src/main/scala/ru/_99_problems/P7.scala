@@ -27,9 +27,19 @@ class P7 extends ShouldMatchers {
 		"afg^^c^bd^e^^^".internalPathLength should equal(9)
 	}
 
+	@Test def `P72 (*) Construct the postorder sequence of the tree nodes.`() {
+		"a^".postorder should equal(List('a'))
+		"abc^^^".postorder should equal(List('c', 'b', 'a'))
+		"afg^^c^bd^e^^^".postorder should equal(List('g', 'f', 'c', 'd', 'e', 'b', 'a'))
+	}
+
 	implicit def stringToMTree(s: String): MTree[Char] = MTree.string2MTree(s)
 
 	case class MTree[+T](value: T, children: List[MTree[T]]) {
+		def postorder: List[T] = {
+			children.flatMap(_.postorder) ::: List(value)
+		}
+
 		def internalPathLength: Int = {
 			children.map(_.nodeCount).sum + children.map(_.internalPathLength).sum
 		}
@@ -45,7 +55,6 @@ class P7 extends ShouldMatchers {
 		def apply[T](value: T, children: MTree[T]*) = new MTree(value, children.toList)
 
 		def string2MTree(string: String): MTree[Char] = {
-
 			def consumeMTreeFrom(s: String): (MTree[Char], String) = {
 				val value = s.head
 				var children = List[MTree[Char]]()
@@ -60,10 +69,7 @@ class P7 extends ShouldMatchers {
 
 				(MTree(value, children), tail)
 			}
-
 			consumeMTreeFrom(string)._1
 		}
-
 	}
-
 }
