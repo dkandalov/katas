@@ -33,9 +33,18 @@ class P7 extends ShouldMatchers {
 		"afg^^c^bd^e^^^".postorder should equal(List('g', 'f', 'c', 'd', 'e', 'b', 'a'))
 	}
 
+	@Test def `P73 (**) Lisp-like tree representation.`() {
+		MTree("a", List(MTree("b", List(MTree("c"))))).lispyTree should equal("(a (b c))")
+	}
+	
 	implicit def stringToMTree(s: String): MTree[Char] = MTree.string2MTree(s)
 
 	case class MTree[+T](value: T, children: List[MTree[T]]) {
+		def lispyTree: String = {
+			if (children.isEmpty) value.toString
+			else "(" + value + " " + children.map(_.lispyTree).mkString(" ") + ")"
+		}
+
 		def postorder: List[T] = {
 			children.flatMap(_.postorder) ::: List(value)
 		}
