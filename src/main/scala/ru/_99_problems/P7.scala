@@ -34,9 +34,46 @@ class P7 extends ShouldMatchers {
 	}
 
 	@Test def `P73 (**) Lisp-like tree representation.`() {
+		MTree("a").lispyTree should equal("a")
 		MTree("a", List(MTree("b", List(MTree("c"))))).lispyTree should equal("(a (b c))")
+		"afg^^c^bd^e^^^".lispyTree should equal("(a (f g) c (b d e))")
+
+		lispyStringToTree("a") should equal (MTree('a'))
+		lispyStringToTree("(a (b c))") should equal (MTree('a', List(MTree('b', List(MTree('c'))))))
 	}
-	
+
+	def lispyStringToTree(string: String): MTree[Char] = {
+		def consumeTreeFrom(lispyString: String): (MTree[Char], String) = {
+			var s = lispyString
+
+			val hasChildren = s.startsWith("(")
+			if (!hasChildren) {
+				(MTree(s.head), s.tail)
+			} else {
+				s = s.drop("(".size)
+				val value = s.head
+				s = s.drop((value + " ").size)
+
+				var children = List[MTree[Char]]()
+				while (!s.startsWith(")")) {
+					val (child, restOfString) = consumeTreeFrom(s)
+
+					children = children :+ child
+
+					if (restOfString.startsWith(" ")) {
+						s = restOfString.drop(" ".size)
+					} else {
+						s = restOfString
+					}
+				}
+				s = s.drop(")".size)
+
+				(MTree(value, children), s)
+			}
+		}
+		consumeTreeFrom(string)._1
+	}
+
 	implicit def stringToMTree(s: String): MTree[Char] = MTree.string2MTree(s)
 
 	case class MTree[+T](value: T, children: List[MTree[T]]) {
