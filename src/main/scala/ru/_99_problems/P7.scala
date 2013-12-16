@@ -42,6 +42,72 @@ class P7 extends ShouldMatchers {
 		lispyStringToTree("(a (b c))") should equal (MTree('a', List(MTree('b', List(MTree('c'))))))
 	}
 
+
+	abstract class GraphBase[T, U] {
+		case class Edge(node1: Node, node2: Node, value: U) {
+			def toTuple = (node1.value, node2.value, value)
+		}
+		case class Node(value: T) {
+			var adj: List[Edge] = Nil
+			def neighbors: List[Node] = adj.map(edgeTarget(_, this).get)
+		}
+
+		var nodesByValue: Map[T, Node] = Map()
+		var edges: List[Edge] = Nil
+
+		// If the edge E connects N to another node, returns the other node, otherwise returns None.
+		def edgeTarget(edge: Edge, node: Node): Option[Node]
+
+		override def equals(o: Any) = o match {
+			case graph: GraphBase[T,U] =>
+				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) && 
+				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
+			case _ => false
+		}
+
+		def addNode(value: T) = {
+			val node = new Node(value)
+			nodesByValue = Map(value -> node) ++ nodesByValue
+			node
+		}
+	}
+
+	class Graph[T, U] extends GraphBase[T, U] {
+		override def equals(o: Any) = o match {
+			case graph: Graph[T,U] => super.equals(graph)
+			case _ => false
+		}
+
+		def edgeTarget(edge: Edge, node: Node): Option[Node] =
+			if (edge.node1 == node) Some(edge.node2)
+			else if (edge.node2 == node) Some(edge.node1)
+			else None
+
+		def addEdge(value1: T, value2: T, edgeValue: U) = {
+			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), edgeValue)
+			edges = edge :: edges
+			nodesByValue(value1).adj = edge :: nodesByValue(value1).adj
+			nodesByValue(value2).adj = edge :: nodesByValue(value2).adj
+		}
+	}
+
+	class Digraph[T, U] extends GraphBase[T, U] {
+		override def equals(o: Any) = o match {
+			case graph: Digraph[T,U] => super.equals(graph)
+			case _ => false
+		}
+
+		def edgeTarget(edge: Edge, node: Node): Option[Node] =
+			if (edge.node1 == node) Some(edge.node2) else None
+
+		def addArc(source: T, dest: T, value: U) = {
+			val edge = new Edge(nodesByValue(source), nodesByValue(dest), value)
+			edges = edge :: edges
+			nodesByValue(source).adj = edge :: nodesByValue(source).adj
+		}
+	}
+
+
 	def lispyStringToTree(string: String): MTree[Char] = {
 		def consumeTreeFrom(lispyString: String): (MTree[Char], String) = {
 			var s = lispyString
