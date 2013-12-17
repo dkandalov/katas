@@ -42,6 +42,22 @@ class P7 extends ShouldMatchers {
 		lispyStringToTree("(a (b c))") should equal (MTree('a', List(MTree('b', List(MTree('c'))))))
 	}
 
+	@Test def `P7x things which are not tasks but is interesting to do on your own`() {
+		Graph.term(
+			List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
+			List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))
+		).toString should equal("")
+
+		Graph.adjacent(List(
+			('b', List('c', 'f')), 
+			('c', List('b', 'f')), 
+			('d', Nil),
+			('f', List('b', 'c', 'k')), 
+			('g', List('h')), 
+			('h', List('g')),
+			('k', List('f')))
+		).toString should equal("")
+	}
 
 	abstract class GraphBase[T, U] {
 		case class Edge(node1: Node, node2: Node, value: U) {
@@ -58,26 +74,40 @@ class P7 extends ShouldMatchers {
 		// If the edge E connects N to another node, returns the other node, otherwise returns None.
 		def edgeTarget(edge: Edge, node: Node): Option[Node]
 
-		override def equals(o: Any) = o match {
-			case graph: GraphBase[T,U] =>
-				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) && 
-				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
-			case _ => false
-		}
-
 		def addNode(value: T) = {
 			val node = new Node(value)
 			nodesByValue = Map(value -> node) ++ nodesByValue
 			node
 		}
+
+		override def equals(o: Any) = o match {
+			case graph: GraphBase[T,U] =>
+				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) &&
+					(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
+			case _ => false
+		}
+	}
+
+	object Graph {
+		def term[T](nodeValues: List[T], connections: List[(T, T)]): Graph[T, Any] = {
+			val graph = new Graph[T, Any]()
+			nodeValues.foreach{ value => graph.addNode(value) }
+			connections.foreach{ connection => graph.addEdge(connection._1, connection._2, null) }
+			graph
+		}
+		
+		def adjacent[T](nodeConnections: List[(T, List[T])]): Graph[T, Any] = {
+			val graph = new Graph[T, Any]()
+			nodeConnections.foreach{
+				case (nodeValue, adjacentNodeValues) =>
+					graph.addNode(nodeValue)
+					adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, null) }
+			}
+			graph
+		}
 	}
 
 	class Graph[T, U] extends GraphBase[T, U] {
-		override def equals(o: Any) = o match {
-			case graph: Graph[T,U] => super.equals(graph)
-			case _ => false
-		}
-
 		def edgeTarget(edge: Edge, node: Node): Option[Node] =
 			if (edge.node1 == node) Some(edge.node2)
 			else if (edge.node2 == node) Some(edge.node1)
@@ -88,6 +118,11 @@ class P7 extends ShouldMatchers {
 			edges = edge :: edges
 			nodesByValue(value1).adj = edge :: nodesByValue(value1).adj
 			nodesByValue(value2).adj = edge :: nodesByValue(value2).adj
+		}
+
+		override def equals(o: Any) = o match {
+			case graph: Graph[T, U] => super.equals(graph)
+			case _ => false
 		}
 	}
 
