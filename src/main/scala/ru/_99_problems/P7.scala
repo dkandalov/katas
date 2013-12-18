@@ -38,25 +38,38 @@ class P7 extends ShouldMatchers {
 		MTree("a", List(MTree("b", List(MTree("c"))))).lispyTree should equal("(a (b c))")
 		"afg^^c^bd^e^^^".lispyTree should equal("(a (f g) c (b d e))")
 
-		lispyStringToTree("a") should equal (MTree('a'))
-		lispyStringToTree("(a (b c))") should equal (MTree('a', List(MTree('b', List(MTree('c'))))))
+		lispyStringToTree("a") should equal(MTree('a'))
+		lispyStringToTree("(a (b c))") should equal(MTree('a', List(MTree('b', List(MTree('c'))))))
 	}
 
 	@Test def `P7x things which are not tasks but is interesting to do on your own`() {
 		Graph.term(
 			List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
 			List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))
-		).toString should equal("")
+		) should equal(Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"))
 
 		Graph.adjacent(List(
-			('b', List('c', 'f')), 
-			('c', List('b', 'f')), 
+			('b', List('c', 'f')),
+			('c', List('b', 'f')),
 			('d', Nil),
-			('f', List('b', 'c', 'k')), 
-			('g', List('h')), 
+			('f', List('b', 'c', 'k')),
+			('g', List('h')),
 			('h', List('g')),
-			('k', List('f')))
-		).toString should equal("")
+			('k', List('f'))
+		)) should equal(Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"))
+
+//		Digraph.term(
+//			List('r', 's', 't', 'u', 'v'),
+//			List(('s', 'r'), ('s', 'u'), ('u', 'r'), ('u', 's'), ('v', 'u'))
+//		)
+//
+//		Digraph.adjacent(List(
+//			('r', Nil),
+//			('s', List('r', 'u')),
+//			('t', Nil),
+//			('u', List('r', 's')),
+//			('v', List('u'))
+//		))
 	}
 
 	abstract class GraphBase[T, U] {
@@ -83,25 +96,41 @@ class P7 extends ShouldMatchers {
 		override def equals(o: Any) = o match {
 			case graph: GraphBase[T,U] =>
 				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) &&
-					(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
-			case _ => false
+				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
+			case _ =>
+				println("aaaaa")
+				false
 		}
 	}
 
 	object Graph {
-		def term[T](nodeValues: List[T], connections: List[(T, T)]): Graph[T, Any] = {
+		def fromString(s: String): Graph[Char, Any] = {
+			if (s.isEmpty) return new Graph[Char, Any]
+
+			val tokens: Seq[Array[String]] = s.substring(1, s.size - 1).split(", ").map{ _.split("-") }
+			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
+			val connections = tokens.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
+
+			Graph.term(nodeValues, connections)
+		}
+
+		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Graph[T, Any] = {
 			val graph = new Graph[T, Any]()
 			nodeValues.foreach{ value => graph.addNode(value) }
-			connections.foreach{ connection => graph.addEdge(connection._1, connection._2, null) }
+			connections.foreach{ connection =>
+				graph.addEdge(connection._1, connection._2, null)
+				graph.addEdge(connection._2, connection._1, null)
+			}
 			graph
 		}
 		
-		def adjacent[T](nodeConnections: List[(T, List[T])]): Graph[T, Any] = {
+		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Graph[T, Any] = {
 			val graph = new Graph[T, Any]()
-			nodeConnections.foreach{
-				case (nodeValue, adjacentNodeValues) =>
-					graph.addNode(nodeValue)
-					adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, null) }
+			nodeConnections.foreach{ case (nodeValue, _) =>
+				graph.addNode(nodeValue)
+			}
+			nodeConnections.foreach{ case (nodeValue, adjacentNodeValues) =>
+				adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, null) }
 			}
 			graph
 		}
@@ -123,6 +152,25 @@ class P7 extends ShouldMatchers {
 		override def equals(o: Any) = o match {
 			case graph: Graph[T, U] => super.equals(graph)
 			case _ => false
+		}
+	}
+
+	object Digraph {
+		def term[T](nodeValues: List[T], connections: List[(T, T)]): Digraph[T, Any] = {
+			val graph = new Digraph[T, Any]()
+			nodeValues.foreach{ value => graph.addNode(value) }
+			connections.foreach{ connection => graph.addArc(connection._1, connection._2, null) }
+			graph
+		}
+
+		def adjacent[T](nodeConnections: List[(T, List[T])]): Digraph[T, Any] = {
+			val graph = new Digraph[T, Any]()
+			nodeConnections.foreach{
+				case (nodeValue, adjacentNodeValues) =>
+					graph.addNode(nodeValue)
+					adjacentNodeValues.foreach{ graph.addArc(nodeValue, _, null) }
+			}
+			graph
 		}
 	}
 
