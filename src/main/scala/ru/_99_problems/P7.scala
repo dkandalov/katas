@@ -43,6 +43,10 @@ class P7 extends ShouldMatchers {
 	}
 
 	@Test def `P7x things which are not tasks but is interesting to do on your own`() {
+		Graph.fromString("[]") should equal(new Graph[Char, Any])
+		Graph.fromString("[a-b]") should equal(Graph.fromString("[a-b]"))
+		Graph.fromString("[a-b]") should equal(Graph.fromString("[a-b, a-b, b-a]"))
+
 		Graph.term(
 			List('b', 'c', 'd', 'f', 'g', 'h', 'k'),
 			List(('b', 'c'), ('b', 'f'), ('c', 'f'), ('f', 'k'), ('g', 'h'))
@@ -98,7 +102,6 @@ class P7 extends ShouldMatchers {
 				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) &&
 				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
 			case _ =>
-				println("aaaaa")
 				false
 		}
 	}
@@ -106,10 +109,12 @@ class P7 extends ShouldMatchers {
 	object Graph {
 		def fromString(s: String): Graph[Char, Any] = {
 			if (s.isEmpty) return new Graph[Char, Any]
+			val withoutBraces = s.substring(1, s.size - 1)
+			if (withoutBraces.isEmpty) return new Graph[Char, Any]
 
-			val tokens: Seq[Array[String]] = s.substring(1, s.size - 1).split(", ").map{ _.split("-") }
+			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("-") }
 			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
-			val connections = tokens.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
+			val connections = tokens.distinct.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
 
 			Graph.term(nodeValues, connections)
 		}
