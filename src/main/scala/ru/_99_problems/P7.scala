@@ -42,7 +42,7 @@ class P7 extends ShouldMatchers {
 		lispyStringToTree("(a (b c))") should equal(MTree('a', List(MTree('b', List(MTree('c'))))))
 	}
 
-	@Test def `P7x things which are not tasks but is interesting to do on your own`() {
+	@Test def `P7x things which are not tasks but are interesting to do on your own`() {
 		Graph.fromString("[]") should equal(new Graph[Char, Any])
 		Graph.fromString("[a-b]") should equal(Graph.fromString("[a-b]"))
 		Graph.fromString("[a-b]") should equal(Graph.fromString("[a-b, a-b, b-a]"))
@@ -62,19 +62,23 @@ class P7 extends ShouldMatchers {
 			('k', List('f'))
 		)) should equal(Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"))
 
-//		Digraph.term(
-//			List('r', 's', 't', 'u', 'v'),
-//			List(('s', 'r'), ('s', 'u'), ('u', 'r'), ('u', 's'), ('v', 'u'))
-//		)
-//
-//		Digraph.adjacent(List(
-//			('r', Nil),
-//			('s', List('r', 'u')),
-//			('t', Nil),
-//			('u', List('r', 's')),
-//			('v', List('u'))
-//		))
+
+		Digraph.fromString("[]") should equal(new Digraph[Char, Any])
+		Digraph.fromString("[a>b]") should equal(Digraph.fromString("[a>b, a>b]"))
+		Digraph.term(
+			List('r', 's', 't', 'u', 'v'),
+			List(('s', 'r'), ('s', 'u'), ('u', 'r'), ('u', 's'), ('v', 'u'))
+		) should equal(Digraph.fromString("[s>r, t, u>r, s>u, u>s, v>u]"))
+
+		Digraph.adjacent(List(
+			('r', Nil),
+			('s', List('r', 'u')),
+			('t', Nil),
+			('u', List('r', 's')),
+			('v', List('u'))
+		)) should equal(Digraph.fromString("[s>r, t, u>r, s>u, u>s, v>u]"))
 	}
+
 
 	abstract class GraphBase[T, U] {
 		case class Edge(node1: Node, node2: Node, value: U) {
@@ -161,18 +165,31 @@ class P7 extends ShouldMatchers {
 	}
 
 	object Digraph {
-		def term[T](nodeValues: List[T], connections: List[(T, T)]): Digraph[T, Any] = {
+		def fromString(s: String): Digraph[Char, Any] = {
+			if (s.isEmpty) return new Digraph[Char, Any]
+			val withoutBraces = s.substring(1, s.size - 1)
+			if (withoutBraces.isEmpty) return new Digraph[Char, Any]
+
+			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split(">") }
+			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
+			val connections = tokens.distinct.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
+
+			Digraph.term(nodeValues, connections)
+		}
+
+		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Digraph[T, Any] = {
 			val graph = new Digraph[T, Any]()
 			nodeValues.foreach{ value => graph.addNode(value) }
 			connections.foreach{ connection => graph.addArc(connection._1, connection._2, null) }
 			graph
 		}
 
-		def adjacent[T](nodeConnections: List[(T, List[T])]): Digraph[T, Any] = {
+		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Digraph[T, Any] = {
 			val graph = new Digraph[T, Any]()
-			nodeConnections.foreach{
-				case (nodeValue, adjacentNodeValues) =>
+			nodeConnections.foreach{ case (nodeValue, _) =>
 					graph.addNode(nodeValue)
+			}
+			nodeConnections.foreach{ case (nodeValue, adjacentNodeValues) =>
 					adjacentNodeValues.foreach{ graph.addArc(nodeValue, _, null) }
 			}
 			graph
