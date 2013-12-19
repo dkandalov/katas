@@ -77,8 +77,23 @@ class P7 extends ShouldMatchers {
 			('u', List('r', 's')),
 			('v', List('u'))
 		)) should equal(Digraph.fromString("[s>r, t, u>r, s>u, u>s, v>u]"))
+
+		Digraph.termLabel(
+			List('k', 'm', 'p', 'q'),
+			List(('m', 'q', 7), ('p', 'm', 5), ('p', 'q', 9))
+		)
+
+		Digraph.adjacentLabel(List(
+			('k', Nil),
+			('m', List(('q', 7))),
+			('p', List(('m', 5), ('q', 9))),
+			('q', Nil))
+		)
 	}
 
+	@Test def `P80 (***) Conversions.`() {
+
+	}
 
 	abstract class GraphBase[T, U] {
 		case class Edge(node1: Node, node2: Node, value: U) {
@@ -178,19 +193,27 @@ class P7 extends ShouldMatchers {
 		}
 
 		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Digraph[T, Any] = {
-			val graph = new Digraph[T, Any]()
+			termLabel(nodeValues, connections.map{ it => (it._1, it._2, null) })
+		}
+
+		def termLabel[T, U](nodeValues: Seq[T], connections: Seq[(T, T, U)]): Digraph[T, U] = {
+			val graph = new Digraph[T, U]()
 			nodeValues.foreach{ value => graph.addNode(value) }
-			connections.foreach{ connection => graph.addArc(connection._1, connection._2, null) }
+			connections.foreach{ connection => graph.addArc(connection._1, connection._2, connection._3) }
 			graph
 		}
 
 		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Digraph[T, Any] = {
-			val graph = new Digraph[T, Any]()
-			nodeConnections.foreach{ case (nodeValue, _) =>
-					graph.addNode(nodeValue)
-			}
-			nodeConnections.foreach{ case (nodeValue, adjacentNodeValues) =>
-					adjacentNodeValues.foreach{ graph.addArc(nodeValue, _, null) }
+			adjacentLabel(nodeConnections.map{ case (nodeValue, adjacency) =>
+				(nodeValue, adjacency.map{ (_, null) })
+			})
+		}
+
+		def adjacentLabel[T, U](nodeConnections: Seq[(T, Seq[(T, U)])]): Digraph[T, U] = {
+			val graph = new Digraph[T, U]()
+			nodeConnections.foreach{ case (nodeValue, _) => graph.addNode(nodeValue)}
+			nodeConnections.foreach{ case (nodeValue, adjacentInfo) =>
+					adjacentInfo.foreach{ it => graph.addArc(nodeValue, it._1, it._2) }
 			}
 			graph
 		}
