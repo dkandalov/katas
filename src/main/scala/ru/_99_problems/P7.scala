@@ -81,22 +81,26 @@ class P7 extends ShouldMatchers {
 		Digraph.termLabel(
 			List('k', 'm', 'p', 'q'),
 			List(('m', 'q', 7), ('p', 'm', 5), ('p', 'q', 9))
-		)
+		) should equal(Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]"))
 
 		Digraph.adjacentLabel(List(
 			('k', Nil),
 			('m', List(('q', 7))),
 			('p', List(('m', 5), ('q', 9))),
 			('q', Nil))
-		)
+		) should equal(Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]"))
 	}
 
 	@Test def `P80 (***) Conversions.`() {
+		val termForm = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
+		Graph.termLabel(termForm._1, termForm._2) should equal(Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"))
 
+		// Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
 	}
 
 	abstract class GraphBase[T, U] {
 		case class Edge(node1: Node, node2: Node, value: U) {
+			def reverse = Edge(node2, node1, value)
 			def toTuple = (node1.value, node2.value, value)
 		}
 		case class Node(value: T) {
@@ -105,7 +109,14 @@ class P7 extends ShouldMatchers {
 		}
 
 		var nodesByValue: Map[T, Node] = Map()
-		var edges: List[Edge] = Nil
+		var edges: Set[Edge] = Set()
+
+
+		override def toString = toTermForm.toString()
+
+		def toTermForm: (Seq[T], Seq[(T, T, U)]) = {
+			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
+		}
 
 		// If the edge E connects N to another node, returns the other node, otherwise returns None.
 		def edgeTarget(edge: Edge, node: Node): Option[Node]
@@ -115,21 +126,13 @@ class P7 extends ShouldMatchers {
 			nodesByValue = Map(value -> node) ++ nodesByValue
 			node
 		}
-
-		override def equals(o: Any) = o match {
-			case graph: GraphBase[T,U] =>
-				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList == Nil) &&
-				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) == Nil)
-			case _ =>
-				false
-		}
 	}
 
 	object Graph {
-		def fromString(s: String): Graph[Char, Any] = {
-			if (s.isEmpty) return new Graph[Char, Any]
+		def fromString(s: String): Graph[Char, Unit] = {
+			if (s.isEmpty) return new Graph[Char, Unit]
 			val withoutBraces = s.substring(1, s.size - 1)
-			if (withoutBraces.isEmpty) return new Graph[Char, Any]
+			if (withoutBraces.isEmpty) return new Graph[Char, Unit]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("-") }
 			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
@@ -138,23 +141,24 @@ class P7 extends ShouldMatchers {
 			Graph.term(nodeValues, connections)
 		}
 
-		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Graph[T, Any] = {
-			val graph = new Graph[T, Any]()
+		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Graph[T, Unit] = {
+			termLabel(nodeValues, connections.map{ it => (it._1, it._2, ()) })
+		}
+
+		def termLabel[T, U](nodeValues: Seq[T], connections: Seq[(T, T, U)]): Graph[T, U] = {
+			val graph = new Graph[T, U]()
 			nodeValues.foreach{ value => graph.addNode(value) }
-			connections.foreach{ connection =>
-				graph.addEdge(connection._1, connection._2, null)
-				graph.addEdge(connection._2, connection._1, null)
-			}
+			connections.foreach{ connection => graph.addEdge(connection._1, connection._2, connection._3) }
 			graph
 		}
-		
-		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Graph[T, Any] = {
-			val graph = new Graph[T, Any]()
+
+		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Graph[T, Unit] = {
+			val graph = new Graph[T, Unit]()
 			nodeConnections.foreach{ case (nodeValue, _) =>
 				graph.addNode(nodeValue)
 			}
 			nodeConnections.foreach{ case (nodeValue, adjacentNodeValues) =>
-				adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, null) }
+				adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, ()) }
 			}
 			graph
 		}
@@ -168,22 +172,40 @@ class P7 extends ShouldMatchers {
 
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
 			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), edgeValue)
-			edges = edge :: edges
+			if (!edges.contains(edge) && !edges.contains(edge.reverse)) {
+				edges = edges + edge
+			}
 			nodesByValue(value1).adj = edge :: nodesByValue(value1).adj
 			nodesByValue(value2).adj = edge :: nodesByValue(value2).adj
 		}
 
 		override def equals(o: Any) = o match {
-			case graph: Graph[T, U] => super.equals(graph)
-			case _ => false
+			case graph: Graph[T, U] =>
+				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList).isEmpty &&
+				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) -- graph.edges.map(_.reverse.toTuple)).isEmpty
+			case _ =>
+				false
 		}
+
 	}
 
 	object Digraph {
-		def fromString(s: String): Digraph[Char, Any] = {
-			if (s.isEmpty) return new Digraph[Char, Any]
+		def fromLabelString(s: String): Digraph[Char, Int] = {
+			if (s.isEmpty) return new Digraph[Char, Int]
 			val withoutBraces = s.substring(1, s.size - 1)
-			if (withoutBraces.isEmpty) return new Digraph[Char, Any]
+			if (withoutBraces.isEmpty) return new Digraph[Char, Int]
+
+			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("[>/]") }
+			val nodeValues = tokens.flatMap(_.take(2).toSeq).distinct.map(_.head)
+			val connections = tokens.distinct.filter(_.size == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
+
+			Digraph.termLabel(nodeValues, connections)
+		}
+
+		def fromString(s: String): Digraph[Char, Unit] = {
+			if (s.isEmpty) return new Digraph[Char, Unit]
+			val withoutBraces = s.substring(1, s.size - 1)
+			if (withoutBraces.isEmpty) return new Digraph[Char, Unit]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split(">") }
 			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
@@ -192,8 +214,8 @@ class P7 extends ShouldMatchers {
 			Digraph.term(nodeValues, connections)
 		}
 
-		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Digraph[T, Any] = {
-			termLabel(nodeValues, connections.map{ it => (it._1, it._2, null) })
+		def term[T](nodeValues: Seq[T], connections: Seq[(T, T)]): Digraph[T, Unit] = {
+			termLabel(nodeValues, connections.map{ it => (it._1, it._2, ()) })
 		}
 
 		def termLabel[T, U](nodeValues: Seq[T], connections: Seq[(T, T, U)]): Digraph[T, U] = {
@@ -203,9 +225,9 @@ class P7 extends ShouldMatchers {
 			graph
 		}
 
-		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Digraph[T, Any] = {
+		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Digraph[T, Unit] = {
 			adjacentLabel(nodeConnections.map{ case (nodeValue, adjacency) =>
-				(nodeValue, adjacency.map{ (_, null) })
+				(nodeValue, adjacency.map{ (_, ()) })
 			})
 		}
 
@@ -220,18 +242,21 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Digraph[T, U] extends GraphBase[T, U] {
-		override def equals(o: Any) = o match {
-			case graph: Digraph[T,U] => super.equals(graph)
-			case _ => false
-		}
-
 		def edgeTarget(edge: Edge, node: Node): Option[Node] =
 			if (edge.node1 == node) Some(edge.node2) else None
 
 		def addArc(source: T, dest: T, value: U) = {
 			val edge = new Edge(nodesByValue(source), nodesByValue(dest), value)
-			edges = edge :: edges
+			edges = edges + edge
 			nodesByValue(source).adj = edge :: nodesByValue(source).adj
+		}
+
+		override def equals(o: Any) = o match {
+			case graph: Digraph[T, U] =>
+				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList).isEmpty &&
+				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
+			case _ =>
+				false
 		}
 	}
 
