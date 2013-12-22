@@ -97,10 +97,17 @@ class P7 extends ShouldMatchers {
 
 		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm.toSet should equal(Set(
 			('m', Seq(('q', 7))),
-			('p', Seq(('m', 5), ('q', 9))),
+			('p', Seq(('q', 9), ('m', 5))),
 			('k', Seq()),
 			('q', Seq())
 		))
+	}
+
+	@Test def `P81 (**) Path from one node to another one.`() {
+		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'k') should equal(List())
+		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'q') should equal(
+			List(List('p', 'q'), List('p', 'm', 'q'))
+		)
 	}
 
 	abstract class GraphBase[T, U] {
@@ -118,17 +125,6 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
-
-		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
-			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
-				val connections = edges
-					.filter{ edge => edge.node1 == node || edge.node2 == node }
-					.map{ edge => if (edge.node1 == node) edge else edge.reverse}
-					.map{ edge => (edge.node2.value, edge.value) }
-					.toList
-				result :+ (node.value, connections)
-			}
-		}
 
 		def toTermForm: (Seq[T], Seq[(T, T, U)]) = {
 			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
@@ -202,8 +198,8 @@ class P7 extends ShouldMatchers {
 			case _ =>
 				false
 		}
-
 	}
+
 
 	object Digraph {
 		def fromLabelString(s: String): Digraph[Char, Int] = {
@@ -258,6 +254,37 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Digraph[T, U] extends GraphBase[T, U] {
+		type NodePath = List[Node]
+
+		def findPaths(fromValue: T, toValue: T): List[List[T]] = {
+			def findPaths(fromNode: Node, toNode: Node, path: NodePath): List[NodePath] = {
+				if (fromNode == toNode) return List(path)
+
+				val nextNodes = edges
+					.filter(edge => edge.node1 == fromNode)
+					.map(_.node2)
+					.filterNot(path.contains(_))
+
+				nextNodes.flatMap(node => findPaths(node, toNode, path :+ node))
+					.filterNot(_.isEmpty)
+					.toList
+			}
+
+			val fromNode = nodesByValue(fromValue)
+			val toNode = nodesByValue(toValue)
+			findPaths(fromNode, toNode, List(fromNode)).map(_.map(_.value))
+		}
+
+		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
+			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
+				val connections = edges
+					.filter{ edge => edge.node1 == node }
+					.map{ edge => (edge.node2.value, edge.value) }
+					.toList
+				result :+ (node.value, connections)
+			}
+		}
+
 		def edgeTarget(edge: Edge, node: Node): Option[Node] =
 			if (edge.node1 == node) Some(edge.node2) else None
 
