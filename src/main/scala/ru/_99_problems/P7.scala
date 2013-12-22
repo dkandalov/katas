@@ -95,7 +95,12 @@ class P7 extends ShouldMatchers {
 		val termForm = Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").toTermForm
 		Graph.termLabel(termForm._1, termForm._2) should equal(Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]"))
 
-		// Digraph.fromStringLabel("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm
+		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").toAdjacentForm.toSet should equal(Set(
+			('m', Seq(('q', 7))),
+			('p', Seq(('m', 5), ('q', 9))),
+			('k', Seq()),
+			('q', Seq())
+		))
 	}
 
 	abstract class GraphBase[T, U] {
@@ -113,6 +118,17 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
+			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
+				val connections = edges
+					.filter{ edge => edge.node1 == node || edge.node2 == node }
+					.map{ edge => if (edge.node1 == node) edge else edge.reverse}
+					.map{ edge => (edge.node2.value, edge.value) }
+					.toList
+				result :+ (node.value, connections)
+			}
+		}
 
 		def toTermForm: (Seq[T], Seq[(T, T, U)]) = {
 			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
