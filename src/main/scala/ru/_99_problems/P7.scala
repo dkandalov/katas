@@ -105,20 +105,24 @@ class P7 extends ShouldMatchers {
 
 	@Test def `P81 (**) Path from one node to another one.`() {
 		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'k') should equal(List())
+		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'p') should equal(List(List('p')))
 		Digraph.fromLabelString("[p>q/9, m>q/7, k, p>m/5]").findPaths('p', 'q') should equal(
 			List(List('p', 'q'), List('p', 'm', 'q'))
 		)
 	}
 
+	@Test def `P82 (*) Cycle from a given node.`() {
+//		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(
+//			List(List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f'))
+//		)
+	}
+
 	abstract class GraphBase[T, U] {
-		case class Edge(node1: Node, node2: Node, value: U) {
-			def reverse = Edge(node2, node1, value)
-			def toTuple = (node1.value, node2.value, value)
+		case class Edge(fromNode: Node, toNode: Node, value: U) {
+			def reverse = Edge(toNode, fromNode, value)
+			def toTuple = (fromNode.value, toNode.value, value)
 		}
-		case class Node(value: T) {
-			var adj: List[Edge] = Nil
-			def neighbors: List[Node] = adj.map(edgeTarget(_, this).get)
-		}
+		case class Node(value: T)
 
 		var nodesByValue: Map[T, Node] = Map()
 		var edges: Set[Edge] = Set()
@@ -129,9 +133,6 @@ class P7 extends ShouldMatchers {
 		def toTermForm: (Seq[T], Seq[(T, T, U)]) = {
 			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
 		}
-
-		// If the edge E connects N to another node, returns the other node, otherwise returns None.
-		def edgeTarget(edge: Edge, node: Node): Option[Node]
 
 		def addNode(value: T) = {
 			val node = new Node(value)
@@ -177,18 +178,12 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Graph[T, U] extends GraphBase[T, U] {
-		def edgeTarget(edge: Edge, node: Node): Option[Node] =
-			if (edge.node1 == node) Some(edge.node2)
-			else if (edge.node2 == node) Some(edge.node1)
-			else None
-
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
+			if (!nodesByValue.contains(value1) || !nodesByValue.contains(value2)) throw new IllegalStateException
+
 			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), edgeValue)
-			if (!edges.contains(edge) && !edges.contains(edge.reverse)) {
-				edges = edges + edge
-			}
-			nodesByValue(value1).adj = edge :: nodesByValue(value1).adj
-			nodesByValue(value2).adj = edge :: nodesByValue(value2).adj
+			if (!edges.contains(edge)) edges = edges + edge
+			if (!edges.contains(edge.reverse)) edges = edges + edge.reverse
 		}
 
 		override def equals(o: Any) = o match {
@@ -261,8 +256,8 @@ class P7 extends ShouldMatchers {
 				if (fromNode == toNode) return List(path)
 
 				val nextNodes = edges
-					.filter(edge => edge.node1 == fromNode)
-					.map(_.node2)
+					.filter(edge => edge.fromNode == fromNode)
+					.map(_.toNode)
 					.filterNot(path.contains(_))
 
 				nextNodes.flatMap(node => findPaths(node, toNode, path :+ node))
@@ -278,20 +273,16 @@ class P7 extends ShouldMatchers {
 		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
 			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
 				val connections = edges
-					.filter{ edge => edge.node1 == node }
-					.map{ edge => (edge.node2.value, edge.value) }
+					.filter{ edge => edge.fromNode == node }
+					.map{ edge => (edge.toNode.value, edge.value) }
 					.toList
 				result :+ (node.value, connections)
 			}
 		}
 
-		def edgeTarget(edge: Edge, node: Node): Option[Node] =
-			if (edge.node1 == node) Some(edge.node2) else None
-
 		def addArc(source: T, dest: T, value: U) = {
 			val edge = new Edge(nodesByValue(source), nodesByValue(dest), value)
 			edges = edges + edge
-			nodesByValue(source).adj = edge :: nodesByValue(source).adj
 		}
 
 		override def equals(o: Any) = o match {
