@@ -112,9 +112,10 @@ class P7 extends ShouldMatchers {
 	}
 
 	@Test def `P82 (*) Cycle from a given node.`() {
-//		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(
-//			List(List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f'))
-//		)
+		Graph.fromString("[a-b, b-c]").findCycles('a') should equal(List())
+		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(
+			List(List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f'))
+		)
 	}
 
 	abstract class GraphBase[T, U] {
@@ -123,12 +124,51 @@ class P7 extends ShouldMatchers {
 			def toTuple = (fromNode.value, toNode.value, value)
 		}
 		case class Node(value: T)
+		type NodePath = List[Node]
 
 		var nodesByValue: Map[T, Node] = Map()
 		var edges: Set[Edge] = Set()
 
 
 		override def toString = toTermForm.toString()
+
+		def findCycles(nodeValue: T): List[List[T]] = {
+			def findCycles(fromNode: Node, toNode: Node, path: NodePath): List[NodePath] = {
+				if (path.size > 3 && fromNode == toNode) return List(path)
+
+				val nodeNeighbors = edges
+					.filter(edge => edge.fromNode == fromNode)
+					.map(_.toNode)
+					.filterNot(path.tail.contains(_))
+
+				nodeNeighbors.flatMap(node => findCycles(node, toNode, path :+ node))
+					.filterNot(_.isEmpty)
+					.toList
+			}
+
+			val fromNode = nodesByValue(nodeValue)
+			val toNode = nodesByValue(nodeValue)
+			findCycles(fromNode, toNode, List(fromNode)).map(_.map(_.value))
+		}
+
+		def findPaths(fromValue: T, toValue: T): List[List[T]] = {
+			def findPaths(fromNode: Node, toNode: Node, path: NodePath): List[NodePath] = {
+				if (fromNode == toNode) return List(path)
+
+				val nodeNeighbors = edges
+					.filter(edge => edge.fromNode == fromNode)
+					.map(_.toNode)
+					.filterNot(path.contains(_))
+
+				nodeNeighbors.flatMap(node => findPaths(node, toNode, path :+ node))
+					.filterNot(_.isEmpty)
+					.toList
+			}
+
+			val fromNode = nodesByValue(fromValue)
+			val toNode = nodesByValue(toValue)
+			findPaths(fromNode, toNode, List(fromNode)).map(_.map(_.value))
+		}
 
 		def toTermForm: (Seq[T], Seq[(T, T, U)]) = {
 			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
@@ -249,26 +289,6 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Digraph[T, U] extends GraphBase[T, U] {
-		type NodePath = List[Node]
-
-		def findPaths(fromValue: T, toValue: T): List[List[T]] = {
-			def findPaths(fromNode: Node, toNode: Node, path: NodePath): List[NodePath] = {
-				if (fromNode == toNode) return List(path)
-
-				val nextNodes = edges
-					.filter(edge => edge.fromNode == fromNode)
-					.map(_.toNode)
-					.filterNot(path.contains(_))
-
-				nextNodes.flatMap(node => findPaths(node, toNode, path :+ node))
-					.filterNot(_.isEmpty)
-					.toList
-			}
-
-			val fromNode = nodesByValue(fromValue)
-			val toNode = nodesByValue(toValue)
-			findPaths(fromNode, toNode, List(fromNode)).map(_.map(_.value))
-		}
 
 		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
 			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
