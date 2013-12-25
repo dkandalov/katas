@@ -121,6 +121,9 @@ class P7 extends ShouldMatchers {
 		Graph.fromString("[a-b, b-c, c-a]").findAllCycles() should equal(List(
 			List('c', 'b', 'a', 'c'), List('c', 'a', 'b', 'c')
 		))
+		Graph.fromString("[a-b, b-c, c-a]").findAllUniqueCycles() should equal(List(
+			List('c', 'b', 'a', 'c')
+		))
 	}
 
 	@Test def `P83 (**) Construct all spanning trees.`() {
@@ -145,8 +148,15 @@ class P7 extends ShouldMatchers {
 		override def toString = toTermForm.toString()
 
 		def spanningTrees(): List[Graph[T, U]] = {
-//			findAllCycles() // TODO
+			// TODO
 			List()
+		}
+
+		def findAllUniqueCycles(): List[List[T]] = {
+			findAllCycles().foldLeft(List[List[T]]()){ (result, cycle) =>
+				if (result.exists{ _.toSet == cycle.toSet }) result
+				else result :+ cycle
+			}
 		}
 
 		def findAllCycles(nodeValues: Seq[T] = nodesByValue.keySet.toSeq): List[List[T]] = {
