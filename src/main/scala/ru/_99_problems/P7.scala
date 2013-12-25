@@ -113,9 +113,21 @@ class P7 extends ShouldMatchers {
 
 	@Test def `P82 (*) Cycle from a given node.`() {
 		Graph.fromString("[a-b, b-c]").findCycles('a') should equal(List())
-		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(
-			List(List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f'))
-		)
+		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(List(
+			List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f')
+		))
+
+		Graph.fromString("[a-b, b-c]").findAllCycles() should equal(List())
+		Graph.fromString("[a-b, b-c, c-a]").findAllCycles() should equal(List(
+			List('c', 'b', 'a', 'c'), List('c', 'a', 'b', 'c')
+		))
+	}
+
+	@Test def `P83 (**) Construct all spanning trees.`() {
+		import Graph._
+		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
+			fromString("[a-b, b-c]"), fromString("[a-c, b-c]"), fromString("[a-b, a-c]")
+		))
 	}
 
 	abstract class GraphBase[T, U] {
@@ -131,6 +143,19 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+		def spanningTrees(): List[Graph[T, U]] = {
+//			findAllCycles() // TODO
+			List()
+		}
+
+		def findAllCycles(nodeValues: Seq[T] = nodesByValue.keySet.toSeq): List[List[T]] = {
+			if (nodeValues.isEmpty) List()
+			else {
+				val cycles = findCycles(nodeValues.head)
+				cycles ++ findAllCycles(nodeValues.tail.filterNot(it => cycles.flatten.contains(it)))
+			}
+		}
 
 		def findCycles(nodeValue: T): List[List[T]] = {
 			def findCycles(fromNode: Node, toNode: Node, path: NodePath): List[NodePath] = {
