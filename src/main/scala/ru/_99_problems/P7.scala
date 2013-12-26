@@ -2,6 +2,7 @@ package ru._99_problems
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import scala.collection.immutable.HashMap
 
 
 class P7 extends ShouldMatchers {
@@ -124,9 +125,16 @@ class P7 extends ShouldMatchers {
 		Graph.fromString("[a-b, b-c, c-a]").findAllUniqueCycles() should equal(List(
 			List('c', 'b', 'a', 'c')
 		))
+		Graph.fromString("[a-b, b-c, c-a, x-y, y-z, z-x]").findAllUniqueCycles() should equal(List(
+			List('x', 'z', 'y', 'x'), List('a', 'c', 'b', 'a')
+		))
 	}
 
 	@Test def `P83 (**) Construct all spanning trees.`() {
+
+		val list = List(1, 2, 3)
+		println(list.zip(list.tail :+ list.head))
+
 		import Graph._
 		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
 			fromString("[a-b, b-c]"), fromString("[a-c, b-c]"), fromString("[a-b, a-c]")
@@ -147,10 +155,7 @@ class P7 extends ShouldMatchers {
 
 		override def toString = toTermForm.toString()
 
-		def spanningTrees(): List[Graph[T, U]] = {
-			// TODO
-			List()
-		}
+		def copy(): GraphBase[T, U]
 
 		def findAllUniqueCycles(): List[List[T]] = {
 			findAllCycles().foldLeft(List[List[T]]()){ (result, cycle) =>
@@ -253,6 +258,27 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Graph[T, U] extends GraphBase[T, U] {
+
+		def copy() = {
+			val graph = new Graph[T, U]() // TODO ?
+//			graph.nodesByValue = nodesByValue
+//			graph.edges = edges
+			graph
+		}
+
+		def spanningTrees(): List[Graph[T, U]] = {
+			nodesByValue.keys.flatMap{ nodeValue =>
+				findCycles(nodeValue).flatMap{ cycle =>
+					val connections = cycle.zip(cycle.tail :+ cycle.head)
+					connections.flatMap{ connection =>
+
+						List()
+					}
+				}
+			}
+			List()
+		}
+
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
 			if (!nodesByValue.contains(value1) || !nodesByValue.contains(value2)) throw new IllegalStateException
 
