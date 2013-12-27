@@ -131,10 +131,6 @@ class P7 extends ShouldMatchers {
 	}
 
 	@Test def `P83 (**) Construct all spanning trees.`() {
-
-		val list = List(1, 2, 3)
-		println(list.zip(list.tail :+ list.head))
-
 		import Graph._
 		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
 			fromString("[a-b, b-c]"), fromString("[a-c, b-c]"), fromString("[a-b, a-c]")
@@ -145,6 +141,7 @@ class P7 extends ShouldMatchers {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
 			def toTuple = (fromNode.value, toNode.value, value)
+			def hasSameNodes(edge: Edge): Boolean = fromNode == edge.fromNode && toNode == edge.toNode
 		}
 		case class Node(value: T)
 		type NodePath = List[Node]
@@ -260,23 +257,28 @@ class P7 extends ShouldMatchers {
 	class Graph[T, U] extends GraphBase[T, U] {
 
 		def copy() = {
-			val graph = new Graph[T, U]() // TODO ?
-//			graph.nodesByValue = nodesByValue
-//			graph.edges = edges
-			graph
+			val (nodeValues, connections) = toTermForm
+			Graph.termLabel[T, U](nodeValues, connections)
 		}
 
 		def spanningTrees(): List[Graph[T, U]] = {
 			nodesByValue.keys.flatMap{ nodeValue =>
+				println(nodeValue)
 				findCycles(nodeValue).flatMap{ cycle =>
 					val connections = cycle.zip(cycle.tail :+ cycle.head)
 					connections.flatMap{ connection =>
-
-						List()
+						val graphCopy = this.copy()
+						graphCopy.removeEdge(connection._1, connection._2)
+						graphCopy.spanningTrees
 					}
 				}
-			}
-			List()
+			}.toList
+		}
+
+		def removeEdge(value1: T, value2: T) = {
+			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), null.asInstanceOf[U])
+			edges.find(edge.hasSameNodes).foreach(edgeToRemove => edges = edges - edgeToRemove)
+			edges.find(edge.reverse.hasSameNodes).foreach(edgeToRemove => edges = edges - edgeToRemove)
 		}
 
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
@@ -350,6 +352,8 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Digraph[T, U] extends GraphBase[T, U] {
+
+		def copy() = null
 
 		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
 			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
