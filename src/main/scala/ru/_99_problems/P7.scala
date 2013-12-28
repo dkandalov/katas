@@ -262,17 +262,17 @@ class P7 extends ShouldMatchers {
 		}
 
 		def spanningTrees(): List[Graph[T, U]] = {
-			nodesByValue.keys.flatMap{ nodeValue =>
-				println(nodeValue)
-				findCycles(nodeValue).flatMap{ cycle =>
-					val connections = cycle.zip(cycle.tail :+ cycle.head)
-					connections.flatMap{ connection =>
-						val graphCopy = this.copy()
-						graphCopy.removeEdge(connection._1, connection._2)
-						graphCopy.spanningTrees
-					}
+			def connectsToGraph[T,U](edge: Edge, nodes: List[Node]): Boolean =
+				nodes.contains(edge.fromNode) != nodes.contains(edge.toNode)
+
+			def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T,U]] = {
+				if (graphNodes.isEmpty) List(Graph.termLabel(nodesByValue.keys.toList, treeEdges.map(_.toTuple)))
+				else if (graphEdges.isEmpty) List()
+				else graphEdges.filter(connectsToGraph(_, graphNodes)).flatMap { edge =>
+					spanningTreesR(graphEdges.remove(_ == edge), graphNodes.filter(edgeTarget(edge, _) == None), edge :: treeEdges)
 				}
-			}.toList
+			}
+			spanningTreesR(edges.toList, nodesByValue.values.toList.tail, List()).removeDuplicates
 		}
 
 		def removeEdge(value1: T, value2: T) = {
