@@ -3,6 +3,7 @@ package ru._99_problems
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
 import scala.collection.immutable.HashMap
+import scala.collection.JavaConversions.asScalaIterator
 
 
 class P7 extends ShouldMatchers {
@@ -133,7 +134,7 @@ class P7 extends ShouldMatchers {
 	@Test def `P83 (**) Construct all spanning trees.`() {
 		import Graph._
 		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
-			fromString("[a-b, b-c]"), fromString("[a-c, b-c]"), fromString("[a-b, a-c]")
+			fromString("[a-b, a-c]"), fromString("[a-c, b-c]"), fromString("[a-b, b-c]")
 		))
 	}
 
@@ -152,7 +153,15 @@ class P7 extends ShouldMatchers {
 
 		override def toString = toTermForm.toString()
 
-		def copy(): GraphBase[T, U]
+		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
+			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
+				val connections = edges
+					.filter{ edge => edge.fromNode == node }
+					.map{ edge => (edge.toNode.value, edge.value) }
+					.toList
+				result :+ (node.value, connections)
+			}
+		}
 
 		def findAllUniqueCycles(): List[List[T]] = {
 			findAllCycles().foldLeft(List[List[T]]()){ (result, cycle) =>
@@ -256,24 +265,30 @@ class P7 extends ShouldMatchers {
 
 	class Graph[T, U] extends GraphBase[T, U] {
 
-		def copy() = {
-			val (nodeValues, connections) = toTermForm
-			Graph.termLabel[T, U](nodeValues, connections)
-		}
-
 		def spanningTrees(): List[Graph[T, U]] = {
-			def connectsToGraph[T,U](edge: Edge, nodes: List[Node]): Boolean =
+			def usedIn(edge: Edge, node: Node): Boolean =
+				edge.fromNode == node || edge.toNode == node
+
+			def connectsToGraph(edge: Edge, nodes: List[Node]): Boolean =
 				nodes.contains(edge.fromNode) != nodes.contains(edge.toNode)
 
-			def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T,U]] = {
+			def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T, U]] = {
 				if (graphNodes.isEmpty) List(Graph.termLabel(nodesByValue.keys.toList, treeEdges.map(_.toTuple)))
 				else if (graphEdges.isEmpty) List()
 				else graphEdges.filter(connectsToGraph(_, graphNodes)).flatMap { edge =>
-					spanningTreesR(graphEdges.remove(_ == edge), graphNodes.filter(edgeTarget(edge, _) == None), edge :: treeEdges)
+					val otherEdges = graphEdges.filterNot(_ == edge)
+					spanningTreesR(otherEdges, graphNodes.filterNot(usedIn(edge, _)), edge :: treeEdges)
 				}
 			}
-			spanningTreesR(edges.toList, nodesByValue.values.toList.tail, List()).removeDuplicates
+
+			spanningTreesR(edges.toList, nodesByValue.values.toList.tail, List()).foldLeft(List[Graph[T, U]]()) { (result, graph) =>
+				if (result.exists(_ == graph)) result
+				else result :+ graph
+			}
 		}
+		def isTree: Boolean = spanningTrees.lengthCompare(1) == 0
+
+		def isConnected: Boolean = spanningTrees.lengthCompare(0) > 0
 
 		def removeEdge(value1: T, value2: T) = {
 			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), null.asInstanceOf[U])
@@ -296,6 +311,26 @@ class P7 extends ShouldMatchers {
 			case _ =>
 				false
 		}
+
+		override def toString = {
+			val result = toAdjacentForm
+				.flatMap{ case (nodeValue, connections) =>
+					if (connections.isEmpty) Seq(Left(nodeValue))
+					else connections.map{ connection => Right((nodeValue, connection._1)) }
+				}
+				.foldLeft(Seq[Either[T, (T, T)]]()) {
+					case (seq, nodeValue@Left(_)) => seq :+ nodeValue
+					case (seq, connection@Right((from, to))) =>
+				    if (seq.exists{case Right(pair) => pair._1 == to && pair._2 == from}) seq
+						else seq :+ connection
+				}
+				.map{
+					case Left(nodeValue) => nodeValue
+					case Right((fromValue, toValue)) => fromValue.toString + "-" + toValue.toString
+				}
+			"[" + result.mkString(", ") + "]"
+		}
+
 	}
 
 
@@ -352,18 +387,6 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Digraph[T, U] extends GraphBase[T, U] {
-
-		def copy() = null
-
-		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
-			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
-				val connections = edges
-					.filter{ edge => edge.fromNode == node }
-					.map{ edge => (edge.toNode.value, edge.value) }
-					.toList
-				result :+ (node.value, connections)
-			}
-		}
 
 		def addArc(source: T, dest: T, value: U) = {
 			val edge = new Edge(nodesByValue(source), nodesByValue(dest), value)
