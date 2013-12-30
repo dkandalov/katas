@@ -137,7 +137,7 @@ class P7 extends ShouldMatchers {
 			fromString("[a-b, a-c]"), fromString("[a-c, b-c]"), fromString("[a-b, b-c]")
 		))
 
-		// this is too slow
+		// this is too slow and fails with OOM
 //		term(
 //			List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
 //			List(
@@ -152,6 +152,17 @@ class P7 extends ShouldMatchers {
 		import Graph._
 		fromLabelString("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree should equal(
 			fromLabelString("[a-b/1, b-c/2]")
+		)
+
+		Graph.termLabel(
+			List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+			List(
+				('a', 'b', 5), ('a', 'd', 3), ('b', 'c', 2), ('b', 'e', 4),
+				('c', 'e', 6), ('d', 'e', 7), ('d', 'f', 4), ('d', 'g', 3),
+				('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)
+			)
+		).minimalSpanningTree should equal(
+			fromLabelString("[e-b/4, f-d/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]")
 		)
 	}
 
@@ -295,16 +306,24 @@ class P7 extends ShouldMatchers {
 
 	class Graph[T, U] extends GraphBase[T, U] {
 
-		def minimalSpanningTree(): Graph[T, U] = {
-			this
+		def minimalSpanningTree(implicit f: (U) => Ordered[U]): Graph[T, U] = {
+			def usedIn(edge: Edge, node: Node) = edge.fromNode == node || edge.toNode == node
+			def connectsToGraph(edge: Edge, nodes: List[Node]) = nodes.contains(edge.fromNode) != nodes.contains(edge.toNode)
+
+			def findMinSpanningTrees(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): Graph[T, U] = {
+				if (graphNodes.isEmpty) Graph.termLabel(nodesByValue.keys.toList, treeEdges.map(_.toTuple))
+				else {
+					val edge = graphEdges.filter(connectsToGraph(_, graphNodes)).minBy(_.value)
+					val otherEdges = graphEdges.filterNot(_ == edge)
+					findMinSpanningTrees(otherEdges, graphNodes.filterNot(usedIn(edge, _)), edge :: treeEdges)
+				}
+			}
+			findMinSpanningTrees(edges.toList, nodesByValue.values.toList.tail, List())
 		}
 
 		def spanningTrees(): List[Graph[T, U]] = {
-			def usedIn(edge: Edge, node: Node): Boolean =
-				edge.fromNode == node || edge.toNode == node
-
-			def connectsToGraph(edge: Edge, nodes: List[Node]): Boolean =
-				nodes.contains(edge.fromNode) != nodes.contains(edge.toNode)
+			def usedIn(edge: Edge, node: Node) = edge.fromNode == node || edge.toNode == node
+			def connectsToGraph(edge: Edge, nodes: List[Node]) = nodes.contains(edge.fromNode) != nodes.contains(edge.toNode)
 
 			def spanningTreesR(graphEdges: List[Edge], graphNodes: List[Node], treeEdges: List[Edge]): List[Graph[T, U]] = {
 				if (graphNodes.isEmpty) List(Graph.termLabel(nodesByValue.keys.toList, treeEdges.map(_.toTuple)))
