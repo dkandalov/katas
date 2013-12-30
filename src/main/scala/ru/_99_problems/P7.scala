@@ -136,6 +136,23 @@ class P7 extends ShouldMatchers {
 		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
 			fromString("[a-b, a-c]"), fromString("[a-c, b-c]"), fromString("[a-b, b-c]")
 		))
+
+		// this is too slow
+//		term(
+//			List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+//			List(
+//				('a', 'b'), ('a', 'd'), ('b', 'c'), ('b', 'e'),
+//				('c', 'e'), ('d', 'e'), ('d', 'f'), ('d', 'g'),
+//				('e', 'h'), ('f', 'g'), ('g', 'h')
+//			)
+//		).spanningTrees().size should equal(100)
+	}
+
+	@Test def `P84 (**) Construct the minimal spanning tree.`() {
+		import Graph._
+		fromLabelString("[a-b/1, b-c/2, a-c/3]").minimalSpanningTree should equal(
+			fromLabelString("[a-b/1, b-c/2]")
+		)
 	}
 
 	abstract class GraphBase[T, U] {
@@ -228,6 +245,19 @@ class P7 extends ShouldMatchers {
 	}
 
 	object Graph {
+		def fromLabelString(s: String): Graph[Char, Int] = {
+			if (s.isEmpty) return new Graph[Char, Int]
+
+			val withoutBraces = s.substring(1, s.size - 1)
+			if (withoutBraces.isEmpty) return new Graph[Char, Int]
+
+			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("[-\\/]") }
+			val nodeValues = tokens.flatMap(token => token.take(2)).distinct.map(_.head)
+			val connections = tokens.distinct.filter(_.size == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
+
+			Graph.termLabel(nodeValues, connections)
+		}
+
 		def fromString(s: String): Graph[Char, Unit] = {
 			if (s.isEmpty) return new Graph[Char, Unit]
 			val withoutBraces = s.substring(1, s.size - 1)
@@ -265,6 +295,10 @@ class P7 extends ShouldMatchers {
 
 	class Graph[T, U] extends GraphBase[T, U] {
 
+		def minimalSpanningTree(): Graph[T, U] = {
+			this
+		}
+
 		def spanningTrees(): List[Graph[T, U]] = {
 			def usedIn(edge: Edge, node: Node): Boolean =
 				edge.fromNode == node || edge.toNode == node
@@ -286,9 +320,9 @@ class P7 extends ShouldMatchers {
 				else result :+ graph
 			}
 		}
-		def isTree: Boolean = spanningTrees.lengthCompare(1) == 0
+		def isTree: Boolean = spanningTrees().length == 1
 
-		def isConnected: Boolean = spanningTrees.lengthCompare(0) > 0
+		def isConnected: Boolean = spanningTrees().length > 0
 
 		def removeEdge(value1: T, value2: T) = {
 			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), null.asInstanceOf[U])
@@ -307,7 +341,7 @@ class P7 extends ShouldMatchers {
 		override def equals(o: Any) = o match {
 			case graph: Graph[T, U] =>
 				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList).isEmpty &&
-				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple) -- graph.edges.map(_.reverse.toTuple)).isEmpty
+				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
 			case _ =>
 				false
 		}
@@ -316,17 +350,20 @@ class P7 extends ShouldMatchers {
 			val result = toAdjacentForm
 				.flatMap{ case (nodeValue, connections) =>
 					if (connections.isEmpty) Seq(Left(nodeValue))
-					else connections.map{ connection => Right((nodeValue, connection._1)) }
+					else connections.map{ connection => Right((nodeValue, connection._1, connection._2)) }
 				}
-				.foldLeft(Seq[Either[T, (T, T)]]()) {
+				.foldLeft(Seq[Either[T, (T, T, U)]]()) {
 					case (seq, nodeValue@Left(_)) => seq :+ nodeValue
-					case (seq, connection@Right((from, to))) =>
+					case (seq, connection@Right((from, to, weight))) =>
 				    if (seq.exists{case Right(pair) => pair._1 == to && pair._2 == from}) seq
 						else seq :+ connection
 				}
-				.map{
+				.map {
 					case Left(nodeValue) => nodeValue
-					case Right((fromValue, toValue)) => fromValue.toString + "-" + toValue.toString
+					case Right((fromValue, toValue, weight)) => {
+						val weightPostfix = if (weight.isInstanceOf[Unit]) "" else "/" + weight.toString
+						fromValue.toString + "-" + toValue.toString + weightPostfix
+					}
 				}
 			"[" + result.mkString(", ") + "]"
 		}
