@@ -166,6 +166,32 @@ class P7 extends ShouldMatchers {
 		)
 	}
 
+	@Test def `P85 (**) Graph isomorphism.`() {
+		import Graph._
+
+		combinations(List(), List()) should equal(Seq(List()))
+		combinations(List(1), List(2)) should equal(Seq(List((1, 2))))
+		combinations(List(1, 2), List(3, 4)) should equal(Seq(
+			List((1, 3), (2, 4)),
+			List((1, 4), (2, 3))
+		))
+		combinations(List(1, 2, 3), List(4, 5, 6)) should equal(Seq(
+			List((1, 4), (2, 5), (3, 6)),
+			List((1, 4), (2, 6), (3, 5)),
+			List((1, 5), (2, 4), (3, 6)),
+			List((1, 5), (2, 6), (3, 4)),
+			List((1, 6), (2, 4), (3, 5)),
+			List((1, 6), (2, 5), (3, 4))
+		))
+
+		fromString("[a-b]").isIsomorphicTo(fromString("[1]")) should be(false)
+		fromString("[a-b, b-c]").isIsomorphicTo(fromString("[a-b, c]")) should be(false)
+		fromString("[a-b, b-c, c-d]").isIsomorphicTo(fromString("[a-b, b-c, c-a, d]")) should be(false)
+
+		fromString("[a-b]").isIsomorphicTo(fromString("[5-7]")) should be(true)
+		fromString("[a-b, b-c, c-d, d-a]").isIsomorphicTo(fromString("[1-2, 2-3, 3-4, 4-1]")) should be(true)
+	}
+
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
@@ -305,6 +331,29 @@ class P7 extends ShouldMatchers {
 	}
 
 	class Graph[T, U] extends GraphBase[T, U] {
+
+		def isIsomorphicTo(graph: Graph[T, U]): Boolean = {
+			def replace(value: T, substitutions: List[(T, T)]): T = {
+				substitutions.find(_._1 == value).map(_._2).get
+			}
+			
+			def replaceAll(adjacentList: Seq[(T, Seq[(T, U)])], substitutions: List[(T, T)]): Seq[(T, Seq[(T, U)])] = {
+				adjacentList.map{ case (nodeValue, connections) =>
+					val newNodeValue = replace(nodeValue, substitutions)
+					val newConnections = connections.map(it => (replace(it._1, substitutions), it._2))
+					(newNodeValue, newConnections)
+				}
+			}
+
+			if (nodesByValue.size != graph.nodesByValue.size || edges.size != graph.edges.size) false
+			else {
+				val thisAdjacentList = this.toAdjacentForm
+				val thatAdjacentList = graph.toAdjacentForm
+				combinations(nodesByValue.keys.toList, graph.nodesByValue.keys.toList).exists { substitutions =>
+					replaceAll(thisAdjacentList, substitutions).toSet == thatAdjacentList.toSet
+				}
+			}
+		}
 
 		def minimalSpanningTree(implicit f: (U) => Ordered[U]): Graph[T, U] = {
 			def usedIn(edge: Edge, node: Node) = edge.fromNode == node || edge.toNode == node
@@ -535,4 +584,15 @@ class P7 extends ShouldMatchers {
 			consumeMTreeFrom(string)._1
 		}
 	}
+
+	def combinations[T](list1: List[T], list2: List[T]): Seq[List[(T, T)]] = {
+		if (list1.size != list2.size) throw new IllegalArgumentException
+		else if (list1.isEmpty) Seq(List())
+		else {
+			list2.flatMap { value2 =>
+				combinations(list1.tail, list2.filterNot(_ == value2)).map { it => (list1.head, value2) +: it }
+			}
+		}
+	}
+
 }
