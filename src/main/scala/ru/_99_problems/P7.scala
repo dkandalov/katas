@@ -2,8 +2,6 @@ package ru._99_problems
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
-import scala.collection.immutable.HashMap
-import scala.collection.JavaConversions.asScalaIterator
 
 
 class P7 extends ShouldMatchers {
@@ -408,7 +406,7 @@ class P7 extends ShouldMatchers {
 
 		override def equals(o: Any) = o match {
 			case graph: Graph[T, U] =>
-				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList).isEmpty &&
+				nodesByValue.keys.toList.filterNot(graph.nodesByValue.keys.toList.contains(_)).isEmpty &&
 				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
 			case _ =>
 				false
@@ -500,7 +498,7 @@ class P7 extends ShouldMatchers {
 
 		override def equals(o: Any) = o match {
 			case graph: Digraph[T, U] =>
-				(nodesByValue.keys.toList -- graph.nodesByValue.keys.toList).isEmpty &&
+				nodesByValue.keys.toList.filterNot(graph.nodesByValue.keys.toList.contains(_)).isEmpty &&
 				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
 			case _ =>
 				false
