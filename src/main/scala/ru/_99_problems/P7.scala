@@ -190,13 +190,26 @@ class P7 extends ShouldMatchers {
 		fromString("[a-b, b-c, c-d, d-a]").isIsomorphicTo(fromString("[1-2, 2-3, 3-4, 4-1]")) should be(true)
 	}
 
+	@Test def `P86 (**) Node degree and graph coloration.`() {
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('a').degree should equal(3)
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree should equal(List('a', 'c', 'b', 'd'))
+	}
+
+
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
 			def toTuple = (fromNode.value, toNode.value, value)
 			def hasSameNodes(edge: Edge): Boolean = fromNode == edge.fromNode && toNode == edge.toNode
 		}
-		case class Node(value: T)
+		case class Node(value: T) {
+			def degree: Int = {
+				val edgesWithoutReverse = edges.foldLeft(Set[Edge]()) { (result, edge) =>
+					if (result.exists(_.reverse == edge)) result else result + edge
+				}
+				edgesWithoutReverse.count(edge => edge.fromNode == this || edge.toNode == this)
+			}
+		}
 		type NodePath = List[Node]
 
 		var nodesByValue: Map[T, Node] = Map()
@@ -204,6 +217,11 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+
+		def nodesByDegree: Seq[T] = {
+			nodesByValue.values.map(node => (node.value, node.degree)).toList.sortBy(-_._2).map(_._1)
+		}
 
 		def toAdjacentForm: Seq[(T, Seq[(T, U)])] = {
 			nodesByValue.values.foldLeft(Seq[(T, Seq[(T, U)])]()) { (result, node) =>
@@ -389,12 +407,6 @@ class P7 extends ShouldMatchers {
 		def isTree: Boolean = spanningTrees().length == 1
 
 		def isConnected: Boolean = spanningTrees().length > 0
-
-		def removeEdge(value1: T, value2: T) = {
-			val edge = new Edge(nodesByValue(value1), nodesByValue(value2), null.asInstanceOf[U])
-			edges.find(edge.hasSameNodes).foreach(edgeToRemove => edges = edges - edgeToRemove)
-			edges.find(edge.reverse.hasSameNodes).foreach(edgeToRemove => edges = edges - edgeToRemove)
-		}
 
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
 			if (!nodesByValue.contains(value1) || !nodesByValue.contains(value2)) throw new IllegalStateException
