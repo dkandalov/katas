@@ -192,7 +192,8 @@ class P7 extends ShouldMatchers {
 
 	@Test def `P86 (**) Node degree and graph coloration.`() {
 		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('a').degree should equal(3)
-		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree should equal(List('a', 'c', 'b', 'd'))
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree should equal(Seq('a', 'c', 'b', 'd'))
+		Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes should equal(Seq(('a', 1), ('b', 2), ('c', 3), ('d', 2)))
 	}
 
 
@@ -218,6 +219,23 @@ class P7 extends ShouldMatchers {
 
 		override def toString = toTermForm.toString()
 
+		def colorNodes: Seq[(T, Int)] = {
+			def colorNodes(nodes: Seq[Node], color: Int, result: Seq[(T, Int)]): Seq[(T, Int)] = {
+				if (nodes.isEmpty) result
+				else {
+					val node = nodes.head
+					val adjacentValues = toAdjacentForm.find(_._1 == node.value).get._2.map(_._1)
+					val colorWasUsed = result.exists {
+						case (nodeValue, nodeColor) =>
+							adjacentValues.contains(nodeValue) && nodeColor == color
+					}
+					val newColor = if (colorWasUsed) color + 1 else color
+					colorNodes(nodes.tail, newColor, result :+ (node.value, newColor))
+				}
+			}
+			val sortedNodes = nodesByValue.values.toList.sortBy(-_.degree)
+			colorNodes(sortedNodes, 1, Seq())
+		}
 
 		def nodesByDegree: Seq[T] = {
 			nodesByValue.values.map(node => (node.value, node.degree)).toList.sortBy(-_._2).map(_._1)
