@@ -192,8 +192,21 @@ class P7 extends ShouldMatchers {
 
 	@Test def `P86 (**) Node degree and graph coloration.`() {
 		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('a').degree should equal(3)
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('b').degree should equal(2)
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('c').degree should equal(2)
+		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByValue('d').degree should equal(1)
+
 		Graph.fromString("[a-b, b-c, a-c, a-d]").nodesByDegree should equal(Seq('a', 'c', 'b', 'd'))
-		Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes should equal(Seq(('a', 1), ('b', 2), ('c', 3), ('d', 2)))
+
+		Graph.fromString("[a]").colorNodes should equal(Seq(('a', 1)))
+		Graph.fromString("[a-b]").colorNodes should equal(Seq(('b', 1), ('a', 2)))
+		Graph.fromString("[a-b, b-c]").colorNodes should equal(Seq(('b', 1), ('c', 2), ('a', 2)))
+		Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes should equal(Seq(('a', 1), ('c', 2), ('b', 3), ('d', 3)))
+
+		Graph.fromString("[a]").colorNodes2().toString() should equal("List((Node(a),1))")
+		Graph.fromString("[a-b]").colorNodes2().toString() should equal("List((Node(b),2), (Node(a),1))")
+		Graph.fromString("[a-b, b-c]").colorNodes2().toString() should equal("List((Node(c),2), (Node(a),2), (Node(b),1))")
+		Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes2().toString() should equal("List((Node(b),3), (Node(d),2), (Node(c),2), (Node(a),1))")
 	}
 
 
@@ -210,6 +223,10 @@ class P7 extends ShouldMatchers {
 				}
 				edgesWithoutReverse.count(edge => edge.fromNode == this || edge.toNode == this)
 			}
+			def neighbors: List[Node] = edges
+				.filter(edge => edge.toNode == this || edge.fromNode == this)
+				.map(edge => if (edge.toNode == this) edge.fromNode else edge.toNode)
+				.toList
 		}
 		type NodePath = List[Node]
 
@@ -218,6 +235,32 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+		// original version from http://aperiodic.net/phil/scala/s-99/p86.scala
+		def colorNodes2(): List[(Node,Int)] = {
+			import collection.immutable.Set
+
+			def nodesByDegree: List[Node] = nodesByValue.values.toList.sort(_.degree > _.degree)
+
+			def applyColor(color: Int, uncolored: List[Node], colored: List[(Node,Int)], adjacentNodes: Set[Node]): List[(Node,Int)] =
+				uncolored match {
+					case List() => colored
+					case n :: tail => {
+						val newAdjacent = adjacentNodes ++ n.neighbors
+						// strange that it's "dropWhile" and not "filterNot" (seems like some neighbors might be not removed with dropWhile)
+						applyColor(color, tail.dropWhile(newAdjacent.apply), (n, color) :: colored, newAdjacent)
+					}
+				}
+
+			def colorNodesR(color: Int, uncolored: List[Node], colored: List[(Node,Int)]): List[(Node,Int)] =
+				if (uncolored.isEmpty) colored
+				else {
+					val newColored = applyColor(color, uncolored, colored, Set())
+					colorNodesR(color + 1, uncolored -- newColored.map(_._1), newColored)
+				}
+
+			colorNodesR(1, nodesByDegree, List())
+		}
 
 		def colorNodes: Seq[(T, Int)] = {
 			def colorNodes(nodes: Seq[Node], color: Int, result: Seq[(T, Int)]): Seq[(T, Int)] = {
