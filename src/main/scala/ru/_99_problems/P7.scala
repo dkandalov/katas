@@ -209,6 +209,12 @@ class P7 extends ShouldMatchers {
 		Graph.fromString("[a-b, b-c, a-c, a-d]").colorNodes2().toString() should equal("List((Node(b),3), (Node(d),2), (Node(c),2), (Node(a),1))")
 	}
 
+	@Test def `P87 (**) Depth-first order graph traversal.`() {
+		Graph.fromString("[a]").nodesByDepthFrom('a') should equal(Seq('a'))
+		Graph.fromString("[a-b]").nodesByDepthFrom('a') should equal(Seq('b', 'a'))
+		Graph.fromString("[a-b, c-b]").nodesByDepthFrom('a') should equal(Seq('c', 'b', 'a'))
+		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('c', 'b', 'a', 'd'))
+	}
 
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
@@ -235,6 +241,19 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+		def nodesByDepthFrom(nodeValue: T, visited: Set[T] = Set()): Seq[T] = {
+			def traverseByDepth(nodeValues: Seq[T], result: Seq[T]): Seq[T] = {
+				if (nodeValues.isEmpty) result
+				else if (result.contains(nodeValues.head)) traverseByDepth(nodeValues.tail, result)
+				else {
+					val node = nodesByValue(nodeValues.head)
+					val neighbors = node.neighbors.map(_.value)
+					traverseByDepth(nodeValues.tail ++ neighbors, node.value +: result)
+				}
+			}
+			traverseByDepth(Seq(nodeValue), Seq())
+		}
 
 		// original version from http://aperiodic.net/phil/scala/s-99/p86.scala
 		def colorNodes2(): List[(Node,Int)] = {
