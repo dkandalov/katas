@@ -223,6 +223,10 @@ class P7 extends ShouldMatchers {
 		fromString("[a-b, c-d]").splitGraph should equal(Seq(fromString("[a-b]"), fromString("[c-d]")))
 	}
 
+	@Test def `P89 (**) Bipartite graphs.`() {
+
+	}
+
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
