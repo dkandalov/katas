@@ -216,6 +216,13 @@ class P7 extends ShouldMatchers {
 		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('c', 'b', 'a', 'd'))
 	}
 
+	@Test def `P88 (**) Connected components.`() {
+		import Graph._
+		fromString("[a-b]").splitGraph should equal(Seq(fromString("[a-b]")))
+		fromString("[a-b, c]").splitGraph should equal(Seq(fromString("[a-b]"), fromString("[c]")))
+		fromString("[a-b, c-d]").splitGraph should equal(Seq(fromString("[a-b]"), fromString("[c-d]")))
+	}
+
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
@@ -416,17 +423,34 @@ class P7 extends ShouldMatchers {
 
 		def adjacent[T](nodeConnections: Seq[(T, Seq[T])]): Graph[T, Unit] = {
 			val graph = new Graph[T, Unit]()
-			nodeConnections.foreach{ case (nodeValue, _) =>
-				graph.addNode(nodeValue)
-			}
+			nodeConnections.foreach{ case (nodeValue, _) => graph.addNode(nodeValue) }
 			nodeConnections.foreach{ case (nodeValue, adjacentNodeValues) =>
 				adjacentNodeValues.foreach{ graph.addEdge(nodeValue, _, ()) }
+			}
+			graph
+		}
+
+		def adjacentLabel[T, U](nodeConnections: Seq[(T, Seq[(T, U)])]): Graph[T, U] = {
+			val graph = new Graph[T, U]()
+			nodeConnections.foreach{ case (nodeValue, _) => graph.addNode(nodeValue)}
+			nodeConnections.foreach{ case (nodeValue, adjacentInfo) =>
+				adjacentInfo.foreach{ it => graph.addEdge(nodeValue, it._1, it._2) }
 			}
 			graph
 		}
 	}
 
 	class Graph[T, U] extends GraphBase[T, U] {
+		def splitGraph: Seq[Graph[T, U]] = {
+			nodesByValue.keys.foldLeft(Seq[Graph[T, U]]()) { (result, nodeValue) =>
+				if (result.exists(_.nodesByValue.contains(nodeValue))) result
+				else {
+					val nodeValues = nodesByDepthFrom(nodeValue)
+					val newGraph = Graph.adjacentLabel(toAdjacentForm.filter(entry => nodeValues.contains(entry._1)))
+					newGraph +: result
+				}
+			}
+		}
 
 		def isIsomorphicTo(graph: Graph[T, U]): Boolean = {
 			def replace(value: T, substitutions: List[(T, T)]): T = {
