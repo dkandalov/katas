@@ -216,7 +216,8 @@ class P7 extends ShouldMatchers {
 		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('c', 'b', 'a', 'd'))
 	}
 
-	@Test def `P88 (**) Connected components.`() {
+	@Test def
+	`P88 (**) Connected components.`() {
 		import Graph._
 		fromString("[a-b]").splitGraph should equal(Seq(fromString("[a-b]")))
 		fromString("[a-b, c]").splitGraph should equal(Seq(fromString("[a-b]"), fromString("[c]")))
@@ -224,7 +225,10 @@ class P7 extends ShouldMatchers {
 	}
 
 	@Test def `P89 (**) Bipartite graphs.`() {
-
+		Digraph.fromString("[a>b, c>a, d>b]").isBipartite should be(true)
+		Graph.fromString("[a-b, b-c, c-a]").isBipartite should be(false)
+		Graph.fromString("[a-b, b-c, d]").isBipartite should be(true)
+		Graph.fromString("[a-b, b-c, d, e-f, f-g, g-e, h]").isBipartite should be(false)
 	}
 
 	abstract class GraphBase[T, U] {
@@ -252,6 +256,42 @@ class P7 extends ShouldMatchers {
 
 
 		override def toString = toTermForm.toString()
+
+		/**
+		 * based on http://en.wikipedia.org/wiki/Bipartite_graph#Testing_bipartiteness
+		 */
+		def isBipartite: Boolean = {
+			type Color = Boolean
+			def another(color: Color) = !color
+
+			def colorize(nodeValues: Seq[(T, T)], colored: Seq[(T, Color)]): Boolean = {
+				if (nodeValues.isEmpty) return true
+
+				val node = nodesByValue(nodeValues.head._1)
+				val startNode = nodesByValue(nodeValues.head._2)
+
+				if (colored.exists(_._1 == node.value)) {
+					colorize(nodeValues.tail, colored)
+				} else {
+					val startNodeColor = colored.find(_._1 == startNode.value).get._2
+					val newColor = another(startNodeColor)
+					val neighbors = node.neighbors.map(_.value)
+
+					val colorCollision = neighbors.exists { neighborValue =>
+						colored.exists{ case (nodeValue, color) =>
+							nodeValue == neighborValue && color == newColor
+						}
+					}
+					if (colorCollision) false
+					else {
+						colorize(nodeValues.tail ++ neighbors.map((_, node.value)), (node.value, newColor) +: colored)
+					}
+				}
+			}
+			val startNode = nodesByValue.values.head
+			val neighbors = startNode.neighbors.map(node => (node.value, startNode.value))
+			colorize(neighbors, Seq((startNode.value, true)))
+		}
 
 		def nodesByDepthFrom(nodeValue: T, visited: Set[T] = Set()): Seq[T] = {
 			def traverseByDepth(nodeValues: Seq[T], result: Seq[T]): Seq[T] = {
