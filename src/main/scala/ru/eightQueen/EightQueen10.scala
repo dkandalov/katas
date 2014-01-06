@@ -19,7 +19,7 @@ class EightQueen10 extends ShouldMatchers {
 	}
 
 	@Test def printingSolutions() {
-		solveForBoardSize(4).map{ asBoard(_) }.mkString("\n=====\n") should equal("""
+		solveForBoardSize(4).map{ asBoard }.mkString("\n=====\n") should equal("""
 		  |-Q--
 		  |---Q
 		  |Q---
