@@ -2,12 +2,23 @@ package ru._99_problems
 
 import org.scalatest.matchers.ShouldMatchers
 import org.junit.Test
+import scala.annotation.tailrec
 
 
 class Misc extends ShouldMatchers {
 	private case class Point(x: Int, y: Int) {
 		def knightMoves: Seq[Point] = {
-			Seq()
+			Seq(
+			  Point(x + 2, y - 1),
+				Point(x - 2, y - 1),
+				Point(x + 1, y - 2),
+			  Point(x - 1, y - 2),
+
+			  Point(x + 2, y + 1),
+				Point(x - 2, y + 1),
+				Point(x + 1, y + 2),
+			  Point(x - 1, y + 2)
+			)
 		}
 
 		def isOnBoard(boardSize: Int): Boolean = {
@@ -16,22 +27,39 @@ class Misc extends ShouldMatchers {
 	}
 
 	@Test def `P91 (**) Knight's tour.`() {
-		findKnightMoves(boardSize = 5, Point(0, 0), Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
+		findKnightMoves(boardSize = 1, Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
+		findKnightMoves(boardSize = 3, Seq(Point(0, 0))) should equal(Seq())
+		findKnightMoves(boardSize = 5, Seq(Point(0, 0))) should equal(
+			Seq(
+				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
+				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
+				Point(2, 0), Point(4, 1), Point(2, 2), Point(0, 3), Point(2, 4),
+				Point(4, 3), Point(3, 1), Point(1, 0), Point(0, 2), Point(1, 4),
+				Point(3, 3), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
+		))
 	}
 
-	private def findKnightMoves(boardSize: Int, startPoint: Point, moves: Seq[Point]): Seq[Point] = {
+	private def findKnightMoves(boardSize: Int, moves: Seq[Point]): Seq[Point] = {
 		if (moves.size == boardSize * boardSize) return moves
 
+		val startPoint = moves.last
 		val nextMoves = startPoint.knightMoves.filter(_.isOnBoard(boardSize)).filter(!moves.contains(_))
 		if (nextMoves.isEmpty) return Seq()
 
-		nextMoves.foldLeft[Option[Seq[Point]]](None) { (result, nextMove) =>
-			if (result != None) result
-			else {
-				val subMoves = findKnightMoves(boardSize, nextMove, nextMove +: moves)
-				if (subMoves.nonEmpty) Some(subMoves) else None
-			}
+		findResult(nextMoves) { move =>
+			val subMoves = findKnightMoves(boardSize, moves :+ move)
+			if (subMoves.nonEmpty) Some(subMoves) else None
 		}.getOrElse(Seq())
+	}
+
+	@tailrec private def findResult[T, U](seq: Seq[T])(f: T => Option[U]): Option[U] = {
+		if (seq.isEmpty) None
+		else {
+			f(seq.head) match {
+				case None => findResult(seq.tail)(f)
+				case x@Some(_) => x
+			}
+		}
 	}
 
 
