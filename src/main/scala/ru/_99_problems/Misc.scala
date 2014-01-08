@@ -5,6 +5,36 @@ import org.junit.Test
 
 
 class Misc extends ShouldMatchers {
+	private case class Point(x: Int, y: Int) {
+		def knightMoves: Seq[Point] = {
+			Seq()
+		}
+
+		def isOnBoard(boardSize: Int): Boolean = {
+			x < boardSize && x >= 0 && y < boardSize && y >= 0
+		}
+	}
+
+	@Test def `P91 (**) Knight's tour.`() {
+		findKnightMoves(boardSize = 5, Point(0, 0), Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
+	}
+
+	private def findKnightMoves(boardSize: Int, startPoint: Point, moves: Seq[Point]): Seq[Point] = {
+		if (moves.size == boardSize * boardSize) return moves
+
+		val nextMoves = startPoint.knightMoves.filter(_.isOnBoard(boardSize)).filter(!moves.contains(_))
+		if (nextMoves.isEmpty) return Seq()
+
+		nextMoves.foldLeft[Option[Seq[Point]]](None) { (result, nextMove) =>
+			if (result != None) result
+			else {
+				val subMoves = findKnightMoves(boardSize, nextMove, nextMove +: moves)
+				if (subMoves.nonEmpty) Some(subMoves) else None
+			}
+		}.getOrElse(Seq())
+	}
+
+
 	@Test def `P90 (**) Eight queens problem`() {
 		solveEightQueen(2) should equal(Seq())
 		solveEightQueen(3) should equal(Seq())
