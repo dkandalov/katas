@@ -6,18 +6,59 @@ import scala.annotation.tailrec
 
 
 class Misc extends ShouldMatchers {
+
+	@Test def `P91 (**) Knight's tour.`() {
+		findKnightMoves(boardSize = 1, moves = Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
+		findKnightMoves(boardSize = 3, moves = Seq(Point(0, 0))) should equal(Seq())
+		findKnightMoves(boardSize = 5, moves = Seq(Point(0, 0))) should equal(
+			Seq(
+				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
+				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
+				Point(2, 0), Point(4, 1), Point(2, 2), Point(0, 3), Point(2, 4),
+				Point(4, 3), Point(3, 1), Point(1, 0), Point(0, 2), Point(1, 4),
+				Point(3, 3), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
+		))
+
+		val moves = findAllKnightMoves(boardSize = 5, moves = Seq(Point(0, 0))).take(3)
+		moves.foreach(println(_))
+		moves should equal(Seq(
+			Seq(
+				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
+				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
+				Point(2, 0), Point(4, 1), Point(2, 2), Point(0, 3), Point(2, 4),
+				Point(4, 3), Point(3, 1), Point(1, 0), Point(0, 2), Point(1, 4),
+				Point(3, 3), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
+			),
+			Seq(
+				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
+				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
+				Point(2, 0), Point(4, 1), Point(3, 3), Point(1, 4), Point(0, 2),
+				Point(1, 0), Point(3, 1), Point(4, 3), Point(2, 2), Point(0, 3),
+				Point(2, 4), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
+			),
+			Seq(
+				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
+				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
+				Point(2, 0), Point(4, 1), Point(3, 3), Point(1, 4), Point(0, 2),
+				Point(1, 0), Point(2, 2), Point(0, 3), Point(2, 4), Point(4, 3),
+				Point(3, 1), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
+			)
+		))
+
+	}
+
 	private case class Point(x: Int, y: Int) {
 		def knightMoves: Seq[Point] = {
 			Seq(
-			  Point(x + 2, y - 1),
+				Point(x + 2, y - 1),
 				Point(x - 2, y - 1),
 				Point(x + 1, y - 2),
-			  Point(x - 1, y - 2),
+				Point(x - 1, y - 2),
 
-			  Point(x + 2, y + 1),
+				Point(x + 2, y + 1),
 				Point(x - 2, y + 1),
 				Point(x + 1, y + 2),
-			  Point(x - 1, y + 2)
+				Point(x - 1, y + 2)
 			)
 		}
 
@@ -26,28 +67,35 @@ class Misc extends ShouldMatchers {
 		}
 	}
 
-	@Test def `P91 (**) Knight's tour.`() {
-		findKnightMoves(boardSize = 1, Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
-		findKnightMoves(boardSize = 3, Seq(Point(0, 0))) should equal(Seq())
-		findKnightMoves(boardSize = 5, Seq(Point(0, 0))) should equal(
-			Seq(
-				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
-				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
-				Point(2, 0), Point(4, 1), Point(2, 2), Point(0, 3), Point(2, 4),
-				Point(4, 3), Point(3, 1), Point(1, 0), Point(0, 2), Point(1, 4),
-				Point(3, 3), Point(1, 2), Point(0, 4), Point(2, 3), Point(4, 4)
-		))
+	private def findAllKnightMoves(boardSize: Int, moves: Seq[Point], allMoves: Seq[Seq[Point]] = Seq()): Stream[Seq[Point]] = {
+		val nextMoves = findKnightMoves(boardSize, moves, allMoves)
+		Stream.cons(nextMoves, {
+			findAllKnightMoves(boardSize, moves, allMoves :+ nextMoves)
+		})
 	}
 
-	private def findKnightMoves(boardSize: Int, moves: Seq[Point]): Seq[Point] = {
-		if (moves.size == boardSize * boardSize) return moves
+	private def findKnightMoves(boardSize: Int, moves: Seq[Point], previousMoves: Seq[Seq[Point]] = Seq()): Seq[Point] = {
+		if (moves.size == boardSize * boardSize) {
+			return if (previousMoves.contains(moves)) Seq() else moves
+		}
 
 		val startPoint = moves.last
-		val nextMoves = startPoint.knightMoves.filter(_.isOnBoard(boardSize)).filter(!moves.contains(_))
+		var nextMoves = startPoint.knightMoves
+			.filter(_.isOnBoard(boardSize))
+			.filterNot(moves.contains(_))
+
+		// this ugly bit skips already used moves (otherwise, findAllKnightMoves() won't be really lazy and will always recalc all moves)
+		val points = previousMoves
+			.filter(_.startsWith(moves)).map(_.drop(moves.size)).map(_.head)
+			.map(nextMoves.indexOf(_)).filter(_ != -1)
+		if (points.nonEmpty) {
+			nextMoves = nextMoves.drop(points.max)
+		}
+
 		if (nextMoves.isEmpty) return Seq()
 
 		findResult(nextMoves) { move =>
-			val subMoves = findKnightMoves(boardSize, moves :+ move)
+			val subMoves = findKnightMoves(boardSize, moves :+ move, previousMoves)
 			if (subMoves.nonEmpty) Some(subMoves) else None
 		}.getOrElse(Seq())
 	}
