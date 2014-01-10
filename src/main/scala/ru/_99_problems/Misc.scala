@@ -7,6 +7,19 @@ import scala.annotation.tailrec
 
 class Misc extends ShouldMatchers {
 
+	@Test def `P92 (***) Von Koch's conjecture.`() {
+		import P7._
+		import P7.Graph._
+
+		val expected = new Graph[(Char, Int), Int]()
+		expected.addNode(('a', 1))
+		expected.addNode(('b', 3))
+		expected.addNode(('c', 2))
+		expected.addEdge(('a', 1), ('b', 3), 2)
+		expected.addEdge(('b', 3), ('c', 2), 1)
+		fromString("[a-b, b-c]").enumNodes should equal(expected)
+	}
+
 	@Test def `P91 (**) Knight's tour.`() {
 		findKnightMoves(boardSize = 1, moves = Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
 		findKnightMoves(boardSize = 3, moves = Seq(Point(0, 0))) should equal(Seq())
