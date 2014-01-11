@@ -301,13 +301,13 @@ object P7 {
 		}
 
 		def nodesByDepthFrom(nodeValue: T, visited: Set[T] = Set()): Seq[T] = {
-			def traverseByDepth(nodeValues: Seq[T], result: Seq[T]): Seq[T] = {
-				if (nodeValues.isEmpty) result
-				else if (result.contains(nodeValues.head)) traverseByDepth(nodeValues.tail, result)
+			def traverseByDepth(queue: Seq[T], result: Seq[T]): Seq[T] = {
+				if (queue.isEmpty) result
+				else if (result.contains(queue.head)) traverseByDepth(queue.tail, result)
 				else {
-					val node = nodesByValue(nodeValues.head)
+					val node = nodesByValue(queue.head)
 					val neighbors = node.neighbors.map(_.value)
-					traverseByDepth(nodeValues.tail ++ neighbors, node.value +: result)
+					traverseByDepth(queue.tail ++ neighbors, node.value +: result)
 				}
 			}
 			traverseByDepth(Seq(nodeValue), Seq())
@@ -493,6 +493,15 @@ object P7 {
 
 	class Graph[T, U] extends GraphBase[T, U] {
 		def enumNodes: Graph[(T, Int), Int] = {
+//			def doEnum(nodeLabels: Seq[Int], edgeLabels: Seq[Int]): Seq[(Int, Int, Int)] = {
+//				traverse { (node1, node2, edge) =>
+//					def labels = findMatchingLabelsFor(edge, nodeLabels, edgeLabels)
+//
+//				}
+//				Seq()
+//			}
+//			edgesDepthFirstFrom()
+//			doEnum(Range(0, nodesByValue.size), Range(0, nodesByValue.size - 1))
 			new Graph[(T, Int), Int]()
 		}
 
