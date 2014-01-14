@@ -214,9 +214,9 @@ class P7 extends ShouldMatchers {
 
 	@Test def `P87 (**) Depth-first order graph traversal.`() {
 		Graph.fromString("[a]").nodesByDepthFrom('a') should equal(Seq('a'))
-		Graph.fromString("[a-b]").nodesByDepthFrom('a') should equal(Seq('b', 'a'))
-		Graph.fromString("[a-b, c-b]").nodesByDepthFrom('a') should equal(Seq('c', 'b', 'a'))
-		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('c', 'b', 'a', 'd'))
+		Graph.fromString("[a-b]").nodesByDepthFrom('a') should equal(Seq('a', 'b'))
+		Graph.fromString("[a-b, c-b]").nodesByDepthFrom('a') should equal(Seq('a', 'b', 'c'))
+		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('d', 'a', 'b', 'c'))
 	}
 
 	@Test def
@@ -300,6 +300,10 @@ object P7 {
 			colorize(neighbors, Seq((startNode.value, true)))
 		}
 
+		def edgesByDepthFrom(nodeValue: T, visited: Set[T] = Set()): Seq[(T, T, U)] = {
+			Seq()
+		}
+
 		def nodesByDepthFrom(nodeValue: T, visited: Set[T] = Set()): Seq[T] = {
 			def traverseByDepth(queue: Seq[T], result: Seq[T]): Seq[T] = {
 				if (queue.isEmpty) result
@@ -307,7 +311,7 @@ object P7 {
 				else {
 					val node = nodesByValue(queue.head)
 					val neighbors = node.neighbors.map(_.value)
-					traverseByDepth(queue.tail ++ neighbors, node.value +: result)
+					traverseByDepth(queue.tail ++ neighbors, result :+ node.value)
 				}
 			}
 			traverseByDepth(Seq(nodeValue), Seq())
