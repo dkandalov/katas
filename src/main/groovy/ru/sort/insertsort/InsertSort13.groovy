@@ -6,23 +6,21 @@ class InsertSort13 {
   @Test void "sort a list with insert sort"() {
     assert sorted([]) == []
     assert sorted([1]) == [1]
-    [1, 2, 3, 4, 5].permutations().each { permutation ->
-      assert sorted(permutation) == [1, 2, 3, 4, 5]
-    }
+    [1, 2].permutations().each { assert sorted(it) == [1, 2] }
+    [1, 2, 3].permutations().each { assert sorted(it) == [1, 2, 3] }
+    [1, 2, 3, 4].permutations().each { assert sorted(it) == [1, 2, 3, 4] }
+    [1, 2, 3, 4, 5].permutations().each { assert sorted(it) == [1, 2, 3, 4, 5] }
   }
 
   private static List sorted(List list) {
     for (int i = 1; i < list.size(); i++) {
-      for (int j = i; j > 0 && list[j - 1] > list[j]; j--) {
-        swap(j - 1, j, list)
+      int j = i - 1
+      while (j >= 0 && list[j] > list[i]) j--
+      if (list[j + 1] > list[i]) {
+        def element = list.remove(i as int)
+        list.add(j + 1, element)
       }
     }
     list
-  }
-
-  private static def swap(int i, int j, List list) {
-    def value = list[i]
-    list[i] = list[j]
-    list[j] = value
   }
 }
