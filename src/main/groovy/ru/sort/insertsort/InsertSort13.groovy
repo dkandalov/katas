@@ -14,13 +14,14 @@ class InsertSort13 {
 
   private static List sorted(List list) {
     for (int i = 1; i < list.size(); i++) {
-      int j = i - 1
-      while (j >= 0 && list[j] > list[i]) j--
-      if (list[j + 1] > list[i]) {
-        def element = list.remove(i as int)
-        list.add(j + 1, element)
-      }
+      int j = i
+      while (j > 0 && list[j - 1] > list[i]) j--
+      if (j != i) moveTo(j, i, list)
     }
     list
+  }
+
+  private static moveTo(int index, int fromIndex, List list) {
+    list.add(index, list.remove(fromIndex))
   }
 }
