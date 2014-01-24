@@ -13,15 +13,15 @@ class InsertSort13 {
   }
 
   private static List sorted(List list) {
-    for (int i = 1; i < list.size(); i++) {
-      int j = i
-      while (j > 0 && list[j - 1] > list[i]) j--
-      if (j != i) moveTo(j, i, list)
+    (1..<list.size()).each { index ->
+      def insertToIndex = (0..index - 1).find{ list[it] > list[index] }
+      if (insertToIndex != null) moveTo(insertToIndex, index, list)
     }
     list
   }
 
   private static moveTo(int index, int fromIndex, List list) {
+    //noinspection GroovyAssignabilityCheck
     list.add(index, list.remove(fromIndex))
   }
 }
