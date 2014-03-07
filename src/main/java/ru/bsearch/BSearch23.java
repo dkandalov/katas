@@ -24,7 +24,18 @@ public class BSearch23 {
         assertThat(bsearch(3, Arrays.asList(1, 2)), equalTo(-1));
     }
 
-    private int bsearch(int index, List<Integer> list) {
+    private <T extends Comparable<T>> int bsearch(T value, List<T> list) {
+        int from = 0;
+        int to = list.size();
+
+        while (from < to) {
+            int midIndex = (from + to) / 2;
+            T midValue = list.get(midIndex);
+
+            if (value.compareTo(midValue) == 0) return midIndex;
+            else if (value.compareTo(midValue) < 0) to = midIndex;
+            else from = midIndex + 1;
+        }
         return -1;
     }
 }
