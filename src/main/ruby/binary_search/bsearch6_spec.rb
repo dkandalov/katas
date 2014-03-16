@@ -1,15 +1,33 @@
 require "rspec"
 
-def binary_search(element, array, shift = 0)
+def binary_search(element, array)
+  from = 0
+  to = array.size
+
+  while from < to do
+    mid_index = (from + to) / 2
+    mid_element = array[mid_index]
+    if element < mid_element
+      to = mid_index
+    elsif element > mid_element
+      from = mid_index + 1
+    else
+      return mid_index
+    end
+  end
+  -1
+end
+
+def binary_search_(element, array, shift = 0)
   return -1 if array.empty?
 
   mid = array.size / 2
   mid_element = array[mid]
 
   if element < mid_element
-    binary_search(element, array[0...mid], shift)
+    binary_search_(element, array[0...mid], shift)
   elsif element > mid_element
-    binary_search(element, array[(mid + 1)..-1], shift + mid + 1)
+    binary_search_(element, array[(mid + 1)..-1], shift + mid + 1)
   else
     mid + shift
   end
