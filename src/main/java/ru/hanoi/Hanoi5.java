@@ -10,7 +10,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class Hanoi4 {
+public class Hanoi5 {
     @Test public void findMovesToSolveTowersOfHanoiProblem() {
         assertThat(solveHanoi(1), equalTo(asList(move(0, -1))));
         assertThat(solveHanoi(2), equalTo(asList(move(0, 1), move(1, -1), move(0, 1))));
@@ -21,11 +21,11 @@ public class Hanoi4 {
         )));
     }
 
-    private List<Move> solveHanoi(int i) {
+    private static List<Move> solveHanoi(int i) {
         return solveHanoi(i, -1);
     }
 
-    private List<Move> solveHanoi(int i, int direction) {
+    private static List<Move> solveHanoi(int i, int direction) {
         if (i == 0) return Collections.emptyList();
         else {
             List<Move> result = new ArrayList<>();
