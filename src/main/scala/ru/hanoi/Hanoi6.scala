@@ -17,14 +17,28 @@ class Hanoi6 extends ShouldMatchers {
 		))
 	}
 
-	case class Move(tower: Int, shift: Int)
+	case class Move(ringIndex: Int, shift: Int)
 
-	private def findMoves(towerSize: Int, direction: Int = -1): Seq[Move] = {
+	private def findMoves(towerSize: Int): Seq[Move] = {
+		var moves = Seq[Move]()
+		var ringIndex = towerSize - 1
+		var shift = -1
+		while (ringIndex >= 0) {
+			moves = moves :+ Move(ringIndex, shift)
+			ringIndex = ringIndex - 1
+			shift = shift * -1
+		}
+		moves.foldRight(Seq[Move]()) { (move, result) =>
+			result ++ Seq(move) ++ result
+		}
+	}
+
+	private def findMoves_(towerSize: Int, shift: Int = -1): Seq[Move] = {
 		if (towerSize == 0) Seq()
 		else {
 			val ringIndex = towerSize - 1
-			val moves = findMoves(towerSize - 1, -direction)
-			moves ++ Seq(Move(ringIndex, direction)) ++ moves
+			val moves = findMoves_(towerSize - 1, -shift)
+			moves ++ Seq(Move(ringIndex, shift)) ++ moves
 		}
 	}
 }
