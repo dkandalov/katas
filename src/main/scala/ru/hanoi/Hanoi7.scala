@@ -15,9 +15,9 @@ class Hanoi7 extends ShouldMatchers {
 		))
 	}
 
-	case class Move(towerIndex: Int, shift: Int)
+	private case class Move(towerIndex: Int, shift: Int)
 
-	def findMoves(towerSize: Int): Seq[Move] = {
+	private def findMoves(towerSize: Int): Seq[Move] = {
 		def shiftStream: Stream[Int] = Seq(-1, 1).toStream #::: shiftStream
 		val shifts = shiftStream.take(towerSize).toList
 		val moves = Range(towerSize-1, -1, -1).zip(shifts).map{ it => Move(it._1, it._2) }
