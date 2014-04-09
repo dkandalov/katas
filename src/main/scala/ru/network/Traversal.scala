@@ -1,11 +1,13 @@
 package ru.network
 
-import scala.actors.Actor
-import scala.actors.Actor._
 
 /**
  * @author DKandalov
  */
+
+/*
+
+ TODO broken after moving to scala 2.10; should change code below to use akka
 
 object Traversal {
   def main(args: Array[String]) {
@@ -83,3 +85,5 @@ abstract class Producer[T] {
 
 
 }
+
+*/

@@ -142,7 +142,7 @@ object DiningHakkers {
 	def scheduleOnce(actor: ActorRef, message: Any, interval: Int, timeUnit: TimeUnit) {
 		executor.schedule(new Runnable() {
 			override def run() {
-				actor.tell(message)
+				actor.tell(message, null)
 			}
 		}, interval, timeUnit)
 	}

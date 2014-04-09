@@ -40,7 +40,7 @@ class WordChain3 extends ShouldMatchers {
 		} else if (wordChain.size + 1 >= minChainSize) {
 			List[String]()
 		} else {
-			val nextWords = words.filter{canBeNextWord(fromWord, _)} -- wordChain
+			val nextWords = words.filter{canBeNextWord(fromWord, _)} diff wordChain
 			nextWords.foreach { word =>
 				if (wordChain.size + 1 < minChainSize)
 					findShortestChain(word, toWord, wordChain :+ word)

@@ -1,9 +1,9 @@
 package ru.akka_tutorial.typed
 
 import akka.actor.{TypedProps, ActorSystem, TypedActor}
-import akka.util.duration._
+import scala.concurrent.duration._
 import TypedActor.dispatcher
-import akka.dispatch.{Promise, Future, Await}
+import scala.concurrent.{Promise, Future, Await}
 
 /**
  * User: dima
@@ -28,7 +28,7 @@ object UserRegistry {
     var usersByName: Map[String, User] = Map()
 
     override def register(user: User) { usersByName = usersByName.updated(user.name, user) }
-    override def findUserBy(name: String): Future[User] = Promise successful usersByName(name)
+    override def findUserBy(name: String): Future[User] = Future successful usersByName(name)
     override def syncFindUserBy(name: String): Option[User] = Some(usersByName(name))
   }
 

@@ -1,10 +1,10 @@
 package ru.game_of_life
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class Conway7 extends ShouldMatchers {
+class Conway7 extends Matchers {
 	@Test def emptyUniverse_Evolves_IntoEmptyUniverse() {
 		val universe = new Universe()
 		val evolvedUniverse = universe.evolve()
@@ -41,7 +41,7 @@ class Conway7 extends ShouldMatchers {
 	val emptyUniverse: Universe = new Universe()
 
 
-	sealed abstract case class Location()
+	sealed abstract class Location()
 	case class Left() extends Location
 	case class Top() extends Location
 	case class Right() extends Location
@@ -56,20 +56,20 @@ class Conway7 extends ShouldMatchers {
 
 	case class Universe() {
 		def evolve(): Universe = {
-			return new Universe()
+			new Universe()
 		}
 
 		def withCell(): Universe = {
-			return this
+			this
 
 		}
 
 		def withCells(cells : Cell*) : Universe = {
-			return this
+			this
 		}
 
 		def cellsCount() : Int = {
-			return 3
+			3
 		}
 	}
 }

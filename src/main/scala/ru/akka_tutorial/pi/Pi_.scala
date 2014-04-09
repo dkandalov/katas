@@ -31,7 +31,7 @@ class Master(nOfWorkers: Int, calcCount: Int, batchSize: Int, resultQueue: Synch
   var counter: Int = 0
   var startTime: Long = 0
 
-  override protected def receive = {
+  override def receive = {
     case CalculatePi =>
       val workerRouter = context.actorOf(Props[Worker].withRouter(RoundRobinRouter(nOfWorkers)))
       0.until(calcCount).foreach{ i => workerRouter ! Task(i * batchSize, (i + 1) * batchSize) }
@@ -55,7 +55,7 @@ class Master(nOfWorkers: Int, calcCount: Int, batchSize: Int, resultQueue: Synch
 }
 
 class Worker extends Actor {
-  override protected def receive = {
+  override def receive = {
     case Task(from, to) => sender ! new TaskResult(calcPi(from, to))
   }
 

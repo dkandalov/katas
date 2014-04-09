@@ -1,11 +1,11 @@
 package ru.network
 
-import scala.actors.Actor
-import scala.actors.Actor._
 
 /**
  * @author DKandalov
  */
+/*
+ TODO broken after moving to scala 2.10; should change code below to use akka
 
 object PingPong {
   def main(args: Array[String]) {
@@ -53,3 +53,4 @@ object PingPong {
   case object Stop
 
 }
+*/

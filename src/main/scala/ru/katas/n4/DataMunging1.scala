@@ -37,7 +37,7 @@ class DataMunging1 extends ShouldMatchers {
 		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
-	case class ARow[+T](id: T, min: Int, max: Int)
+	abstract class ARow[+T](val id: T, val min: Int, val max: Int)
 	case class WeatherRow(day: Int, override val min: Int, override val max: Int) extends ARow[Int](day, min, max)
 	case class FootballRow(team: String, override val min: Int, override val max: Int) extends ARow[String](team, min, max)
 

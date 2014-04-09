@@ -4,6 +4,7 @@ import org.scalatest.matchers._
 import org.junit.Test
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
+import org.scalatest.words.ResultOfOneOfApplication
 
 
 class P1 extends ShouldMatchers {
@@ -245,7 +246,7 @@ class P1 extends ShouldMatchers {
 		randomPermute(Seq()) should equal(Seq())
 		randomPermute(Seq('a)) should equal(Seq('a))
 		randomPermute(Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
-		randomPermute(Seq('a, 'b, 'c)) should be(oneOf(Seq('a, 'b, 'c).permutations))
+		randomPermute(Seq('a, 'b, 'c)) should be(new ResultOfOneOfApplication(Seq('a, 'b, 'c).permutations.toSeq))
 	}
 
 	def combinations[T](k: Int, seq: Seq[T], subSet: Seq[T] = Seq()): Seq[Seq[T]] = {
@@ -300,7 +301,7 @@ class P1 extends ShouldMatchers {
 				}
 			}
 		}
-		group(Seq(1), Seq()) should equal(Seq(Seq()))
+		group(Seq(1), Seq[Int]()) should equal(Seq(Seq()))
 		group(Seq(1), Seq('a)) should equal(Seq(Seq(Seq('a))))
 		group(Seq(1), Seq('a, 'b)) should equal(Seq(
 			Seq(Seq('a)),
@@ -487,12 +488,20 @@ class P1 extends ShouldMatchers {
 	@Test def `P50 (***) Huffman code.`() {
 		type Code = (String, Int)
 
-		case class Node(weight: Int, left: Node = null, right: Node = null)
-		case class LeafNode(value: String, override val weight: Int) extends Node(weight)
+		abstract class ANode {
+			def weight: Int
+			def left: ANode
+			def right: ANode
+		}
+		case class Node(weight: Int, left: ANode = null, right: ANode = null) extends ANode
+		case class LeafNode(value: String, weight: Int) extends ANode{
+			override def right = null
+			override def left = null
+		}
 
 
-		def buildTreeFrom(queue1: Seq[Node], queue2: Seq[Node] = Seq()): Node = {
-			def takeSmallest(queue1: Seq[Node], queue2: Seq[Node]): (Node, Seq[Node], Seq[Node]) = {
+		def buildTreeFrom(queue1: Seq[ANode], queue2: Seq[ANode] = Seq()): ANode = {
+			def takeSmallest(queue1: Seq[ANode], queue2: Seq[ANode]): (ANode, Seq[ANode], Seq[ANode]) = {
 				if (queue2.isEmpty) (queue1(0), queue1.drop(1), queue2)
 				else if (queue1.isEmpty || queue2(0).weight < queue1(0).weight) (queue2(0), queue1, queue2.drop(1))
 				else (queue1(0), queue1.drop(1), queue2)
@@ -506,9 +515,9 @@ class P1 extends ShouldMatchers {
 			}
 		}
 
-		def sortByWeight(nodes: Seq[Node]): Seq[Node] = nodes.sortBy{_.weight}
+		def sortByWeight(nodes: Seq[ANode]): Seq[ANode] = nodes.sortBy{_.weight}
 
-		def allCodesIn(tree: Node, path: String = ""): Seq[Code] = tree match {
+		def allCodesIn(tree: ANode, path: String = ""): Seq[Code] = tree match {
 			case LeafNode(nodeValue, _) =>  Seq((nodeValue, path.toInt))
 			case Node(weight, left, right) => allCodesIn(tree.left, path + "0") ++ allCodesIn(tree.right, path + "1")
 		}
@@ -1047,13 +1056,19 @@ class P1 extends ShouldMatchers {
 		def inorder: Seq[T]
 	}
 
-	case class PositionedNode[+T <% Ordered[T]](override val value: T, override val left: Tree[T], override val right: Tree[T], x: Int, y: Int) extends Node[T](value, left, right) {
+	case class PositionedNode[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End, x: Int, y: Int)
+							extends ANode[T](value, left, right) {
 		override def toString =
 			if (isLeaf) "T[" + x.toString + "," + y.toString + "](" + value.toString + ")"
 			else "T[" + x.toString + "," + y.toString + "](" + value.toString + " " + left.toString + " " + right.toString + ")"
+
+		override protected def isLeaf: Boolean = left == End && right == End
 	}
 
-	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End)
+		extends ANode[T](value, left, right)
+
+	abstract class ANode[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
 		def toDotString =
 			if (value.isInstanceOf[Char] || value.toString.size == 1) value.toString + left.toDotString + right.toDotString
 			else throw new IllegalStateException
