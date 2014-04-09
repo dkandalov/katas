@@ -5,9 +5,10 @@ import org.junit.Test
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
 import org.scalatest.words.ResultOfOneOfApplication
+import org.scalatest.Matchers
 
 
-class P1 extends ShouldMatchers {
+class P1 extends Matchers {
 	def encode[T](seq: Seq[T]): Seq[(Int, T)] = {
 		new P0().pack(seq).map{ it => (it.size, it.head) }
 	}

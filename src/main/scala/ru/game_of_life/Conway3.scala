@@ -1,6 +1,6 @@
 package ru.game_of_life
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 23/10/2012
  */
 
-class Conway3 extends ShouldMatchers {
+class Conway3 extends Matchers {
 	@Test def whenAllCellsAreDeadNothingHappens() {
 		new Field(
 			"""

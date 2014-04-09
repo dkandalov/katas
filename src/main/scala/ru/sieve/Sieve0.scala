@@ -1,9 +1,9 @@
 package ru.sieve
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
-class Sieve0 extends ShouldMatchers {
+class Sieve0 extends Matchers {
 
   @Test def shouldFindPrimeNumbers() {
     findPrimesUpTo(10) should equal(List(2, 3, 5, 7))

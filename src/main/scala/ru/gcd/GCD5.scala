@@ -1,6 +1,6 @@
 package ru.gcd
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 import org.scalacheck.Prop._
@@ -10,7 +10,7 @@ import org.scalacheck.Prop._
  * Date: 02/12/2012
  */
 
-class GCD5 extends ShouldMatchers {
+class GCD5 extends Matchers {
 
 	@Test def shouldFindGreatestCommonDivider() {
 		gcdOf(1, 1) should equal(1)

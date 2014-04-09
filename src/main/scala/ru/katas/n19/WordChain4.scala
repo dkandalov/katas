@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import ru.util.{Fail, Arcade}
@@ -11,7 +11,7 @@ import ru.util.{Fail, Arcade}
  */
 
 @Arcade @Fail
-class WordChain4 extends ShouldMatchers {
+class WordChain4 extends Matchers {
 	@Test def aaa() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().toSeq
 		findMinChain("cat", "cat", dictionary) should equal(Seq("cat"))

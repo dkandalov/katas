@@ -1,14 +1,14 @@
 package ru.newton
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 29/03/2013
  */
 
-class Newton1 extends ShouldMatchers {
+class Newton1 extends Matchers {
 	@Test def aa() {
 		squareRootOf(1) should equal(1.0)
 		squareRootOf(2) should equal(1.4142156862745099)

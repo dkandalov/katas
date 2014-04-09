@@ -1,6 +1,6 @@
 package ru.connectivity
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import collection.mutable.ArrayBuffer
 import annotation.tailrec
@@ -10,7 +10,7 @@ import annotation.tailrec
  * Date: 05/09/2012
  */
 
-class QUnion4 extends ShouldMatchers {
+class QUnion4 extends Matchers {
 	@Test def pointsAreConnected_InSimpleCases() {
 		var board = new Board(2)
 

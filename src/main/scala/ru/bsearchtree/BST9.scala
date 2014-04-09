@@ -1,13 +1,13 @@
 package ru.bsearchtree
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * User: dima
  * Date: 15/02/2012
  */
-class BST9 extends ShouldMatchers {
+class BST9 extends Matchers {
   @Test def WHEN_insertingValueToBST_it_SHOULD_beInsertedAtTheRoot() {
     BST().add(List(1)) should equal(BST(Node(1)))
     BST().add(List(1, 2)) should equal(BST(Node(2, Node(1), null)))

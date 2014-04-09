@@ -1,9 +1,9 @@
 package ru.fizzbuzz
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
-class FizzBuzz extends ShouldMatchers {
+class FizzBuzz extends Matchers {
 
 	@Test def given_number_one_should_produce_one() {
 		fizzBuzz(1) should equal("1")

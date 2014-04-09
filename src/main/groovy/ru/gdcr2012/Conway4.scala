@@ -1,9 +1,9 @@
 package ru.gdcr2012
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
-class Conway4 extends ShouldMatchers {
+class Conway4 extends Matchers {
 //	@Test def /*aa*/emptyBoardShouldRem/*e*/ainEmpty() {
 //	@Test def emptyBoardShouldRemainEmpty() {
 	@Test def live_cellWithNoNeighboursShouldDieOnTheNextStep() {

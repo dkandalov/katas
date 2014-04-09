@@ -2,14 +2,14 @@ package ru.game_of_life
 
 import collection.mutable
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 28/10/2012
  */
 
-class Conway5 extends ShouldMatchers {
+class Conway5 extends Matchers {
 	@Test def whenAllCellsAreDeadNothingHappens() {
 		new Field(
 			"""

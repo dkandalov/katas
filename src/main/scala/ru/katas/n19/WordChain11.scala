@@ -1,7 +1,7 @@
 package ru.katas.n19
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import scala.io.Source
 
 /**
@@ -9,7 +9,7 @@ import scala.io.Source
  * Date: 10/08/2012
  */
 
-class WordChain11 extends ShouldMatchers {
+class WordChain11 extends Matchers {
 
 	@Test def shouldFindSimpleWordChains() {
 		findShortestWordChain("aaa", "aaa", Seq("aaa")) should equal(Seq("aaa"))

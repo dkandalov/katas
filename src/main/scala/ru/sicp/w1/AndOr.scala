@@ -1,6 +1,6 @@
 package ru.sicp.w1
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 22/09/2012
  */
 
-class AndOr extends ShouldMatchers {
+class AndOr extends Matchers {
 	@Test def booleanLogic() {
 		and(false, false) should equal(false)
 		and(false, true) should equal(false)

@@ -2,13 +2,14 @@ package ru.newton
 
 import org.scalatest.matchers.{MatchResult, Matcher, ShouldMatchers}
 import org.junit.Test
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 04/04/2013
  */
 
-class Newton4 extends ShouldMatchers {
+class Newton4 extends Matchers {
 	@Test def `should find square root of a number`() {
 		squareRootOf(1 + 1) should beCloseTo(0)
 		squareRootOf(1.0) should beCloseTo(1.0)

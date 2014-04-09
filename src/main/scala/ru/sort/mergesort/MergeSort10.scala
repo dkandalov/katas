@@ -1,6 +1,6 @@
 package ru.sort.mergesort
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import ru.util.Pomodoro
 
@@ -9,7 +9,7 @@ import ru.util.Pomodoro
  * Date: 30/04/2012
  */
 @Pomodoro("1")
-class MergeSort10 extends ShouldMatchers {
+class MergeSort10 extends Matchers {
   @Test def shouldSortList() {
     sort(List[Int]()) should equal(List())
     sort(List(1)) should equal(List(1))

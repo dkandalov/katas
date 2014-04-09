@@ -1,6 +1,6 @@
 package ru.game_of_life
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import collection.mutable.Buffer
 import collection.mutable
@@ -10,7 +10,7 @@ import collection.mutable
  * Date: 27/10/2012
  */
 
-class Conway4 extends ShouldMatchers {
+class Conway4 extends Matchers {
 
 	@Test def fieldShouldReturnCellState() {
 		def field = new Field(

@@ -1,11 +1,11 @@
 package org.techstock
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.annotation.tailrec
 
 // rbs techstock 2013
-class SumOfPrimes extends ShouldMatchers {
+class SumOfPrimes extends Matchers {
 	@Test def `find sum of primes below 2 million`() {
 		// too slow for 2M
 		def from(n: Int): Stream[Int] = Stream.cons(n, from(n + 1))

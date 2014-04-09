@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import collection.mutable
@@ -10,7 +10,7 @@ import collection.mutable
  * Date: 31/07/2012
  */
 
-class WordChain9 extends ShouldMatchers {
+class WordChain9 extends Matchers {
 
 	@Test def shouldFindSingleWordChain() {
 		findMinWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equal(Seq("aaa", "aab", "abb", "bbb"))

@@ -1,6 +1,6 @@
 package ru.connectivity
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import collection.mutable.ArrayBuffer
 import annotation.tailrec
@@ -10,7 +10,7 @@ import annotation.tailrec
  * Date: 06/09/2012
  */
 
-class WUnion extends ShouldMatchers {
+class WUnion extends Matchers {
 	@Test def determineIfPointAreConnected_InSimplestCases() {
 		val board = new Board(2)
 

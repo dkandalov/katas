@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import collection.immutable.SortedSet
@@ -12,7 +12,7 @@ import ru.util.Pomodoro
  */
 
 @Pomodoro("2.5 + X")
-class WordChain8 extends ShouldMatchers {
+class WordChain8 extends Matchers {
 	@Test def shouldFindMinChainOfTransformationsFromOneWordToAnother() {
 		findMinChain("aaa", "bbb", Set()) should equal(Seq())
 		findMinChain("aaa", "aaa", Set()) should equal(Seq("aaa"))

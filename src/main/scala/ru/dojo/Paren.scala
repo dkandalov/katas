@@ -1,6 +1,6 @@
 package ru.dojo
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -9,7 +9,7 @@ import annotation.tailrec
  * Date: 20/09/2012
  */
 
-class Paren extends ShouldMatchers {
+class Paren extends Matchers {
 	@Test def aaa() {
 		balance("".toList) should equal(true)
 

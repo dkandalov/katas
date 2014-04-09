@@ -1,6 +1,6 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import scala.None
 import annotation.tailrec
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.junit.Test
  * Date: 06/06/2012
  */
 
-class BSearch11 extends ShouldMatchers {
+class BSearch11 extends Matchers {
 	@Test def shouldFindIndexOfElementUsingBinarySearch() {
 		find(1, Seq()) should equal(None)
 

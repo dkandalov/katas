@@ -1,6 +1,6 @@
 package ru.sort.heap
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import java.lang.IllegalStateException
 import annotation.tailrec
@@ -9,7 +9,7 @@ import annotation.tailrec
  * User: dima
  * Date: 06/02/2012
  */
-class HeapSort8 extends ShouldMatchers {
+class HeapSort8 extends Matchers {
   @Test def GIVEN_aSequence_SHOULD_sortItUsingHeapSort() {
     sort(Seq()) should equal(Seq())
     sort(Seq(1)) should equal(Seq(1))

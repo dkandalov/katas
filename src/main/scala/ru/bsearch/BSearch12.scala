@@ -1,6 +1,6 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -9,7 +9,7 @@ import annotation.tailrec
  * Date: 06/06/2012
  */
 
-class BSearch12 extends ShouldMatchers {
+class BSearch12 extends Matchers {
 	import BinarySearch._
 
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {

@@ -1,6 +1,6 @@
 package ru.eightQueen
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 23/07/2012
  */
 
-class EightQueen7 extends ShouldMatchers {
+class EightQueen7 extends Matchers {
 	@Test def shouldSolveForBoardOfSize_4() {
 		val boardSize = 4
 

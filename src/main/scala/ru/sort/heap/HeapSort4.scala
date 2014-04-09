@@ -1,14 +1,14 @@
 package ru.sort.heap
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import ru.permutation.Perm3_
 
 /**
  * User: dima
  * Date: 05/11/2011
  */
-class HeapSort4 extends ShouldMatchers {
+class HeapSort4 extends Matchers {
   @Test def shouldSortList() {
     sort(List()) should equal(List())
     sort(List(1)) should equal(List(1))

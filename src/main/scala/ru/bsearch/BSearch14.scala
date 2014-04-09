@@ -1,14 +1,14 @@
 package ru.bsearch
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 05/08/2012
  */
 
-class BSearch14 extends ShouldMatchers {
+class BSearch14 extends Matchers {
 //	@Test def () {
 //	}
 

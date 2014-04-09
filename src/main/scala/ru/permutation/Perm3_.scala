@@ -1,12 +1,12 @@
 package ru.permutation
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * @author DKandalov
  */
-class Perm3_ extends ShouldMatchers {
+class Perm3_ extends Matchers {
 
   @Test def shouldFindPermutationsOfAList() {
     perm(List()) should equal(List())

@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import ru.util.{Fail, Pomodoro}
@@ -12,7 +12,7 @@ import ru.util.{Fail, Pomodoro}
 
 @Pomodoro("1")
 @Fail
-class WordChains1 extends ShouldMatchers {
+class WordChains1 extends Matchers {
 
 	@Test def aaa() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().toSet[String]

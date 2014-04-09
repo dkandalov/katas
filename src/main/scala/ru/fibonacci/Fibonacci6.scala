@@ -1,6 +1,6 @@
 package ru.fibonacci
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -9,7 +9,7 @@ import annotation.tailrec
  * Date: 28/07/2012
  */
 
-class Fibonacci6 extends ShouldMatchers {
+class Fibonacci6 extends Matchers {
 	@Test def shouldCalculateFibonacciNumbers() {
 		fibonacci(0) should equal(0)
 		fibonacci(1) should equal(1)

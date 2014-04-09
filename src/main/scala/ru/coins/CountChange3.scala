@@ -1,6 +1,6 @@
 package ru.coins
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import ru.util.Pomodoro
 
@@ -9,7 +9,7 @@ import ru.util.Pomodoro
  * Date: 03/04/2012
  */
 @Pomodoro("1")
-class CountChange3 extends ShouldMatchers {
+class CountChange3 extends Matchers {
   import EnhancedInt._
 
   @Test def GIVEN_amount_of_money_SHOULD_find_all_unique_ways_to_change_it() {

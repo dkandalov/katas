@@ -1,6 +1,6 @@
 package ru.sort
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 27/06/2012
  */
 
-trait SeqSortTest extends ShouldMatchers {
+trait SeqSortTest extends Matchers {
 
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T]
 

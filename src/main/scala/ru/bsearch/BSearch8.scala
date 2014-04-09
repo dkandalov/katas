@@ -1,13 +1,13 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * User: dima
  * Date: 17/11/2011
  */
-class BSearch8 extends ShouldMatchers {
+class BSearch8 extends Matchers {
   @Test def shouldFindIndexOfItemsInAList() {
     search(0, List()) should equal(-1)
 

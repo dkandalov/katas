@@ -1,10 +1,10 @@
 package ru.dojo
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class CountChange extends ShouldMatchers {
+class CountChange extends Matchers {
 	@Test def aaa() {
 		val coins = List(2, 1)
 

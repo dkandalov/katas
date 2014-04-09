@@ -1,6 +1,6 @@
 package ru.bsearchtree
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -8,7 +8,7 @@ import annotation.tailrec
  * User: dima
  * Date: 08/02/2012
  */
-class BST7 extends ShouldMatchers {
+class BST7 extends Matchers {
   @Test def GIVEN_aSetOfKeysAndValues_SHOULD_addThemToBST_AND_determineIfBSTContainsThem() {
     new BST[Int, String]().get(1) should equal(None)
     new BST[Int, String]().put(1, "a").get(1) should equal(Some("a"))

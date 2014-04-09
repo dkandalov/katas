@@ -1,6 +1,6 @@
 package ru.katas.n6
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 
@@ -9,7 +9,7 @@ import scala.io.Source
  * Date: 06/12/2012
  */
 
-class Anagrams1 extends ShouldMatchers {
+class Anagrams1 extends Matchers {
 	@Test def shouldReadDictionary() {
 		val words = readDictionary
 		words.size should equal(234371)

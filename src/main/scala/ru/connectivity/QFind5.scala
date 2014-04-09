@@ -2,14 +2,14 @@ package ru.connectivity
 
 import org.junit.Test
 import collection.mutable.ArrayBuffer
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 07/09/2012
  */
 
-class QFind5 extends ShouldMatchers {
+class QFind5 extends Matchers {
 	@Test def determineIfPointsAreConnected_InSimpleCase() {
 		val board = new Board(2)
 		board.connected(0, 0) should equal(true)

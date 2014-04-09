@@ -1,7 +1,7 @@
 package ru.sort.mergesort
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import collection.Seq
 import collection.mutable.ListBuffer
 import ru.permutation.{Perm1_, Perm1}
@@ -9,7 +9,7 @@ import ru.permutation.{Perm1_, Perm1}
 /**
  * @author DKandalov
  */
-class MergeSort6 extends ShouldMatchers {
+class MergeSort6 extends Matchers {
 
   def permutate(seq: Seq[Int]): Seq[Seq[Int]] = {
     val listBuffer = ListBuffer[Int]()

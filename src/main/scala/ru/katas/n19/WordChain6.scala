@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import collection.immutable.Set
@@ -12,7 +12,7 @@ import ru.util.{Arcade, Fail}
  */
 
 @Arcade @Fail
-class WordChain6 extends ShouldMatchers {
+class WordChain6 extends Matchers {
 
 	@Test def shouldFindShortestWordChain() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase).toSet

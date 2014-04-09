@@ -1,12 +1,12 @@
 package ru.misc
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * @author DKandalov
  */
-class PascalTriangle1 extends ShouldMatchers {
+class PascalTriangle1 extends Matchers {
   @Test def shouldComputeElementsOfPascalsTriangle() {
     pascal(0, -1) should equal(0)
     pascal(0, 0) should equal(1)

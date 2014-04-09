@@ -1,10 +1,10 @@
 package ru.hanoi
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class Hanoi6 extends ShouldMatchers {
+class Hanoi6 extends Matchers {
 	@Test def `find moves to solve towers of Hanoi problem`() {
 		findMoves(towerSize = 1) should equal(Seq(Move(0, -1)))
 		findMoves(towerSize = 2) should equal(Seq(

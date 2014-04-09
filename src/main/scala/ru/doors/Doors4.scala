@@ -1,12 +1,12 @@
 package ru.doors
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * @author DKandalov
  */
-class Doors4 extends ShouldMatchers {
+class Doors4 extends Matchers {
 
   @Test def shouldWalkDoors() {
     walkDoors(2) should equal(List(true, false))

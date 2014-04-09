@@ -1,7 +1,7 @@
 package ru.tree
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import collection.mutable
 
 /**
@@ -9,7 +9,7 @@ import collection.mutable
  * Date: 17/04/2012
  */
 
-class Tree9 extends ShouldMatchers {
+class Tree9 extends Matchers {
   case class Node(value: Int, left: Node = null, right: Node = null)
 
   @Test def inOrderTraversal() {

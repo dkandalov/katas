@@ -1,11 +1,11 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.annotation.tailrec
 
 
-class BinarySearch19 extends ShouldMatchers {
+class BinarySearch19 extends Matchers {
 	@Test def findIndexOfElementInASequence() {
 		search(1, Seq()) should equal(notFound)
 

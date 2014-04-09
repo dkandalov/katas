@@ -1,6 +1,6 @@
 package ru.doors
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 04/12/2012
  */
 
-class Doors7 extends ShouldMatchers {
+class Doors7 extends Matchers {
 	@Test def shouldVisitDoors() {
 		visitDoors(0) should equal(Seq())
 		visitDoors(1) should equal(Seq(true))

@@ -1,6 +1,6 @@
 package ru.streams
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 09/11/2012
  */
 
-class Streams0 extends ShouldMatchers {
+class Streams0 extends Matchers {
 	@Test def test() {
 		from(1).toString() should equal("Stream(1, ?)")
 		from(1).tail.toString() should equal("Stream(3, ?)")

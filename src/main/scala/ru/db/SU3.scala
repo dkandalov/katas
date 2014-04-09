@@ -6,6 +6,7 @@ import org.scalatest.matchers.{Matcher, ShouldMatchers}
 import java.lang.{Character => JCharacter, Integer => JInteger}
 import scala.collection.JavaConversions.iterableAsScalaIterable
 import ru.util.Pomodoro
+import org.scalatest.Matchers
 
 /**
  * User: dima
@@ -49,7 +50,7 @@ class SU3 extends StringUtil {
   }
 }
 
-class SU3Test extends ShouldMatchers {
+class SU3Test extends Matchers {
   private val utils = new SU3()
 
   @Test def sort() {

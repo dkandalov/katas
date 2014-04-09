@@ -1,9 +1,9 @@
 package ru.gdcr2012
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
-class Conway3 extends ShouldMatchers {
+class Conway3 extends Matchers {
 	val aliveCell = new Cell(isAlive = true, amountOfNeighbours = 0)
 
 	@Test def liveCellWithFewerThanTwoNeighboursShouldDieOnTheNextStep() {

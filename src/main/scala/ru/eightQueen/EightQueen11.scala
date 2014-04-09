@@ -1,10 +1,10 @@
 package ru.eightQueen
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class EightQueen11 extends ShouldMatchers {
+class EightQueen11 extends Matchers {
 	@Test def findAllValidQueenPositions() {
 		solveForBoardOfSize(3) should equal(Seq())
 		solveForBoardOfSize(4).map{ solution => asPrintableBoard(4, solution) }.mkString("\n\n") should equal(

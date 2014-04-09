@@ -1,10 +1,10 @@
 package ru.sort.mergesort
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class MergeSort12 extends ShouldMatchers {
+class MergeSort12 extends Matchers {
 	@Test def sortValues() {
 		sort(Seq()) should equal(Seq())
 		sort(Seq(1)) should equal(Seq(1))

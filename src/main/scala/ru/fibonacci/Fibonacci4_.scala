@@ -1,13 +1,13 @@
 package ru.fibonacci
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import scala.math._
 
 /**
  * @author DKandalov
  */
-class Fibonacci4_ extends ShouldMatchers {
+class Fibonacci4_ extends Matchers {
   @Test def shouldCalculateFibonacciNumber() {
     fib(0) should equal(1)
     fib(1) should equal(1)

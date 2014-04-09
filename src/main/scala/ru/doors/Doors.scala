@@ -1,7 +1,7 @@
 package ru.doors
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import ru.util.Arcade
 
 /**
@@ -10,7 +10,7 @@ import ru.util.Arcade
  */
 
 @Arcade
-class Doors extends ShouldMatchers {
+class Doors extends Matchers {
 	@Test def aaa() {
 		val doors = Array.fill(10){ false }
 		1.to(doors.size).foreach { stepSize =>

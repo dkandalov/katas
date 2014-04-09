@@ -1,13 +1,13 @@
 package ru.katas.n4
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import scala.io.Source
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers._
 import org.junit.{Assert, Test}
 import collection.Seq
 
 
-class DataMunging1 extends ShouldMatchers {
+class DataMunging1 extends Matchers {
 	val path = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat"
 	val path2 = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat"
 
@@ -18,12 +18,12 @@ class DataMunging1 extends ShouldMatchers {
 
 	@Test def extractDataReturnsLinesContainingOnlyNumericalData() {
 		val data = readFile(path)
-		Assert.assertThat(extractData(data)(0), Matchers.startsWith("   1"))
-		Assert.assertThat(extractData(data)(29), Matchers.startsWith("  30"))
+		Assert.assertThat(extractData(data)(0), startsWith("   1"))
+		Assert.assertThat(extractData(data)(29), startsWith("  30"))
 
 		val data2 = readFile(path2)
-		Assert.assertThat(extractData(data2)(0), Matchers.startsWith("    1."))
-		Assert.assertThat(extractData(data2)(19), Matchers.startsWith("   20."))
+		Assert.assertThat(extractData(data2)(0), startsWith("    1."))
+		Assert.assertThat(extractData(data2)(19), startsWith("   20."))
 	}
 
 	@Test def shouldExtractFirstThreeColumns() {

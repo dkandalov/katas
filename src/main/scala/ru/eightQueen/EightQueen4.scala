@@ -1,6 +1,6 @@
 package ru.eightQueen
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 14/07/2012
  */
 
-class EightQueen4 extends ShouldMatchers {
+class EightQueen4 extends Matchers {
 	case class Queen(row: Int, col: Int) {
 		def isBefore(queen: Queen) = queen.row > row || (queen.row == row && queen.col >= col)
 		def notOnTheSameRowOrColumnAs(queen: Queen) = queen.row != row && queen.col != col

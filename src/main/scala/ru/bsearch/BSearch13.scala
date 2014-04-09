@@ -1,7 +1,7 @@
 package ru.bsearch
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import annotation.tailrec
 
 /**
@@ -9,7 +9,7 @@ import annotation.tailrec
  * Date: 18/06/2012
  */
 
-class BSearch13 extends ShouldMatchers {
+class BSearch13 extends Matchers {
 	@Test def should_find_element_index_in_a_sequence() {
 		bsearch(1, Seq()) should equal(None)
 

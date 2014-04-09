@@ -1,6 +1,6 @@
 package ru.katas.n13
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import scala.io.Source
 import org.junit.Test
 
@@ -8,7 +8,7 @@ import org.junit.Test
  * User: dima
  * Date: 15/03/2012
  */
-class LineCount2 extends ShouldMatchers {
+class LineCount2 extends Matchers {
   def extractLinesWithCode(s: String): Seq[String] = {
     s.replaceAll("""(?s)/\*.*?\*/""", "")
       .replaceAll("//.*", "")

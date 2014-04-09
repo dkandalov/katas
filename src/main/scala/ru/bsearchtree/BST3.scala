@@ -1,14 +1,14 @@
 package ru.bsearchtree
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import java.lang.IllegalStateException
 
 /**
  * User: dima
  * Date: 04/11/2011
  */
-class BST3 extends ShouldMatchers {
+class BST3 extends Matchers {
   @Test def shouldFindIfBinarySearchTreeContainsElement() {
     var bst = BST()
     bst.contains(1) should equal(false)

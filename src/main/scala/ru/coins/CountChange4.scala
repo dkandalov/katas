@@ -1,10 +1,10 @@
 package ru.coins
 
 import org.junit.Test
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class CountChange4 extends ShouldMatchers {
+class CountChange4 extends Matchers {
 	@Test def shouldFindWayToChangeSumOfMoneyGivenASetOfCoins() {
 		val withCoinTypes = Seq(1, 5, 10, 25, 50)
 		waysToChange(0, withCoinTypes) should equal(Seq(Seq()))

@@ -1,13 +1,13 @@
 package ru._99_problems
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.annotation.tailrec
 
 /**
  * http://aperiodic.net/phil/scala/s-99/
  */
-class P0 extends ShouldMatchers {
+class P0 extends Matchers {
 	@Test def `should find last element of a list`() {
 		last(List[Int]()) should equal(None)
 		last(List(1)) should equal(Some(1))

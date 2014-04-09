@@ -1,10 +1,10 @@
 package ru.sieve
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class SOE3 extends ShouldMatchers {
+class SOE3 extends Matchers {
 	@Test def `finding prime numbers`() {
 		findPrimes(10) should equal(Seq(1, 2, 3, 5, 7))
 		findPrimes(20) should equal(Seq(1, 2, 3, 5, 7, 11, 13, 17, 19))

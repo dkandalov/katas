@@ -1,6 +1,6 @@
 package ru.katas.n5
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -11,7 +11,7 @@ import util.Random
  * Date: 12/09/2012
  */
 
-class Bloom0 extends ShouldMatchers {
+class Bloom0 extends Matchers {
 	@Test def determineIfWordIsInFilter_InSimplestCases() {
 		val bloomFilter = new BloomFilter(100)
 

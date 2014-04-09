@@ -1,7 +1,7 @@
 package ru.sort.insertsort
 
 import ru.sort.SeqSortTest
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import ru.util.Arcade
 
@@ -11,7 +11,7 @@ import ru.util.Arcade
  */
 
 @Arcade
-class InsertSort9 extends SeqSortTest with ShouldMatchers {
+class InsertSort9 extends SeqSortTest with Matchers {
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
 		
 		def insert(v: T, sorted: Seq[T]): Seq[T] = {
@@ -26,7 +26,7 @@ class InsertSort9 extends SeqSortTest with ShouldMatchers {
 }
 
 @Arcade
-class InsertSort9_ extends SeqSortTest with ShouldMatchers {
+class InsertSort9_ extends SeqSortTest with Matchers {
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T] = {
 		def swap(s: Seq[T], i1: Int, i2: Int) = s.updated(i1, s(i2)).updated(i2, s(i1))
 

@@ -1,6 +1,6 @@
 package ru.fibonacci_sums
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -9,7 +9,7 @@ import annotation.tailrec
  * Date: 22/11/2012
  */
 
-class Sums extends ShouldMatchers {
+class Sums extends Matchers {
 	@Test def shouldFindFibonacciRepresentationsOfANumber() {
 		fibonacciRepresentationsOf(1) map asString should equal(Seq("1"))
 		fibonacciRepresentationsOf(2) map asString should equal(Seq("10"))

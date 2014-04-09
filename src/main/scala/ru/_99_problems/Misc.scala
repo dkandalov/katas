@@ -1,11 +1,11 @@
 package ru._99_problems
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.annotation.tailrec
 
 
-class Misc extends ShouldMatchers {
+class Misc extends Matchers {
 
 	@Test def `P92 (***) Von Koch's conjecture.`() {
 		import P7._

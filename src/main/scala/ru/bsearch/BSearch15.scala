@@ -1,6 +1,6 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 15/09/2012
  */
 
-class BSearch15 extends ShouldMatchers {
+class BSearch15 extends Matchers {
 	@Test def findIndexOfElementInASequence() {
 		given(Seq()) {
 			bsearch(1, _) should equal(-1)

@@ -1,10 +1,10 @@
 package ru._99_problems
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class P7 extends ShouldMatchers {
+class P7 extends Matchers {
 	import P7._
 
 	@Test def `P70C (*) Count the nodes of a multiway tree.`() {

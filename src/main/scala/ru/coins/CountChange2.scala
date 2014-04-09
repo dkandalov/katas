@@ -1,13 +1,13 @@
 package ru.coins
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * User: dima
  * Date: 02/04/2012
  */
-class CountChange2 extends ShouldMatchers {
+class CountChange2 extends Matchers {
 
   @Test def shouldFindAmountOfUniqueWaysToChangeSumOfMoney() {
     amountOfCombinations(1) should equal(1) // 1

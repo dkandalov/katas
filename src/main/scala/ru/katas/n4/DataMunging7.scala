@@ -1,6 +1,6 @@
 package ru.katas.n4
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 
@@ -9,7 +9,7 @@ import scala.io.Source
  * Date: 13/10/2012
  */
 
-class DataMunging7 extends ShouldMatchers { // TODO try streaming implementation
+class DataMunging7 extends Matchers { // TODO try streaming implementation
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
 		val dayWithMinTempSpread = convertToEntries(lines, 0, 1, 2).minBy{ _.valueDifference }.key

@@ -2,14 +2,14 @@ package ru.katas.n4
 
 import org.junit.Test
 import scala.io.Source
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 13/10/2012
  */
 
-class DataMunging8 extends ShouldMatchers {
+class DataMunging8 extends Matchers {
 
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)

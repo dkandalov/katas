@@ -1,6 +1,6 @@
 package ru.tree
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import ru.util.Pomodoro
 
@@ -9,7 +9,7 @@ import ru.util.Pomodoro
  * Date: 21/02/2012
  */
 @Pomodoro("1")
-class Tree8 extends ShouldMatchers {
+class Tree8 extends Matchers {
   @Test def inOrderTraversal() {
     traverseInOrder(Node(1)) should equal(Seq(1))
     traverseInOrder(Node(1, Node(0))) should equal(Seq(0, 1))

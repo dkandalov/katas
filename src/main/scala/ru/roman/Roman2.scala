@@ -1,6 +1,6 @@
 package ru.roman
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 23/05/2012
  */
 
-class Roman2 extends ShouldMatchers {
+class Roman2 extends Matchers {
 	@Test def shouldConvertNumbersToRomanNumerals() {
 		toRoman(1) should equal("I")
 		toRoman(2) should equal("II")

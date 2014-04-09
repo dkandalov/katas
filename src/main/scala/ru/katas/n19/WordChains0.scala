@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import collection.immutable.TreeSet
@@ -12,7 +12,7 @@ import ru.util.Fail
  * Date: 22/04/2012
  */
 @Fail
-class WordChains0 extends ShouldMatchers {
+class WordChains0 extends Matchers {
 	// TODO finish
 
 	@Test def aaa() {

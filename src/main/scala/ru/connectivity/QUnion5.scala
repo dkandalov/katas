@@ -1,6 +1,6 @@
 package ru.connectivity
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import collection.mutable
 
@@ -9,7 +9,7 @@ import collection.mutable
  * Date: 23/02/2013
  */
 
-class QUnion5 extends ShouldMatchers {
+class QUnion5 extends Matchers {
 	@Test def connectingTwoPoints() {
 		val board = new Board(10)
 		board.areConnected(0, 1) should equal(false)

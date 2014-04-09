@@ -1,6 +1,6 @@
 package ru.katas.n19
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 import ru.util.{Mess, Pomodoro}
@@ -13,7 +13,7 @@ import annotation.tailrec
 
 @Pomodoro("1")
 @Mess
-class WordChain3 extends ShouldMatchers {
+class WordChain3 extends Matchers {
 	val dict = Source.fromFile("/usr/share/dict/words").getLines().toList
 	var words = List[String]()
 	var minChain = List[String]()

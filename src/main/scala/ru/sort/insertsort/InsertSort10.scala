@@ -1,6 +1,6 @@
 package ru.sort.insertsort
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import ru.sort.SeqSortTest
 import collection.mutable.ArrayBuffer
 
@@ -9,7 +9,7 @@ import collection.mutable.ArrayBuffer
  * Date: 06/07/2012
  */
 
-class InsertSort10 extends SeqSortTest with ShouldMatchers {
+class InsertSort10 extends SeqSortTest with Matchers {
 
 	def sort[T](seq: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
 		val array = ArrayBuffer(seq: _*)

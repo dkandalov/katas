@@ -1,6 +1,6 @@
 package ru.water
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 10/11/2012
  */
 
-class Water0 extends ShouldMatchers {
+class Water0 extends Matchers {
 
 	class Pouring(capacity: Vector[Int]) {
 		type State = Vector[Int]

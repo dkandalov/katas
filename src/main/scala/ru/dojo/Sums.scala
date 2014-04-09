@@ -1,6 +1,6 @@
 package ru.dojo
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 //object Sums {
@@ -9,7 +9,7 @@ import org.junit.Test
 //	}
 //}
 
-class Sums extends ShouldMatchers {
+class Sums extends Matchers {
 	@Test def givenANumber_shouldFindItFibonacciRepresentations() {
 		fibonacciRepresentationsOf(1) should equal(Seq("1"))
 		fibonacciRepresentationsOf(2) should equal(Seq("10"))

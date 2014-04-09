@@ -1,10 +1,10 @@
 package ru.bsearch
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class BSearch18 extends ShouldMatchers {
+class BSearch18 extends Matchers {
 	@Test def bbb() {
 		def search(n: Int, values: Seq[Int]): Int = {
 //			if (values.isEmpty) {

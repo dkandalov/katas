@@ -1,13 +1,13 @@
 package ru.tree
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * User: dima
  * Date: 26/10/2011
  */
-class Tree7 extends ShouldMatchers {
+class Tree7 extends Matchers {
   @Test def shouldCalculateTreeProperties () {
     val tree = Node("root",
       Node("1",

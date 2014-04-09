@@ -1,6 +1,6 @@
 package ru.sudoku
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.collection._
 import scala.Some
@@ -10,7 +10,7 @@ import scala.Some
  * Date: 14/04/2013
  */
 
-class Sudoku4 extends ShouldMatchers {
+class Sudoku4 extends Matchers {
 
 	@Test def `should parse sudoku puzzles`() {
 		parseGrid("""

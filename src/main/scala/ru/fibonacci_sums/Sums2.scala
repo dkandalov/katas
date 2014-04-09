@@ -1,6 +1,6 @@
 package ru.fibonacci_sums
 
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 24/11/2012
  */
 
-class Sums2 extends ShouldMatchers {
+class Sums2 extends Matchers {
 
 	@Test def output() {
 		for (i <- 1 to 20) {
