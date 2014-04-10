@@ -13,7 +13,7 @@ import rx.lang.scala.Observable
 // TODO these tests are not deterministic (although might work most of the time)
 // TODO these tests are ugly
 class ObservableFun extends Matchers {
-	private val events = new CopyOnWriteArrayList[String]()
+	private val events = new CopyOnWriteArrayList[Any]()
 	private val someException = new IllegalStateException("no future, no past")
 
 	@Test def successfulFuture() {
@@ -234,4 +234,32 @@ class ObservableFun extends Matchers {
 			"odd5"))
 	}
 
+	@Test def pivotObservable() {
+		// TODO has different name in scala API?
+	}
+
+	@Test def bufferObservable() {
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		observable.buffer(count = 2).subscribe{ it => events add it }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
+	}
+
+	@Test def bufferSkippingObservable() {
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		observable.buffer(count = 2, skip = 3).subscribe{ it => events add it }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
+	}
+
+	@Test def bufferObservable_WithManualClosing() {
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		def closeOnThree(): Observable[Int] = observable.filter(_ == 3)
+//		observable.buffer[Int](closeOnThree).subscribe{ it => events add it } // TODO cannot be applied, wtf?
+//
+//		Thread.sleep(10)
+//		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
+	}
 }
