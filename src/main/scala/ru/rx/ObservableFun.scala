@@ -7,6 +7,8 @@ import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
 import scala.collection.JavaConversions._
 import scala.util.{Failure, Success}
+import scala.concurrent.duration._
+import rx.lang.scala.Observable
 
 // TODO these tests are not deterministic (although might work most of the time)
 // TODO these tests are ugly
@@ -110,6 +112,13 @@ class ObservableFun extends Matchers {
 		events.toList should equal(Seq(someException.toString))
 	}
 
+	@Test def awaitingFuture() {
+		val f = future { "future!" }
+		f.onSuccess { case it => events.add(it) }
+
+		Await.result(f, 1 second) should equal("future!")
+	}
+
 	@Test def successfulPromise() {
 		val promise = Promise[String]()
 		promise.future.onSuccess{ case it => events add it }
@@ -155,4 +164,74 @@ class ObservableFun extends Matchers {
 		Thread.sleep(10)
 		events.toList should equal(Seq(someException.toString))
 	}
+
+	@Test def valuesFromObservable() {
+		val observable = Observable.items(1, 2)
+		observable.subscribe { it => events add it.toString }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("1", "2"))
+	}
+
+	@Test def mapObservable() {
+		val observable = Observable.items(1, 2)
+		observable.map{_ + 1}.subscribe { it => events add it.toString }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("2", "3"))
+	}
+
+	@Test def flatMapObservable() {
+		def observeTwice[T](value: T): Observable[T] = Observable.items(value, value)
+
+		val observable = Observable.items(1, 2)
+		observable.flatMap(observeTwice).subscribe { it => events add it.toString }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("1", "1", "2", "2"))
+	}
+
+	@Test def scanObservable() {
+		val observable = Observable.items(1, 2)
+		observable.scan{(acc: Int, it: Int) => acc + it}.subscribe { it => events add it.toString }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("1", "3"))
+	}
+
+	@Test def groupObservable() {
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		observable.groupBy(_ % 2 == 0).subscribe{ entry =>
+			val prefix = if (entry._1) "even" else "odd"
+			val subObservable = entry._2
+			events add "observing " + prefix
+			subObservable.subscribe{ events add prefix + _.toString }
+		}
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("observing odd", "odd1", "observing even", "even2", "odd3", "even4", "odd5"))
+	}
+
+	@Test def groupUtilObservable() {
+		def isEven(n: Int) = n % 2 == 0
+		def closeOnSecondEvent(even: Boolean, observable: Observable[Int]) = observable.buffer(2)
+
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		observable.groupByUntil(isEven, closeOnSecondEvent).subscribe{ entry =>
+			val prefix = if (entry._1) "even" else "odd"
+			val subObservable = entry._2
+			events add "observing " + prefix
+			subObservable.subscribe{ events add prefix + _.toString }
+		}
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(
+			"observing odd", "odd1",
+			"observing even", "even2",
+			"odd3", // second odd event
+			"even4",
+			"observing odd", // new odd observer
+			"odd5"))
+	}
+
 }
