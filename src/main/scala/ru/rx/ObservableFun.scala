@@ -110,4 +110,49 @@ class ObservableFun extends Matchers {
 		events.toList should equal(Seq(someException.toString))
 	}
 
+	@Test def successfulPromise() {
+		val promise = Promise[String]()
+		promise.future.onSuccess{ case it => events add it }
+
+		promise.complete(Success("future!"))
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("future!"))
+	}
+
+	@Test def failedPromise() {
+		val promise = Promise[String]()
+		promise.future.onFailure{ case e => events add e.toString }
+
+		promise.complete(Failure(someException))
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(someException.toString))
+	}
+
+	@Test def tryingToCompletePromise() {
+		val promise = Promise[String]()
+		promise.tryComplete(Success("yay!")) should equal(true)
+		promise.tryComplete(Success("yay!")) should equal(false)
+	}
+
+	@Test def completePromise_With_SuccessfulFuture() {
+		val promise = Promise[String]()
+		promise.future.onSuccess{ case it => events add it }
+
+		promise.completeWith(future { "future!" })
+
+		Thread.sleep(10)
+		events.toList should equal(Seq("future!"))
+	}
+
+	@Test def completePromise_With_FailedFuture() {
+		val promise = Promise[String]()
+		promise.future.onFailure{ case e => events add e.toString }
+
+		promise.completeWith(future { throw someException })
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(someException.toString))
+	}
 }
