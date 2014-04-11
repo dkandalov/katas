@@ -934,8 +934,6 @@ class P1 extends Matchers {
 
 
 	object Tree {
-//		abstract type E <: Ordered[E] // TODO extract type to avoid repeating type-bounds in every method?
-
 		def fromDotString(string: String): Tree[String] = {
 			if (string.isEmpty) throw new IllegalArgumentException
 

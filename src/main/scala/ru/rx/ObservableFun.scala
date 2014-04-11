@@ -254,12 +254,25 @@ class ObservableFun extends Matchers {
 		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
 	}
 
+/*
 	@Test def bufferObservable_WithManualClosing() {
 		val observable = Observable.items(1, 2, 3, 4, 5)
-		def closeOnThree(): Observable[Int] = observable.filter(_ == 3)
-//		observable.buffer[Int](closeOnThree).subscribe{ it => events add it } // TODO cannot be applied, wtf?
-//
-//		Thread.sleep(10)
-//		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
+		def aa(): Observable[Int] = observable.filter(_ == 3)
+		//val closings: () => Observable[Int] = aa
+		val observable1: Observable[Seq[Int]] = observable.buffer[Int](aa) // TODO compiler says "cannot be applied", wtf?
+		observable1.subscribe{ it => events add it }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
 	}
+*/
+
+	@Test def windowObservable() {
+		val observable = Observable.items(1, 2, 3, 4, 5)
+		observable.window(count = 2).map{_.toSeq}.flatten.subscribe{ events add _ }
+
+		Thread.sleep(10)
+		events.toList should equal(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
+	}
+
 }
