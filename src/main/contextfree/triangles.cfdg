@@ -1,0 +1,13 @@
+startshape triArc
+CF::Background = [b -1]  // looks more cool on black
+
+shape triArc
+rule {
+    TRIANGLE [r -2 sat 1 b 1]
+    triArc [x 1 r 4 hue 4]  // Never shrinks! This recursion will never end...
+}
+rule 0.02 {
+    TRIANGLE [r -45 sat 1 b 1]
+    triArc [y -1 r -90 hue 4]
+}
+rule 0.001 {} // ... unless we execute this rule
