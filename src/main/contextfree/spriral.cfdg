@@ -1,0 +1,11 @@
+startshape triArc(1)
+CF::Background = [b -1]
+
+shape triArc(natural angle)
+rule {
+    TRIANGLE [r 0 sat 1 b 1]
+    // have to scale angle because rule parameters must be "natural" in order to support "+"
+    scaledAngle = angle * 0.3
+    triArc(angle + 1) [x 1 y 1 r scaledAngle hue 4 s 1.1]
+}
+rule 0.001 {}
