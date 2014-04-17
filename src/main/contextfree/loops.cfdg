@@ -1,0 +1,27 @@
+startshape rightTriangle
+CF::Background = [b -1]
+
+shape triArc
+rule {
+  loop 2 [r 45]
+    SQUARE [r -45 sat 1 b 1]
+}
+
+shape flower {
+    // petals
+    loop 6 [r 60] CIRCLE [[ r 30 x 0.5 s 1 0.25 b 0.5]]
+    //center
+    CIRCLE [ s 0.25 b 1 ]
+}
+
+shape rightTriangle {
+    loop i = 10 [x 1] {    // named loop, index variable is i, loops from 0 to 9
+        loop j = i+1 [y 1] {
+        CIRCLE [b 1]
+        } finally {
+            CIRCLE [b 0.7 x j]
+        }
+    } finally {
+        CIRCLE [b 0.2 y i]
+    }
+}
