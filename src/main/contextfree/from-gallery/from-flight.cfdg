@@ -1,0 +1,9 @@
+// http://www.contextfreeart.org/gallery/view.php?id=1903
+startshape T
+background{b -1}
+
+tile {s 2.5}
+rule T {3*{r 120 hue 30}S{x .3}}
+rule S 3{CIRCLE{hue 30}4*{r 20 b.007 sat .1}S[s.3.7y.9]}
+rule S {CIRCLE{hue 15}9*{r 20 b.05 hue -3}S[s.3.7y.9]}
+rule S {S{flip 90}}

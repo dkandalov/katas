@@ -1,4 +1,4 @@
-startshape rightTriangle
+startshape triArc
 CF::Background = [b -1]
 
 shape triArc

@@ -1,0 +1,61 @@
+// http://www.contextfreeart.org/gallery/view.php?id=3433
+background {b -1}
+
+startshape go1
+
+rule go1 {
+  go {hue 140 sat 1 b 0.25}
+}
+
+rule go {
+    goleft {}
+    goleft {r 180}
+    goright {}
+}
+
+rule goleft 20 {
+    mark {}
+    goleft {y 1 r 1 s 0.992 b 0.02 h 0.1}
+}
+
+rule goleft 15 {
+    mark {}
+    goleft {y 1 r 2 s 0.992 b 0.04 h 0.1}
+}
+
+rule goleft 10 {
+    mark {}
+    goleft {y 1 r 3 s 0.992 b -0.03 h 0.1}
+}
+
+rule goleft 1 {
+    mark {}
+    goleft {y 1 r 4 s 0.992 h -4}
+    goright {y 1 r -4 s 0.992}
+}
+
+rule goright 20 {
+    mark {}
+    goright {y 1 r -1 s 0.992 b -0.02 h -0.1}
+}
+
+rule goright 15 {
+    mark {}
+    goright {y 1 r -2 s 0.992 b -0.04 h -0.1}
+}
+
+rule goright 10 {
+    mark {}
+    goright {y 1 r -3 s 0.992 b 0.03 h -0.1}
+}
+
+rule goright 1 {
+    mark {}
+    goright {y 1 r -4 s 0.992}
+    goleft {y 1 r 4 s 0.992 h 4}
+}
+
+rule mark {
+    CIRCLE {s 10 hue 110 alpha -0.98}
+    SQUARE {s 1}
+}
