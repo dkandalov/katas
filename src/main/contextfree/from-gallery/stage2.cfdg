@@ -1,0 +1,26 @@
+startshape Stage_2 [[s 30 x .48 -.28]]
+CF::Background = [b -1]
+CF::Impure = 1
+CF::Size = [s 8 6]
+ 
+Fx(u,v) = sin(v) * cos(u) * cos(35) - cos(v) * sin(35)
+Fy(u,v) = sin(v) * sin(u)
+Su = 360 / 80
+Sv = 180 / 480
+ 
+shape Stage_2 {
+    loop u=0,360,Su [] {
+        loop v=0.25,12,Sv [] {
+           Proj(u,v) [h  70 sat .7 z  1 r 330]
+           Proj(u,v) [h 230 sat .7 z -1 r 330 s .995]
+        }
+    }
+}
+ 
+path Proj(u,v) {
+    MOVETO(Fx(u   ,v   ), Fy(u   ,v   ))
+    LINETO(Fx(u+Su,v   ), Fy(u+Su,v   ))
+    LINETO(Fx(u   ,v+Sv), Fy(u   ,v+Sv))
+    CLOSEPOLY()
+    STROKE(.0005)[b 1 a if(mod(u+v,2), -0.7, 0)]
+}
