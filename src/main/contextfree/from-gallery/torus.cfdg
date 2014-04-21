@@ -1,0 +1,26 @@
+startshape Torus
+CF::Background=[b -1]
+CF::Size=[s 2.4 1.8]
+
+Sw=0 // 1: Granular colored version
+     //-----------------------------
+St  = if(Sw, 0.125, 0.5)
+H() = if(Sw, rand(100..280, 100..280), 0)
+S() = if(Sw, rand(0..1, 0..1), 0)
+B(w) = 0.7 + sin(18 * w)
+
+Fz(u, v) = (cos(u) + 1.414) * sin(v)
+Fx(u, v) = (cos(u) + 1.414) * cos(v) / (2 - Fz(u, v))
+Fy(u, v) = sin(u) / (2 - Fz(u, v))
+vector3 F(u, v) = Fx(u,v), Fy(u,v), Fz(u,v)
+
+shape Torus {
+    loop u=0,360,St [] 
+        loop v=0,360,St []
+            Dot(F(u,v))[h H() sat S() b B(u-v) a -0.85]
+}
+
+shape Dot(vector3 V) {
+    if (abs(V[0])<1.3 && abs(V[1])<1 && V[2]<1)
+        CIRCLE [x V s (0.04*St/(2-V[2]))]
+}
