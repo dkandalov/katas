@@ -1,0 +1,53 @@
+/*
+    Menger sponge and friends.
+
+    By AK May 2009
+
+    Uses similar principles to Crystals
+    (Gallery id 1447) and other designs,
+    but on a three-fold basis.
+*/
+
+startshape sponge
+
+background { b -.8 hue 270 sat .5 }
+
+rule sponge {
+    3* { r 120 } { face { b .5 sat 1 hue 15 } }
+}
+
+rule face {
+    SQUARE [ skew 0 -30 s sqrt(.75) 1 x -.5 y -.5  a -0.3 ]
+
+    facelet{ z (4/6) b .2 }
+    facelet{ y (-1/3) z (-1/6) z (3/6) b .2 }
+    facelet{ y (-2/3) z (-2/6) z (2/6) b .1 }
+
+    facelet{ x (-sqrt(.75)/3) y (1/6) z (3/6) b .2 }
+//	facelet{ x (-sqrt(.75)/3) y (-1/6) z (2/6)  }
+    facelet{ x (-sqrt(.75)/3) y (-3/6) z (1/6) b -.1 }
+
+    facelet{ x (-2*sqrt(.75)/3) y (2/6) z (2/6) b .1}
+    facelet{ x (-2*sqrt(.75)/3) y (0/6) z (1/6) b -.1}
+    facelet{ x (-2*sqrt(.75)/3) y (-2/6) b -.2 }
+
+    facelet { r -120 x (-sqrt(.75)/3) y (-3/6) z (1/6) b -0.5 }
+    facelet { r 120 x (-2*sqrt(.75)/3)  z (1/6) b -0.5 }
+
+    6*{flip 0 h -20 s 0.95 0.95 0.95}
+    whisker { z (1/3) r -150 h -120 b -1 sat -.5 }
+}
+
+rule facelet {face { s  (1/3) (1/3) (1/3)  }}
+
+rule facelet .5{ facelet{b -.05} }
+rule facelet .5{ facelet{b .05} }
+
+
+rule whisker {
+    CIRCLE {s 0.05}
+    whisker { x 0.015 z 0.005 s 0.99  0.99  0.99 r 2 b .001 sat .001 }
+}
+
+rule whisker 0.1 { whisker {flip 0} }
+//rule whisker 0.001 {}
