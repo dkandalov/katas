@@ -1,0 +1,32 @@
+startshape A [h 0 b 1 sat .5]
+CF::Background = [b -1]
+
+shape A {
+    loop 7 [y 2] {
+        loop 7 [x 2 hue 60] {
+            CIRCLE []
+        }
+    }
+}
+
+shape B {
+    loop 7 [y 2 /*skew 0 5*/] {
+        loop 7 [x 2 h 60 skew 0 5] { // note the affect if x is skewed instead
+            SQUARE []
+        }
+    }
+}
+
+shape C {
+    loop 7 [y 2 size 1.4] {
+        loop 7 [x 2 h 60 size 1.4 1.8] {
+          SQUARE []
+        }
+    }
+}
+
+shape D {
+    SQUARE []
+    D [x 1 a -0.3 s 0.8] // note that shape doesn't terminate when it's alpha is 0
+}
+
