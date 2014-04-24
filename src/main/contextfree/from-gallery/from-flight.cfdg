@@ -2,26 +2,34 @@
 startshape T
 CF::Background = [b -1]
 
-// tile {s 2.5}
+// tile {s 2.5} // crashes
 shape T {
-    loop 3 [[r 120 hue 30]] {
-        S [[x 0.3]]
+    loop 3 [r 120 hue 30] {
+        S [x 0.3]
     }
 }
 
 shape S
 rule 3 {
-    CIRCLE [[hue 30]]
-    loop 4 [[r 20 b 0.007 sat 0.1]] {
-        S [s 0.3 0.7 y 0.9]
+    CIRCLE [hue 30]
+    loop 4 [r 20 b 0.007 sat 0.1] {
+        S [[s 0.3 0.7 y 0.9]]
     }
 }
 rule {
-    CIRCLE [[hue 15]]
-    loop 9 [[r 20 b 0.05 hue -3]] {
-        S [s 0.3 0.7 y 0.9]
+    CIRCLE [hue 15]
+    loop 9 [r 20 b 0.05 hue -3] {
+        S [[s 0.3 0.7 y 0.9]]
     }
 }
 rule {
-    S [[flip 90]]
+    S [flip 90]
 }
+
+// startshape T
+// background{b -1}
+// tile {s 2.5}
+// rule T {3*{r 120 hue 30}S{x .3}}
+// rule S 3{CIRCLE{hue 30}4*{r 20 b.007 sat .1}S[s.3.7y.9]}
+// rule S {CIRCLE{hue 15}9*{r 20 b.05 hue -3}S[s.3.7y.9]}
+// rule S {S{flip 90}}

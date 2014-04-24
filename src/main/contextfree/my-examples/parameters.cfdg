@@ -1,0 +1,16 @@
+// Basically the idea is to recursively change parameter
+// and use it later for shape transformation (in this case alpha).
+//
+// See "Restriction to Preserve Context Free Purity"
+// at http://www.contextfreeart.org/mediawiki/index.php/Parameter
+
+startshape E(10) [h 0 b 1 sat .5]
+CF::Background = [b -1]
+
+// "natural" so that it would be possible to recursively change it
+// (it's not allowed to change "number" parameters)
+shape E(natural n) {
+    SQUARE []
+    // "--" is proper subtraction (i.e. never < 0)
+    E(n--1) [x 1 a -(1/n) s 0.8]
+}

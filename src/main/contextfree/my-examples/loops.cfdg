@@ -27,6 +27,8 @@ shape C {
 
 shape D {
     SQUARE []
-    D [x 1 a -0.3 s 0.8] // note that shape doesn't terminate when it's alpha is 0
+    // note that shape doesn't terminate when its alpha or brightness is 0
+    // (therefor it'll draw "infinite" amount of shapes and they will be too small to see => blank screen)
+    D [x 1 a -0.3 s 0.8]
 }
 
