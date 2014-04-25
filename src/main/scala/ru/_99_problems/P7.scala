@@ -219,8 +219,7 @@ class P7 extends Matchers {
 		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('d', 'a', 'b', 'c'))
 	}
 
-	@Test def
-	`P88 (**) Connected components.`() {
+	@Test def `P88 (**) Connected components.`() {
 		import Graph._
 		fromString("[a-b]").splitGraph should equal(Seq(fromString("[a-b]")))
 		fromString("[a-b, c]").splitGraph should equal(Seq(fromString("[a-b]"), fromString("[c]")))
