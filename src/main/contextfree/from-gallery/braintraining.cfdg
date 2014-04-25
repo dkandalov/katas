@@ -1,33 +1,38 @@
 startshape k
-background {b -0.5}
+CF::Background = [b -0.5]
 
-rule k {
-    k1{s 0.8 x 13 y -87 f 0}
-    k2{}
-}
-
-rule k1 {
-    3*{x (45 - 5*cos(60)) y (-85*sin(60)) r 120 z 0.1} M1{z - 1}
-}
-rule k2 {
-    5*{x -33.33  y (-87-0.2) r 72 z 0.1} M2{z - 1}
+shape k {
+    k1[s 0.8 x 13 y -87 f 0]
+    k2[]
 }
 
-rule M1{
-    F{ x 0  y  0 b 0.2}
-    F{ x (-5 *cos(60)+95) y (-5*sin(60)) b 0.7 r 60 f 90}
+shape k1 {
+    loop 3 [x (45 - 5*cos(60)) y (-85*sin(60)) r 120 z 0.1]
+        M1[z - 1]
 }
-rule M2{
-    F1{ b 0.2}
-    F2{ x 100.15 r -72 b 0.7 }
+shape k2 {
+    loop 5 [x -33.33 y (-87-0.2) r 72 z 0.1]
+        M2[z - 1]
 }
 
-rule F{
-    2000*{x 0.05 z 0.1 b 0.0005} SQUARE{ s 0.1 10 r -30 }
+shape M1 {
+    F[x 0 y 0 b 0.2]
+    F[x (-5*cos(60)+95) y (-5*sin(60)) b 0.7 r 60 f 90]
 }
-rule F1{
-    2000*{x 0.05 z 0.1 b 0.0005} SQUARE{ s 0.1 10 r -18 }
+shape M2 {
+    F1[b 0.2]
+    F2[x 100.15 r -72 b 0.7]
 }
-rule F2{
-    2000*{x 0.05 z 0.1 b 0.0005} SQUARE{ s 0.1 10 r 54 }
+
+shape F {
+    loop 2000 [x 0.05 z 0.1 b 0.0005]
+        SQUARE[s 0.1 10 r -30]
+}
+shape F1 {
+    loop 2000 [x 0.05 z 0.1 b 0.0005]
+        SQUARE[s 0.1 10 r -18]
+}
+shape F2 {
+    loop 2000 [x 0.05 z 0.1 b 0.0005]
+        SQUARE[s 0.1 10 r 54]
 }
