@@ -8,16 +8,16 @@ shape k {
 
 shape k1 {
     loop 3 [x (45 - 5*cos(60)) y (-85*sin(60)) r 120 z 0.1]
-        M1[z - 1]
+        M1[]
 }
 shape k2 {
     loop 5 [x -33.33 y (-87-0.2) r 72 z 0.1]
-        M2[z - 1]
+        M2[]
 }
 
 shape M1 {
     F[x 0 y 0 b 0.2]
-    F[x (-5*cos(60)+95) y (-5*sin(60)) b 0.7 r 60 f 90]
+    F[x (95-5*sin(30)) y (-5*sin(60)) b 0.7 r 60 f 90]
 }
 shape M2 {
     F1[b 0.2]
