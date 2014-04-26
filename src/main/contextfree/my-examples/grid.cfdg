@@ -1,0 +1,22 @@
+startshape grid(10, 1)
+CF::Background = [b -1]
+
+shape grid(natural width, natural tickStep) {
+    lines(width)[]
+    ticks(width, tickStep)[]
+}
+shape ticks(natural amount, natural step) {
+    thikness = 0.01 * (amount / 10)
+    length = 0.2 * step
+    loop amount/step [y step]  SQUARE[b 1 s thikness length r 90]
+    loop amount/step [y -step] SQUARE[b 1 s thikness length r 90]
+    loop amount/step [x step]  SQUARE[b 1 s thikness length]
+    loop amount/step [x -step] SQUARE[b 1 s thikness length]
+}
+shape lines(natural length) {
+    thikness = 0.01 * (length / 10)
+    loop length   [y 1]  SQUARE[b 1 s thikness 1 y 0.5]
+    loop length+1 [y -1] SQUARE[b 1 s thikness 1 y 0.5]
+    loop length   [x 1]  SQUARE[b 1 s 1 thikness x 0.5]
+    loop length+1 [x -1] SQUARE[b 1 s 1 thikness x 0.5]
+}
