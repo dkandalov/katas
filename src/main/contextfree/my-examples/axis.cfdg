@@ -1,7 +1,7 @@
-startshape grid(10, 1)
+startshape axis(10, 1)
 CF::Background = [b -1]
 
-shape grid(natural width, natural tickStep) {
+shape axis(natural width, natural tickStep) {
     lines(width)[]
     ticks(width, tickStep)[]
 }
