@@ -1,0 +1,53 @@
+// from http://www.contextfreeart.org/gallery/view.php?id=859
+import i_pix.cfdg
+CF::Background = [b -0.87 sat 0.31 hue 52]
+ 
+startshape GENERATOR
+ 
+shape GENERATOR {
+    CIRCLE [s 150 alpha -.15 sat .5  b 1]
+    loop 22600 [] punto [h 0 sat .5  r 220]
+}
+
+shape punto
+rule .05 { punto2 [s .3 y -110 b .2] }
+rule { punto [r +.5] }
+rule { punto [r -.5] }
+rule { punto [r +1.1] }
+rule { punto [r -1] }
+rule { punto [r +2.3] }
+rule { punto [r -2] }
+rule { punto [r +4.5] }
+rule { punto [r -4] }
+rule { punto [r +8.7] }
+rule { punto [r -8] }
+rule { punto [r +16.7] }
+rule { punto [r -16] }
+
+shape punto2
+rule .17 {
+    CIRCLE [s 60 alpha -.885]
+    CIRCLE [s 7 alpha -.97  sat -1 b -1]
+    RECTB [s -1.5 r 0 b -.53  alpha -.8 h -40 sat -.1]
+}
+rule { punto2 [y +5] }
+rule { punto2 [y +4] }
+rule { punto2 [y +2] }
+rule { punto2 [y +1] }
+rule { punto2 [y +.5] }
+rule { punto2 [x -5] }
+rule { punto2 [x +4] }
+rule { punto2 [x -2] }
+rule { punto2 [x +3] }
+rule { punto2 [s .99] }
+rule { punto2 [b .1 hue 1] }
+rule { punto2 [b .07 hue -1] }
+rule { punto2 [flip 90] }
+ 
+shape RECTB
+rule {
+    SQUARE []
+    RECTB [s 0.99 y 1 r 1.317 alpha .005 sat -.05 b .05]
+} 
+rule 0.21 { RECTB [flip 90] }
+rule 0.051 { RECTB [s .8] }
