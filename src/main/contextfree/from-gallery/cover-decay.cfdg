@@ -1,5 +1,5 @@
 // http://www.contextfreeart.org/gallery/view.php?id=3427
-startshape Wrap //UYG
+startshape Wrap
 CF::Background = [h 240 sat 1 b -0.9]
 CF::Size = [s 4.2]
 
@@ -12,11 +12,39 @@ shape Wrap {
         CIRCLE [x R() R() R() s 0.005 h H() sat 1 b 1 a -0.5]
 }
 shape Cover (natural i) {
-    Squary (i) [z (i/8) h 240 sat 1 b 0.1 a -0.2]
+    Squary(i) [z (i/8) h 240 sat 1 b 0.1 a -0.2]
     if (i < randint(7, 10)) loop 4 [r 90]
         Cover(i+1) [x 1 1 s 0.495 r (R()/5) z (R()/5)]
 }
 path Squary (natural i) {
-    loop randint(i, 4) [r 90] LINETO(0.6, -0.6)
-        STROKE (0.8, CF::RoundJoin) []
+    loop randint(i, 4) [r 90]
+        LINETO(0.6, -0.6)
+    STROKE (0.8, CF::RoundJoin) []
 }
+
+/*
+Un-randomized version:
+startshape Wrap
+CF::Background = [h 240 sat 1 b -0.9]
+CF::Size = [s 4.2]
+
+R() = rand(-2, 2)
+H() = 50
+
+shape Wrap {
+    Cover(1) []
+    loop 400000 []
+        CIRCLE [x R() R() R() s 0.005 h H() sat 1 b 1 a -0.5]
+}
+shape Cover (natural i) {
+    Squary (i) [z (i/8) h 240 sat 1 b 0.1 a -0.2]
+    if (i < 8) loop 4 [r 90]
+        Cover(i+1) [x 1 1 s 0.5 r (0/5) z (0/5)]
+}
+path Squary (natural i) {
+    loop 4 [r 90] {
+	LINETO(0.6, -0.6)
+    }
+    STROKE (1, CF::RoundJoin) []
+}
+*/
