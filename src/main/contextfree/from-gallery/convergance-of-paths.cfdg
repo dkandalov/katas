@@ -1,42 +1,44 @@
 startshape Start
-background {b  -1}
-tile {s 200}
+CF::Background = [b  -1]
+//tile {s 200}
 
-rule Start{
-    2*{ r 180} ThePath2{ r 90 b 1 h 0  sat  0 z 1}
-    30*{ r 180 z 1} ThePath{ r 90 b 1 h 0 sat 0}
-}
-
-rule ThePath   {
-    Step{}
-    ThePath{r 8 x .9 s .999 z -.1 h .001 b -.001}
-}
-rule ThePath   {
-    Step{}
-    ThePath{r -8 x .9 s .999 z -.1 h .001}
-}
-rule ThePath {
-    Step{}
-    ThePath{x .9 s .999 z -.1 h .001}
-}
-rule Step{
-    SQUARE{s 3 b 1 b -.5 }
-    SQUARE{s 3.1 2  y .1 b 1 }
+shape Start {
+    loop 2 [r 180] ThePath2[r 90 b 1 h 0 sat 0 z 1]
+    loop 30 [r 180 z 1] ThePath[r 90 b 1 h 0 sat 0]
 }
 
-rule ThePath2   {
-    Step2{}
-    ThePath2{r 8 x .9 s .9999 z -.1 h .001 b -.001}
+shape ThePath
+rule {
+    Step[]
+    ThePath [r 8 x 0.9 s 0.999 z -0.1 h 0.001 b -0.001]
 }
-rule ThePath2   {
-    Step2{}
-    ThePath2{r -8 x .9 s .9999 z -.1 h .001}
+rule {
+    Step[]
+    ThePath [r -8 x 0.9 s 0.999 z -0.1 h 0.001]
 }
-rule ThePath2 {
-    Step2{}
-    ThePath2{x .9 s .9999 z -.1 h .001 sat .0005}
+rule {
+    Step[]
+    ThePath [x 0.9 s 0.999 z -0.1 h 0.001]
 }
-rule Step2{
-    CIRCLE{s 3 3  b -.5 }
-    CIRCLE{s 3.2  2  y .08 b 1  }
+shape Step {
+    SQUARE [s 3 b 1 b -.5]
+    SQUARE [s 3.1 2 y 0.1 b 1]
+}
+
+shape ThePath2 
+rule {
+    Step2[]
+    ThePath2 [r 8 x 0.9 s 0.9999 z -0.1 h 0.001 b -0.001]
+}
+rule {
+    Step2[]
+    ThePath2 [r -8 x 0.9 s 0.9999 z -0.1 h 0.001]
+}
+rule {
+    Step2[]
+    ThePath2 [x 0.9 s 0.9999 z -0.1 h 0.001 sat 0.0005]
+}
+shape Step2 {
+    CIRCLE [s 3 3 b -0.5]
+    CIRCLE [s 3.2 2 y 0.08 b 1]
 }
