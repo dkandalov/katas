@@ -1,5 +1,5 @@
 startshape Start
-CF::Background = [b  -1]
+CF::Background = [b -1]
 //tile {s 200}
 
 shape Start {
