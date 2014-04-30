@@ -1,4 +1,4 @@
-startshape SPLIT
+startshape SPLIT [sat 1]
 CF::Background = [b -1]
 
 shape SPLIT {
@@ -6,15 +6,16 @@ shape SPLIT {
     //   The rand_static() functions are converted into a random number when the cfdg file is compiled.
     //   So the value is constant for the entire run, but it is different for each variation.
     //   A rand_static() function inside of a loop has the same value for each iteration of the loop.
-    loop 10 [r 36 h rand_static(0,360)]
-        PROJECT [sat 1]
+    loop 10 [r 36 h rand_static(0, 360)]
+        PROJECT []
 }
 
 shape PROJECT {
-    loop 2 [r 60] ICON []
+    loop 2 [r 60]
+        ICON []
 }
 
 shape ICON {
-    TRIANGLE [s 0.55 r 48]
+    TRIANGLE []
     ICON [s 0.99 b 0.01 r 0.8]
 }
