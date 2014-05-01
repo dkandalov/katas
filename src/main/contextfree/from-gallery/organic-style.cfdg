@@ -1,0 +1,31 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2010
+startshape A
+CF::Background = [b -0.5 sat 0.2 h 30]
+
+shape A {
+    A [s 0.92 r 35]
+    B [a -0.7]
+    B [s 0.97 b 0.95 a -0.2]
+}
+
+shape B {
+    C []
+    C [flip 45]
+}
+
+shape C
+rule {
+    C [s 0.99 y 0.1 r 0.3 h 1]
+    D []
+}
+rule 0.0004 {
+    C []
+    A [s 0.5 sat 0.15 b -0.5]
+}
+
+shape D
+rule { loop 4 [r 80] TRIANGLE [a -0.8 s 5] }
+rule { loop 3 [r 100] TRIANGLE [a -0.8 s 5] }
+rule { D [r -17] }
+rule { CIRCLE [a -0.6 s 6] }
+rule { SQUARE [s 5 2 y -0.4 r 45 a -0.97] }
