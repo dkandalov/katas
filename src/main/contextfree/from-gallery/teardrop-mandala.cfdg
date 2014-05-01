@@ -1,0 +1,15 @@
+// http://www.contextfreeart.org/gallery/view.php?id=1942
+startshape B
+CF::Background = [b -0.85]
+
+shape B {
+    A []
+    A [x 1 h -60]
+    A [s 0.3 h 100 b -0.2]
+    B [s 0.985 r -29.1 x 2]
+}
+
+shape A {
+    loop 75 [y 0.1 s 0.9 r 3] CIRCLE []
+    loop 75 [y 0.1 s 0.9 r 3 b 0.15] CIRCLE [s 0.9 b 0.6 sat 0.8 h 230]
+}
