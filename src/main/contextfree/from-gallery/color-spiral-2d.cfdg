@@ -1,0 +1,19 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2162
+startshape spiral
+CF::Background = [b -1]
+
+shape spiral {
+    loop 2000 [[x -0.025 y 2 z -1 r 41 h 0.75 s 0.9 1.101]]
+        box []
+}
+
+shape box
+rule {
+    loop 50 [[r 4 s 0.975 0.975 b 0.025 sat 0.025]]
+        SQUARE [[rotate 50 size 1.75 0.25 skew 10 10 sat 0.75 b 0.5 h 0 alpha -0.95]]
+}
+
+rule {
+    loop 50 [[r 6 s 0.95 0.95]]
+        SQUARE [[rotate 50 size 1.75 0.25 skew 10 10 sat 1 b 1 h 15 alpha -0.95]]
+}
