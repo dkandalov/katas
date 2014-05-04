@@ -1,0 +1,41 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2937
+startshape spawn
+//tile {s 3}
+
+shape spawn {
+    branch []
+    branch [r 180 y 2]
+}
+
+shape branch
+rule {
+    stem []
+    branch [r 2 s 0.995 b 0.01 sat 0.1 h 1]
+}
+rule 0.041 {
+    stem []
+    branch [r 2 s 0.995 z -0.01]
+    branch [r 2 s 0.995 x -0.01 f 0 y 2 h -1 b -0.05]
+}
+rule 0.05 {
+    branch [r 0 s 0.995 f 0 y 2 h -10 b -0.05 sat -1]
+}
+rule 0.035 {
+    CIRCLE [s 0.35 b 1 y 1 a -0.64]
+    CIRCLE [s 0.29 b 1 y 1 a -0.64]
+    CIRCLE [s 0.12 b 1 y 1 a -0.64]
+    CIRCLE [s 0.04 b -1 y 1 sat -1 h 0 a 1 ]
+    CIRCLE [s 0.08 y 1 a -0.7 b -0.1]
+    hoop [sat -1 b -1 s 0.18  y 1.1265 x -0.1265]
+}
+
+shape stem {
+    CIRCLE [s 0.025 y 1 a -0.2]
+}
+
+// used to create black outside ring
+path hoop {
+    ARCREL(+0.00001, +0.00001, 1, CF::ArcLarge)
+    ARCREL(-0.00001, -0.00001, 1)
+    STROKE(0.06)[]
+}
