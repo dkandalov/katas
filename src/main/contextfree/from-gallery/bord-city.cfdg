@@ -1,0 +1,88 @@
+// http://www.contextfreeart.org/gallery/view.php?id=1435
+startshape START
+background { hue 260 b -0.8 sat 0.6}
+
+rule START {
+    BOXEN { hue + 190 sat 0.2 }
+}
+
+rule BOXEN 9 {
+    BOXEN { hue 222 }
+}
+rule BOXEN {
+    BOX {s 3 3 3}
+    X {x 4  }
+    X_ {x -4  }
+    Y {y 4 b 0.2 hue +30 }
+    Y_ {y -4 }
+    Z {x -1 y -1 z 4}
+    Z_ {x 1 y 1 z -4}
+}
+
+rule X 2 { BOX{} X {x 2 hue 10} }
+rule X 1 { BOX{} TURN {x 2} }
+
+rule X_ 2 { BOX{} X_ {x -2 hue -10} }
+rule X_ 1 { BOX{} TURN {x -2} }
+
+rule Y 8 { BOX{} Y{ y 2 } }
+rule Y { BOX{} TURN{ y 2 } }
+
+rule Y_ { BOX{} Y_{ y -2 } }
+rule Y_ 2 { BOX{} TURN{ y -2 } }
+
+rule Z { BOX{} Z{ x -0.5 y -0.5 z 2 hue +20 } }
+rule Z { BOX{} TURN{ x -0.5 y -0.5 z 2 } }
+
+rule Z_ { BOX{} Z_{ x 0.5 y 0.5 z -2 hue -20 } }
+rule Z_ { BOX {} TURN{ x 0.5 y 0.5 z -2  } }
+
+rule TURN 15 { BOXEN { s 0.33333 0.33333 0.33333 } }
+rule TURN { X {} }
+rule TURN { X_ {} }
+rule TURN 2 { Y { sat +0.1 } }
+rule TURN { Y_ {} }
+rule TURN { Z {} }
+rule TURN { Z_ {} }
+rule TURN 0.5 { TURN {} TURN {} }
+rule TURN 0.1 { BOXEN { s 3 3 3 sat -0.5 } }
+
+rule BOX { // a basic cube with textured face.  Texture is staggered in z-direction.
+    BSQ [ b 0.5  x -0.25 y -0.25 z 1 s 1 1 0.00001 ]
+    BSQ [  b 0.2 x 1 skew 0 45  s 0.25 1   ]
+    BSQ [  b 0.8 sat -0.5 r 90 x 1 skew 0 -45 s 0.25 1 ]
+    BLACKMIST { s 10  z -0.5 }
+    GLOW { s 5  z 3 }
+}
+
+// faces of box
+rule BSQ{ // bordered textured square, in cube [-1,1] x [-1,1] x  [-1,1]
+    SQ { s 1.8 1.8 1.8 x -0.9 y -0.9 z -0.9 b -0.4 }
+    SQ { s 0.1 2 0.1 x -1 y -1 z 0.9  b 0.6 }  // left
+    SQ { s 0.1 2 0.1 x 0.9 y -1  z -1  b 0.6 } // right
+    SQ { s 2 0.1 2 x -1 y -1 z -1 b 0.6 } // bot
+    SQ { s 2 0.1 2 x -1 y 0.9 z -0.9 b 0.6 } // top
+}
+
+rule SQ { // textured square
+    A { s 0.5 0.5 0.5 }
+    SQUARE { x 0.5 y 0.5 a -0.5  }
+}
+rule SQ { SQ {b +0.05 }}
+rule SQ { SQ {b -0.05 }}
+rule SQ 0.05 { SQ {b + 0.5 }}
+
+rule A { B { z 1 } B { x 1  }  }
+rule B { SQ {} SQ {y 1 } }
+
+// mist and glow to add illusion of depth
+rule BLACKMIST { MIST { a -0.99  } }
+rule BLACKMIST 5 {  }
+rule GLOW { MIST { a -0.95  b 1 sat -0.5 } }
+rule GLOW { GLOW {  s 0.7 } }
+rule GLOW 3 {}
+
+rule MIST { CIRCLE {} MIST {s 0.9 z 0.02} }
+rule MIST 0.5 { MIST {s 0.7 x 0.2} MIST {s 0.7 x -0.2} }
+rule MIST 2 { MIST {r 50}}
+rule MIST 0.02 {}
