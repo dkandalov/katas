@@ -4,11 +4,13 @@ CF::Background = [hue 260 b -0.8 sat 0.6]
 
 
 shape START {
-    BOXEN [hue + 190 sat 0.2]
+    BOXEN [hue 190 sat 0.2]
 }
 
 shape BOXEN
-rule 9 { BOXEN [hue 222] }
+rule 9 {
+    BOXEN [hue 222]
+}
 rule {
     BOX [s 3 3 3]
     X [x 4]
@@ -22,7 +24,6 @@ rule {
 shape X
 rule 2 { BOX[] X [x 2 hue 10] }
 rule 1 { BOX[] TURN [x 2] }
-
 shape X_
 rule 2 { BOX[] X_ [x -2 hue -10] }
 rule 1 { BOX[] TURN [x -2] }
@@ -30,7 +31,6 @@ rule 1 { BOX[] TURN [x -2] }
 shape Y
 rule 8 { BOX[] Y [y 2] }
 rule { BOX[] TURN [y 2] }
-
 shape Y_
 rule { BOX[] Y_ [y -2] }
 rule 2 { BOX[] TURN [y -2] }
@@ -38,7 +38,6 @@ rule 2 { BOX[] TURN [y -2] }
 shape Z
 rule { BOX[] Z [x -0.5 y -0.5 z 2 hue +20] }
 rule { BOX[] TURN [x -0.5 y -0.5 z 2] }
-
 shape Z_
 rule { BOX[] Z_ [x 0.5 y 0.5 z -2 hue -20] }
 rule { BOX[] TURN [x 0.5 y 0.5 z -2] }
@@ -54,16 +53,18 @@ rule { Z_ [] }
 rule 0.5 { TURN [] TURN [] }
 rule 0.1 { BOXEN [s 3 3 3 sat -0.5] }
 
-shape BOX { // a basic cube with textured face.  Texture is staggered in z-direction.
-    BSQ [b 0.5  x -0.25 y -0.25 z 1 s 1 1 0.00001]
-    BSQ [b 0.2 x 1 skew 0 45  s 0.25 1]
-    BSQ [b 0.8 sat -0.5 r 90 x 1 skew 0 -45 s 0.25 1]
+// a basic cube with textured face.  Texture is staggered in z-direction.
+shape BOX {
+    BSQ [[b 0.5  x -0.25 y -0.25 z 1 s 1 1 0.00001]]
+    BSQ [[b 0.2 x 1 skew 0 45  s 0.25 1]]
+    BSQ [[b 0.8 sat -0.5 r 90 x 1 skew 0 -45 s 0.25 1]]
     BLACKMIST [s 10  z -0.5]
     GLOW [s 5  z 3]
 }
 
 // faces of box
-shape BSQ { // bordered textured square, in cube [-1,1] x [-1,1] x  [-1,1]
+// bordered textured square, in cube [-1,1] x [-1,1] x [-1,1]
+shape BSQ {
     SQ [s 1.8 1.8 1.8 x -0.9 y -0.9 z -0.9 b -0.4]
     SQ [s 0.1 2 0.1 x -1 y -1 z 0.9  b 0.6]  // left
     SQ [s 0.1 2 0.1 x 0.9 y -1  z -1  b 0.6] // right
@@ -82,6 +83,7 @@ rule 0.05 { SQ [b + 0.5] }
 
 shape A { B [z 1] B [x 1] }
 shape B { SQ [] SQ [y 1] }
+
 
 // mist and glow to add illusion of depth
 shape BLACKMIST
