@@ -1,0 +1,259 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2810
+startshape begin
+
+// bcy
+CF::Impure=1
+CF::Size = [s 3 x -.3 ]
+CF::ColorDepth = 16
+CF::Background = [b -.65 sat -1]
+
+
+shape plot(number px, number py, number pz) {
+    CIRCLE [s sqrt(abs(rand(-0,300)))  y (-pz*20 - 10) b -1 a-.999387980675] // a sort of shadow
+    CIRCLE [s 1 ]
+}
+
+shape DDD(
+    number ax, number ay, number az,  // sistema di riferimento
+    number bx, number by, number bz,
+    number cx, number cy, number cz,
+    number ra, number rb, number rc, // rotazioni
+    number ss, number mov, number iter
+    // scala, movimento e controllo iterazioni // posizione  memorizzata nelle variabili interne x, y, z
+)
+
+rule {
+    //-------------------------------------------------------------------------------------------
+    // CALCULATIONS BELOW
+    //-------------------------------------------------------------------------------------------
+
+    // Normalizing axixs to avoid error (a shape got too big)
+
+    va = sqrt(ax*ax + ay*ay + az*az)
+    ax = ax/va
+    ay = ay/va
+    az = az/va
+
+    vb = sqrt(bx*bx + by*by + bz*bz)
+    bx = bx/vb
+    by = by/vb
+    bz = bz/vb
+
+    vc = sqrt(cx*cx + cy*cy + cz*cz)
+    cx = cx/vc
+    cy = cy/vc
+    cz = cz/vc
+
+    // rotate against axis  "A"
+    cos2=cos(ra/2)
+    sin2=sin(ra/2)
+
+    qw=cos2
+    qx=ax*sin2
+    qy=ay*sin2
+    qz=az*sin2
+
+    // rotate B axis --------------------------------------------------------------
+    p1x=bx
+    p1y=by
+    p1z=bz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    bx=p2x
+    by=p2y
+    bz=p2z
+
+
+    // rotate C axis --------------------------------------------------------------
+    p1x=cx
+    p1y=cy
+    p1z=cz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    cx=p2x
+    cy=p2y
+    cz=p2z
+
+    //-------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------
+    // rotate against axis  "B"
+
+    cos2=cos(rb/2)
+    sin2=sin(rb/2)
+
+    qw=cos2
+    qx=bx*sin2
+    qy=by*sin2
+    qz=bz*sin2
+
+    // rotate A axis --------------------------------------------------------------
+    p1x=ax
+    p1y=ay
+    p1z=az
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    ax=p2x
+    ay=p2y
+    az=p2z
+
+
+    // rotate C axis --------------------------------------------------------------
+    p1x=cx
+    p1y=cy
+    p1z=cz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    cx=p2x
+    cy=p2y
+    cz=p2z
+
+    //-------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------
+    // rotate against axis  "C"
+
+    cos2=cos(rc/2)
+    sin2=sin(rc/2)
+
+    qw=cos2
+    qx=cx*sin2
+    qy=cy*sin2
+    qz=cz*sin2
+
+    // rotate A axis --------------------------------------------------------------
+    p1x=ax
+    p1y=ay
+    p1z=az
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    ax=p2x
+    ay=p2y
+    az=p2z
+
+
+    // rotate B axis --------------------------------------------------------------
+    p1x=bx
+    p1y=by
+    p1z=bz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    bx=p2x
+    by=p2y
+    bz=p2z
+
+    //-------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------
+
+    //-------------------------------------------------------------------------------------------
+    // rotate against axis  "C"  ELEMENTO CHILD
+
+    rchild=rand_static(180)
+
+    cos2=cos(rchild/2)
+    sin2=sin(rchild/2)
+
+    qw=cos2
+    qx=cx*sin2
+    qy=cy*sin2
+    qz=cz*sin2
+
+    // NEW A axis --------------------------------------------------------------
+    p1x=ax
+    p1y=ay
+    p1z=az
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    cax=p2x
+    cay=p2y
+    caz=p2z
+
+    // NEW B axis --------------------------------------------------------------
+    p1x=bx
+    p1y=by
+    p1z=bz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    cbx=p2x
+    cby=p2y
+    cbz=p2z
+
+    //-------------------------------------------------------------------------------------------
+
+
+    if (iter<10)
+    plot(cx, cy, cz)[]
+
+
+    rapp=1
+    if (iter>0)
+    {
+        DDD(ax, ay, az,  bx, by, bz,  cx, cy, cz, ra, rb, rc, ss, mov, iter-1)[x (ax*mov) y (ay*mov) z (az*mov) s (ss) h -1 b .0425 sat .021121]
+        DDD(cax, cay, caz,  cbx, cby, cbz,  cx, cy, cz, -ra, rb, rc, ss, mov, iter-rapp)[x (cax*mov*rapp) y (cay*mov*rapp) z (caz*mov*rapp) s (ss/rapp) h 2 b .0925 sat -.118121]
+    }
+}
+
+
+shape begin {
+    // 3D REFERENCE SYSTEM
+    ax=0
+    ay=1
+    az=0
+
+    bx=1
+    by=0
+    bz=0
+
+    cx=0
+    cy=0
+    cz=1
+
+    //-------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------
+    // rotate against axis  "B"  (set the viewpoint)
+
+    rb = 90
+
+    cos2=cos(rb/2)
+    sin2=sin(rb/2)
+    qw=cos2
+    qx=bx*sin2
+    qy=by*sin2
+    qz=bz*sin2
+
+    // rotate A axis --------------------------------------------------------------
+    p1x=ax
+    p1y=ay
+    p1z=az
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    ax=p2x
+    ay=p2y
+    az=p2z
+
+    // rotate C axis --------------------------------------------------------------
+    p1x=cx
+    p1y=cy
+    p1z=cz
+    p2x = qw*qw*p1x    + 2*qy*qw*p1z  - 2*qz*qw*p1y   + qx*qx*p1x     + 2*qy*qx*p1y    + 2*qz*qx*p1z   - qz*qz*p1x - qy*qy*p1x
+    p2y = 2*qx*qy*p1x  + qy*qy*p1y    + 2*qz*qy*p1z   + 2*qw*qz*p1x   - qz*qz*p1y      + qw*qw*p1y     - 2*qx*qw*p1z - qx*qx*p1y
+    p2z = 2*qx*qz*p1x  + 2*qy*qz*p1y  + qz*qz*p1z     - 2*qw*qy*p1x   - qy*qy*p1z      + 2*qw*qx*p1y   - qx*qx*p1z + qw*qw*p1z
+    cx=p2x
+    cy=p2y
+    cz=p2z
+    //-------------------------------------------------------------------------------------------
+
+
+    DDD(ax, ay, az, bx, by, bz, cx, cy, cz, rand_static(360), 0, 0, .75, .50765033, 18)[b -1 sat .5 a 1]
+    // faster previews:
+    //DDD(ax, ay, az, bx, by, bz, cx, cy, cz, rand_static(360), 0, 0, .75, .50765033, 14)[b -1 sat .5 a 1]
+}
