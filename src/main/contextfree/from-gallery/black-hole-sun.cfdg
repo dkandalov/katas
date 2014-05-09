@@ -1,6 +1,7 @@
 // http://www.contextfreeart.org/gallery/view.php?id=2967
 CF::Background = [hue 50 b -0.15 saturation 0.12]
-CF::Size = [s 3840 2160 x 300 y -100] // center on (-xpos, -ypos)
+// for some reason it doesn't draw anything with original view width/height
+CF::Size = [s 3000 1600 x 300 y -100] // center on (-xpos, -ypos)
 CF::MaxNatural = 100000
 
 startshape STARTER
