@@ -1,0 +1,27 @@
+startshape trunk
+//CF::Tile = [s 300]
+
+shape trunk { branch [s 0.5 b 0 h 20 sat 0] }
+
+shape branch
+rule { branch [r -10] }
+rule 0.01 { line [] }
+
+shape line { loop 300 [r 0.1 x 1] dot [] }
+
+shape dot
+rule { dot [y 0.1]  }
+rule { trail [r 90] trail [] }
+rule 0.002 { line [r 90 h 0] }
+rule 0.002 { branch [r 90 h 30] }
+
+shape trail { loop 200 [y 2 a -0.02] grain [] }
+
+shape grain { gr [] }
+
+shape gr
+rule { gr [y 0] }
+rule { gr [x -10] }
+rule { gr [y -0] }
+rule { gr [x -0] }
+rule { SQUARE [] }
