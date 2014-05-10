@@ -1,0 +1,61 @@
+// http://www.contextfreeart.org/gallery/view.php?id=904
+startshape START
+
+rule START {
+    KRSS[z -100 s 6]
+    A[hue 30]
+    PF[y -3 s 0.7 z -200 y 12 x 2]
+}
+
+rule A {
+    BG[]
+    CIRCLE[b 1 sat 1]
+    A[r 90 x 1 s 0.99 hue 0.2]
+}
+rule A {
+    BG[]
+    CIRCLE[b 1 sat 1]
+    A[r -90 x 1]
+}
+
+rule BG {
+    CIRCLE[z -3 s 3.5]
+    CIRCLE[z -2 b 1 sat 0 s 3]
+    CIRCLE[z -1 s 1.5]
+}
+
+rule PF {
+    50*[r 10] PFE[]
+}
+rule PFE {
+    CIRCLE[]
+    PFE[x .1 s 0.995]
+}
+
+rule KRSS { 20*[r 10] KRS[] }
+
+rule KRS {
+    KR[]
+    KRS[s 0.9 x 0.6 r 45 z -1]
+}
+rule KRS {
+    KR[]
+    KRS[s 0.9 x 0.6 r -45 z -1]
+}
+rule KRS {}
+
+rule KR {
+    CIRCLE[]
+    KREIS[b 1 s 0.9]
+}
+
+rule KREIS {
+    CIRCLE[]
+    KREISR[]
+}
+
+rule KREISR 10 { KREIS[z 1 s 0.9 b -1] }
+rule KREISR 9 { KREIS[z 1 s 0.8 b 1] }
+rule KREISR 7 { KREIS[z 1 s 0.6 b -1] }
+rule KREISR 4 { KREIS[z 1 s 0.5 b 1] }
+rule KREISR 2 { KREIS[z 1 s 0.3 b -1] }
