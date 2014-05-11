@@ -1,62 +1,60 @@
 // http://www.contextfreeart.org/gallery/view.php?id=2370
 startshape START
-size {
-    s 100 60
-    x 0
-    y 0
+CF::Size = [s 100 60 x 0 y 0]
+
+shape START {
+    LAYERS [b 0.9]
 }
 
-rule START {
-    LAYERS {b 0.9}
+shape LAYERS {
+    loop 10 [z+10 b -0.20 y-4 s 1.2]
+        LAYER [s 3 y+2]
 }
 
-rule LAYERS {
-    10*{z+10 b-0.20 y-4 s 1.2}
-    LAYER {s 3 y+2}
+shape LAYER {
+    loop 36 [x+1] LAYER_BLOCK [x-17.5]
+    loop 35 [x+1] LAYER_BLOCK [x-17 y-1]
 }
 
-rule LAYER {
-    36*{x+1} LAYER_BLOCK {x-17.5}
-    35*{x+1} LAYER_BLOCK {x-17 y-1}
+shape LAYER_BLOCK
+rule 6{ LAYER_BLOCK [r 2] }
+rule 6{ LAYER_BLOCK [r -2] }
+rule 0.5 { LAYER_BLOCK [s 1.2] }
+rule { LAYER_BLOCK [s 0.9] }
+rule 3 { LAYER_BLOCK [y-0.25] }
+rule 3 { LAYER_BLOCK [y+0.25] }
+rule { SQUARE [s 1.5 3] }
+rule 0.1 {
+    SQUARE  [s 1.5 3]
+    MONSTER [y+1.5 s 0.1]
 }
 
-rule LAYER_BLOCK 6{LAYER_BLOCK{r 2}}
-rule LAYER_BLOCK 6{LAYER_BLOCK{r -2}}
-rule LAYER_BLOCK 0.5 {LAYER_BLOCK{s 1.2}}
-rule LAYER_BLOCK {LAYER_BLOCK{s 0.9}}
-rule LAYER_BLOCK 3{LAYER_BLOCK{y-0.25}}
-rule LAYER_BLOCK 3{LAYER_BLOCK{y+0.25}}
+shape MONSTER { loop 5 [r+12] TENTACLE [r-24] }
 
-rule LAYER_BLOCK {SQUARE {s 1.5 3}}
-rule LAYER_BLOCK 0.1{
-    SQUARE  {s 1.5 3}
-    MONSTER {y+1.5s 0.1}
+shape TENTACLE
+rule { TENTACLE_X [] }
+rule { TENTACLE_Y [] }
+rule { TENTACLE [s 0.9] }
+rule { TENTACLE [s 1.5] }
+
+
+shape TENTACLE_NODE {
+    CIRCLE [y+1 z 2]
+    SQUARE [y+0.5]
+    CIRCLE [y+0.5 s 0.5 x+0.5]
 }
 
-rule MONSTER {5*{r+12} TENTACLE{r-24}}
-
-rule TENTACLE{TENTACLE_X{}}
-rule TENTACLE{TENTACLE_Y{}}
-rule TENTACLE{TENTACLE{s 0.9}}
-rule TENTACLE{TENTACLE{s 1.5}}
-
-
-rule TENTACLE_NODE{
-    CIRCLE{y+1 z 2}
-    SQUARE{y+0.5}
-    CIRCLE{y+0.5 s 0.5 x+0.5}
+shape TENTACLE_X
+rule 5 {
+    TENTACLE_NODE []
+    TENTACLE_Y [y+1 s 0.95 r 12 f 90]
 }
+rule { TENTACLE_Y [] }
 
-rule TENTACLE_X 5 {
-    TENTACLE_NODE{}
-    TENTACLE_Y{y+1 s 0.95 r 12 f 90}
+shape TENTACLE_Y
+rule 5 {
+    TENTACLE_NODE []
+    TENTACLE_X [y+1 s 0.95 r -12 f 90]
 }
-
-rule TENTACLE_Y 5 {
-    TENTACLE_NODE{}
-    TENTACLE_X{y+1 s 0.95 r -12 f 90}
-}
-
-rule TENTACLE_X {	TENTACLE_Y{}}
-rule TENTACLE_Y {	TENTACLE_X{}}
+rule { TENTACLE_X [] }
 
