@@ -1,0 +1,153 @@
+// http://www.contextfreeart.org/gallery/view.php?id=3156
+
+/////////////////////////////////////////////////////
+// Use "Render to size" menu where size like
+// defined bellow
+/////////////////////////////////////////////////////
+WIDTH = 800
+HEIGHT = 600
+
+// set STEP=0.5 for high quality rendering
+STEP = 2
+DOTSIZE = STEP
+
+CF::Background = [b -0.9]
+CF::Size = [s WIDTH HEIGHT x (-WIDTH/2) y (-HEIGHT/2) ]
+CF::ColorDepth = 16
+
+// can be used for animation
+rotation = 18
+
+eps = 0.05
+MAX_DEPTH = 25.0
+
+startshape Main shape Main
+{
+  loop Y=(0, HEIGHT, STEP) []
+  loop X=(0, WIDTH, STEP) []
+  {
+    // Scene animation
+    prp = sin(rotation)*8.0, 4, cos(rotation)*8.0
+
+    // Camera setup
+    vuv = 0, 1, 0 // camera up vector
+    vrp = 0, 0, 0 // camera view
+    vpn = normalize3(sub3(vrp, prp))
+    u = normalize3(cross3(vuv, vpn))
+    v = cross3(vpn, u)
+    vcv = add3(prp, vpn)
+
+    xy = (2*X-WIDTH)/HEIGHT, 2*Y/HEIGHT-1
+    scrCoord = add3(
+      add3(vcv, mul3k(u, xy[0])),
+      mul3k(v, xy[1])
+    )
+
+    scp = normalize3(sub3(scrCoord, prp))
+    result = Raymarching(0, 0.1, 0.1, prp, scp)
+    f1 = result[4]
+
+    if(f1<MAX_DEPTH) {
+      p1 = result[0], result[1], result[2]
+      s1 = result[3]
+
+      n = normalize3(
+        (s1-scene((p1[0]-eps, p1[1], p1[2])),
+         s1-scene((p1[0], p1[1]-eps, p1[2])),
+         s1-scene((p1[0], p1[1], p1[2]-eps))))
+
+      bl = dot3(n, normalize3(sub3(prp, p1)))
+      blp = ((bl^8)*0.3 + (bl^48)*0.2)
+
+      K1 = (1.0-f1*0.05)
+      blk = bl * K1
+      blpk = blp * K1
+
+      rgb0 = (0.2*blk+blpk, 0.6*blk+blpk, 0.8*blk+blpk)
+
+      rgb1 = mul3k((0.99, 0.6, 0.2), 2/f1)
+      rgb = add3(
+        mul3k(add3(rgb0, rgb1), 0.7),
+        (0.1, 0.1, 0.1)
+      )
+
+      Point(X, Y, rgb[0], rgb[1], rgb[2]) []
+    }
+  }
+}
+
+number sphere(vector3 v) =
+  length3(v)-6.
+
+rsin(radian) =
+  sin(radian*180/3.14159265)
+
+number displacement(vector3 pv) =
+    rsin(pv[0])*rsin(pv[1])*rsin(pv[2])
+
+number scene(vector3 pv) =
+  sphere(pv) + displacement(mul3k(pv, 2.0))*0.4
+
+vector5 Raymarching(natural i, number s0, number f0, vector3 prp, vector3 scp) = let
+(
+  f1=f0+s0;
+  p1=add3(prp, mul3k(scp, f1));
+  s1=scene(p1);
+
+  if(i==40, (p1[0], p1[1], p1[2], s1, f1),
+  if(f1>MAX_DEPTH, (0, 0, 0, 0, f1),
+  if(abs(s1)<.001, (p1[0], p1[1], p1[2], s1, f1),
+    Raymarching(i+1, s1, f1, prp, scp)
+  )))
+)
+
+shape Point(X, Y, R, G, B) {
+  hsv = HSV(R, G, B)
+  SQUARE[s DOTSIZE x X y Y h hsv[0] sat hsv[1] b hsv[2]]
+}
+
+cut(A) =
+  if(A>1, 1, if(A<0, 0, A))
+
+vector3 HSV(R0, G0, B0) = let(
+  R=cut(R0);
+  G=cut(G0);
+  B=cut(B0);
+  V=max(R,G,B);
+  if(V==0,(0,0,0),let(VT=V-min(R,G,B);
+  if(VT==0,(0,0,V),let(S=VT/V;K=60/VT;
+  if(R==V,(000+K*(G-B),S,V),
+  if(G==V,(120+K*(B-R),S,V),
+          (240+K*(R-G),S,V)
+  ))))))
+)
+
+////////////////////////////////////////////////
+// Small vector library
+////////////////////////////////////////////////
+
+vector3 mul3k(vector3 v, number k) =
+  (v[0]*k, v[1]*k, v[2]*k)
+
+vector3 cross3(vector3 vx, vector3 vy) =
+  (vx[1]*vy[2]-vy[1]*vx[2],
+   vx[2]*vy[0]-vy[2]*vx[0],
+   vx[0]*vy[1]-vy[0]*vx[1])
+
+number length3(vector3 v) =
+  sqrt(v[0]^2+v[1]^2+v[2]^2)
+
+vector3 add3(vector3 v1, vector3 v2) =
+  (v1[0]+v2[0], v1[1]+v2[1], v1[2]+v2[2])
+
+vector3 sub3(vector3 v1, vector3 v2) =
+  (v1[0]-v2[0], v1[1]-v2[1], v1[2]-v2[2])
+
+vector3 neg3(vector3 pv) =
+  sub3((0, 0, 0), pv)
+
+vector3 normalize3(vector3 v) =
+  mul3k(v, (1/length3(v)))
+
+number dot3(vector3 vx, vector3 vy)=
+  (vx[0]*vy[0]+vx[1]*vy[1]+vx[2]*vy[2])
