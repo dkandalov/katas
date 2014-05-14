@@ -1,0 +1,48 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2373
+startshape begin
+
+//tile { s 400 }
+
+shape begin { sixteensome [h 180 sat 0.5 b 1] }
+
+shape sixteensome {
+  foursome [h   0              ]
+  foursome [h  22 x  200       ]
+  foursome [h  44 x  200 y -200]
+  foursome [h  66        y -200]
+}
+
+shape foursome {
+  tessellator3D [h  0 x -85 y  -15 r  90]
+  tessellator3D [h 11 x  15 y  -85 r 270]
+  tessellator3D [h 22                   ]
+  tessellator3D [h 33 x -70 y -100 r 180]
+}
+
+shape tessellator3D {
+  tessellator []
+  tessellator3D [s 0.99 b -0.01 z -1]
+}
+
+path tessellator {
+  MOVETO(-35,  50)
+  LINETO(-35,  20)
+  LINETO(-85,  30)
+  LINETO(-95, -30)
+  LINETO(-65, -20)
+  LINETO(-35, -50)
+  LINETO( -5, -20)
+  LINETO(-15,  10)
+  LINETO( 45,   0)
+  LINETO( 35, -50)
+  LINETO( 65, -50)
+  LINETO( 95, -10)
+  LINETO( 85,  20)
+  LINETO( 95,  30)
+  LINETO( 65,  50)
+  LINETO( 45,  20)
+  LINETO( 35,  30)
+  LINETO(  5,  20)
+  CLOSEPOLY()
+  STROKE(2)[]
+}
