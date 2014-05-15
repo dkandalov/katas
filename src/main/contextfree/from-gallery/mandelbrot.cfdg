@@ -1,0 +1,41 @@
+// http://www.contextfreeart.org/gallery/view.php?id=2938
+startshape r1[b 1 a 1 sat 1]
+
+CF::Background = [b -1]
+CF::Impure = 1
+CF::MinimumSize = 0.000001
+
+sqr(n) = n * n
+
+widthpix = 500
+maxdepth = 100
+huech = 360/maxdepth
+
+xStart = -1.5
+xEnd = 0.5
+yStart = -0.9
+yEnd = 0.9
+step = (xEnd-xStart) / widthpix
+
+shape r1 {
+    loop lcx = xStart, xEnd, step [x step] {
+        loop lcy = yStart, yEnd, step [y step]{
+            iterate(0, 0, 0, lcx, lcy)[s step]
+        }
+    }
+}
+
+shape iterate(number depth, number zr, number zi, number cr, number ci) {
+    if (depth < maxdepth) {
+        z2r = cr + sqr(zr) - sqr(zi)
+        z2i = ci + 2*(zr * zi)
+
+        distsq = abs(z2r) + abs(z2i)
+        if (distsq > 4) {
+            color = mod(depth, 360) * huech
+            SQUARE [h 1 color]
+        } else {
+             iterate(depth+1, z2r, z2i, cr, ci)[]
+        }
+    }
+}
