@@ -1,0 +1,30 @@
+startshape PLANT
+
+CF::Background = [b -0.3]
+CF::Tile = [s 50]
+
+shape PLANT {
+    EITHER []
+    EITHER [r 180]
+}
+
+shape EITHER
+rule { BL [] }
+rule { BL [flip 90] }
+
+shape BL {
+    CIRCLE [s 1 1.7]
+    WL [size 0.9745 y 1.6]
+//	WL [size 0.967 y 1.6]
+}
+
+shape WL
+rule 10 { BL [rotate 3..7] }
+rule { BOTH [] }
+rule { BL [rotate -10 flip 90] }
+
+shape BOTH {
+    BL [rotate 30 b 0.05 z -0.01]
+    BL [rotate -30 flip 90 b 0.05 z -0.01]
+    CIRCLE [s 1.7 1]
+}

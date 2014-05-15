@@ -1,7 +1,7 @@
 // http://www.contextfreeart.org/gallery/view.php?id=2373
 startshape begin
 
-//tile { s 400 }
+CF::Tile = [s 400]
 
 shape begin { sixteensome [h 180 sat 0.5 b 1] }
 
