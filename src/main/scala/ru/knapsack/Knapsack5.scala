@@ -29,24 +29,27 @@ class Knapsack5 extends Matchers {
 	private var maxPackByCapacity = Map[Int, Seq[ItemType]]()
 
 	private def pack(itemTypes: Seq[ItemType], capacity: Int): Seq[ItemType] = {
+		doPack(itemTypes, capacity).getOrElse(Seq())
+	}
+
+	private def doPack(itemTypes: Seq[ItemType], capacity: Int): Option[Seq[ItemType]] = {
+		if (capacity < 0) return None
+
 		if (maxPackByCapacity.contains(capacity)) {
-			return maxPackByCapacity(capacity)
+			return Some(maxPackByCapacity(capacity))
 		}
 
-		var maxValue = 0
-		var maxPack = Seq[ItemType]()
+		val subPacks = itemTypes.map{ itemType => doPack(itemTypes, capacity - itemType.size) }
+		val maxItemAndPack = itemTypes.zip(subPacks).maxBy{ it => it._1.value + valueOf(it._2) }
 
-		for (itemType <- itemTypes) {
-			if (capacity - itemType.size >= 0) {
-				val aPack = itemType +: pack(itemTypes, capacity - itemType.size)
-				val value = aPack.map(_.value).sum
-				if (maxValue < value) {
-					maxValue = value
-					maxPack = aPack
-				}
-			}
-		}
-		maxPackByCapacity = maxPackByCapacity.updated(capacity, maxPack)
-		maxPack
+		if (!maxItemAndPack._2.isDefined) return None
+
+		maxPackByCapacity = maxPackByCapacity.updated(capacity, maxItemAndPack._1 +: maxItemAndPack._2.get)
+		Some(maxItemAndPack._2.get)
+	}
+
+	private def valueOf(maybePack: Option[Seq[ItemType]]): Int = maybePack match {
+		case Some(aPack) => aPack.map (_.value).sum
+		case None => Int.MinValue
 	}
 }
