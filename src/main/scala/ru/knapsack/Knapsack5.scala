@@ -26,7 +26,13 @@ class Knapsack5 extends Matchers {
 
 	private case class ItemType(size: Int, value: Int)
 
+	private var maxPackByCapacity = Map[Int, Seq[ItemType]]()
+
 	private def pack(itemTypes: Seq[ItemType], capacity: Int): Seq[ItemType] = {
+		if (maxPackByCapacity.contains(capacity)) {
+			return maxPackByCapacity(capacity)
+		}
+
 		var maxValue = 0
 		var maxPack = Seq[ItemType]()
 
@@ -40,6 +46,7 @@ class Knapsack5 extends Matchers {
 				}
 			}
 		}
+		maxPackByCapacity = maxPackByCapacity.updated(capacity, maxPack)
 		maxPack
 	}
 }
