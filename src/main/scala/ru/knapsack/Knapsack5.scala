@@ -5,8 +5,13 @@ import org.junit.Test
 
 
 class Knapsack5 extends Matchers {
-	@Test def `don't pack item which doesn't fit`() {
+	@Test def `don't pack one item which doesn't fit`() {
 		pack(Seq(ItemType(size = 2, 1)), capacity = 1) should equal(Seq())
+	}
+
+	@Test def `pack one item which fits`() {
+		val a = ItemType(1, value = 1)
+		pack(Seq(a), 1) should equal(Seq(a))
 	}
 
 	@Test def `pack item which is more valuable`() {
@@ -26,30 +31,30 @@ class Knapsack5 extends Matchers {
 
 	private case class ItemType(size: Int, value: Int)
 
-	private var maxPackByCapacity = Map[Int, Seq[ItemType]]()
+	private abstract class Pack {
+		def items: Seq[ItemType]
+		def withItem(item: ItemType): Pack
+		def value(): Int = items.map(_.value).sum
+	}
+	private case class APack(items: Seq[ItemType] = Seq()) extends Pack {
+		override def withItem(item: ItemType) = APack(item +: items)
+	}
+	private case class OverloadedPack() extends Pack() {
+		override def items = Seq()
+		override def withItem(item: ItemType) = this
+	}
 
 	private def pack(itemTypes: Seq[ItemType], capacity: Int): Seq[ItemType] = {
-		doPack(itemTypes, capacity).getOrElse(Seq())
+		doPack(itemTypes, capacity).items
 	}
 
-	private def doPack(itemTypes: Seq[ItemType], capacity: Int): Option[Seq[ItemType]] = {
-		if (capacity < 0) return None
+	private def doPack(itemTypes: Seq[ItemType], capacity: Int): Pack = {
+		if (capacity < 0) return OverloadedPack()
 
-		if (maxPackByCapacity.contains(capacity)) {
-			return Some(maxPackByCapacity(capacity))
-		}
+		val packs = itemTypes
+				.map{ itemType => doPack(itemTypes, capacity - itemType.size).withItem(itemType) }
+				.map{ pack => if (pack == OverloadedPack()) APack() else pack }
 
-		val subPacks = itemTypes.map{ itemType => doPack(itemTypes, capacity - itemType.size) }
-		val maxItemAndPack = itemTypes.zip(subPacks).maxBy{ it => it._1.value + valueOf(it._2) }
-
-		if (!maxItemAndPack._2.isDefined) return None
-
-		maxPackByCapacity = maxPackByCapacity.updated(capacity, maxItemAndPack._1 +: maxItemAndPack._2.get)
-		Some(maxItemAndPack._2.get)
-	}
-
-	private def valueOf(maybePack: Option[Seq[ItemType]]): Int = maybePack match {
-		case Some(aPack) => aPack.map (_.value).sum
-		case None => Int.MinValue
+		if (packs.isEmpty) OverloadedPack() else packs.maxBy(_.value())
 	}
 }
