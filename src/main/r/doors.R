@@ -6,9 +6,6 @@ doors_puzzle <- function(ndoors=100,passes=100) {
     }
     return (which(doors == TRUE))
 }
-
-doors_puzzle()
-
 doors_puzzle2 <- function(ndoors=100,passes=100) {
     names(which(
         table(unlist(
@@ -16,3 +13,5 @@ doors_puzzle2 <- function(ndoors=100,passes=100) {
         )) %% 2 == 1
     ))
 }
+
+doors_puzzle()
