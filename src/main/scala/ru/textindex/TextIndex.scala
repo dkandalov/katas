@@ -5,6 +5,7 @@ import org.junit.Test
 
 
 class TextIndex extends Matchers {
+
 	@Test def `text index`() {
 		new Index("abc").positionOf("a") should equal(0)
 		new Index("abc").positionOf("ab") should equal(0)
@@ -38,18 +39,22 @@ class TextIndex extends Matchers {
 			while (from < to) {
 				val midIndex = (from + to) / 2
 				val midValue = text.substring(index(midIndex))
+				val result = startsWithCompare(midValue, s)
 
-				if (midValue.startsWith(s)) return index(midIndex)
-				else if (isLess(midValue, s)) from = midIndex + 1
+				if (result == 0) return index(midIndex)
+				else if (result < 0) from = midIndex + 1
 				else to = midIndex
 			}
 			-1
 		}
 
-		private def isLess(text: String, s: String): Boolean = {
-			if (text.isEmpty || s.isEmpty) false
-			else if (text.head == s.head) isLess(text.tail, s.tail)
-			else text.head < s.head
+		private def startsWithCompare(text: String, s: String): Int = {
+			if (s.isEmpty) 0
+			else if (text.isEmpty) 1 // implies that longer strings are alphabetically "greater"
+			else {
+				val result = text.head.compareTo(s.head)
+				if (result == 0) startsWithCompare(text.tail, s.tail) else result
+			}
 		}
 	}
 }
