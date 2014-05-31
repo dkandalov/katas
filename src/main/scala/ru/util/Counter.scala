@@ -8,7 +8,7 @@ package ru.util
 class Counter {
 	private var i: Int = 0
 
-	def count(threshold: Int = 10000, callback: Function1[Int, Unit]) {
+	def count(threshold: Int = 10000, callback: (Int) => Unit) {
 		i += 1
 		if (i % threshold == 0) callback(i)
 	}
