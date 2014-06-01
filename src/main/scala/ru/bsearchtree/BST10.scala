@@ -21,6 +21,18 @@ class BST10 extends Matchers {
 		EmptyNode().rootInsert("A") should equal(Node("A"))
 		Node("B").rootInsert("A") should equal(Node("A", EmptyNode(), Node("B")))
 		Node("B").rootInsert("A").rootInsert("C") should equal(Node("C", Node("A", EmptyNode(), Node("B"))))
+
+		val tree = "aserchi".foldLeft(EmptyNode().asInstanceOf[Tree]) { (tree, c) => tree.rootInsert(c.toString) }
+		tree should equal(
+			Node("i",
+				Node("h",
+					Node("c",
+						Node("a"),
+						Node("e"))),
+				Node("r",
+					EmptyNode(),
+					Node("s"))
+		))
 	}
 
 	private abstract class Tree(value: String, left: Tree = EmptyNode(), right: Tree = EmptyNode()) {
@@ -51,15 +63,23 @@ class BST10 extends Matchers {
 			case leftNode: Node =>
 				Node(leftNode.value, leftNode.left, Node(value, leftNode.right, right))
 		}
+
 		private def rotateLeft(): Node = right match {
 			case EmptyNode() => this
 			case rightNode: Node =>
 				Node(rightNode.value, Node(value, left, rightNode.left), rightNode.right)
 		}
+
+		override def toString = (left, right) match {
+			case (EmptyNode(), EmptyNode()) => "(" + value + ")"
+			case _ => "(" + value + ", " + left + ", " + right + ")"
+		}
 	}
+
 	private case class EmptyNode() extends Tree(null, null, null) {
 		override def size() = 0
 		override def insert(value: String) = Node(value)
 		override def rootInsert(value: String) = Node(value)
+		override def toString = "-"
 	}
 }
