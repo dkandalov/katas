@@ -3,6 +3,9 @@ package ru.doors
 import org.junit.Test
 
 class Doors15 {
+  private final open = true
+  private final closed = false
+
   @Test void "walking doors"() {
     def amount = 10
     def steps = (1..amount).collectMany{ int stepSize ->
@@ -10,8 +13,8 @@ class Doors15 {
       (stepSize-1).step(amount, stepSize) { steps << it }
       steps
     }
-    def doors = steps.groupBy{it}.collect{ it.value.size() % 2 == 1}
+    def doors = steps.groupBy{it}.sort{it.key}.collect{ it.value.size() % 2 == 1 }
 
-    assert doors == [true, false, false, true, false, false, false, false, true, false]
+    assert doors == [open, closed, closed, open, closed, closed, closed, closed, open, closed]
   }
 }
