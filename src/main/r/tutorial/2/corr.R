@@ -1,4 +1,5 @@
-complete <- function(directory, id = 1:332) {
+corr <- function(directory, threshold = 0) {
+    id <- 1:332
     join <- function(...){ paste(..., sep = "") }
     pad_to_3 <- function(x) { formatC(x, width = 3, flag = 0) }
     append_csv <- function(x) { join(x, ".csv") }
@@ -11,5 +12,8 @@ complete <- function(directory, id = 1:332) {
     id <- sapply(complete_data, function(data){ data$ID[[1]] })
     nobs <- sapply(complete_data, nrow)
 
-    data.frame(id, nobs)
+    filtered_data <- subset(complete_data, nobs > threshold)
+    sapply(filtered_data, function(data) {
+        cor(data$sulfate, data$nitrate)
+    })
 }
