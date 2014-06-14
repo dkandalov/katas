@@ -1,12 +1,12 @@
-pollutantmean <- function(directory, pollutant, id = 1:332) {
-    join <- function(...){ paste(..., sep = "") }
-    pad_to_3 <- function(x) { formatC(x, width = 3, flag = 0) }
-    append_csv <- function(x) { join(x, ".csv") }
-    file_names <- lapply(pad_to_3(id), append_csv)
-    file_paths <- lapply(file_names, function(x){ join(directory, "/", x) })
+pollutantmean = function(directory, pollutant, id = 1:332) {
+    pad_to_3 = function(x) { formatC(x, width = 3, flag = 0) }
+    as_file_name = function(x) { paste0(pad_to_3(x), ".csv") }
+    file_names = sapply(id, as_file_name)
+    file_paths = sapply(file_names, function(x){ paste0(directory, "/", x) })
+    get_column = function(file_name) {
+        read.csv(file_name)[pollutant]
+    }
 
-    all_data = lapply(file_paths, read.csv)
-    pollutant_data <- lapply(all_data, function(data){ na.omit(data[pollutant]) })
-
-    mean(unlist(pollutant_data))
+    all_data = lapply(file_paths, get_column)
+    mean(unlist(all_data), na.rm = TRUE)
 }
