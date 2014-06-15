@@ -33,6 +33,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="katas" />
+        <module name="morestuff" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
