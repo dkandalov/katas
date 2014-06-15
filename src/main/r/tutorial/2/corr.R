@@ -1,10 +1,9 @@
 corr <- function(directory, threshold = 0) {
     id <- 1:332
-    join <- function(...){ paste(..., sep = "") }
-    pad_to_3 <- function(x) { formatC(x, width = 3, flag = 0) }
-    append_csv <- function(x) { join(x, ".csv") }
-    file_names <- sapply(pad_to_3(id), append_csv)
-    file_paths <- sapply(file_names, function(x){ join(directory, "/", x) })
+    pad_to_3 = function(x) { formatC(x, width = 3, flag = 0) }
+    as_file_name = function(x) { paste0(pad_to_3(x), ".csv") }
+    file_names = sapply(id, as_file_name)
+    file_paths = sapply(file_names, function(x){ paste0(directory, "/", x) })
 
     all_data <- lapply(file_paths, read.csv)
     complete_data <- lapply(all_data, function(data){ subset(data, !is.na(data$sulfate) & !is.na(data$nitrate)) })
