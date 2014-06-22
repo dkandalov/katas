@@ -5,7 +5,7 @@ import org.junit.Test
 
 
 class _234BST extends Matchers {
-	@Test def `inserting elements`() {
+	@Test def `inserting elements as described in 'Algorithms in Java' Figure 13.13`() {
 		Empty().insert("a") should equal(Node2("a"))
 		Empty().insert("a", "s") should equal(Node3(("a", "s")))
 		Empty().insert("a", "s", "e") should equal(Node4(("a", "e", "s")))
@@ -47,6 +47,18 @@ class _234BST extends Matchers {
 				Node3(("g", "h")),
 				Node2("n"),
 				Node2("s")
+			))
+		)
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g", "x") should equal(
+			Node2("i", (
+				Node2("e", (
+					Node3(("a", "c")),
+					Node3(("g", "h"))
+				)),
+				Node2("r",(
+					Node2("n"),
+					Node3(("s", "x"))
+				))
 			))
 		)
 	}
@@ -124,7 +136,7 @@ class _234BST extends Matchers {
 						children._1,
 						Node2(node4.value._1, (node4.children._1, node4.children._2)),
 						Node2(node4.value._3, (node4.children._3, node4.children._4)),
-						children._2
+						children._3
 					)).insertWithoutSplit(newValue)
 				} else if (children._2 != Empty()) {
 					Node3(value, (children._1, children._2.insert(newValue), children._3))
@@ -138,8 +150,8 @@ class _234BST extends Matchers {
 					Node4((node4.value._2, value._1, value._2), (
 						Node2(node4.value._1, (node4.children._1, node4.children._2)),
 						Node2(node4.value._3, (node4.children._3, node4.children._4)),
-						children._1,
-						children._2
+						children._2,
+						children._3
 					)).insertWithoutSplit(newValue)
 				} else if (children._1 != Empty()) {
 					Node3(value, (children._1.insert(newValue), children._2, children._3))
@@ -157,7 +169,18 @@ class _234BST extends Matchers {
 		}
 
 		def insertWithoutSplit(newValue: String): Tree = {
-			insert(newValue)
+			if (newValue > value._1 && newValue > value._2 && newValue > value._3) {
+				Node4(value, (children._1, children._2, children._3, children._4.insert(newValue)))
+
+			} else if (newValue > value._1 && newValue > value._2 && newValue <= value._3) {
+				Node4(value, (children._1, children._2, children._3.insert(newValue), children._4))
+
+			} else if (newValue > value._1 && newValue <= value._2 && newValue <= value._3) {
+				Node4(value, (children._1, children._2.insert(newValue), children._3, children._4))
+
+			} else {
+				Node4(value, (children._1.insert(newValue), children._2, children._3, children._4))
+			}
 		}
 
 		private def split: Node2 = {
