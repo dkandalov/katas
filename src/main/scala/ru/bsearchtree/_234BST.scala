@@ -15,6 +15,40 @@ class _234BST extends Matchers {
 				Node3(("r", "s"))
 			))
 		)
+		Empty().insert("a", "s", "e", "r", "c") should equal(
+			Node2("e", (
+				Node3(("a", "c")),
+				Node3(("r", "s"))
+			))
+		)
+		Empty().insert("a", "s", "e", "r", "c", "h") should equal(
+			Node2("e", (
+				Node3(("a", "c")),
+				Node4(("h", "r", "s"))
+			))
+		)
+		Empty().insert("a", "s", "e", "r", "c", "h", "i") should equal(
+			Node3(("e", "r"), (
+				Node3(("a", "c")),
+				Node3(("h", "i")),
+				Node2("s")
+			))
+		)
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n") should equal(
+			Node3(("e", "r"), (
+				Node3(("a", "c")),
+				Node4(("h", "i", "n")),
+				Node2("s")
+			))
+		)
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g") should equal(
+			Node4(("e", "i", "r"), (
+				Node3(("a", "c")),
+				Node3(("g", "h")),
+				Node2("n"),
+				Node2("s")
+			))
+		)
 	}
 
 	private abstract class Tree {
@@ -32,10 +66,36 @@ class _234BST extends Matchers {
 	private case class Node2(value: String,
 	                         children: (Tree, Tree) = (Empty(), Empty())) extends Tree {
 		override def insert(newValue: String) = {
-			if (newValue > value)
-				Node3((value, newValue), (children._1, children._2, Empty()))
-			else
-				Node3((newValue, value), (children._1, children._2, Empty()))
+			if (newValue > value) {
+				if (children._2.isInstanceOf[Node4]) {
+					val node4 = children._2.asInstanceOf[Node4]
+					Node3((value, node4.value._2), (
+						children._1,
+						Node2(node4.value._1, (node4.children._1, node4.children._2)),
+						Node2(node4.value._3, (node4.children._3, node4.children._4))
+					)).insert(newValue)
+
+				} else if (children._2 != Empty()) {
+					Node2(value, (children._1, children._2.insert(newValue)))
+				} else {
+					Node3((value, newValue), (children._1, children._2, Empty()))
+				}
+
+			} else {
+				if (children._1.isInstanceOf[Node4]) {
+					val node4 = children._1.asInstanceOf[Node4]
+					Node3((node4.value._2, value), (
+						Node2(node4.value._1, (node4.children._1, node4.children._2)),
+						Node2(node4.value._3, (node4.children._3, node4.children._4)),
+						children._2
+					)).insert(newValue)
+
+				} else if (children._1 != Empty()) {
+					Node2(value, (children._1.insert(newValue), children._2))
+				} else {
+					Node3((newValue, value), (children._1, children._2, Empty()))
+				}
+			}
 		}
 	}
 
@@ -43,20 +103,68 @@ class _234BST extends Matchers {
 	                         children: (Tree, Tree, Tree) = (Empty(), Empty(), Empty())) extends Tree {
 		override def insert(newValue: String) = {
 			if (newValue > value._1 && newValue > value._2)
-				Node4((value._1, value._2, newValue), (children._1, children._2, children._3, Empty()))
+				if (children._3.isInstanceOf[Node4]) {
+					val node4 = children._3.asInstanceOf[Node4]
+					Node4((value._1, value._2, node4.value._2), (
+						children._1,
+						children._2,
+						Node2(node4.value._1, (node4.children._1, node4.children._2)),
+						Node2(node4.value._3, (node4.children._3, node4.children._4))
+					)).insertWithoutSplit(newValue)
+				} else if (children._3 != Empty()) {
+					Node3(value, (children._1, children._2, children._3.insert(newValue)))
+				} else {
+					Node4((value._1, value._2, newValue), (children._1, children._2, children._3, Empty()))
+				}
+
 			else if (newValue > value._1 && newValue <= value._2) {
-				Node4((value._1, newValue, value._2), (children._1, children._2, Empty(), children._3))
+				if (children._2.isInstanceOf[Node4]) {
+					val node4 = children._2.asInstanceOf[Node4]
+					Node4((value._1, node4.value._2, value._2), (
+						children._1,
+						Node2(node4.value._1, (node4.children._1, node4.children._2)),
+						Node2(node4.value._3, (node4.children._3, node4.children._4)),
+						children._2
+					)).insertWithoutSplit(newValue)
+				} else if (children._2 != Empty()) {
+					Node3(value, (children._1, children._2.insert(newValue), children._3))
+				} else {
+					Node4((value._1, newValue, value._2), (children._1, children._2, Empty(), children._3))
+				}
+
 			} else {
-				Node4((newValue, value._1, value._2), (children._1, Empty(), children._2, children._3))
+				if (children._1.isInstanceOf[Node4]) {
+					val node4 = children._1.asInstanceOf[Node4]
+					Node4((node4.value._2, value._1, value._2), (
+						Node2(node4.value._1, (node4.children._1, node4.children._2)),
+						Node2(node4.value._3, (node4.children._3, node4.children._4)),
+						children._1,
+						children._2
+					)).insertWithoutSplit(newValue)
+				} else if (children._1 != Empty()) {
+					Node3(value, (children._1.insert(newValue), children._2, children._3))
+				} else {
+					Node4((newValue, value._1, value._2), (children._1, Empty(), children._2, children._3))
+				}
 			}
 		}
 	}
+
 	private case class Node4(value: (String, String, String),
 	                         children: (Tree, Tree, Tree, Tree) = (Empty(), Empty(), Empty(), Empty())) extends Tree {
 		override def insert(newValue: String) = {
 			split.insert(newValue)
 		}
 
-		private def split: Node2 = Node2(value._2, (Node2(value._1), Node2(value._3)))
+		def insertWithoutSplit(newValue: String): Tree = {
+			insert(newValue)
+		}
+
+		private def split: Node2 = {
+			Node2(value._2, (
+				Node2(value._1, (children._1, children._2)),
+				Node2(value._3, (children._3, children._4))
+			))
+		}
 	}
 }
