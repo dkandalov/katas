@@ -13,8 +13,8 @@ class RedBlackTree extends Matchers {
 
 
 	@Test def `inserting elements as described in 'Algorithms in Java' Figure 13.13`() {
-		emptyNode().insert("a") should equal(Node("a", Red))
-		emptyNode().insert("a", "s") should equal(Node("a", Red, emptyNode(), Node("s", Red)))
+		emptyNode().insert("a") should equal(Node("a", Black))
+		emptyNode().insert("a", "s") should equal(Node("a", Black, emptyNode(), Node("s", Red)))
 		emptyNode().insert("a", "s", "e") should equal(Node("e", Red, Node("a", Red), Node("s", Red)))
 	}
 
@@ -24,7 +24,18 @@ class RedBlackTree extends Matchers {
 	}
 
 	private case class Node(value: String, var color: Color = None, var left: Node = emptyNode(), var right: Node = emptyNode()) {
-		def insert(newValue: String, sw: Boolean = false): Node = {
+		def insert(newValue: String): Node = {
+			val node = insertR(newValue, false)
+			node.color = Black
+			node
+		}
+
+		def insert(newValues: String*): Node = {
+			if (newValues.isEmpty) this
+			else insert(newValues.head).insert(newValues.tail : _*)
+		}
+
+		def insertR(newValue: String, sw: Boolean = false): Node = {
 			if (value == null) return Node(newValue, Red)
 
 			var node = this
@@ -34,7 +45,7 @@ class RedBlackTree extends Matchers {
 				node.right.color = Black
 			}
 			if (newValue < value) {
-				node.left = node.left.insert(newValue, false)
+				node.left = node.left.insertR(newValue, false)
 				if (node.color == Red && node.left.color == Red && sw) node = node.rotateRight()
 				if (node.left.color == Red && node.left.left.color == Red) {
 					node = node.rotateRight()
@@ -42,7 +53,7 @@ class RedBlackTree extends Matchers {
 					node.right.color = Red
 				}
 			} else {
-				node.right = node.right.insert(newValue, true)
+				node.right = node.right.insertR(newValue, true)
 				if (node.color == Red && node.right.color == Red && !sw) node = node.rotateLeft()
 				if (node.right.color == Red && node.right.right.color == Red) {
 					node = node.rotateLeft()
@@ -51,11 +62,6 @@ class RedBlackTree extends Matchers {
 				}
 			}
 			node
-		}
-
-		def insert(newValues: String*): Node = {
-			if (newValues.isEmpty) this
-			else insert(newValues.head, false).insert(newValues.tail : _*)
 		}
 
 		def rotateRight(): Node = {
@@ -71,6 +77,18 @@ class RedBlackTree extends Matchers {
 			newRoot.left = this
 			this.right = temp
 			newRoot
+		}
+
+		override def toString = {
+			def childAsString(node: Node) = {
+				if (node == emptyNode()) "-" else node.toString
+			}
+			def childrenAsString() = {
+				if (left == null && right == null) ""
+				else if (left == null && right != null) "," + childAsString(left)
+				else "," + childAsString(left) + "," + childAsString(right)
+			}
+			"Node(" + value + "," + color + childrenAsString() + ")"
 		}
 	}
 }
