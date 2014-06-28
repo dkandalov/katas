@@ -5,11 +5,11 @@ import org.junit.Test
 
 
 class RedBlackTree extends Matchers {
-	private object Color extends Enumeration {
-		type Color = Value
+	private object NodeColor extends Enumeration {
+		type NodeColor = Value
 		val None, Red, Black = Value
 	}
-	import Color._
+	import NodeColor._
 
 
 	@Test def `inserting elements as described in 'Algorithms in Java' Figure 13.20`() {
@@ -70,41 +70,41 @@ class RedBlackTree extends Matchers {
 		Node(null, None, null, null)
 	}
 
-	private case class Node(value: String, var color: Color = None, var left: Node = emptyNode(), var right: Node = emptyNode()) {
+	private case class Node(value: String, var color: NodeColor = None, var left: Node = emptyNode(), var right: Node = emptyNode()) {
+		def insert(newValues: String*): Node = {
+			if (newValues.isEmpty) this
+			else insert(newValues.head).insert(newValues.tail : _*)
+		}
+
 		def insert(newValue: String): Node = {
 			val node = insertR(newValue, false)
 			node.color = Black
 			node
 		}
 
-		def insert(newValues: String*): Node = {
-			if (newValues.isEmpty) this
-			else insert(newValues.head).insert(newValues.tail : _*)
-		}
-
 		private def insertR(newValue: String, sw: Boolean = false): Node = {
-			def colorOf(node: Node): Color = if (node == null) None else node.color
-
 			if (value == null) return Node(newValue, Red)
 
 			var node = this
-			if (node.left.color == Red && node.right.color == Red) {
+
+			val is4Node = isRed(node.left) && isRed(node.right)
+			if (is4Node) {
 				node.color = Red
 				node.left.color = Black
 				node.right.color = Black
 			}
-			if (newValue < value) {
+			if (newValue < node.value) {
 				node.left = node.left.insertR(newValue, false)
-				if (node.color == Red && node.left.color == Red && sw) node = node.rotateRight()
-				if (colorOf(node.left) == Red && colorOf(node.left.left) == Red) {
+				if (isRed(node) && isRed(node.left) && sw) node = node.rotateRight()
+				if (isRed(node.left) && isRed(node.left.left)) {
 					node = node.rotateRight()
 					node.color = Black
 					node.right.color = Red
 				}
 			} else {
 				node.right = node.right.insertR(newValue, true)
-				if (node.color == Red && node.right.color == Red && !sw) node = node.rotateLeft()
-				if (colorOf(node.right) == Red && colorOf(node.right.right) == Red) {
+				if (isRed(node) && isRed(node.right) && !sw) node = node.rotateLeft()
+				if (isRed(node.right) && isRed(node.right.right)) {
 					node = node.rotateLeft()
 					node.color = Black
 					node.left.color = Red
@@ -113,7 +113,11 @@ class RedBlackTree extends Matchers {
 			node
 		}
 
-		def rotateRight(): Node = {
+		private def isRed(node: Node): Boolean = {
+			if (node == null) false else node.color == Red
+		}
+
+		private def rotateRight(): Node = {
 			val newRoot = left
 			val temp = newRoot.right
 			newRoot.right = this
@@ -121,7 +125,7 @@ class RedBlackTree extends Matchers {
 			newRoot
 		}
 
-		def rotateLeft(): Node = {
+		private def rotateLeft(): Node = {
 			val newRoot = right
 			val temp = newRoot.left
 			newRoot.left = this
