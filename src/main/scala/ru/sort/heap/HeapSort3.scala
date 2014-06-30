@@ -2,6 +2,7 @@ package ru.sort.heap
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
+import scala.annotation.tailrec
 ;
 
 /*
@@ -23,9 +24,9 @@ class HeapSort3 extends AssertionsForJUnit {
 
   def sort(list: List[Int]): List[Int] = {
     val heap = new Heap()
-    list.foreach(heap.add(_))
+    list.foreach(heap.add)
 
-    var result: List[Int] = List()
+    var result = List[Int]()
     while (!heap.isEmpty) result = heap.takeMaxValue :: result
     result
   }
@@ -47,12 +48,12 @@ class Heap {
     result
   }
 
-  private def sink(index: Int) {
+  @tailrec private def sink(index: Int) {
     if (index >= size - 1) return
     val maxChild = if (index * 2 + 2 >= size)
-      if (data(index * 2 + 1) > data(index * 2 + 2)) (index * 2 + 1) else (index * 2 + 2)
+      if (data(index * 2 + 1) > data(index * 2 + 2)) index * 2 + 1 else index * 2 + 2
     else
-      (index * 2 + 1)
+      index * 2 + 1
 
     if (data(index) < data(maxChild)) {
       swap(index, maxChild)
