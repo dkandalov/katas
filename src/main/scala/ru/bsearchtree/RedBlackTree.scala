@@ -77,12 +77,12 @@ class RedBlackTree extends Matchers {
 		}
 
 		def insert(newValue: String): Node = {
-			val node = insertR(newValue, false)
+			val node = doInsert(newValue, false)
 			node.color = Black
 			node
 		}
 
-		private def insertR(newValue: String, sw: Boolean = false): Node = {
+		private def doInsert(newValue: String, sw: Boolean = false): Node = {
 			if (value == null) return Node(newValue, Red)
 
 			var node = this
@@ -94,7 +94,7 @@ class RedBlackTree extends Matchers {
 				node.right.color = Black
 			}
 			if (newValue < node.value) {
-				node.left = node.left.insertR(newValue, false)
+				node.left = node.left.doInsert(newValue, false)
 				if (isRed(node) && isRed(node.left) && sw) node = node.rotateRight()
 				if (isRed(node.left) && isRed(node.left.left)) {
 					node = node.rotateRight()
@@ -102,7 +102,7 @@ class RedBlackTree extends Matchers {
 					node.right.color = Red
 				}
 			} else {
-				node.right = node.right.insertR(newValue, true)
+				node.right = node.right.doInsert(newValue, true)
 				if (isRed(node) && isRed(node.right) && !sw) node = node.rotateLeft()
 				if (isRed(node.right) && isRed(node.right.right)) {
 					node = node.rotateLeft()
