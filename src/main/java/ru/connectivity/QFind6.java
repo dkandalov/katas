@@ -24,7 +24,7 @@ public class QFind6 {
     private static class Points {
         private final int[] data;
 
-        private Points(int size) {
+        public Points(int size) {
             data = new int[size];
             for (int i = 0; i < data.length; i++) {
                 data[i] = i;
@@ -32,13 +32,10 @@ public class QFind6 {
         }
 
         public Points connect(int point1, int point2) {
-            if (areConnected(point1, point2)) return this;
-
-            int index = data[point1];
+            int oldIndex = data[point1];
+            int newIndex = data[point2];
             for (int i = 0; i < data.length; i++) {
-                if (data[i] == index) {
-                    data[i] = data[point2];
-                }
+                if (data[i] == oldIndex) data[i] = newIndex;
             }
             return this;
         }
