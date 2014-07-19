@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -18,41 +18,43 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DataMunging9 {
-    @Test public void findDayWithMinimumTemperatureSpread() throws IOException {
-        Path path = FileSystems.getDefault().getPath("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat");
-        List<String> lines = readAllLines(path, defaultCharset()).subList(8, 38);
-        assertThat(lines.size(), equalTo(30));
 
-        Row minTemperatureSpread = lines.stream()
-                .map(it -> it.trim().split("\\s+"))
-                .map(it -> new Row(it[0], asInt(it[1]), asInt(it[2])))
-                .min((row1, row2) -> compare(abs(row1.value1 - row1.value2), abs(row2.value1 - row2.value2)))
-                .get();
+    @Test public void findDayWithMinimumTemperatureSpread() throws IOException {
+        List<String> lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 38);
+        Row minTemperatureSpread = parseRows(lines, 0, 1, 2).min(valueDiff()).get();
 
         assertThat(minTemperatureSpread.key, equalTo("14"));
     }
 
     @Test public void findFootballTeamWithMinimumGoalDifference() throws IOException {
-        Path path = FileSystems.getDefault().getPath("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat");
-        Stream<String> lines = Files.readAllLines(path, defaultCharset()).subList(5, 26).stream();
-
-        lines = lines.filter(it -> !it.contains("---"));
-
-        Row rows = lines
-                .map(it -> it.trim().split("\\s+"))
-                .map(it -> new Row(it[1], asInt(it[6]), asInt(it[8])))
-                .min((row1, row2) -> {
-                    int diff1 = abs(row1.value1 - row1.value2);
-                    int diff2 = abs(row2.value1 - row2.value2);
-                    return compare(diff1, diff2);
-                })
-                .get();
+        List<String> lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 26);
+        Row rows = parseRows(lines, 1, 6, 8).min(valueDiff()).get();
 
         assertThat(rows.key, equalTo("Aston_Villa"));
     }
-    
+
+    private static List<String> readLines(String filePath, int fromLine, int toLine) throws IOException {
+        Path path = FileSystems.getDefault().getPath(filePath);
+        return readAllLines(path, defaultCharset()).subList(fromLine, toLine);
+    }
+
+    private static Stream<Row> parseRows(List<String> lines, int keyColumn, int value1Column, int value2Column) {
+        return lines.stream()
+                .filter(it -> !it.contains("---"))
+                .map(it -> it.trim().split("\\s+"))
+                .map(it -> new Row(it[keyColumn], asInt(it[value1Column]), asInt(it[value2Column])));
+    }
+
     private static int asInt(String s) {
         return parseInt(s.replace("*", ""));
+    }
+
+    private static Comparator<Row> valueDiff() {
+        return (row1, row2) -> {
+            int diff1 = abs(row1.value1 - row1.value2);
+            int diff2 = abs(row2.value1 - row2.value2);
+            return compare(diff1, diff2);
+        };
     }
 
     private static class Row {
@@ -67,11 +69,7 @@ public class DataMunging9 {
         }
 
         @Override public String toString() {
-            return "Row{" +
-                    "key='" + key + '\'' +
-                    ", value1=" + value1 +
-                    ", value2=" + value2 +
-                    '}';
+            return "Row{key='" + key + '\'' + ", value1=" + value1 + ", value2=" + value2 + '}';
         }
     }
 }
