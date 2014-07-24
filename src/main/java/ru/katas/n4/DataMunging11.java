@@ -16,27 +16,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DataMunging11 {
 
     @Test public void findDayWithMinimumTemperatureSpread() throws IOException {
-        Path path = FileSystems.getDefault().getPath("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat");
-        Stream<String> lines = Files.readAllLines(path, defaultCharset()).subList(8, 38).stream();
-        Stream<Row> dayRows = lines
-                .filter(it -> !it.contains("---"))
-                .map(s -> s.trim().split("\\s+"))
-                .map(it -> new Row(it[0], asInt(it[1]), asInt(it[2])));
-        Row dayRow = dayRows.min(rowDiff()).get();
+        Stream<String> lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 38);
+        Row dayRow = convertToRows(lines, 0, 1, 2).min(rowDiff()).get();
 
         assertThat(dayRow.key, equalTo("14"));
     }
 
     @Test public void findFootballTeamWithMinimumGoalDifference() throws IOException {
-        Path path = FileSystems.getDefault().getPath("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat");
-        Stream<String> lines = Files.readAllLines(path, defaultCharset()).subList(5, 26).stream();
-        Stream<Row> teamRows = lines
+        Stream<String> lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 26);
+        Row teamRow = convertToRows(lines, 1, 6, 8).min(rowDiff()).get();
+
+        assertThat(teamRow.key, equalTo("Aston_Villa"));
+    }
+
+    private static Stream<Row> convertToRows(Stream<String> lines, int keyIndex, int value1Index, int value2Index) {
+        return lines
                 .filter(it -> !it.contains("---"))
                 .map(s -> s.trim().split("\\s+"))
-                .map(it -> new Row(it[1], asInt(it[6]), asInt(it[8])));
+                .map(it -> new Row(it[keyIndex], asInt(it[value1Index]), asInt(it[value2Index])));
+    }
 
-        Row teamRow = teamRows.min(rowDiff()).get();
-        assertThat(teamRow.key, equalTo("Aston_Villa"));
+    private static Stream<String> readLines(String filePath, int fromLine, int toLine) throws IOException {
+        Path path = FileSystems.getDefault().getPath(filePath);
+        return Files.readAllLines(path, defaultCharset()).subList(fromLine, toLine).stream();
     }
 
     private static Comparator<Row> rowDiff() {
