@@ -41,7 +41,7 @@ public class BSearch20 {
         assertThat(bsearch(5, asList(1, 2, 3, 4)), equalTo(-1));
     }
 
-    private Integer bsearch(int value, List<Integer> listOfValues) {
+    private static Integer bsearch(int value, List<Integer> listOfValues) {
         if (listOfValues == null || listOfValues.isEmpty()) return -1;
         int from = 0;
         int to = listOfValues.size();

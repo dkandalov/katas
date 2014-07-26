@@ -24,7 +24,7 @@ public class BSearch23 {
         assertThat(bsearch(3, Arrays.asList(1, 2)), equalTo(-1));
     }
 
-    private <T extends Comparable<T>> int bsearch(T value, List<T> list) {
+    private static <T extends Comparable<T>> int bsearch(T value, List<T> list) {
         int from = 0;
         int to = list.size();
 
