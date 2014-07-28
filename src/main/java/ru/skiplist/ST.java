@@ -2,114 +2,120 @@ package ru.skiplist;
 
 public class ST {
     private static final int L = 50;
-    private Node head;
-    private int N, lgN;
+    private final Node head;
+    private int lgN;
 
-    ST(int maxN) {
-        N = 0;
+    ST() {
         lgN = 0;
         head = new Node(null, L);
     }
 
-    public void insert(ITEM v) {
-        insertR(head, new Node(v, randX()), lgN);
-        N++;
+    public void insert(Item item) {
+        insertR(head, new Node(item, randX()), lgN);
     }
 
-    public ITEM search(KEY v) {
-        return searchR(head, v, lgN - 1);
+    public Item search(Key key) {
+        return searchR(head, key, lgN - 1);
     }
 
-    public void remove(ITEM x) {
-        removeR(head, x.key(), lgN);
-        N--;
+    public void remove(Item item) {
+        removeR(head, item.key(), lgN);
     }
 
-    private static void insertR(Node t, Node x, int k) {
-        KEY v = x.item.key();
-        Node tk = t.next[k];
-        if ((tk == null) || less(v, tk.item.key())) {
-            if (k < x.sz) {
-                x.next[k] = tk;
-                t.next[k] = x;
+    private static void insertR(Node node, Node newNode, int level) {
+        Node nextNode = node.next[level];
+        if (nextNode == null || less(newNode.item.key(), nextNode.item.key())) {
+            if (level < newNode.levels) {
+                newNode.next[level] = nextNode;
+                node.next[level] = newNode;
             }
-            if (k == 0) return;
-            insertR(t, x, k - 1);
+            if (level == 0) return;
+            insertR(node, newNode, level - 1);
             return;
         }
-        insertR(tk, x, k);
+        insertR(nextNode, newNode, level);
     }
 
-    private static void removeR(Node t, KEY v, int k) {
-        Node x = t.next[k];
-        if (!less(x.item.key(), v)) {
-            if (equals(v, x.item.key())) {
-                t.next[k] = x.next[k];
+    private static void removeR(Node node, Key key, int level) {
+        Node nextNode = node.next[level];
+        if (!less(nextNode.item.key(), key)) {
+            if (equals(key, nextNode.item.key())) {
+                node.next[level] = nextNode.next[level];
             }
-            if (k == 0) return;
-            removeR(t, v, k - 1);
+            if (level == 0) return;
+            removeR(node, key, level - 1);
             return;
         }
-        removeR(t.next[k], v, k);
+        removeR(node.next[level], key, level);
     }
 
-    private static boolean less(KEY key1, KEY key2) {
+    private static boolean less(Key key1, Key key2) {
         return key1.value < key2.value;
     }
 
-    private static boolean equals(KEY key1, KEY key2) {
+    private static boolean equals(Key key1, Key key2) {
         return key1.value == key2.value;
     }
 
-    private static class ITEM {
-        private final KEY key;
+    private int randX() {
+        int i, j;
+        double random = Math.random();
+        for (i = 1, j = 2; i < L; i++, j += j) {
+            if (random * j > 1.0) break;
+        }
+        if (i > lgN) lgN = i;
+        return i;
+    }
 
-        private ITEM(KEY key) {
+    private Item searchR(Node node, Key key, int level) {
+        if (node == null) return null;
+        if (node != head)
+            if (equals(node.item.key(), key)) return node.item;
+        if (level >= node.levels) level = node.levels - 1;
+        if (node.next[level] != null)
+            if (!less(key, node.next[level].item.key()))
+                return searchR(node.next[level], key, level);
+        return (level == 0) ? null : searchR(node, key, level - 1);
+    }
+
+
+    static Key key(int value) {
+        return new Key(value);
+    }
+
+    static Item item(int value) {
+        return new Item(new Key(value));
+    }
+
+    static class Item {
+        private final Key key;
+
+        private Item(Key key) {
             this.key = key;
         }
 
-        public KEY key() {
+        public Key key() {
             return key;
         }
     }
 
-    private static class KEY {
+    private static class Key {
         final int value;
 
-        private KEY(int value) {
+        private Key(int value) {
             this.value = value;
         }
     }
 
     private static class Node {
-        ITEM item;
-        Node[] next;
-        int sz;
+        final Item item;
+        final Node[] next;
+        final int levels;
 
-        Node(ITEM x, int k) {
-            item = x;
-            sz = k;
-            next = new Node[sz];
+        Node(Item item, int levels) {
+            this.item = item;
+            this.levels = levels;
+            this.next = new Node[levels];
         }
-    }
-
-    private int randX() {
-        int i, j;
-        double t = Math.random();
-        for (i = 1, j = 2; i < L; i++, j += j)
-            if (t * j > 1.0) break;
-        if (i > lgN) lgN = i;
-        return i;
-    }
-
-    private ITEM searchR(Node t, KEY v, int k) {
-        if (t == null) return null;
-        if (t != head)
-            if (equals(t.item.key(), v)) return t.item;
-        if (k >= t.sz) k = t.sz - 1;
-        if (t.next[k] != null)
-            if (!less(v, t.next[k].item.key()))
-                return searchR(t.next[k], v, k);
-        return (k == 0) ? null : searchR(t, v, k - 1);
     }
 }
