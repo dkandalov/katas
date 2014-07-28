@@ -1,11 +1,11 @@
 package ru.skiplist;
 
-public class ST {
+public class SkipList {
     private static final int L = 50;
     private final Node head;
     private int lgN;
 
-    ST() {
+    SkipList() {
         lgN = 0;
         head = new Node(null, L);
     }
@@ -31,22 +31,22 @@ public class ST {
             }
             if (level == 0) return;
             insertR(node, newNode, level - 1);
-            return;
+        } else {
+            insertR(nextNode, newNode, level);
         }
-        insertR(nextNode, newNode, level);
     }
 
     private static void removeR(Node node, Key key, int level) {
         Node nextNode = node.next[level];
-        if (!less(nextNode.item.key(), key)) {
-            if (equals(key, nextNode.item.key())) {
+        if (nextNode == null || !less(nextNode.item.key(), key)) {
+            if (nextNode != null && equals(key, nextNode.item.key())) {
                 node.next[level] = nextNode.next[level];
             }
             if (level == 0) return;
             removeR(node, key, level - 1);
-            return;
+        } else {
+            removeR(node.next[level], key, level);
         }
-        removeR(node.next[level], key, level);
     }
 
     private static boolean less(Key key1, Key key2) {
@@ -69,12 +69,14 @@ public class ST {
 
     private Item searchR(Node node, Key key, int level) {
         if (node == null) return null;
-        if (node != head)
-            if (equals(node.item.key(), key)) return node.item;
+        if (node != head && equals(node.item.key(), key)) return node.item;
+
         if (level >= node.levels) level = node.levels - 1;
-        if (node.next[level] != null)
-            if (!less(key, node.next[level].item.key()))
-                return searchR(node.next[level], key, level);
+        if (level < 0) return null;
+
+        if (node.next[level] != null && !less(key, node.next[level].item.key())) {
+            return searchR(node.next[level], key, level);
+        }
         return (level == 0) ? null : searchR(node, key, level - 1);
     }
 
@@ -97,17 +99,51 @@ public class ST {
         public Key key() {
             return key;
         }
+
+        @Override public String toString() {
+            return "Item{key=" + key + '}';
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Item item = (Item) o;
+
+            return !(key != null ? !key.equals(item.key) : item.key != null);
+        }
+
+        @Override public int hashCode() {
+            return key != null ? key.hashCode() : 0;
+        }
     }
 
-    private static class Key {
+    public static class Key {
         final int value;
 
         private Key(int value) {
             this.value = value;
         }
+
+        @Override public String toString() {
+            return "Key{value=" + value + '}';
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Key key = (Key) o;
+
+            return value == key.value;
+        }
+
+        @Override public int hashCode() {
+            return value;
+        }
     }
 
-    private static class Node {
+    public static class Node {
         final Item item;
         final Node[] next;
         final int levels;
