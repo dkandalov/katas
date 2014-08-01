@@ -29,7 +29,7 @@ public class Josephus2
         assertThat(findLeader(3, 3), equalTo(2));
     }
 
-    private int findLeader(int amountOfPeople, int stepSize)
+    private static int findLeader(int amountOfPeople, int stepSize)
     {
         List<Integer> people = new LinkedList<Integer>();
         for (int i = 1; i <= amountOfPeople; i++) {
