@@ -2,7 +2,7 @@
 function shuffle(array) {
     var i = 0;
     while (i < array.length) {
-        var randomI = i + Math.floor(Math.random() * (array.length - i + 1));
+        var randomI = i + Math.floor(Math.random() * (array.length - i));
         swap(i, randomI, array);
         i++;
     }
