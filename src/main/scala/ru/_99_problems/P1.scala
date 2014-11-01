@@ -352,7 +352,7 @@ class P1 extends Matchers {
 		}
 	}
 
-	@Test def `(**) Determine the greatest common divisor of two positive integer numbers.`() {
+	@Test def `P32 (**) Determine the greatest common divisor of two positive integer numbers.`() {
 		gcd(1, 1) should be(1)
 		gcd(1, 2) should be(1)
 		gcd(2, 2) should be(2)
