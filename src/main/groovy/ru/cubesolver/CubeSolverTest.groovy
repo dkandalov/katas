@@ -6,15 +6,45 @@ class CubeSolverTest {
   private static String _ = " "
   private static String x = "x"
 
-  @Test void "aaa"() {
+  @Test void "can assemble some surfaces"() {
     def allSurfaces = combinationsOf(surface(
             [_, _, _],
             [_, x, _],
             [_, _, _]
     ))
-    def map = connect(allSurfaces.first(), allSurfaces.tail().take(30))
-    println(allSurfaces.first())
-    map.each { key, value ->
+    def cube = assembleAsCube(allSurfaces.take(30))
+
+    assert cube.front == surface(
+            [_, x, _],
+            [_, x, _],
+            [_, _, _]
+    )
+    assert cube.top == surface(
+            [x, x, _],
+            [_, x, _],
+            [_, _, _]
+    )
+    assert cube.right == surface(
+            [x, x, x],
+            [x, x, _],
+            [_, _, _]
+    )
+    assert cube.bottom == surface(
+            [x, x, x],
+            [x, x, x],
+            [_, _, _]
+    )
+    assert cube.left == surface(
+            [_, x, x],
+            [x, x, x],
+            [_, _, _]
+    )
+    assert cube.back == surface(
+            [_, _, _],
+            [_, x, x],
+            [x, x, x]
+    )
+    cube.each { key, value ->
       println("----")
       println(key)
       println(value)
@@ -29,92 +59,99 @@ class CubeSolverTest {
     }
   }
 
-  private static Map connect(Surface centerSurface, List<Surface> surfaces, Map<String, Surface> result = [:]) {
-    if (surfaces.empty || result.size() == 5) return result
+  private static Map assembleAsCube(List<Surface> surfaces) {
+    if (surfaces.size() < 6) throw new IllegalAccessException()
+    def result = assembleAsCube(surfaces.first(), surfaces.tail())
+    result.front = surfaces.first()
+    result
+  }
 
-    if (result.top == null) {
+  private static Map assembleAsCube(Surface frontSurface, List<Surface> surfaces, Map<String, Surface> cube = [:]) {
+    if (surfaces.empty || cube.size() == 5) return cube
+
+    if (cube.top == null) {
       def topSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(centerSurface.topSide(), it.bottomSide())
+        areConnectible(frontSurface.topSide(), it.bottomSide())
       }
-      if (topSurfaces.empty) return result
-      result.top = topSurfaces.find {
-        Map newResult = result.clone() as Map
+      if (topSurfaces.empty) return cube
+      cube.top = topSurfaces.find {
+        Map newResult = cube.clone() as Map
         newResult.top = it.rotatedSurface
-        Map subResult = connect(centerSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
         subResult.right != null
       }?.rotatedSurface
-      if (result.top == null) return result
-      surfaces -= result.top
+      if (cube.top == null) return cube
+      surfaces -= cube.top
     }
 
-    if (result.right == null) {
+    if (cube.right == null) {
       def rightSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(centerSurface.rightSide(), it.leftSide()) &&
-        areConnectible(result.top.rightSide(), it.topSide()) &&
-        [centerSurface.topSide()[2], result.top.bottomSide()[2], it.leftSide()[0]].count{it == x} == 1
+        areConnectible(frontSurface.rightSide(), it.leftSide()) &&
+        areConnectible(cube.top.rightSide(), it.topSide()) &&
+        [frontSurface.topSide()[2], cube.top.bottomSide()[2], it.leftSide()[0]].count{it == x} == 1
       }
-      if (rightSurfaces.empty) return result
-      result.right = rightSurfaces.find {
-        Map newResult = result.clone() as Map
+      if (rightSurfaces.empty) return cube
+      cube.right = rightSurfaces.find {
+        Map newResult = cube.clone() as Map
         newResult.right = it.rotatedSurface
-        Map subResult = connect(centerSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
         subResult.bottom != null
       }?.rotatedSurface
-      if (result.right == null) return result
-      surfaces -= result.right
+      if (cube.right == null) return cube
+      surfaces -= cube.right
     }
 
-    if (result.bottom == null) {
+    if (cube.bottom == null) {
       def bottomSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(centerSurface.bottomSide(), it.topSide()) &&
-        areConnectible(result.right.bottomSide(), it.rightSide()) &&
-        [centerSurface.bottomSide()[2], result.right.leftSide()[2], it.topSide()[2]].count{it == x} == 1
+        areConnectible(frontSurface.bottomSide(), it.topSide()) &&
+        areConnectible(cube.right.bottomSide(), it.rightSide()) &&
+        [frontSurface.bottomSide()[2], cube.right.leftSide()[2], it.topSide()[2]].count{it == x} == 1
       }
-      if (bottomSurfaces.empty) return result
-      result.bottom = bottomSurfaces.find {
-        Map newResult = result.clone() as Map
+      if (bottomSurfaces.empty) return cube
+      cube.bottom = bottomSurfaces.find {
+        Map newResult = cube.clone() as Map
         newResult.bottom = it.rotatedSurface
-        Map subResult = connect(centerSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
         subResult.left != null
       }?.rotatedSurface
-      if (result.bottom == null) return result
-      surfaces -= result.bottom
+      if (cube.bottom == null) return cube
+      surfaces -= cube.bottom
     }
 
-    if (result.left == null) {
+    if (cube.left == null) {
       def leftSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(centerSurface.leftSide(), it.rightSide()) &&
-        areConnectible(result.bottom.leftSide().reverse(), it.bottomSide()) &&
-        areConnectible(result.top.leftSide(), it.topSide()) &&
-        [centerSurface.leftSide()[2], result.bottom.topSide()[0], it.rightSide()[2]].count{it == x} == 1 &&
-        [centerSurface.leftSide()[0], result.top.bottomSide()[0], it.rightSide()[0]].count{it == x} == 1
+        areConnectible(frontSurface.leftSide(), it.rightSide()) &&
+        areConnectible(cube.bottom.leftSide().reverse(), it.bottomSide()) &&
+        areConnectible(cube.top.leftSide(), it.topSide()) &&
+        [frontSurface.leftSide()[2], cube.bottom.topSide()[0], it.rightSide()[2]].count{it == x} == 1 &&
+        [frontSurface.leftSide()[0], cube.top.bottomSide()[0], it.rightSide()[0]].count{it == x} == 1
       }
-      if (leftSurfaces.empty) return result
-      result.left = leftSurfaces.find {
-        Map newResult = result.clone() as Map
+      if (leftSurfaces.empty) return cube
+      cube.left = leftSurfaces.find {
+        Map newResult = cube.clone() as Map
         newResult.left = it.rotatedSurface
-        Map subResult = connect(centerSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
         subResult.back != null
       }?.rotatedSurface
-      if (result.left == null) return result
-      surfaces -= result.left
+      if (cube.left == null) return cube
+      surfaces -= cube.left
     }
 
 
     def rotations = matchingRotationsOf(surfaces) {
-      areConnectible(result.top.topSide(), it.topSide()) &&
-              areConnectible(result.right.rightSide(), it.rightSide()) &&
-              areConnectible(result.bottom.bottomSide(), it.bottomSide()) &&
-              areConnectible(result.left.leftSide(), it.leftSide()) &&
-              [result.top.leftSide()[0], result.left.topSide()[0], it.topSide()[0]].count { it == x } == 1 &&
-              [result.top.rightSide()[0], result.right.topSide()[2], it.topSide()[2]].count { it == x } == 1 &&
-              [result.bottom.rightSide()[2], result.right.bottomSide()[2], it.bottomSide()[2]].count { it == x } == 1 &&
-              [result.bottom.leftSide()[2], result.left.bottomSide()[0], it.bottomSide()[0]].count { it == x } == 1
+      areConnectible(cube.top.topSide(), it.topSide()) &&
+              areConnectible(cube.right.rightSide(), it.rightSide()) &&
+              areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
+              areConnectible(cube.left.leftSide(), it.leftSide()) &&
+              [cube.top.leftSide()[0], cube.left.topSide()[0], it.topSide()[0]].count { it == x } == 1 &&
+              [cube.top.rightSide()[0], cube.right.topSide()[2], it.topSide()[2]].count { it == x } == 1 &&
+              [cube.bottom.rightSide()[2], cube.right.bottomSide()[2], it.bottomSide()[2]].count { it == x } == 1 &&
+              [cube.bottom.leftSide()[2], cube.left.bottomSide()[0], it.bottomSide()[0]].count { it == x } == 1
     }
-    result.back = rotations.empty ? null : rotations.first().rotatedSurface
+    cube.back = rotations.empty ? null : rotations.first().rotatedSurface
 
 
-    result
+    cube
   }
 
   @Test void "all possible rotations of a surface"() {
