@@ -1,8 +1,8 @@
 package ru.cubesolver
 
 class Surface {
-  static String _ = " "
-  static String x = "x"
+  final static String _ = " "
+  final static String x = "x"
 
   final List<List> data
   final int lastIndex

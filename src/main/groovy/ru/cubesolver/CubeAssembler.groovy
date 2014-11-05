@@ -35,8 +35,8 @@ class CubeAssembler {
     if (cube.right == null) {
       def rightSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.rightSide(), it.leftSide()) &&
-                areConnectible(cube.top.rightSide(), it.topSide()) &&
-                haveOneX(cube.front.topRight, cube.top.bottomRight, it.topLeft)
+        areConnectible(cube.top.rightSide(), it.topSide()) &&
+        haveOneX(cube.front.topRight, cube.top.bottomRight, it.topLeft)
       }
       return rightSurfaces.findResult {
         def newCube = doAssembleAsCube(surfaces - it.surface, updated(cube, "right", it.rotatedSurface))
@@ -47,8 +47,8 @@ class CubeAssembler {
     if (cube.bottom == null) {
       def bottomSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.bottomSide(), it.topSide()) &&
-                areConnectible(cube.right.bottomSide(), it.rightSide()) &&
-                haveOneX(cube.front.bottomRight, cube.right.bottomLeft, it.topRight)
+        areConnectible(cube.right.bottomSide(), it.rightSide()) &&
+        haveOneX(cube.front.bottomRight, cube.right.bottomLeft, it.topRight)
       }
       return bottomSurfaces.findResult {
         def newCube = doAssembleAsCube(surfaces - it.surface, updated(cube, "bottom", it.rotatedSurface))
@@ -59,10 +59,10 @@ class CubeAssembler {
     if (cube.left == null) {
       def leftSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.leftSide(), it.rightSide()) &&
-                areConnectible(cube.bottom.leftSide().reverse(), it.bottomSide()) &&
-                areConnectible(cube.top.leftSide(), it.topSide()) &&
-                haveOneX(cube.front.bottomLeft, cube.bottom.topLeft, it.bottomRight) &&
-                haveOneX(cube.front.topLeft, cube.top.bottomLeft, it.topRight)
+        areConnectible(cube.bottom.leftSide().reverse(), it.bottomSide()) &&
+        areConnectible(cube.top.leftSide(), it.topSide()) &&
+        haveOneX(cube.front.bottomLeft, cube.bottom.topLeft, it.bottomRight) &&
+        haveOneX(cube.front.topLeft, cube.top.bottomLeft, it.topRight)
       }
       return leftSurfaces.findResult {
         def newCube = doAssembleAsCube(surfaces - it.surface, updated(cube, "left", it.rotatedSurface))
@@ -72,13 +72,13 @@ class CubeAssembler {
 
     def rotations = matchingRotationsOf(surfaces) {
       areConnectible(cube.top.topSide(), it.topSide()) &&
-              areConnectible(cube.right.rightSide(), it.rightSide()) &&
-              areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
-              areConnectible(cube.left.leftSide(), it.leftSide()) &&
-              haveOneX(cube.top.topLeft, cube.left.topLeft, it.topLeft) &&
-              haveOneX(cube.top.topRight, cube.right.topRight, it.topRight) &&
-              haveOneX(cube.bottom.bottomRight, cube.right.bottomRight, it.bottomRight) &&
-              haveOneX(cube.bottom.bottomLeft, cube.left.bottomLeft, it.bottomLeft)
+      areConnectible(cube.right.rightSide(), it.rightSide()) &&
+      areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
+      areConnectible(cube.left.leftSide(), it.leftSide()) &&
+      haveOneX(cube.top.topLeft, cube.left.topLeft, it.topLeft) &&
+      haveOneX(cube.top.topRight, cube.right.topRight, it.topRight) &&
+      haveOneX(cube.bottom.bottomRight, cube.right.bottomRight, it.bottomRight) &&
+      haveOneX(cube.bottom.bottomLeft, cube.left.bottomLeft, it.bottomLeft)
     }
     rotations.empty ? null : updated(cube, "back", rotations.first().rotatedSurface)
   }
