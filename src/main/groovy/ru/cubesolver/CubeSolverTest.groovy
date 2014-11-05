@@ -82,7 +82,7 @@ class CubeSolverTest {
       def rightSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.rightSide(), it.leftSide()) &&
         areConnectible(cube.top.rightSide(), it.topSide()) &&
-        haveOneX(cube.front.topSide()[2], cube.top.bottomSide()[2], it.leftSide()[0])
+        haveOneX(cube.front.topRight, cube.top.bottomRight, it.topLeft)
       }
       return rightSurfaces.findResult {
         def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "right", it.rotatedSurface))
@@ -94,7 +94,7 @@ class CubeSolverTest {
       def bottomSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.bottomSide(), it.topSide()) &&
         areConnectible(cube.right.bottomSide(), it.rightSide()) &&
-        haveOneX(cube.front.bottomSide()[2], cube.right.leftSide()[2], it.topSide()[2])
+        haveOneX(cube.front.bottomRight, cube.right.bottomLeft, it.topRight)
       }
       return bottomSurfaces.findResult {
         def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "bottom", it.rotatedSurface))
@@ -107,8 +107,8 @@ class CubeSolverTest {
         areConnectible(cube.front.leftSide(), it.rightSide()) &&
         areConnectible(cube.bottom.leftSide().reverse(), it.bottomSide()) &&
         areConnectible(cube.top.leftSide(), it.topSide()) &&
-        haveOneX(cube.front.leftSide()[2], cube.bottom.topSide()[0], it.rightSide()[2]) &&
-        haveOneX(cube.front.leftSide()[0], cube.top.bottomSide()[0], it.rightSide()[0])
+        haveOneX(cube.front.bottomLeft, cube.bottom.topLeft, it.bottomRight) &&
+        haveOneX(cube.front.topLeft, cube.top.bottomLeft, it.topRight)
       }
       return leftSurfaces.findResult {
         def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "left", it.rotatedSurface))
@@ -121,10 +121,10 @@ class CubeSolverTest {
       areConnectible(cube.right.rightSide(), it.rightSide()) &&
       areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
       areConnectible(cube.left.leftSide(), it.leftSide()) &&
-      haveOneX(cube.top.leftSide()[0], cube.left.topSide()[0], it.topSide()[0]) &&
-      haveOneX(cube.top.rightSide()[0], cube.right.topSide()[2], it.topSide()[2]) &&
-      haveOneX(cube.bottom.rightSide()[2], cube.right.bottomSide()[2], it.bottomSide()[2]) &&
-      haveOneX(cube.bottom.leftSide()[2], cube.left.bottomSide()[0], it.bottomSide()[0])
+      haveOneX(cube.top.topLeft, cube.left.topLeft, it.topLeft) &&
+      haveOneX(cube.top.topRight, cube.right.topRight, it.topRight) &&
+      haveOneX(cube.bottom.bottomRight, cube.right.bottomRight, it.bottomRight) &&
+      haveOneX(cube.bottom.bottomLeft, cube.left.bottomLeft, it.bottomLeft)
     }
     rotations.empty ? null : updated(cube, "back", rotations.first().rotatedSurface)
   }
@@ -205,6 +205,32 @@ class CubeSolverTest {
             [_, x, _],
             [_, x, _],
     )
+  }
+
+  @Test void "surface can be converted to string"() {
+    def surface = surface(
+            [x, x, _],
+            [_, x, x],
+            [_, x, _]
+    )
+    assert surface.toString() == """
+      |xx-
+      |-xx
+      |-x-
+    """.stripMargin("|").trim()
+  }
+
+  @Test void "surface can be constructed from string"() {
+    def surface = surface("""
+      xx-
+      -xx
+      -x-
+    """)
+    assert surface.toString() == """
+      |xx-
+      |-xx
+      |-x-
+    """.stripMargin("|").trim()
   }
 
   @Test void "sides of surface"() {
@@ -324,6 +350,22 @@ class CubeSolverTest {
 
     List leftSide() {
       (0..2).collect{ data[it][0] }
+    }
+
+    def getTopRight() {
+      topSide()[2]
+    }
+
+    def getBottomRight() {
+      bottomSide()[2]
+    }
+
+    def getTopLeft() {
+      topSide()[0]
+    }
+
+    def getBottomLeft() {
+      leftSide()[2]
     }
 
     Surface copy() {
