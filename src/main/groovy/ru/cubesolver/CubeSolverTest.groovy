@@ -7,11 +7,12 @@ class CubeSolverTest {
   private static String x = "x"
 
   @Test void "can assemble some surfaces"() {
-    def allSurfaces = combinationsOf(surface("""
+    def allSurfaces = surface("""
           ---
           -x-
           ---
-    """))
+    """).combinations()
+
     def cube = assembleAsCube(allSurfaces.take(30))
     cube.each { key, value ->
       println("===${key}===")
@@ -131,18 +132,19 @@ class CubeSolverTest {
 
   private static List<Map> matchingRotationsOf(List<Surface> surfaces, Closure accepted) {
     surfaces.collectMany { Surface surface ->
-      rotationsOf(surface)
+      surface.rotations()
           .findAll { accepted(it) }
           .collect{ [surface: surface, rotatedSurface: it] }
     }
   }
 
   @Test void "all possible rotations of a surface"() {
-    def rotations = rotationsOf(surface(
+    def rotations = surface(
             [x, x, _],
             [_, x, _],
             [_, x, _],
-    ))
+    ).rotations()
+
     assert rotations.size() == 8
     assert rotations[4] == surface(
             [_, x, x],
@@ -253,66 +255,22 @@ class CubeSolverTest {
   }
 
   @Test void "all possible valid combinations of surfaces"() {
-    def allSurfaces = combinationsOf(surface(
+    def combinations = surface(
             [_, _, _],
             [_, x, _],
             [_, _, _]
-    ))
-    allSurfaces.each {
+    ).combinations()
+
+    combinations.each {
       println("---")
       println(it)
     }
-    assert allSurfaces.size() == 160
+    assert combinations.size() == 160
   }
 
-  private static List<Surface> rotationsOf(Surface surface) {
-    def rotate = { Surface aSurface ->
-      def result = [aSurface]
-      (0..2).each {
-        aSurface = aSurface.rotateRight()
-        result << aSurface
-      }
-      result
-    }
-    rotate(surface) + rotate(surface.horizontalFlip())
-  }
 
   private static boolean areConnectible(List side1, List side2) {
     [side1, side2].transpose().every{ it[0] == _ || it[1] == _ } && (side1[1] == x || side2[1] == x)
-  }
-
-  private static List<Surface> combinationsOf(Surface surface) {
-    positions().collectMany { row, column ->
-      if (surface.get(row, column) != x) {
-        def updateSurface = surface.copy().set(row, column, x)
-        if (updateSurface.valid) {
-          [updateSurface] + combinationsOf(updateSurface)
-        } else {
-          [null]
-        }
-      } else {
-        [null]
-      }
-    }.findAll{ it != null }.unique()
-  }
-
-  private static positions(int startRow = 0, int startColumn = -1) {
-    int row = startRow
-    int column = startColumn
-    new Iterator() {
-      @Override Object next() {
-        column++
-        if (column >= 3) {
-          row++
-          column = 0
-        }
-        [row, column]
-      }
-
-      @Override boolean hasNext() {
-        row != 2 || column != 2
-      }
-    }
   }
 
 
@@ -399,6 +357,52 @@ class CubeSolverTest {
           }
         }
       new Surface(newData)
+    }
+
+    List<Surface> rotations() {
+      def rotate = { Surface aSurface ->
+        def result = [aSurface]
+        (0..2).each {
+          aSurface = aSurface.rotateRight()
+          result << aSurface
+        }
+        result
+      }
+      rotate(this) + rotate(this.horizontalFlip())
+    }
+
+    List<Surface> combinations() {
+      positions().collectMany { row, column ->
+        if (get(row, column) != x) {
+          def updateSurface = copy().set(row, column, x)
+          if (updateSurface.valid) {
+            [updateSurface] + updateSurface.combinations()
+          } else {
+            [null]
+          }
+        } else {
+          [null]
+        }
+      }.findAll{ it != null }.unique()
+    }
+
+    private positions(int startRow = 0, int startColumn = -1) {
+      int row = startRow
+      int column = startColumn
+      new Iterator() {
+        @Override Object next() {
+          column++
+          if (column >= 3) {
+            row++
+            column = 0
+          }
+          [row, column]
+        }
+
+        @Override boolean hasNext() {
+          row != 2 || column != 2
+        }
+      }
     }
 
     @Override String toString() {
