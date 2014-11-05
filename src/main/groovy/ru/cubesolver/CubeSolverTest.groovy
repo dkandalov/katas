@@ -28,7 +28,7 @@ class CubeSolverTest {
           ---
     """).combinations()
 
-    def cube = assembleAsCube(allSurfaces.take(30))
+    def cube = assembleAsCube(allSurfaces.toList().take(30))
     cube.each { key, value ->
       println("===${key}===")
       println(value)
@@ -173,19 +173,6 @@ class CubeSolverTest {
     )
   }
 
-  @Test void "determine if surface is valid"() {
-    assert !isValid(surface(
-          [x, _, _],
-          [_, x, _],
-          [_, _, _],
-    ))
-    assert isValid(surface(
-          [x, x, _],
-          [_, x, _],
-          [_, _, _],
-    ))
-  }
-
   @Test void "surfaces can be rotated"() {
     assert surface(
             [x, x, _],
@@ -269,14 +256,25 @@ class CubeSolverTest {
         ---
         -x-
         ---
-    """
-    ).combinations()
+    """).combinations()
 
     combinations.each {
       println("=====")
       println(it)
     }
     assert combinations.size() == 160
+  }
+
+  @Test void "all possible valid combinations of 4x4 surfaces"() {
+    def combinations = surface("""
+        ----
+        -xx-
+        -xx-
+        ----
+    """).combinations()
+
+    def size = combinations.size()
+    assert size == 2400
   }
 
   @Test void "all possible valid combinations of 5x5 surfaces"() {
@@ -286,16 +284,11 @@ class CubeSolverTest {
         -xxx-
         -xxx-
         -----
-    """
-    ).combinations()
+    """).combinations()
 
-    combinations.each {
-      println("---")
-      println(it)
-    }
-    assert combinations.size() == 160
+    def size = combinations.size()
+    assert size == 38415
   }
-
 
   private static boolean areConnectible(List side1, List side2) {
     int centerIndex1 = side1.size().intdiv(2)
@@ -355,18 +348,6 @@ class CubeSolverTest {
       lastIndex + 1
     }
 
-    Surface copy() {
-      data.collect{ it.clone() }.toList()
-    }
-
-    boolean isValid() {
-      if (topLeft == x && topSide()[1] != x && leftSide()[1] != x) false
-      else if (topRight == x && topSide()[lastIndex - 1] != x && rightSide()[1] != x) false
-      else if (bottomRight == x && bottomSide()[lastIndex - 1] != x && rightSide()[lastIndex - 1] != x) false
-      else if (bottomLeft == x && bottomSide()[1] != x && leftSide()[lastIndex - 1] != x) false
-      else true
-    }
-
     Surface rotateRight() {
       def newData =
         (0..lastIndex).collect { column ->
@@ -399,28 +380,30 @@ class CubeSolverTest {
       rotate(this) + rotate(this.horizontalFlip())
     }
 
-    List<Surface> combinations() {
-      positions().collectMany { row, column ->
-        if (get(row, column) != x) {
-          def updateSurface = copy().set(row, column, x)
-          if (updateSurface.valid) {
-            [updateSurface] + updateSurface.combinations()
-          } else {
-            [null]
+    LinkedHashSet<Surface> combinations(LinkedHashSet<Surface> result = []) {
+      positions().each { row, column ->
+        if (isValidUpdate(row, column)) {
+          def updateSurface = copy()
+          updateSurface.data[row][column] = x
+          if (!result.contains(updateSurface)) {
+            result.add(updateSurface)
+            updateSurface.combinations(result)
           }
-        } else {
-          [null]
         }
-      }.findAll{ it != null }.unique()
+      }
+      result
     }
 
-    private def get(int row, int column) {
-      data[row][column]
+    private boolean isValidUpdate(int row, int column) {
+      if (row == 0 && column == 0) topSide()[1] == x || leftSide()[1] == x
+      else if (row == 0 && column == lastIndex) topSide()[lastIndex - 1] == x || rightSide()[1] == x
+      else if (row == lastIndex && column == lastIndex) bottomSide()[lastIndex - 1] == x || rightSide()[lastIndex - 1] == x
+      else if (row == lastIndex && column == 0) bottomSide()[1] == x || leftSide()[lastIndex - 1] == x
+      else data[row][column] != x
     }
 
-    private def set(int row, int column, value) {
-      data[row][column] = value
-      this
+    private Surface copy() {
+      new Surface(data.collect{ it.clone() }.toList())
     }
 
     private positions(int row = 0, int column = -1) {
@@ -460,10 +443,6 @@ class CubeSolverTest {
     @Override int hashCode() {
       return (data != null ? data.hashCode() : 0)
     }
-  }
-
-  private static boolean isValid(Surface surface) {
-    surface.valid
   }
 
   private static surface(String s) {
