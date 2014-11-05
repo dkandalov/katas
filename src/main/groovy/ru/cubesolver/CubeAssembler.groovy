@@ -3,7 +3,7 @@ import static ru.cubesolver.Surface.*
 
 class CubeAssembler {
   static Map assembleAsCube(Collection<Surface> surfaces) {
-    if (surfaces.size() < 6) throw new IllegalAccessException()
+    if (surfaces.size() < 6) throw new IllegalArgumentException()
     surfaces = surfaces.toList()
 
     def cube = [front: surfaces.first()]
