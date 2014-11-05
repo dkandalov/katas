@@ -160,7 +160,7 @@ class CubeSolverTest {
   }
 
 
-  @Test void "can assemble some 3x3 surfaces"() {
+  @Test void "can assemble cube from some 3x3 surfaces"() {
     def allSurfaces = surface("""
           ---
           -x-
@@ -205,7 +205,7 @@ class CubeSolverTest {
     """)
   }
 
-  @Test void "can assemble some 5x5 surfaces"() {
+  @Test void "can assemble cube from some 5x5 surfaces"() {
     def allSurfaces = surface("""
           -----
           -xxx-
@@ -262,5 +262,59 @@ class CubeSolverTest {
        -xxx-
        -----
     """)
+  }
+
+  @Test void "can assemble cube using surfaces from test task"() {
+    def surface1 = surface("""
+      --x--
+      -xxx-
+      xxxxx
+      -xxx-
+      --x--
+    """)
+    def surface2 = surface("""
+      x-x-x
+      xxxxx
+      -xxx-
+      xxxxx
+      x-x-x
+    """)
+    def surface3 = surface("""
+      --x--
+      -xxxx
+      xxxx-
+      -xxxx
+      --x--
+    """)
+    def surface4 = surface("""
+      -x-x-
+      xxxx-
+      -xxxx
+      xxxx-
+      xx-x-
+    """)
+    def surface5 = surface("""
+      -x-x-
+      xxxxx
+      -xxx-
+      xxxxx
+      x-x--
+    """)
+    def surface6 = surface("""
+      -x-x-
+      -xxxx
+      xxxx-
+      -xxxx
+      xx-xx
+    """)
+    def cube = assembleAsCube([surface1, surface2, surface3, surface4, surface5, surface6])
+    println(cube)
+
+    assert cube.front == surface1
+    assert cube.top == surface2.rotateRight()
+    assert cube.right == surface4
+    assert cube.bottom == surface6.horizontalFlip()
+    assert cube.left == surface5.horizontalFlip()
+    assert cube.back == surface3
   }
 }

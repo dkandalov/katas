@@ -69,21 +69,21 @@ class Surface {
 
   Surface rotateRight() {
     def newData =
-            (0..lastIndex).collect { column ->
-              (lastIndex..0).collect { row ->
-                data[row][column]
-              }
-            }
+        (0..lastIndex).collect { column ->
+          (lastIndex..0).collect { row ->
+            data[row][column]
+          }
+        }
     new Surface(newData)
   }
 
   Surface horizontalFlip() {
     def newData =
-            (0..lastIndex).collect { row ->
-              (lastIndex..0).collect { column ->
-                data[row][column]
-              }
-            }
+        (0..lastIndex).collect { row ->
+          (lastIndex..0).collect { column ->
+            data[row][column]
+          }
+        }
     new Surface(newData)
   }
 
@@ -177,10 +177,10 @@ class CubeAssembler {
   static Map assembleAsCube(List<Surface> surfaces) {
     if (surfaces.size() < 6) throw new IllegalAccessException()
     def cube = [front: surfaces.first()]
-    assembleAsCube(surfaces.tail(), cube)
+    doAssembleAsCube(surfaces.tail(), cube)
   }
 
-  static Map assembleAsCube(List<Surface> surfaces, Map<String, Surface> cube) {
+  private static Map doAssembleAsCube(List<Surface> surfaces, Map<String, Surface> cube) {
     if (surfaces.empty || cube.size() == 6) return cube
 
     def updated = { Map map, String key, value ->
