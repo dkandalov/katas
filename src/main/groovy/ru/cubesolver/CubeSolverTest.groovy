@@ -7,77 +7,74 @@ class CubeSolverTest {
   private static String x = "x"
 
   @Test void "can assemble some surfaces"() {
-    def allSurfaces = combinationsOf(surface(
-            [_, _, _],
-            [_, x, _],
-            [_, _, _]
-    ))
+    def allSurfaces = combinationsOf(surface("""
+          ---
+          -x-
+          ---
+    """))
     def cube = assembleAsCube(allSurfaces.take(30))
 
-    assert cube.front == surface(
-            [_, x, _],
-            [_, x, _],
-            [_, _, _]
-    )
-    assert cube.top == surface(
-            [x, x, _],
-            [_, x, _],
-            [_, _, _]
-    )
-    assert cube.right == surface(
-            [x, x, x],
-            [x, x, _],
-            [_, _, _]
-    )
-    assert cube.bottom == surface(
-            [x, x, x],
-            [x, x, x],
-            [_, _, _]
-    )
-    assert cube.left == surface(
-            [_, x, x],
-            [x, x, x],
-            [_, _, _]
-    )
-    assert cube.back == surface(
-            [_, _, _],
-            [_, x, x],
-            [x, x, x]
-    )
+    assert cube.front == surface("""
+          -x-
+          -x-
+          ---
+    """)
+    assert cube.top == surface("""
+          xx-
+          -x-
+          ---
+    """)
+    assert cube.right == surface("""
+          xxx
+          xx-
+          ---
+    """)
+    assert cube.bottom == surface("""
+          xxx
+          xxx
+          ---
+    """)
+    assert cube.left == surface("""
+          -xx
+          xxx
+          ---
+    """)
+    assert cube.back == surface("""
+          ---
+          -xx
+          xxx
+    """)
     cube.each { key, value ->
-      println("----")
-      println(key)
+      println("===${key}===")
       println(value)
-    }
-  }
-
-  private static List<Map> matchingRotationsOf(List<Surface> surfaces, Closure accepted) {
-    surfaces.collectMany { Surface surface ->
-      rotationsOf(surface)
-              .findAll { accepted(it) }
-              .collect{ [surface: surface, rotatedSurface: it] }
     }
   }
 
   private static Map assembleAsCube(List<Surface> surfaces) {
     if (surfaces.size() < 6) throw new IllegalAccessException()
-    def result = assembleAsCube(surfaces.first(), surfaces.tail())
-    result.front = surfaces.first()
-    result
+    def cube = [front: surfaces.first()]
+    assembleAsCube(surfaces.tail(), cube)
   }
 
-  private static Map assembleAsCube(Surface frontSurface, List<Surface> surfaces, Map<String, Surface> cube = [:]) {
-    if (surfaces.empty || cube.size() == 5) return cube
+  private static Map assembleAsCube(List<Surface> surfaces, Map<String, Surface> cube) {
+    if (surfaces.empty || cube.size() == 6) return cube
+
+    def updated = { Map map, String key, value ->
+      def newMap = map.clone()
+      newMap[key] = value
+      newMap
+    }
+    def haveOneX = { Object... points ->
+      points.count { it == x } == 1
+    }
 
     if (cube.top == null) {
       def topSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(frontSurface.topSide(), it.bottomSide())
+        areConnectible(cube.front.topSide(), it.bottomSide())
       }
       if (topSurfaces.empty) return cube
       cube.top = topSurfaces.find {
-        Map newResult = cube.clone() as Map
-        newResult.top = it.rotatedSurface
-        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "top", it.rotatedSurface))
         subResult.right != null
       }?.rotatedSurface
       if (cube.top == null) return cube
@@ -86,15 +83,13 @@ class CubeSolverTest {
 
     if (cube.right == null) {
       def rightSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(frontSurface.rightSide(), it.leftSide()) &&
+        areConnectible(cube.front.rightSide(), it.leftSide()) &&
         areConnectible(cube.top.rightSide(), it.topSide()) &&
-        [frontSurface.topSide()[2], cube.top.bottomSide()[2], it.leftSide()[0]].count{it == x} == 1
+        haveOneX(cube.front.topSide()[2], cube.top.bottomSide()[2], it.leftSide()[0])
       }
       if (rightSurfaces.empty) return cube
       cube.right = rightSurfaces.find {
-        Map newResult = cube.clone() as Map
-        newResult.right = it.rotatedSurface
-        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "right", it.rotatedSurface))
         subResult.bottom != null
       }?.rotatedSurface
       if (cube.right == null) return cube
@@ -103,15 +98,13 @@ class CubeSolverTest {
 
     if (cube.bottom == null) {
       def bottomSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(frontSurface.bottomSide(), it.topSide()) &&
+        areConnectible(cube.front.bottomSide(), it.topSide()) &&
         areConnectible(cube.right.bottomSide(), it.rightSide()) &&
-        [frontSurface.bottomSide()[2], cube.right.leftSide()[2], it.topSide()[2]].count{it == x} == 1
+        haveOneX(cube.front.bottomSide()[2], cube.right.leftSide()[2], it.topSide()[2])
       }
       if (bottomSurfaces.empty) return cube
       cube.bottom = bottomSurfaces.find {
-        Map newResult = cube.clone() as Map
-        newResult.bottom = it.rotatedSurface
-        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "bottom", it.rotatedSurface))
         subResult.left != null
       }?.rotatedSurface
       if (cube.bottom == null) return cube
@@ -120,38 +113,42 @@ class CubeSolverTest {
 
     if (cube.left == null) {
       def leftSurfaces = matchingRotationsOf(surfaces) {
-        areConnectible(frontSurface.leftSide(), it.rightSide()) &&
+        areConnectible(cube.front.leftSide(), it.rightSide()) &&
         areConnectible(cube.bottom.leftSide().reverse(), it.bottomSide()) &&
         areConnectible(cube.top.leftSide(), it.topSide()) &&
-        [frontSurface.leftSide()[2], cube.bottom.topSide()[0], it.rightSide()[2]].count{it == x} == 1 &&
-        [frontSurface.leftSide()[0], cube.top.bottomSide()[0], it.rightSide()[0]].count{it == x} == 1
+        haveOneX(cube.front.leftSide()[2], cube.bottom.topSide()[0], it.rightSide()[2]) &&
+        haveOneX(cube.front.leftSide()[0], cube.top.bottomSide()[0], it.rightSide()[0])
       }
       if (leftSurfaces.empty) return cube
       cube.left = leftSurfaces.find {
-        Map newResult = cube.clone() as Map
-        newResult.left = it.rotatedSurface
-        Map subResult = assembleAsCube(frontSurface, surfaces - it.surface, newResult)
+        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "left", it.rotatedSurface))
         subResult.back != null
       }?.rotatedSurface
       if (cube.left == null) return cube
       surfaces -= cube.left
     }
 
-
     def rotations = matchingRotationsOf(surfaces) {
       areConnectible(cube.top.topSide(), it.topSide()) &&
-              areConnectible(cube.right.rightSide(), it.rightSide()) &&
-              areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
-              areConnectible(cube.left.leftSide(), it.leftSide()) &&
-              [cube.top.leftSide()[0], cube.left.topSide()[0], it.topSide()[0]].count { it == x } == 1 &&
-              [cube.top.rightSide()[0], cube.right.topSide()[2], it.topSide()[2]].count { it == x } == 1 &&
-              [cube.bottom.rightSide()[2], cube.right.bottomSide()[2], it.bottomSide()[2]].count { it == x } == 1 &&
-              [cube.bottom.leftSide()[2], cube.left.bottomSide()[0], it.bottomSide()[0]].count { it == x } == 1
+      areConnectible(cube.right.rightSide(), it.rightSide()) &&
+      areConnectible(cube.bottom.bottomSide(), it.bottomSide()) &&
+      areConnectible(cube.left.leftSide(), it.leftSide()) &&
+      haveOneX(cube.top.leftSide()[0], cube.left.topSide()[0], it.topSide()[0]) &&
+      haveOneX(cube.top.rightSide()[0], cube.right.topSide()[2], it.topSide()[2]) &&
+      haveOneX(cube.bottom.rightSide()[2], cube.right.bottomSide()[2], it.bottomSide()[2]) &&
+      haveOneX(cube.bottom.leftSide()[2], cube.left.bottomSide()[0], it.bottomSide()[0])
     }
     cube.back = rotations.empty ? null : rotations.first().rotatedSurface
 
-
     cube
+  }
+
+  private static List<Map> matchingRotationsOf(List<Surface> surfaces, Closure accepted) {
+    surfaces.collectMany { Surface surface ->
+      rotationsOf(surface)
+          .findAll { accepted(it) }
+          .collect{ [surface: surface, rotatedSurface: it] }
+    }
   }
 
   @Test void "all possible rotations of a surface"() {
@@ -171,18 +168,6 @@ class CubeSolverTest {
             [x, x, x],
             [_, _, _],
     )
-  }
-
-  private static List<Surface> rotationsOf(Surface surface) {
-    def rotate = { Surface aSurface ->
-      def result = [aSurface]
-      (0..2).each {
-        aSurface = aSurface.rotateRight()
-        result << aSurface
-      }
-      result
-    }
-    rotate(surface) + rotate(surface.horizontalFlip())
   }
 
   @Test void "determine if surface is valid"() {
@@ -266,6 +251,18 @@ class CubeSolverTest {
       println(it)
     }
     assert allSurfaces.size() == 160
+  }
+
+  private static List<Surface> rotationsOf(Surface surface) {
+    def rotate = { Surface aSurface ->
+      def result = [aSurface]
+      (0..2).each {
+        aSurface = aSurface.rotateRight()
+        result << aSurface
+      }
+      result
+    }
+    rotate(surface) + rotate(surface.horizontalFlip())
   }
 
   private static boolean areConnectible(List side1, List side2) {
@@ -377,7 +374,9 @@ class CubeSolverTest {
     }
 
     @Override String toString() {
-      data.collect{it.join("")}.join("\n")
+      data.collect{
+        it.collect { it == x ? "x" : "-" }.join("")
+      }.join("\n")
     }
 
     @Override boolean equals(o) {
@@ -398,6 +397,13 @@ class CubeSolverTest {
 
   private static boolean isValid(Surface surface) {
     surface.valid
+  }
+
+  private static surface(String s) {
+    def rows = s.trim().split("\n").collect {
+        it.trim().chars.collect{ it == "x" ? x : _ }
+      }
+    new Surface(rows)
   }
 
   private static surface(List... rows) {
