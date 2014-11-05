@@ -13,6 +13,10 @@ class CubeSolverTest {
           ---
     """))
     def cube = assembleAsCube(allSurfaces.take(30))
+    cube.each { key, value ->
+      println("===${key}===")
+      println(value)
+    }
 
     assert cube.front == surface("""
           -x-
@@ -44,10 +48,6 @@ class CubeSolverTest {
           -xx
           xxx
     """)
-    cube.each { key, value ->
-      println("===${key}===")
-      println(value)
-    }
   }
 
   private static Map assembleAsCube(List<Surface> surfaces) {
@@ -72,13 +72,10 @@ class CubeSolverTest {
       def topSurfaces = matchingRotationsOf(surfaces) {
         areConnectible(cube.front.topSide(), it.bottomSide())
       }
-      if (topSurfaces.empty) return cube
-      cube.top = topSurfaces.find {
-        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "top", it.rotatedSurface))
-        subResult.right != null
-      }?.rotatedSurface
-      if (cube.top == null) return cube
-      surfaces -= cube.top
+      return topSurfaces.findResult {
+        def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "top", it.rotatedSurface))
+        newCube?.size() == 6 ? newCube : null
+      }
     }
 
     if (cube.right == null) {
@@ -87,13 +84,10 @@ class CubeSolverTest {
         areConnectible(cube.top.rightSide(), it.topSide()) &&
         haveOneX(cube.front.topSide()[2], cube.top.bottomSide()[2], it.leftSide()[0])
       }
-      if (rightSurfaces.empty) return cube
-      cube.right = rightSurfaces.find {
-        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "right", it.rotatedSurface))
-        subResult.bottom != null
-      }?.rotatedSurface
-      if (cube.right == null) return cube
-      surfaces -= cube.right
+      return rightSurfaces.findResult {
+        def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "right", it.rotatedSurface))
+        newCube?.size() == 6 ? newCube : null
+      }
     }
 
     if (cube.bottom == null) {
@@ -102,13 +96,10 @@ class CubeSolverTest {
         areConnectible(cube.right.bottomSide(), it.rightSide()) &&
         haveOneX(cube.front.bottomSide()[2], cube.right.leftSide()[2], it.topSide()[2])
       }
-      if (bottomSurfaces.empty) return cube
-      cube.bottom = bottomSurfaces.find {
-        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "bottom", it.rotatedSurface))
-        subResult.left != null
-      }?.rotatedSurface
-      if (cube.bottom == null) return cube
-      surfaces -= cube.bottom
+      return bottomSurfaces.findResult {
+        def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "bottom", it.rotatedSurface))
+        newCube?.size() == 6 ? newCube : null
+      }
     }
 
     if (cube.left == null) {
@@ -119,13 +110,10 @@ class CubeSolverTest {
         haveOneX(cube.front.leftSide()[2], cube.bottom.topSide()[0], it.rightSide()[2]) &&
         haveOneX(cube.front.leftSide()[0], cube.top.bottomSide()[0], it.rightSide()[0])
       }
-      if (leftSurfaces.empty) return cube
-      cube.left = leftSurfaces.find {
-        Map subResult = assembleAsCube(surfaces - it.surface, updated(cube, "left", it.rotatedSurface))
-        subResult.back != null
-      }?.rotatedSurface
-      if (cube.left == null) return cube
-      surfaces -= cube.left
+      return leftSurfaces.findResult {
+        def newCube = assembleAsCube(surfaces - it.surface, updated(cube, "left", it.rotatedSurface))
+        newCube?.size() == 6 ? newCube : null
+      }
     }
 
     def rotations = matchingRotationsOf(surfaces) {
@@ -138,9 +126,7 @@ class CubeSolverTest {
       haveOneX(cube.bottom.rightSide()[2], cube.right.bottomSide()[2], it.bottomSide()[2]) &&
       haveOneX(cube.bottom.leftSide()[2], cube.left.bottomSide()[0], it.bottomSide()[0])
     }
-    cube.back = rotations.empty ? null : rotations.first().rotatedSurface
-
-    cube
+    rotations.empty ? null : updated(cube, "back", rotations.first().rotatedSurface)
   }
 
   private static List<Map> matchingRotationsOf(List<Surface> surfaces, Closure accepted) {
