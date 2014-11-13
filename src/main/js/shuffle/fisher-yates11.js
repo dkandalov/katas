@@ -1,4 +1,4 @@
-function sort(array) {
+function shuffle(array) {
     for (var i = 0; i < array.length - 1; i++) {
         swap(array, i, randomIntBetween(i, array.length));
     }
