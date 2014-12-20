@@ -331,7 +331,7 @@ class P1 extends Matchers {
 	private class IntWithPrime(n: Int) {
 		def isPrime: Boolean = n > 1 && Range(2, n).forall{ i => n % i != 0 }
 	}
-	private implicit def intToIntWithPrime(n: Int) = new IntWithPrime(n)
+	private implicit def intToIntWithPrime(n: Int): IntWithPrime = new IntWithPrime(n)
 
 	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
 		1.isPrime should be(false)
@@ -362,7 +362,7 @@ class P1 extends Matchers {
 	private class IntWithCoPrime(n: Int) {
 		def isCoprimeTo(m: Int): Boolean = gcd(n, m) == 1
 	}
-	private implicit def intToIntWithCoPrime(n: Int) = new IntWithCoPrime(n)
+	private implicit def intToIntWithCoPrime(n: Int): IntWithCoPrime = new IntWithCoPrime(n)
 
 	@Test def `P33 (*) Determine whether two positive integer numbers are coprime.`() {
 		1.isCoprimeTo(2) should be(true)
@@ -376,7 +376,7 @@ class P1 extends Matchers {
 		class IntWithTotient(n: Int) {
 			def totient(): Int = Range(1, n + 1).count(it => n.isCoprimeTo(it))
 		}
-		implicit def intToIntWithTotient(n: Int) = new IntWithTotient(n)
+		implicit def intToIntWithTotient(n: Int): IntWithTotient = new IntWithTotient(n)
 		10.totient should be(4)
 	}
 
@@ -390,7 +390,7 @@ class P1 extends Matchers {
 	class IntWithPrimeFactors(n: Int) {
 		def primeFactors: Seq[Int] = if (n == 1) Seq(1) else primeFactorsOf(n)
 	}
-	implicit def intToIntWithPrimeFactors(n: Int) = new IntWithPrimeFactors(n)
+	implicit def intToIntWithPrimeFactors(n: Int): IntWithPrimeFactors = new IntWithPrimeFactors(n)
 
 	@Test def `P35 (**) Determine the prime factors of a given positive integer.`() {
 		1.primeFactors should equal(Seq(1))
@@ -404,7 +404,7 @@ class P1 extends Matchers {
 		def primeFactorMultiplicity: Map[Int, Int] =
 			primeFactorsOf(n).groupBy{it => it}.map{ it => it._1 -> it._2.size }
 	}
-	private implicit def intToIntWithPrimeFactors2(n: Int) = new IntWithPrimeFactors2(n)
+	private implicit def intToIntWithPrimeFactors2(n: Int): IntWithPrimeFactors2 = new IntWithPrimeFactors2(n)
 
 	@Test def `P36 (**) Determine the prime factors of a given positive integer (2).`() {
 		315.primeFactorMultiplicity should equal(Map(3 -> 2, 5 -> 1, 7 -> 1))
@@ -444,7 +444,7 @@ class P1 extends Matchers {
 			      if p1 + p2 == n } yield (p1, p2)).take(1)(0)
 		}
 	}
-	private implicit def intToIntWithGoldbach(n: Int) = new IntWithGoldbach(n)
+	private implicit def intToIntWithGoldbach(n: Int): IntWithGoldbach = new IntWithGoldbach(n)
 
 	@Test def `P40 (**) Goldbach's conjecture.`() {
 		evaluating{ 2.goldbach } should produce[IllegalArgumentException]
@@ -675,7 +675,19 @@ class P1 extends Matchers {
 		import Tree._
 
 		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
-		heightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x"), Node("x")), Node("x", Node("x")), Node("x", End, Node("x"))))
+
+		heightBalancedTrees(2, "x") should equal(Seq(
+			Node("x",
+				Node("x"),
+				Node("x")),
+			Node("x",
+				Node("x"),
+				End),
+			Node("x",
+				End,
+				Node("x"))))
+
+		heightBalancedTrees(3, "x").foreach(println)
 		heightBalancedTrees(3, "x").size should equal(15)
 	}
 
@@ -1027,8 +1039,12 @@ class P1 extends Matchers {
 			else {
 				val fullHeightTrees = heightBalancedTrees(height - 1, value)
 				val shortHeightTrees = heightBalancedTrees(height - 2, value)
+
 				(for (left <- fullHeightTrees; right <- fullHeightTrees) yield Node(value, left, right)) ++
-					(for (fullTree <- fullHeightTrees; shortTree <- shortHeightTrees) yield List(Node(value, fullTree, shortTree), Node(value, shortTree, fullTree))).flatten
+				(for (fullTree <- fullHeightTrees; shortTree <- shortHeightTrees)
+					yield List(Node(value, fullTree, shortTree), Node(value, shortTree, fullTree))
+				).flatten
+
 			}
 		}
 	}
