@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ScalacSettings">
-    <option name="SCALAC_BEFORE" value="false" />
-    <option name="COMPILER_LIBRARY_NAME" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.1" />
-    <option name="COMPILER_LIBRARY_LEVEL" value="Project" />
+  <component name="ScalaCompilerConfiguration">
+    <option name="implicitConversions" value="true" />
   </component>
 </project>
-
