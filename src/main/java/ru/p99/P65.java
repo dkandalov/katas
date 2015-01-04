@@ -13,7 +13,7 @@ public class P65 {
                 node('b', end(), node('c')),
                 node('d')
             );
-        PositionedTree<Character> positionedTree = tree.layoutBinaryTree();
+        Tree<Positioned<Character>> positionedTree = tree.layoutBinaryTree();
         assertThat(positionedTree, equalTo(
             nodeXY(3, 1, 'a',
                 nodeXY(1, 2, 'b', endXY(), nodeXY(2, 3, 'c')),
@@ -39,7 +39,7 @@ public class P65 {
                         node('s', node('q'), end())),
                     end())
             );
-        PositionedTree<Character> positionedTree = tree.layoutBinaryTree();
+        Tree<Positioned<Character>> positionedTree = tree.layoutBinaryTree();
         assertThat(positionedTree, equalTo(
             nodeXY(8, 1, 'n',
                 nodeXY(6, 2, 'k',
@@ -58,12 +58,12 @@ public class P65 {
         // @formatter:on
     }
 
-    private static <T> PositionedTree<T> nodeXY(int x, int y, T value) {
-        return new PositionedNode<>(x, y, value, endXY(), endXY());
+    private static <T> Tree<Positioned<T>> nodeXY(int x, int y, T value) {
+        return new Node<>(new Positioned<>(x, y, value), endXY(), endXY());
     }
 
-    private static <T> PositionedTree<T> nodeXY(int x, int y, T value, PositionedTree<T> left, PositionedTree<T> right) {
-        return new PositionedNode<>(x, y, value, left, right);
+    private static <T> Tree<Positioned<T>> nodeXY(int x, int y, T value, Tree<Positioned<T>> left, Tree<Positioned<T>> right) {
+        return new Node<>(new Positioned<>(x, y, value), left, right);
     }
 
     private static <T> Node<T> node(T value, Tree<T> left, Tree<T> right) {
@@ -78,15 +78,52 @@ public class P65 {
         return new End<>();
     }
 
-    private static <T> PositionedEnd<T> endXY() {
-        return new PositionedEnd<>();
+    private static <T> End<Positioned<T>> endXY() {
+        return new End<>();
+    }
+
+
+    private static class Positioned<T> {
+        public final int x;
+        public final int y;
+        public final T value;
+
+        public Positioned(int x, int y, T value) {
+            this.value = value;
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override public String toString() {
+            return "(" + x + "," + y + ": " + value + ")";
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Positioned that = (Positioned) o;
+
+            if (x != that.x) return false;
+            if (y != that.y) return false;
+            if (!value.equals(that.value)) return false;
+
+            return true;
+        }
+
+        @Override public int hashCode() {
+            int result = x;
+            result = 31 * result + y;
+            result = 31 * result + value.hashCode();
+            return result;
+        }
     }
 
 
     private interface Tree<T> {
-        PositionedTree<T> layoutBinaryTree();
+        Tree<Positioned<T>> layoutBinaryTree();
 
-        PositionedTree<T> layoutBinaryTree(int xShift, int yShift);
+        Tree<Positioned<T>> layoutBinaryTree(int xShift, int yShift);
 
         int width();
 
@@ -104,14 +141,14 @@ public class P65 {
             this.right = right;
         }
 
-        @Override public PositionedNode<T> layoutBinaryTree() {
+        @Override public Node<Positioned<T>> layoutBinaryTree() {
             return layoutBinaryTree(1, 1);
         }
 
-        @Override public PositionedNode<T> layoutBinaryTree(int xShift, int yShift) {
-            PositionedTree<T> leftLayout = left.layoutBinaryTree(xShift, yShift + 1);
-            PositionedTree<T> rightLayout = right.layoutBinaryTree(xShift + left.width() + 1, yShift + 1);
-            return new PositionedNode<>(xShift + left.width(), yShift, value, leftLayout, rightLayout);
+        @Override public Node<Positioned<T>> layoutBinaryTree(int xShift, int yShift) {
+            Tree<Positioned<T>> leftLayout = left.layoutBinaryTree(xShift, yShift + 1);
+            Tree<Positioned<T>> rightLayout = right.layoutBinaryTree(xShift + left.width() + 1, yShift + 1);
+            return new Node<>(new Positioned<>(xShift + left.width(), yShift, value), leftLayout, rightLayout);
         }
 
         @Override public int width() {
@@ -145,11 +182,11 @@ public class P65 {
     }
 
     private static class End<T> implements Tree<T> {
-        @Override public PositionedEnd<T> layoutBinaryTree() {
+        @Override public End<Positioned<T>> layoutBinaryTree() {
             return endXY();
         }
 
-        @Override public PositionedEnd<T> layoutBinaryTree(int xShift, int yShift) {
+        @Override public End<Positioned<T>> layoutBinaryTree(int xShift, int yShift) {
             return endXY();
         }
 
@@ -163,65 +200,6 @@ public class P65 {
 
         @Override public boolean equals(Object obj) {
             return obj instanceof End;
-        }
-    }
-
-
-    private interface PositionedTree<T> {
-    }
-
-    private static class PositionedNode<T> implements PositionedTree<T> {
-        public final int x;
-        public final int y;
-        public final T value;
-        private final PositionedTree<T> left;
-        private final PositionedTree<T> right;
-
-        public PositionedNode(int x, int y, T value, PositionedTree<T> left, PositionedTree<T> right) {
-            this.x = x;
-            this.y = y;
-            this.value = value;
-            this.left = left;
-            this.right = right;
-        }
-
-        @Override public String toString() {
-            return "T[" + x + "," + y + "](" + value + " " + left.toString() + " " + right.toString() + " )";
-        }
-
-        @SuppressWarnings("RedundantIfStatement")
-        @Override public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            PositionedNode that = (PositionedNode) o;
-
-            if (x != that.x) return false;
-            if (y != that.y) return false;
-            if (!left.equals(that.left)) return false;
-            if (!right.equals(that.right)) return false;
-            if (!value.equals(that.value)) return false;
-
-            return true;
-        }
-
-        @Override public int hashCode() {
-            int result = x;
-            result = 31 * result + y;
-            result = 31 * result + value.hashCode();
-            result = 31 * result + left.hashCode();
-            result = 31 * result + right.hashCode();
-            return result;
-        }
-    }
-
-    private static class PositionedEnd<T> implements PositionedTree<T> {
-        @Override public String toString() {
-            return ".";
-        }
-
-        @Override public boolean equals(Object obj) {
-            return obj instanceof PositionedEnd;
         }
     }
 }
