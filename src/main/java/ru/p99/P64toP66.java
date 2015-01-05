@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class P65 {
+public class P64toP66 {
     @Test public void treeLayout() {
         // @formatter:off
         Tree<Character> tree =
