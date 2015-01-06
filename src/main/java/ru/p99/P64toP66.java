@@ -2,6 +2,14 @@ package ru.p99;
 
 import org.junit.Test;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -108,6 +116,55 @@ public class P64toP66 {
         // @formatter:on
     }
 
+    @Test public void treeLayout3() {
+        // @formatter:off
+        Tree<Character> tree =
+            node('a',
+                node('b', end(), node('c')),
+                node('d')
+            );
+        Tree<Positioned<Character>> positionedTree = tree.layoutBinaryTree3();
+        assertThat(positionedTree, equalTo(
+            nodeXY(2, 1, 'a',
+                nodeXY(1, 2, 'b', endXY(), nodeXY(2, 3, 'c')),
+                nodeXY(3, 2, 'd')
+            ))
+        );
+        // @formatter:on
+    }
+
+    @Test public void treeLayout3_complexCase() {
+        // @formatter:off
+        Tree<Character> tree =
+            node('u',
+                node('k',
+                    node('c',
+                        node('a'),
+                        node('e', node('d'), node('g'))),
+                    node('m')
+                ),
+                node('u',
+                    node('p', end(), node('q')),
+                    end()
+                )
+            );
+        Tree<Positioned<Character>> positionedTree = tree.layoutBinaryTree3();
+        assertThat(positionedTree, equalTo(
+            nodeXY(5, 1, 'u',
+                nodeXY(3, 2, 'k',
+                    nodeXY(2, 3, 'c',
+                        nodeXY(1, 4, 'a'),
+                        nodeXY(3, 4, 'e', nodeXY(2, 5, 'd'), nodeXY(4, 5, 'g'))),
+                    nodeXY(4, 3, 'm')
+                ),
+                nodeXY(7, 2, 'u',
+                    nodeXY(6, 3, 'p', endXY(), nodeXY(7, 4, 'q')),
+                    endXY()
+                )
+            )
+        ));
+        // @formatter:on
+    }
 
     private static <T> Tree<Positioned<T>> nodeXY(int x, int y, T value) {
         return new Node<>(new Positioned<>(x, y, value), endXY(), endXY());
@@ -134,6 +191,31 @@ public class P64toP66 {
     }
 
 
+    private static class Position {
+        public final int x;
+        public final int y;
+
+        public Position(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Position position = (Position) o;
+
+            return x == position.x && y == position.y;
+        }
+
+        @Override public int hashCode() {
+            int result = x;
+            result = 31 * result + y;
+            return result;
+        }
+    }
+
     private static class Positioned<T> {
         public final int x;
         public final int y;
@@ -143,6 +225,10 @@ public class P64toP66 {
             this.value = value;
             this.x = x;
             this.y = y;
+        }
+
+        public Position position() {
+            return new Position(x, y);
         }
 
         @Override public String toString() {
@@ -179,6 +265,10 @@ public class P64toP66 {
         Tree<Positioned<T>> layoutBinaryTree2();
 
         Tree<Positioned<T>> layoutBinaryTree2(int x, int y, int level);
+
+        Tree<Positioned<T>> layoutBinaryTree3();
+
+        Tree<Positioned<T>> layoutBinaryTree3(int x, int y);
 
         int width();
 
@@ -217,24 +307,85 @@ public class P64toP66 {
         }
 
         @Override public Node<Positioned<T>> layoutBinaryTree2() {
-            return layoutBinaryTree2(findLeftX() + 1, 1, height());
+            return layoutBinaryTree2(findLayout2XShiftFor(this) + 1, 1, height());
         }
 
         @Override public Node<Positioned<T>> layoutBinaryTree2(int x, int y, int level) {
-            int layoutShift = (int) Math.pow(2, level - 2);
+            int layoutShift = xShiftAt(level);
             Tree<Positioned<T>> leftLayout = left.layoutBinaryTree2(x - layoutShift, y + 1, level - 1);
             Tree<Positioned<T>> rightLayout = right.layoutBinaryTree2(x + layoutShift, y + 1, level - 1);
             return new Node<>(new Positioned<>(x, y, value), leftLayout, rightLayout);
         }
 
-        private int findLeftX() {
+        private static int findLayout2XShiftFor(Tree<?> node) {
             int result = 0;
-            Tree<T> node = this;
             while (!node.left().equals(end())) {
-                result += Math.pow(2, node.height() - 2); // TODO refactor
+                result += xShiftAt(node.height());
                 node = node.left();
             }
             return result;
+        }
+
+        private static int xShiftAt(int level) {
+            return (int) Math.pow(2, level - 2);
+        }
+
+        @Override public Tree<Positioned<T>> layoutBinaryTree3() {
+            Tree<Positioned<T>> tree = layoutBinaryTree3(1, 1);
+            int xShift = 1 - leftmostXIn(tree);
+            return shiftPositions(xShift, 0, tree);
+        }
+
+        private static <T> Tree<Positioned<T>> shiftPositions(int xShift, int yShift, Tree<Positioned<T>> tree) {
+            if (tree instanceof End) {
+                return endXY();
+            } else if (tree instanceof Node) {
+                Node<Positioned<T>> node = (Node<Positioned<T>>) tree;
+                return new Node<>(
+                        new Positioned<T>(xShift + node.value.x, yShift + node.value.y, node.value.value),
+                        shiftPositions(xShift, yShift, node.left),
+                        shiftPositions(xShift, yShift, node.right)
+                );
+            } else {
+                throw new IllegalStateException();
+            }
+        }
+
+        private static <T> int leftmostXIn(Tree<Positioned<T>> tree) {
+            //noinspection SuspiciousNameCombination
+            return treeToList(tree).stream().min((pos1, pos2) -> Integer.compare(pos1.x, pos2.x)).get().x;
+        }
+
+        @Override public Node<Positioned<T>> layoutBinaryTree3(int x, int y) {
+            int shift = 1;
+            Tree<Positioned<T>> leftLayout;
+            Tree<Positioned<T>> rightLayout;
+            do {
+                leftLayout = left.layoutBinaryTree3(x - shift, y + 1);
+                rightLayout = right.layoutBinaryTree3(x + shift, y + 1);
+                shift++;
+            } while (haveCollisions(leftLayout, rightLayout));
+
+            return new Node<>(new Positioned<>(x, y, value), leftLayout, rightLayout);
+        }
+
+        private static <T> boolean haveCollisions(Tree<Positioned<T>> leftLayout, Tree<Positioned<T>> rightLayout) {
+            List<Position> leftPositions = treeToList(leftLayout);
+            List<Position> rightPositions = treeToList(rightLayout);
+            return !Collections.disjoint(leftPositions, rightPositions);
+        }
+
+        private static <T> List<Position> treeToList(Tree<Positioned<T>> tree) {
+            if (tree instanceof Node) {
+                Node<Positioned<T>> node = (Node<Positioned<T>>) tree;
+                return Stream.of(
+                        singletonList(node.value.position()),
+                        treeToList(node.left),
+                        treeToList(node.right)
+                ).flatMap(Collection::stream).collect(toList());
+            } else {
+                return emptyList();
+            }
         }
 
         @Override public int width() {
@@ -293,6 +444,14 @@ public class P64toP66 {
         }
 
         @Override public End<Positioned<T>> layoutBinaryTree2(int x, int y, int level) {
+            return endXY();
+        }
+
+        @Override public End<Positioned<T>> layoutBinaryTree3() {
+            return endXY();
+        }
+
+        @Override public End<Positioned<T>> layoutBinaryTree3(int x, int y) {
             return endXY();
         }
 
