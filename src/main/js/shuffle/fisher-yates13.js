@@ -1,5 +1,5 @@
 function shuffle(array) {
-    var i = array.length() - 1;
+    var i = array.length;
     while (i >= 1) {
         swap(array, i-1, randomIntBelow(i));
         i--;
