@@ -2,6 +2,7 @@ package ru.bsearchtree
 
 import org.junit.Test
 import static ru.bsearchtree.Node4.node
+import groovy.transform.Immutable
 
 /**
  * User: dima

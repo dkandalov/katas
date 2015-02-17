@@ -1,6 +1,7 @@
 package ru.knapsack
 
 import org.junit.Test
+import groovy.transform.Immutable
 
 /**
  * User: dima

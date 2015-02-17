@@ -175,7 +175,7 @@
 
         <dependency>
             <groupId>org.codehaus.gmaven.runtime</groupId>
-            <artifactId>gmaven-runtime-1.7</artifactId>
+            <artifactId>gmaven-runtime-2.0</artifactId>
             <version>1.5</version>
             <exclusions>
                 <exclusion>
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-maven</artifactId>
-            <version>0.6-groovy-1.8</version>
+            <version>0.7-groovy-2.0</version>
         </dependency>
 
         <dependency>
@@ -299,7 +299,7 @@
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.4</version>
+                <version>1.5</version>
                 <configuration>
                     <providerSelection>1.7</providerSelection>
                     <source/>

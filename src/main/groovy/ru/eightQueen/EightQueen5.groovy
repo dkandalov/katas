@@ -1,5 +1,6 @@
 package ru.eightQueen
 
+import groovy.transform.Immutable
 import org.junit.Test
 
 /**

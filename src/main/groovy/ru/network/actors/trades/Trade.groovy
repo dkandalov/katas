@@ -1,5 +1,7 @@
 package ru.network.actors.trades
 
+import groovy.transform.Immutable
+
 /**
  * User: dima
  * Date: 22/10/2011

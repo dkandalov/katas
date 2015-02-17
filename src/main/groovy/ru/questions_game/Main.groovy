@@ -19,6 +19,7 @@ import static ru.questions_game.MathQuestions.factorial
 import static ru.questions_game.MathQuestions.fibonacci
 import static ru.questions_game.Player.newPlayer
 import static ru.questions_game.Util.catchingAllExceptions
+import groovy.transform.Immutable
 
 /**
  * User: dima
