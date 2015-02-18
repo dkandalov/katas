@@ -32,6 +32,30 @@ public class SubscriberTest {
         assertThat(listener.values, equalTo(singletonList("A;B;C")));
     }
 
+    @Test public void subscriber0ForwardsMessageToListener() {
+        // given
+        EventBus bus = new EventBus.Default();
+        RecordingListener listener = new RecordingListener();
+
+        Function<Integer, Predicate<Message>> withPredicateForInt = value -> message -> Objects.equals(value, asInt(message));
+        Listener<Integer> subscriber = cached(
+            subscribedTo(bus, withPredicateForInt,
+                new TransformerListener<>(createValueFilter(),
+                        message -> message.attributes.get("instrumentIds"),
+                        listener
+                )
+            )
+        );
+
+        // when
+        subscriber.update(1);
+        subscriber.update(1);
+        bus.publish(new Message("1", "", "instrumentIds", "A;B;C"));
+
+        // then
+        assertThat(listener.values, equalTo(singletonList("A;B;C")));
+    }
+
     @Test public void subscriberForwardsMultipleMessagesToListener() {
         // given
         EventBus bus = new EventBus.Default();
@@ -109,6 +133,14 @@ public class SubscriberTest {
         }
     }
 
+    private static <T> Listener<T> cached(Listener<T> listener) {
+        return new TransformerListener<>(it -> it, listener);
+    }
+
+    private static <T> Listener<T> subscribedTo(EventBus bus, Function<T, Predicate<Message>> createPredicate, Listener<Message> listener) {
+        return new WrappedBusListener<>(bus, createPredicate, listener);
+    }
+
     private static <T> Function<T, Boolean> createValueFilter() {
         return new Function<T, Boolean>() {
             private final Set<T> values = new HashSet<>();
@@ -124,6 +156,46 @@ public class SubscriberTest {
         void update(T value);
     }
 
+    public static class WrappedBusListener<T> implements Listener<T>, EventBus.BusListener {
+        private final EventBus bus;
+        private final Function<T, Predicate<Message>> createPredicate;
+        private final Listener<Message> listener;
+
+        public WrappedBusListener(EventBus bus, Function<T, Predicate<Message>> createPredicate, Listener<Message> listener) {
+            this.bus = bus;
+            this.createPredicate = createPredicate;
+            this.listener = listener;
+        }
+
+        @Override public void update(T value) {
+            bus.subscribe(createPredicate.apply(value), this);
+        }
+
+        @Override public void accept(Message message) {
+            listener.update(message);
+        }
+    }
+
+    public static class TransformerListener<T, U> implements Listener<T> {
+        private final Function<T, Boolean> isNew;
+        private final Function<T, U> transform;
+        private final Listener<U> listener;
+
+        public TransformerListener(Function<T, U> transform, Listener<U> listener) {
+            this(createValueFilter(), transform, listener);
+        }
+
+        public TransformerListener(Function<T, Boolean> isNew, Function<T, U> transform, Listener<U> listener) {
+            this.isNew = isNew;
+            this.transform = transform;
+            this.listener = listener;
+        }
+
+        @Override public void update(T value) {
+            if (!isNew.apply(value)) return;
+            listener.update(transform.apply(value));
+        }
+    }
 
     public static class Subscriber<T, U> implements Listener<T> {
         private final EventBus bus;

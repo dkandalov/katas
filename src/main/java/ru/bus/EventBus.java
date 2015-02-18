@@ -10,17 +10,17 @@ import java.util.stream.Collectors;
 public interface EventBus {
     void publish(Message message);
 
-    void subscribe(Predicate<Message> predicate, Listener listener);
+    void subscribe(Predicate<Message> predicate, BusListener busListener);
 
-    void unsubscribe(Listener listener);
+    void unsubscribe(BusListener busListener);
 
 
-    interface Listener {
+    interface BusListener {
         void accept(Message message);
     }
 
     public static class Default implements EventBus {
-        private final List<Pair<Predicate<Message>, Listener>> predicateList = new ArrayList<>();
+        private final List<Pair<Predicate<Message>, BusListener>> predicateList = new ArrayList<>();
         private final List<Message> allMessages = new ArrayList<>();
 
         @Override public void publish(Message message) {
@@ -30,16 +30,16 @@ public interface EventBus {
             allMessages.add(message);
         }
 
-        @Override public void subscribe(Predicate<Message> predicate, Listener listener) {
-            predicateList.add(new Pair<>(predicate, listener));
+        @Override public void subscribe(Predicate<Message> predicate, BusListener busListener) {
+            predicateList.add(new Pair<>(predicate, busListener));
             allMessages.stream().forEach(message -> {
-                if (predicate.test(message)) listener.accept(message);
+                if (predicate.test(message)) busListener.accept(message);
             });
         }
 
-        @Override public void unsubscribe(Listener listener) {
+        @Override public void unsubscribe(BusListener busListener) {
             predicateList.removeAll(predicateList.stream().filter(pair ->
-                pair.second.equals(listener)
+                pair.second.equals(busListener)
             ).collect(Collectors.toList()));
         }
     }
