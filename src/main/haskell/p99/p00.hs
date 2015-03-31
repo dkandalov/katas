@@ -27,9 +27,20 @@ reverse' (x:xs) = (reverse' xs) ++ [x]
 isPalindrome :: (Eq a) => [a] -> Bool
 isPalindrome xs = xs == (reverse xs)
 
-flatten :: [[a]] -> [a]
+data AList a = AList [AList a] | Value a
+aList :: [a] -> AList a
+aList [] = AList []
+aList xs = AList ((\x -> Value x) `map` xs)
+
+flatten :: [AList a] -> [a]
 flatten [] = []
-flatten (x:xs) = x ++ flatten xs
+flatten (head:xs) = case head of
+        Value it -> [it] ++ flatten xs
+        AList it -> flatten it ++ flatten xs
+
+compress :: [Char] -> [Char]
+compress [] = []
+compress xs = []
 
 main :: IO Counts
 main =
@@ -41,4 +52,5 @@ main =
         runTestTT (TestCase (assertEqual "P05" [8, 5, 3, 2, 1, 1] (reverse' [1, 1, 2, 3, 5, 8])))
         runTestTT (TestCase (assertEqual "P06" False (isPalindrome [1, 2, 3, 4, 5])))
         runTestTT (TestCase (assertEqual "P06" True (isPalindrome [1, 2, 3, 2, 1])))
---        runTestTT (TestCase (assertEqual "P07" True (flatten [[1, 1], 2, List(3, List(5, 8)))))))
+        runTestTT (TestCase (assertEqual "P07" [1, 1, 2] (flatten [aList([1, 1]), Value 2])))
+        runTestTT (TestCase (assertEqual "P08" "abcade" (compress "aaaabccaadeeee")))
