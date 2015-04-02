@@ -40,7 +40,17 @@ flatten (head:xs) = case head of
 
 compress :: [Char] -> [Char]
 compress [] = []
-compress xs = []
+compress (x:xs) = [x] ++ compress (consumeHead x xs)
+    where
+        consumeHead _ [] = []
+        consumeHead char ys =
+            if (head ys) /= char then ys
+            else consumeHead char (tail ys)
+
+pack :: [Char] -> [[Char]]
+pack [] = []
+pack (x:xs) = []
+
 
 main :: IO Counts
 main =
@@ -54,3 +64,4 @@ main =
         runTestTT (TestCase (assertEqual "P06" True (isPalindrome [1, 2, 3, 2, 1])))
         runTestTT (TestCase (assertEqual "P07" [1, 1, 2] (flatten [aList([1, 1]), Value 2])))
         runTestTT (TestCase (assertEqual "P08" "abcade" (compress "aaaabccaadeeee")))
+        runTestTT (TestCase (assertEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (pack "aaaabccaadeeee")))
