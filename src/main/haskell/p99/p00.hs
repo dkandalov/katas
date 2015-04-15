@@ -71,8 +71,34 @@ encode :: (Eq a) => [a] -> [(Int, a)]
 encode list = (\x -> (length x, head x)) `map` (pack list)
 
 
-decode :: [(Int, Char)] -> [Char]
-decode [] = ""
+decode :: [(Int, a)] -> [a]
+decode [] = []
+decode ((n, c):xs) = (nCopiesOf c n) ++ decode xs
+    where
+        nCopiesOf _ 0 = []
+        nCopiesOf char amount = char : nCopiesOf char (amount - 1)
+
+
+encodeDirect :: (Eq a) => [a] -> [(Int, a)]
+encodeDirect [] = []
+encodeDirect list = (countHeadIn list, head list) : encodeDirect (dropHeadIn list)
+    where
+        countHeadIn xs = length (takeWhile (== head xs) xs)
+        dropHeadIn xs = dropWhile (== head xs) xs
+
+
+duplicate :: (Eq a) => [a] -> [a]
+duplicate [] = []
+duplicate (x:xs) = [x, x] ++ duplicate xs
+
+
+duplicateN :: (Eq a) => Int -> [a] -> [a]
+duplicateN _ [] = []
+duplicateN n (x:xs) = nCopiesOf x n ++ duplicateN n xs
+    where
+        nCopiesOf _ 0 = [] -- TODO extract
+        nCopiesOf char amount = char : nCopiesOf char (amount - 1)
+
 
 
 main :: IO Counts
@@ -91,3 +117,6 @@ main =
         runTestTT (TestCase (assertEqual "P10" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encode "aaaabccaadeeee")))
         runTestTT (TestCase (assertEqual "P11" "" "")) -- not implemented because it's cumbersome to do in type system
         runTestTT (TestCase (assertEqual "P12" "aaaabccaadeeee" (decode [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')])))
+        runTestTT (TestCase (assertEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee")))
+        runTestTT (TestCase (assertEqual "P14" "aabbccccdd" (duplicate "abccd")))
+        runTestTT (TestCase (assertEqual "P14" "aaabbbccccccddd" (duplicateN 3 "abccd")))
