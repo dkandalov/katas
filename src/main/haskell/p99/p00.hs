@@ -74,9 +74,6 @@ encode list = (\x -> (length x, head x)) `map` (pack list)
 decode :: [(Int, a)] -> [a]
 decode [] = []
 decode ((n, c):xs) = (nCopiesOf c n) ++ decode xs
-    where
-        nCopiesOf _ 0 = []
-        nCopiesOf char amount = char : nCopiesOf char (amount - 1)
 
 
 encodeDirect :: (Eq a) => [a] -> [(Int, a)]
@@ -95,9 +92,30 @@ duplicate (x:xs) = [x, x] ++ duplicate xs
 duplicateN :: (Eq a) => Int -> [a] -> [a]
 duplicateN _ [] = []
 duplicateN n (x:xs) = nCopiesOf x n ++ duplicateN n xs
+
+
+dropNth :: Int -> [a] -> [a]
+dropNth _ [] = []
+dropNth amount list = drop' amount amount list
     where
-        nCopiesOf _ 0 = [] -- TODO extract
-        nCopiesOf char amount = char : nCopiesOf char (amount - 1)
+        drop' n counter xs
+            | n < 2 || null xs = []
+            | counter == 1 = drop' n n (tail xs)
+            | otherwise = (head xs) : (drop' n (counter - 1) (tail xs))
+
+
+split :: Int -> [a] -> ([a], [a])
+split amount list = split' amount [] list
+    where
+        split' 0 xs ys = (xs, ys)
+        split' _ xs [] = (xs, [])
+        split' n xs (y:ys) = split' (n - 1) (xs ++ [y]) ys
+
+
+-- private
+nCopiesOf :: a -> Int -> [a]
+nCopiesOf _ 0 = []
+nCopiesOf value amount = value : nCopiesOf value (amount - 1)
 
 
 
@@ -119,4 +137,6 @@ main =
         runTestTT (TestCase (assertEqual "P12" "aaaabccaadeeee" (decode [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')])))
         runTestTT (TestCase (assertEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee")))
         runTestTT (TestCase (assertEqual "P14" "aabbccccdd" (duplicate "abccd")))
-        runTestTT (TestCase (assertEqual "P14" "aaabbbccccccddd" (duplicateN 3 "abccd")))
+        runTestTT (TestCase (assertEqual "P15" "aaabbbccccccddd" (duplicateN 3 "abccd")))
+        runTestTT (TestCase (assertEqual "P16" "abdeghjk" (dropNth 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P17" ("abc", "defghijk") (split 3 "abcdefghijk")))
