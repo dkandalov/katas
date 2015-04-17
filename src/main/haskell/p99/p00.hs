@@ -94,9 +94,9 @@ duplicateN _ [] = []
 duplicateN n (x:xs) = nCopiesOf x n ++ duplicateN n xs
 
 
-dropNth :: Int -> [a] -> [a]
-dropNth _ [] = []
-dropNth amount list = drop' amount amount list
+dropEveryNth :: Int -> [a] -> [a]
+dropEveryNth _ [] = []
+dropEveryNth amount list = drop' amount amount list
     where
         drop' n counter xs
             | n < 2 || null xs = []
@@ -110,6 +110,30 @@ split amount list = split' amount [] list
         split' 0 xs ys = (xs, ys)
         split' _ xs [] = (xs, [])
         split' n xs (y:ys) = split' (n - 1) (xs ++ [y]) ys
+
+
+slice :: Int -> Int -> [a] -> [a]
+slice _ _ [] = []
+slice from to list = fst (split (to - from) (snd (split from list)))
+
+
+rotate :: Int -> [a] -> [a]
+rotate _ [] = []
+rotate shift list
+    | shift < 0 = rotate (shift + length list) list
+    | shift == 0 = []
+    | shift > (length list) = rotate (shift `mod` length list) list
+    | otherwise = (snd tuple) ++ (fst tuple)
+        where tuple = split shift list
+
+
+removeAt :: Int -> [a] -> ([a], a)
+removeAt _ [] = error "Cannot remove element from empty list"
+removeAt n list =
+    let tuple = split n list
+        newList = (fst tuple) ++ (tail (snd tuple))
+        removeElement = (head (snd tuple))
+    in (newList, removeElement)
 
 
 -- private
@@ -138,5 +162,10 @@ main =
         runTestTT (TestCase (assertEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee")))
         runTestTT (TestCase (assertEqual "P14" "aabbccccdd" (duplicate "abccd")))
         runTestTT (TestCase (assertEqual "P15" "aaabbbccccccddd" (duplicateN 3 "abccd")))
-        runTestTT (TestCase (assertEqual "P16" "abdeghjk" (dropNth 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P16" "abdeghjk" (dropEveryNth 3 "abcdefghijk")))
         runTestTT (TestCase (assertEqual "P17" ("abc", "defghijk") (split 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P18" "defg" (slice 3 7 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P19" "defghijkabc" (rotate 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P19" "defghijkabc" (rotate 14 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P19" "jkabcdefghi" (rotate (-2) "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P20" ("acd", 'b') (removeAt 1 "abcd")))
