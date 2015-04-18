@@ -1,4 +1,5 @@
 import Test.HUnit
+import System.Random (next, mkStdGen)
 
 last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
@@ -105,7 +106,7 @@ dropEveryNth amount list = drop' amount amount list
 
 
 split :: Int -> [a] -> ([a], [a])
-split amount list = split' amount [] list
+split index list = split' index [] list
     where
         split' 0 xs ys = (xs, ys)
         split' _ xs [] = (xs, [])
@@ -134,6 +135,31 @@ removeAt n list =
         newList = (fst tuple) ++ (tail (snd tuple))
         removeElement = (head (snd tuple))
     in (newList, removeElement)
+
+
+insertAt :: Int -> a -> [a] -> [a]
+insertAt n value [] = [value]
+insertAt n value list = (fst s) ++ [value] ++ (snd s)
+    where s = split n list
+
+
+range :: Int -> Int -> [Int]
+range from to
+    | from == to = [to]
+    | from < to = from : range (from + 1) to
+    | otherwise = []
+
+
+randomSelect :: Int -> [a] -> [a]
+randomSelect _ _ = [] -- TODO
+
+randomSelect' :: Int -> Int -> [a] -> [a]
+randomSelect' _ _ [] = []
+randomSelect' _ 0 _ = []
+randomSelect' seed amount list = element : (randomSelect' seed (amount - 1) updatedList)
+    where index = fst (next (mkStdGen seed))
+          element = kth (index `mod` (length list)) list
+          updatedList = fst (removeAt index list)
 
 
 -- private
@@ -169,3 +195,7 @@ main =
         runTestTT (TestCase (assertEqual "P19" "defghijkabc" (rotate 14 "abcdefghijk")))
         runTestTT (TestCase (assertEqual "P19" "jkabcdefghi" (rotate (-2) "abcdefghijk")))
         runTestTT (TestCase (assertEqual "P20" ("acd", 'b') (removeAt 1 "abcd")))
+        runTestTT (TestCase (assertEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd")))
+        runTestTT (TestCase (assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)))
+        runTestTT (TestCase (assertEqual "P22" [] (range 9 4)))
+        runTestTT (TestCase (assertEqual "P23" "abc" (randomSelect 3 "abcdefghijk")))
