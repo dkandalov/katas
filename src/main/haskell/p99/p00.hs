@@ -158,8 +158,9 @@ randomSelect amount list = do
 randomSelect' :: (RandomGen g) => g -> Int -> [a] -> [a]
 randomSelect' _ _ [] = []
 randomSelect' _ 0 _ = []
-randomSelect' randomGen amount list = element : (randomSelect' randomGen (amount - 1) updatedList)
-    where index = fst (next randomGen) `mod` (length list)
+randomSelect' randomGen amount list = element : (randomSelect' newGenerator (amount - 1) updatedList)
+    where (randomInt, newGenerator) = next randomGen
+          index = randomInt `mod` (length list)
           element = kth index list
           updatedList = fst (removeAt index list)
 
@@ -200,4 +201,4 @@ main =
         runTestTT (TestCase (assertEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd")))
         runTestTT (TestCase (assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)))
         runTestTT (TestCase (assertEqual "P22" [] (range 9 4)))
-        runTestTT (TestCase (assertEqual "P23" "hei" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")))
