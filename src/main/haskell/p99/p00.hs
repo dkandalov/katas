@@ -1,5 +1,5 @@
 import Test.HUnit
-import System.Random (next, mkStdGen)
+import System.Random (RandomGen, StdGen, next, mkStdGen, newStdGen)
 
 last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
@@ -150,15 +150,17 @@ range from to
     | otherwise = []
 
 
-randomSelect :: Int -> [a] -> [a]
-randomSelect _ _ = [] -- TODO
+randomSelect :: Int -> [a] -> IO [a]
+randomSelect amount list = do
+    g <- newStdGen
+    return $ randomSelect' g amount list
 
-randomSelect' :: Int -> Int -> [a] -> [a]
+randomSelect' :: (RandomGen g) => g -> Int -> [a] -> [a]
 randomSelect' _ _ [] = []
 randomSelect' _ 0 _ = []
-randomSelect' seed amount list = element : (randomSelect' seed (amount - 1) updatedList)
-    where index = fst (next (mkStdGen seed))
-          element = kth (index `mod` (length list)) list
+randomSelect' randomGen amount list = element : (randomSelect' randomGen (amount - 1) updatedList)
+    where index = fst (next randomGen) `mod` (length list)
+          element = kth index list
           updatedList = fst (removeAt index list)
 
 
@@ -198,4 +200,4 @@ main =
         runTestTT (TestCase (assertEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd")))
         runTestTT (TestCase (assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)))
         runTestTT (TestCase (assertEqual "P22" [] (range 9 4)))
-        runTestTT (TestCase (assertEqual "P23" "abc" (randomSelect 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P23" "hei" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")))
