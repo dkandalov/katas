@@ -165,6 +165,24 @@ randomSelect' randomGen amount list = element : (randomSelect' newGenerator (amo
           updatedList = fst (removeAt index list)
 
 
+lotto :: Int -> Int -> IO [Int]
+lotto amount maxNumber = do
+    g <- newStdGen
+    return $ lotto' g amount maxNumber
+
+lotto' :: (RandomGen g) => g -> Int -> Int -> [Int]
+lotto' randomGen amount maxNumber = randomSelect' randomGen amount (range 1 maxNumber)
+
+
+randomPermute :: [a] -> IO [a]
+randomPermute list =
+    newStdGen >>= \ g -> do return $ randomPermute' g list
+
+randomPermute' :: (RandomGen g) => g -> [a] -> [a]
+randomPermute' _ [] = []
+randomPermute' randomGen list = randomSelect' randomGen (length list) list
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -202,3 +220,5 @@ main =
         runTestTT (TestCase (assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)))
         runTestTT (TestCase (assertEqual "P22" [] (range 9 4)))
         runTestTT (TestCase (assertEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")))
+        runTestTT (TestCase (assertEqual "P24" [24,23,18,4,13,25] (lotto' (mkStdGen 123) 6 49)))
+        runTestTT (TestCase (assertEqual "P25" "acbdfe" (randomPermute' (mkStdGen 123) "abcdef")))
