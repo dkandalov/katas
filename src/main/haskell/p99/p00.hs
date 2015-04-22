@@ -176,11 +176,26 @@ lotto' randomGen amount maxNumber = randomSelect' randomGen amount (range 1 maxN
 
 randomPermute :: [a] -> IO [a]
 randomPermute list =
-    newStdGen >>= \ g -> do return $ randomPermute' g list
+    newStdGen >>= (\ g -> return $ randomPermute' g list)
 
 randomPermute' :: (RandomGen g) => g -> [a] -> [a]
 randomPermute' _ [] = []
 randomPermute' randomGen list = randomSelect' randomGen (length list) list
+
+
+combinations :: Int -> [a] -> [[a]]
+combinations amount list
+    | amount == 0 = [[]]
+    | amount > (length list) = []
+    | otherwise =
+        (\ subCombination -> head list : subCombination) `map` (combinations (amount - 1) (tail list)) ++
+        (combinations amount (tail list))
+
+
+group3 :: [a] -> [[[a]]]
+group3 xs
+    | length xs /= 9 = error ("Expected group size to be 9 but was " ++ show (length xs))
+    | otherwise = []
 
 
 -- private
@@ -222,3 +237,15 @@ main =
         runTestTT (TestCase (assertEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")))
         runTestTT (TestCase (assertEqual "P24" [24,23,18,4,13,25] (lotto' (mkStdGen 123) 6 49)))
         runTestTT (TestCase (assertEqual "P25" "acbdfe" (randomPermute' (mkStdGen 123) "abcdef")))
+        runTestTT (TestCase (assertEqual "P26" [""] (combinations 0 "a")))
+        runTestTT (TestCase (assertEqual "P26" ["a"] (combinations 1 "a")))
+        runTestTT (TestCase (assertEqual "P26" [] (combinations 2 "a")))
+        runTestTT (TestCase (assertEqual "P26" ["ab", "ac", "bc"] (combinations 2 "abc")))
+        runTestTT (TestCase (assertEqual "P26" ["abc"] (combinations 3 "abc")))
+        runTestTT (TestCase (assertEqual "P26"
+                ["abc","abd","abe","abf","acd","ace","acf","ade","adf","aef","bcd","bce","bcf","bde","bdf","bef","cde","cdf","cef","def"]
+                (combinations 3 "abcdef")))
+        runTestTT (TestCase (assertEqual "P26" 220 (length (combinations 3 "abcdef123456"))))
+        runTestTT (TestCase (assertEqual "P27a"
+            [[["Aldo", "Beat"], ["Carla", "David", "Evi"], ["Flip", "Gary", "Hugo", "Ida"]], []]
+            (group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])))
