@@ -192,10 +192,15 @@ combinations amount list
         (combinations amount (tail list))
 
 
-group3 :: [a] -> [[[a]]]
-group3 xs
-    | length xs /= 9 = error ("Expected group size to be 9 but was " ++ show (length xs))
-    | otherwise = []
+group3 :: (Eq a) => [a] -> [[[a]]]
+group3 list
+    | length list /= 9 = error ("Expected group size to be 9 but was " ++ show (length list))
+    | otherwise =  (combinations 2 list) >>= (\comb2 ->
+        (combinations 3 (exclude comb2 list)) >>= (\comb3 ->
+            (combinations 4 (exclude comb3 (exclude comb2 list))) >>= (\comb4 -> [[comb2, comb3, comb4]])
+        ))
+        where
+            exclude comb xs = filter (\it -> notElem it comb) xs
 
 
 -- private
@@ -205,10 +210,10 @@ nCopiesOf value amount = value : nCopiesOf value (amount - 1)
 
 
 
-main :: IO Counts
+main :: IO ()
 main =
     do
-        runTestTT (TestCase (assertEqual "P01" 8 (last' [1, 1, 2, 3, 5, 8])))
+        {-runTestTT (TestCase (assertEqual "P01" 8 (last' [1, 1, 2, 3, 5, 8])))
         runTestTT (TestCase (assertEqual "P02" 5 (penultimate [1, 1, 2, 3, 5, 8])))
         runTestTT (TestCase (assertEqual "P03" 2 (kth 2 [1, 1, 2, 3, 5, 8])))
         runTestTT (TestCase (assertEqual "P04" 6 (length' [1, 1, 2, 3, 5, 8])))
@@ -248,4 +253,5 @@ main =
         runTestTT (TestCase (assertEqual "P26" 220 (length (combinations 3 "abcdef123456"))))
         runTestTT (TestCase (assertEqual "P27a"
             [[["Aldo", "Beat"], ["Carla", "David", "Evi"], ["Flip", "Gary", "Hugo", "Ida"]], []]
-            (group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])))
+            (group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])))-}
+        putStrLn (show $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
