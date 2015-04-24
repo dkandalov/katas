@@ -195,10 +195,11 @@ combinations amount list
 group3 :: (Eq a) => [a] -> [[[a]]]
 group3 list
     | length list /= 9 = error ("Expected group size to be 9 but was " ++ show (length list))
-    | otherwise =  (combinations 2 list) >>= (\comb2 ->
-        (combinations 3 $ exclude comb2 list) >>= (\comb3 ->
-            (combinations 4 $ exclude comb3 $ exclude comb2 list) >>= (\comb4 -> [[comb2, comb3, comb4]])
-        ))
+    | otherwise =
+        (combinations 2 list) >>= (\comb2 ->
+            (combinations 3 $ exclude comb2 list) >>= (\comb3 ->
+                (combinations 4 $ exclude comb3 $ exclude comb2 list) >>= (\comb4 -> [[comb2, comb3, comb4]])
+            ))
         where
             exclude comb xs = filter (\it -> notElem it comb) xs
 
