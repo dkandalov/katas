@@ -204,6 +204,15 @@ group3 list
             exclude comb xs = filter (\it -> notElem it comb) xs
 
 
+group :: (Eq a) => [Int] -> [a] -> [[[a]]]
+group sizes list
+    | sizes == [] = [[]]
+    | otherwise =
+        (combinations (head sizes) list) >>= (\combination -> (\it -> combination : it) `map` (group (tail sizes) (exclude combination list)))
+        where
+            exclude comb xs = filter (\it -> notElem it comb) xs
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -254,3 +263,5 @@ main =
         runTestTT (TestCase (assertEqual "P26" 220 $ (length . combinations 3) "abcdef123456"))
         runTestTT $ TestCase $ assertEqual "P27a" 1260
             (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
+        runTestTT $ TestCase $ assertEqual "P27b" 1260
+            (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
