@@ -1,5 +1,6 @@
 import Test.HUnit
-import System.Random (RandomGen, StdGen, next, mkStdGen, newStdGen)
+import Data.List(sortBy)
+import System.Random (RandomGen, next, mkStdGen, newStdGen)
 
 last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
@@ -208,9 +209,19 @@ group :: (Eq a) => [Int] -> [a] -> [[[a]]]
 group sizes list
     | sizes == [] = [[]]
     | otherwise =
-        (combinations (head sizes) list) >>= (\combination -> (\it -> combination : it) `map` (group (tail sizes) (exclude combination list)))
+        (combinations (head sizes) list) >>=
+            (\combination -> (\it -> combination : it) `map` (group (tail sizes) (exclude combination list)))
         where
             exclude comb xs = filter (\it -> notElem it comb) xs
+
+
+lsort :: [[a]] -> [[a]]
+lsort listOfLists = sortBy (\a b -> compare (length a) (length b)) listOfLists
+
+
+lsortFreq :: [[a]] -> [[a]]
+lsortFreq listOfLists = sortBy (\a b -> compare (lengthFreqOf a) (lengthFreqOf b)) listOfLists
+    where lengthFreqOf list = length (filter (\it -> (length it) == (length list)) listOfLists)
 
 
 -- private
@@ -261,7 +272,7 @@ main =
                 ["abc","abd","abe","abf","acd","ace","acf","ade","adf","aef","bcd","bce","bcf","bde","bdf","bef","cde","cdf","cef","def"]
                 (combinations 3 "abcdef")
         runTestTT (TestCase (assertEqual "P26" 220 $ (length . combinations 3) "abcdef123456"))
-        runTestTT $ TestCase $ assertEqual "P27a" 1260
-            (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
-        runTestTT $ TestCase $ assertEqual "P27b" 1260
-            (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
+        runTestTT $ TestCase $ assertEqual "P27a" 1260 (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
+        runTestTT $ TestCase $ assertEqual "P27b" 1260 (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
+        runTestTT $ TestCase $ assertEqual "P28a" ["o", "de", "de", "mn", "abc", "fgh", "ijkl"] (lsort ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
+        runTestTT $ TestCase $ assertEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
