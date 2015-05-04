@@ -224,6 +224,23 @@ lsortFreq listOfLists = sortBy (\a b -> compare (lengthFreqOf a) (lengthFreqOf b
     where lengthFreqOf list = length (filter (\it -> (length it) == (length list)) listOfLists)
 
 
+isPrime :: Int -> Bool
+isPrime n
+    | n < 2 = False
+    | otherwise = notDivisable n (n - 1)
+notDivisable :: Int -> Int -> Bool
+notDivisable n n2
+    | n2 < 2 = True
+    | otherwise = ((n `rem` n2) /= 0) && (notDivisable n (n2 - 1))
+
+
+gcd' :: Int -> Int -> Int
+gcd' a b
+    | a < b = gcd' b a
+    | a `rem` b == 0 = b
+    | otherwise = gcd b (a - b)
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -276,3 +293,7 @@ main =
         runTestTT $ TestCase $ assertEqual "P27b" 1260 (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
         runTestTT $ TestCase $ assertEqual "P28a" ["o", "de", "de", "mn", "abc", "fgh", "ijkl"] (lsort ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
         runTestTT $ TestCase $ assertEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
+
+        runTestTT $ TestCase $ assertEqual "P31" False (isPrime 6)
+        runTestTT $ TestCase $ assertEqual "P31" True (isPrime 7)
+        runTestTT $ TestCase $ assertEqual "P32" 9 (gcd' 36 63)
