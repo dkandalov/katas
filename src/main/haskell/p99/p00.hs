@@ -1,5 +1,5 @@
 import Test.HUnit
-import Data.List(sortBy)
+import Data.List(sortBy, find)
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
 
 last' :: [a] -> a
@@ -241,6 +241,22 @@ gcd' a b
     | otherwise = gcd b (a - b)
 
 
+isCoprimeTo :: Int -> Int -> Bool
+isCoprimeTo a b = (gcd' a b) == 1
+
+
+totient :: Int -> Int
+totient n = amountOfComprimes [1..n]
+    where amountOfComprimes = length . filter (isCoprimeTo n)
+
+
+primeFactors :: Int -> [Int]
+primeFactors n = case prime of
+        Just value -> value : primeFactors (n `div` value)
+        Nothing -> []
+    where prime = find (\it -> (isPrime it) && (n `rem` it == 0)) [2..n]
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -297,3 +313,9 @@ main =
         runTestTT $ TestCase $ assertEqual "P31" False (isPrime 6)
         runTestTT $ TestCase $ assertEqual "P31" True (isPrime 7)
         runTestTT $ TestCase $ assertEqual "P32" 9 (gcd' 36 63)
+        runTestTT $ TestCase $ assertEqual "P33" True (35 `isCoprimeTo` 64)
+        runTestTT $ TestCase $ assertEqual "P33" False (36 `isCoprimeTo` 64)
+        runTestTT $ TestCase $ assertEqual "P34" 4 (totient 10)
+        runTestTT $ TestCase $ assertEqual "P35" [] (primeFactors 1)
+        runTestTT $ TestCase $ assertEqual "P35" [2, 5] (primeFactors 10)
+        runTestTT $ TestCase $ assertEqual "P35" [3, 3, 5, 7] (primeFactors 315)
