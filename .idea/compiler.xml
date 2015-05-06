@@ -32,8 +32,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="katas" />
         <module name="morestuff" />
+      </profile>
+      <profile default="false" name="Annotation profile for katas" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="katas" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -41,4 +47,3 @@
     </bytecodeTargetLevel>
   </component>
 </project>
-

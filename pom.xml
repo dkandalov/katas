@@ -71,6 +71,12 @@
             <version>2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+            <version>0.8.17</version>
+        </dependency>
+
         <!-- for growing object oriented software guided by tests (goos_gbt) package -->
         <dependency>
             <groupId>jivesoftware</groupId>
