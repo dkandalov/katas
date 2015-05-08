@@ -1,5 +1,5 @@
 import Test.HUnit
-import Data.List(sortBy, find)
+import Data.List(sortBy, find, findIndex)
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
 
 last' :: [a] -> a
@@ -278,6 +278,18 @@ primeFactors n = case firstPrimeOf n of
     where firstPrimeOf number = find (\it -> (isPrime it) && (number `rem` it == 0)) [2..n]
 
 
+primeFactorsMultiplicity :: Int -> [(Int, Int)]
+primeFactorsMultiplicity n = case firstPrimeOf n of
+        Just value -> add value (primeFactorsMultiplicity (n `div` value))
+        Nothing -> []
+    where
+        firstPrimeOf number = find (\it -> (isPrime it) && (number `rem` it == 0)) [2..n]
+        add value list = case findIndex (\it -> (fst it) == value) list of
+            Just index -> let entry = (list !! index) in
+                (fst entry, (snd entry) + 1) : (filter (\it -> (fst it) /= value) list)
+            Nothing -> (value, 1) : list
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -340,3 +352,5 @@ main =
         runTestTT $ TestCase $ assertEqual "P35" [] (primeFactors 1)
         runTestTT $ TestCase $ assertEqual "P35" [2, 5] (primeFactors 10)
         runTestTT $ TestCase $ assertEqual "P35" [3, 3, 5, 7] (primeFactors 315)
+        runTestTT $ TestCase $ assertEqual "P36" [(3, 2)] (primeFactorsMultiplicity 9)
+        runTestTT $ TestCase $ assertEqual "P36" [(3, 2), (5, 1), (7, 1)] (primeFactorsMultiplicity 315)
