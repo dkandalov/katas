@@ -1,5 +1,6 @@
 import Test.HUnit
 import Data.List(sortBy, find, findIndex)
+import qualified Data.Map as Map
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
 
 last' :: [a] -> a
@@ -290,6 +291,17 @@ primeFactorsMultiplicity n = case firstPrimeOf n of
             Nothing -> (value, 1) : list
 
 
+primeFactorsMultiplicity' :: Int -> Map.Map Int Int
+primeFactorsMultiplicity' n = case firstPrimeOf n of
+        Just value -> add value (primeFactorsMultiplicity' (n `div` value))
+        Nothing -> Map.empty
+    where
+        firstPrimeOf number = find (\it -> (isPrime it) && (number `rem` it == 0)) [2..n]
+        add value result = case Map.lookup value result of
+            Just amount -> Map.insert value (amount + 1) result
+            Nothing -> Map.insert value 1 $ result
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -354,3 +366,5 @@ main =
         runTestTT $ TestCase $ assertEqual "P35" [3, 3, 5, 7] (primeFactors 315)
         runTestTT $ TestCase $ assertEqual "P36" [(3, 2)] (primeFactorsMultiplicity 9)
         runTestTT $ TestCase $ assertEqual "P36" [(3, 2), (5, 1), (7, 1)] (primeFactorsMultiplicity 315)
+        runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2)]) (primeFactorsMultiplicity' 9)
+        runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315)
