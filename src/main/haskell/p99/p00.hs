@@ -302,6 +302,14 @@ primeFactorsMultiplicity' n = case firstPrimeOf n of
             Nothing -> Map.insert value 1 $ result
 
 
+totient2 :: Int -> Int
+totient2 n = foldl (\acc entry -> acc * (phi (fst entry) (snd entry))) 1 factors
+    where
+        factors = (Map.toList (primeFactorsMultiplicity' n))
+        phi p m = (p - 1) * (p ^ (m - 1))
+
+
+
 -- private
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
@@ -368,3 +376,4 @@ main =
         runTestTT $ TestCase $ assertEqual "P36" [(3, 2), (5, 1), (7, 1)] (primeFactorsMultiplicity 315)
         runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2)]) (primeFactorsMultiplicity' 9)
         runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315)
+        runTestTT $ TestCase $ assertEqual "P37" 4 (totient2 10)
