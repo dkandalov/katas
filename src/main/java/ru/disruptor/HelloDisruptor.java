@@ -1,68 +1,71 @@
 package ru.disruptor;
 
-import com.lmax.disruptor.*;
+import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.SleepingWaitStrategy;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 
-import java.util.concurrent.ExecutorService;
+import java.nio.ByteBuffer;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-/**
- * User: dima
- * Date: 04/06/2012
- */
 public class HelloDisruptor {
-    private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
-    private static final int RING_SIZE = 32;
+    public static void main(String[] args) throws InterruptedException {
+        Executor executor = Executors.newCachedThreadPool(); // Executor that will be used to construct new threads for consumers
+        int bufferSize = 1024; // Specify the size of the ring buffer, must be power of 2.
+        Disruptor<LongEvent> disruptor = new Disruptor<>(
+                LongEvent::new, bufferSize, executor, ProducerType.MULTI, new SleepingWaitStrategy()
+        );
+        disruptor.handleEventsWith((event, sequence, endOfBatch) -> System.out.println("Event: " + event));
+        disruptor.start(); // Start the Disruptor, starts all threads running
 
-    public static void main(String[] args) {
+        // Get the ring buffer from the Disruptor to be used for publishing.
+        RingBuffer<LongEvent> ringBuffer = disruptor.getRingBuffer();
+        LongEventProducer producer = new LongEventProducer(ringBuffer);
 
-        RingBuffer<ValueEvent> ringBuffer =
-                new RingBuffer<>(ValueEvent.EVENT_FACTORY, RING_SIZE, ClaimStrategy.Option.SINGLE_THREADED, WaitStrategy.Option.BLOCKING);
-        DependencyBarrier barrier = ringBuffer.newDependencyBarrier();
-
-        BatchEventProcessor<ValueEvent> eventProcessor = new BatchEventProcessor<>(ringBuffer, barrier, new EventHandler<ValueEvent>() {
-            @Override public void onEvent(ValueEvent event, boolean endOfBatch) throws Exception {
-                // process a new event.
-                System.out.println("event = " + event + "; endOfBatch = " + endOfBatch);
-            }
-        });
-
-        // Each EventProcessor can run on a separate thread
-        EXECUTOR.submit(eventProcessor);
-
-        // Publishers claim events in sequence
-        ValueEvent event = ringBuffer.nextEvent();
-
-        event.setValue(1234); // this could be more complex with multiple fields
-
-        // make the event available to EventProcessors
-        ringBuffer.publish(event);
-        System.out.println("HelloDisruptor.main");
-
-        eventProcessor.halt();
-        EXECUTOR.shutdown();
-    }
-}
-
-final class ValueEvent extends AbstractEvent {
-    public final static EventFactory<ValueEvent> EVENT_FACTORY = new EventFactory<ValueEvent>() {
-        @Override public ValueEvent create() {
-            return new ValueEvent();
+        ByteBuffer bb = ByteBuffer.allocate(8);
+        for (long l = 0; true; l++) {
+            bb.putLong(0, l);
+            producer.onData(bb);
+            Thread.sleep(1000);
         }
-    };
-
-    private long value;
-
-    public long getValue() {
-        return value;
     }
 
-    public void setValue(final long value) {
-        this.value = value;
+    public static class LongEventProducer {
+        private final RingBuffer<LongEvent> ringBuffer;
+
+        public LongEventProducer(RingBuffer<LongEvent> ringBuffer) {
+            this.ringBuffer = ringBuffer;
+        }
+
+        public void onData(ByteBuffer bb) {
+            long sequence = ringBuffer.next();  // Grab the next sequence
+            try {
+                LongEvent event = ringBuffer.get(sequence); // Get the entry in the Disruptor for the sequence
+                event.setValue(bb.getLong(0));  // Fill with data
+            } finally {
+                ringBuffer.publish(sequence);
+            }
+        }
     }
 
-    @Override public String toString() {
-        return "ValueEvent{" +
-                "value=" + value +
-                '}';
+    private static class LongEvent {
+        private long value;
+
+        public long getValue() {
+            return value;
+        }
+
+        public void setValue(final long value) {
+            this.value = value;
+        }
+
+        @Override public String toString() {
+            return "ValueEvent{" +
+                    "value=" + value +
+                    '}';
+        }
     }
 }
+
+
