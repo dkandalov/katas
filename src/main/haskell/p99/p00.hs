@@ -2,6 +2,10 @@ import Test.HUnit
 import Data.List(sortBy, find, findIndex)
 import qualified Data.Map as Map
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
+import Data.Time.Clock.POSIX
+import Control.Concurrent
+import Control.DeepSeq
+
 
 last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
@@ -302,6 +306,7 @@ primeFactorsMultiplicity' n = case firstPrimeOf n of
             Nothing -> Map.insert value 1 $ result
 
 
+-- http://stackoverflow.com/questions/6400568/exponentiation-in-haskell
 totient2 :: Int -> Int
 totient2 n = foldl (\acc entry -> acc * (phi (fst entry) (snd entry))) 1 factors
     where
@@ -315,6 +320,15 @@ nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
 nCopiesOf value amount = value : nCopiesOf value (amount - 1)
 
+currentMillis :: IO Int
+currentMillis = fmap (round . (* 1000)) getPOSIXTime
+
+-- http://programmers.stackexchange.com/questions/160580/how-to-force-evaluation-in-haskell/160587#160587
+runAndMeasure :: NFData a => a -> IO (a, Int)
+runAndMeasure result = do
+        start <- currentMillis
+        end <- result `Control.DeepSeq.deepseq` currentMillis
+        return (result, end - start)
 
 
 main :: IO Counts
@@ -377,3 +391,10 @@ main =
         runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2)]) (primeFactorsMultiplicity' 9)
         runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315)
         runTestTT $ TestCase $ assertEqual "P37" 4 (totient2 10)
+
+        a <- runAndMeasure $ totient 100090
+        putStrLn $ "Duration: " ++ (show (snd a))
+        a <- runAndMeasure $ totient2 100090
+        putStrLn $ "Duration2: " ++ (show (snd a))
+
+        return $ Counts 0 0 0 0
