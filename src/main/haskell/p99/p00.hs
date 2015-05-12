@@ -314,6 +314,17 @@ totient2 n = foldl (\acc entry -> acc * (phi (fst entry) (snd entry))) 1 factors
         phi p m = (p - 1) * (p ^ (m - 1))
 
 
+listPrimesInRange :: [Int] -> [Int]
+listPrimesInRange valuesRange = filter isPrime valuesRange
+
+
+goldbach :: Int -> [(Int, Int)]
+goldbach n = primes >>= (\first ->
+        primes >>= (\second ->
+            if (first + second == n) then [(first, second)] else []
+    ))
+    where primes = listPrimesInRange [2..n]
+
 
 -- private
 nCopiesOf :: a -> Int -> [a]
@@ -392,9 +403,11 @@ main =
         runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315)
         runTestTT $ TestCase $ assertEqual "P37" 4 (totient2 10)
 
+        -- P38
         a <- runAndMeasure $ totient 100090
-        putStrLn $ "Duration: " ++ (show (snd a))
+        putStrLn $ "Duration: " ++ (show (snd a)) -- ~60ms
         a <- runAndMeasure $ totient2 100090
-        putStrLn $ "Duration2: " ++ (show (snd a))
+        putStrLn $ "Duration2: " ++ (show (snd a)) -- ~3100ms
 
-        return $ Counts 0 0 0 0
+        runTestTT $ TestCase $ assertEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
+        runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbach 28)
