@@ -318,12 +318,27 @@ listPrimesInRange :: [Int] -> [Int]
 listPrimesInRange valuesRange = filter isPrime valuesRange
 
 
-goldbach :: Int -> [(Int, Int)]
-goldbach n = primes >>= (\first ->
+goldbachAll :: Int -> [(Int, Int)]
+goldbachAll n = primes >>= (\first ->
         primes >>= (\second ->
             if (first + second == n) then [(first, second)] else []
     ))
     where primes = listPrimesInRange [2..n]
+
+goldbach :: Int -> Maybe (Int, Int)
+goldbach n = case goldbachAll n of
+    [] -> Nothing
+    x:xs -> Just x
+
+
+goldbachList :: [Int] -> Map.Map Int (Int, Int)
+goldbachList list = Map.fromList nonEmptyResults
+    where
+        nonEmptyResults = foldl notNothing [] allResults -- :: [Int, (Int, Int)]
+        allResults = map (\it -> (it, goldbach it)) list -- :: [Int, Maybe (Int, Int)]
+        notNothing acc x = case snd x of
+            Just value -> (fst x, value) : acc
+            Nothing -> acc
 
 
 -- private
@@ -410,4 +425,8 @@ main =
         putStrLn $ "Duration2: " ++ (show (snd a)) -- ~3100ms
 
         runTestTT $ TestCase $ assertEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
-        runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbach 28)
+        runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbachAll 28)
+        runTestTT $ TestCase $ assertEqual "P40" (Just (5,23)) (goldbach 28)
+        runTestTT $ TestCase $ assertEqual "P41"
+            (Map.fromList [(9,(2,7)),(10,(3,7)),(12,(5,7)),(13,(2,11)),(14,(3,11)),(15,(2,13)),(16,(3,13)),(18,(5,13)),(19,(2,17)),(20,(3,17))])
+            (goldbachList [9..20])
