@@ -1,6 +1,6 @@
 import Test.HUnit
 import Data.List(sortBy, find, findIndex)
-import qualified Data.Map as Map
+import qualified Data.Map.Strict as Map
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
 import Data.Time.Clock.POSIX
 import Control.Concurrent
@@ -319,16 +319,14 @@ listPrimesInRange valuesRange = filter isPrime valuesRange
 
 
 goldbachAll :: Int -> [(Int, Int)]
-goldbachAll n = primes >>= (\first ->
-        primes >>= (\second ->
-            if (first + second == n) then [(first, second)] else []
-    ))
-    where primes = listPrimesInRange [2..n]
+goldbachAll n = filter (\it -> (fst it) + (snd it) == n) primePairs
+    where primePairs = [(i, j) | i <- primes, j <- primes]
+          primes = listPrimesInRange [2..n]
 
 goldbach :: Int -> Maybe (Int, Int)
-goldbach n = case goldbachAll n of
-    [] -> Nothing
-    x:xs -> Just x
+goldbach n = find (\it -> (fst it) + (snd it) == n) primePairs
+     where primePairs = [(i, j) | i <- primes, j <- primes]
+           primes = listPrimesInRange [2..n]
 
 
 goldbachList :: [Int] -> Map.Map Int (Int, Int)
@@ -339,6 +337,10 @@ goldbachList list = Map.fromList nonEmptyResults
         notNothing acc x = case snd x of
             Just value -> (fst x, value) : acc
             Nothing -> acc
+goldbachListLimited :: [Int] -> Int -> Map.Map Int (Int, Int)
+goldbachListLimited list limit = Map.fromList $ filter (primesAbove limit) (Map.toList $ goldbachList list)
+    where primesAbove n entry = (fst $ snd entry) >= n && (snd $ snd entry) >= n
+
 
 
 -- private
@@ -430,3 +432,5 @@ main =
         runTestTT $ TestCase $ assertEqual "P41"
             (Map.fromList [(9,(2,7)),(10,(3,7)),(12,(5,7)),(13,(2,11)),(14,(3,11)),(15,(2,13)),(16,(3,13)),(18,(5,13)),(19,(2,17)),(20,(3,17))])
             (goldbachList [9..20])
+        runTestTT $ TestCase $ assertEqual "P41" 100 (Map.size (goldbachList [1..1000]))
+--        runTestTT $ TestCase $ assertEqual "P41" (Map.fromList []) (goldbachListLimited [1..2000] 50) -- TODO too slow
