@@ -1,5 +1,6 @@
 import Test.HUnit
 import Data.List(sortBy, find, findIndex)
+import Data.Maybe
 import qualified Data.Map.Strict as Map
 import System.Random (RandomGen, next, mkStdGen, newStdGen)
 import Data.Time.Clock.POSIX
@@ -319,21 +320,25 @@ listPrimesInRange valuesRange = filter isPrime valuesRange
 
 
 goldbachAll :: Int -> [(Int, Int)]
-goldbachAll n = filter (\it -> (fst it) + (snd it) == n) primePairs
-    where primePairs = [(i, j) | i <- primes, j <- primes]
+goldbachAll n = filter (sumsUpTo n) primePairs
+    where sumsUpTo value it = (fst it) + (snd it) == value
+          primePairs = [(i, j) | i <- primes, j <- primes]
           primes = listPrimesInRange [2..n]
 
+goldbach' :: Int -> [Int] -> Maybe (Int, Int)
+goldbach' n primes = find (sumsUpTo n) primePairs
+     where sumsUpTo value it = (fst it) + (snd it) == value
+           primePairs = [(i, j) | i <- primes, j <- primes]
 goldbach :: Int -> Maybe (Int, Int)
-goldbach n = find (\it -> (fst it) + (snd it) == n) primePairs
-     where primePairs = [(i, j) | i <- primes, j <- primes]
-           primes = listPrimesInRange [2..n]
+goldbach n = goldbach' n (listPrimesInRange [2..n])
 
 
 goldbachList :: [Int] -> Map.Map Int (Int, Int)
-goldbachList list = Map.fromList nonEmptyResults
+goldbachList aRange = Map.fromList nonEmptyResults
     where
+        primes = listPrimesInRange [2..(last aRange)]
         nonEmptyResults = foldl notNothing [] allResults -- :: [Int, (Int, Int)]
-        allResults = map (\it -> (it, goldbach it)) list -- :: [Int, Maybe (Int, Int)]
+        allResults = map (\it -> (it, goldbach' it primes)) aRange -- :: [Int, Maybe (Int, Int)]
         notNothing acc x = case snd x of
             Just value -> (fst x, value) : acc
             Nothing -> acc
@@ -421,10 +426,11 @@ main =
         runTestTT $ TestCase $ assertEqual "P37" 4 (totient2 10)
 
         -- P38
-        a <- runAndMeasure $ totient 100090
-        putStrLn $ "Duration: " ++ (show (snd a)) -- ~60ms
-        a <- runAndMeasure $ totient2 100090
-        putStrLn $ "Duration2: " ++ (show (snd a)) -- ~3100ms
+        -- commented out because it's quite slow
+--        a <- runAndMeasure $ totient 100090
+--        putStrLn $ "P38 duration: " ++ (show (snd a)) -- ~60ms
+--        a <- runAndMeasure $ totient2 100090
+--        putStrLn $ "P38 duration: " ++ (show (snd a)) -- ~3100ms
 
         runTestTT $ TestCase $ assertEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
         runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbachAll 28)
@@ -432,5 +438,9 @@ main =
         runTestTT $ TestCase $ assertEqual "P41"
             (Map.fromList [(9,(2,7)),(10,(3,7)),(12,(5,7)),(13,(2,11)),(14,(3,11)),(15,(2,13)),(16,(3,13)),(18,(5,13)),(19,(2,17)),(20,(3,17))])
             (goldbachList [9..20])
-        runTestTT $ TestCase $ assertEqual "P41" 100 (Map.size (goldbachList [1..1000]))
---        runTestTT $ TestCase $ assertEqual "P41" (Map.fromList []) (goldbachListLimited [1..2000] 50) -- TODO too slow
+
+--        p41 <- runAndMeasure $ goldbachListLimited [1..2000] 50
+--        putStrLn $ "P41 duration: " ++ (show (snd p41)) -- ~4.6 seconds
+--        runTestTT $ TestCase $ assertEqual "P41"
+--            (Map.fromList [(992,(73,919)),(1382,(61,1321)),(1856,(67,1789)),(1928,(61,1867))])
+--            (fst p41)
