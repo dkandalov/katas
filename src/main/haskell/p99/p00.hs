@@ -47,13 +47,6 @@ last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
 last' [x] = x
 last' (_:xs) = last' xs
--- from https://wiki.haskell.org/99_questions/Solutions/1
-myLast' = foldr1 (const id)
-myLast'' = foldr1 (flip const)
-myLast''' = head . reverse
-myLast'''' = foldl1 (curry snd)
-myLast''''' [] = error "No end for empty lists!"
-myLast''''' x = x !! (length x -1)
 
 
 penultimate :: [a] -> a
@@ -61,20 +54,6 @@ penultimate [] = error "Can't get penultimate element"
 penultimate [_] = error "Can't get penultimate element"
 penultimate [x, _] = x
 penultimate (_:xs) = penultimate(xs)
--- from https://wiki.haskell.org/99_questions/Solutions/2
-myButLast :: [a] -> a
-myButLast = last . init
-myButLast' x = reverse x !! 1
-myButLast'' [x,_]  = x
-myButLast'' (_:xs) = myButLast'' xs
-myButLast''' (x:(_:[])) = x
-myButLast''' (_:xs) = myButLast''' xs
-myButLast'''' = head . tail . reverse
-lastbut1 = fst . foldl (\(a,b) x -> (b,x)) (err1,err2)
-  where
-    err1 = error "lastbut1: Empty list"
-    err2 = error "lastbut1: Singleton"
-lastbut1safe = fst . foldl (\(a,b) x -> (b,Just x)) (Nothing,Nothing)
 
 
 kth :: Int -> [a] -> a
