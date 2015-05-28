@@ -1,6 +1,6 @@
 module P00_ (
-    myLast', myLast'', myLast''',
-    myButLast
+    myLast', myLast'', myLast''', myLast'''', myLast''''',
+    myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -15,7 +15,7 @@ myLast'' = foldr1 (flip const)
 myLast''' = head . reverse
 myLast'''' = foldl1 (curry snd)
 myLast''''' [] = error "No end for empty lists!"
-myLast''''' x = x !! (length x -1)
+myLast''''' x = x !! (length x - 1)
 
 
 -- P02
@@ -28,9 +28,9 @@ myButLast''' (x:(_:[])) = x
 myButLast''' (_:xs) = myButLast''' xs
 myButLast'''' = head . tail . reverse
 --lastbut1 :: Foldable f => f a -> a
-lastbut1 = fst . foldl (\(a,b) x -> (b,x)) (err1,err2)
+lastbut1 = fst . foldl (\(_,b) x -> (b,x)) (err1,err2)
   where
     err1 = error "lastbut1: Empty list"
     err2 = error "lastbut1: Singleton"
 --lastbut1safe :: Foldable f => f a -> Maybe a
-lastbut1safe = fst . foldl (\(a,b) x -> (b,Just x)) (Nothing,Nothing)
+lastbut1safe = fst . foldl (\(_,b) x -> (b,Just x)) (Nothing,Nothing)
