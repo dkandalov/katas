@@ -1,10 +1,12 @@
+module P00Test (tests) where
+
 import Test.HUnit
 import P00
 import System.Random (mkStdGen)
 import qualified Data.Map.Strict as Map
 
-main :: IO Counts
-main =
+tests :: IO Counts
+tests =
     do
         let runSlow = False
 
