@@ -1,6 +1,7 @@
 module P00_ (
     myLast', myLast'', myLast''', myLast'''', myLast''''',
-    myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe
+    myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe,
+    elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -34,3 +35,22 @@ lastbut1 = fst . foldl (\(_,b) x -> (b,x)) (err1,err2)
     err2 = error "lastbut1: Singleton"
 --lastbut1safe :: Foldable f => f a -> Maybe a
 lastbut1safe = fst . foldl (\(_,b) x -> (b,Just x)) (Nothing,Nothing)
+
+
+-- P03
+elementAt :: Int -> [a] -> a
+elementAt i list = list !! i
+
+elementAt' :: Int -> [a] -> a
+elementAt' 0 (x:_)  = x
+elementAt' i (_:xs) = elementAt' (i - 1) xs
+elementAt' _ _      = error "Index out of bounds"
+
+elementAt'' n xs
+        | length xs < n = error "Index out of bounds"
+        | otherwise = fst . last $ zip xs [0..n]
+
+elementAt''' n xs = head $ foldr ($) xs
+                         $ replicate (n - 1) tail
+
+elementAt_w'pf = (last .) . take . (+ 1)
