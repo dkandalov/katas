@@ -1,7 +1,8 @@
 module P00_ (
     myLast', myLast'', myLast''', myLast'''', myLast''''',
     myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe,
-    elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf
+    elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
+    myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3''
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -50,8 +51,7 @@ elementAt'' n xs
         | length xs < n = error "Index out of bounds"
         | otherwise = fst . last $ zip xs [0..n]
 
-elementAt''' n xs = head $ foldr ($) xs
-                         $ replicate (n - 1) tail
+elementAt''' n xs = head $ foldr ($) xs $ replicate n tail
 
 elementAt_w'pf = (last .) . take . (+ 1)
 
@@ -63,15 +63,13 @@ myLength list = myLength_acc list 0
 		myLength_acc [] n = n
 		myLength_acc (_:xs) n = myLength_acc xs (n + 1)
 
-myLength :: [a] -> Int
-myLength1 =  foldl (\n _ -> n + 1) 0
-myLength2 =  foldr (\_ n -> n + 1) 0
-myLength3 =  foldr (\_ -> (+1)) 0
-myLength4 =  foldr ((+) . (const 1)) 0
-myLength5 =  foldr (const (+1)) 0
-myLength6 =  foldl (const . (+1)) 0
+myLength1' = foldl (\n _ -> n + 1) 0    :: [a] -> Int
+myLength2' = foldr (\_ n -> n + 1) 0    :: [a] -> Int
+myLength3' = foldr (\_ -> (+1)) 0       :: [a] -> Int
+myLength4' = foldr ((+) . (const 1)) 0  :: [a] -> Int
+myLength5' = foldr (const (+1)) 0       :: [a] -> Int
+myLength6' = foldl (const . (+1)) 0     :: [a] -> Int
 
-myLength :: [a] -> Int
-myLength1 xs = snd $ last $ zip xs [1..] -- Just for fun
-myLength2 = snd . last . (flip zip [1..]) -- Because point-free is also fun
-myLength3 = fst . last . zip [1..] -- same, but easier
+myLength1'' xs = snd $ last $ zip xs [1..]  -- Just for fun
+myLength2'' = snd . last . (flip zip [1..]) :: [a] -> Int-- Because point-free is also fun
+myLength3'' = fst . last . zip [1..] :: [a] -> Int -- same, but easier
