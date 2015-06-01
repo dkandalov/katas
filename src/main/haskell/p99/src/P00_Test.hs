@@ -20,5 +20,8 @@ main = do
         (\f -> expectEqual "P04" 6 (f [1, 1, 2, 3, 5, 8])) `mapM_`
             [myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'']
 
+        (\f -> expectEqual "P05" [8, 5, 3, 2, 1, 1] (f [1, 1, 2, 3, 5, 8])) `mapM_`
+            [reverse', reverse'', reverse''', reverse'''']
+
         return $ (Counts 0 0 0 0)
 

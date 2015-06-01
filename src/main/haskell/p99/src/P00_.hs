@@ -2,11 +2,13 @@ module P00_ (
     myLast', myLast'', myLast''', myLast'''', myLast''''',
     myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe,
     elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
-    myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3''
+    myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'',
+    reverse', reverse'', reverse''', reverse''''
 ) where
 
-import Data.List(sortBy, find, findIndex)
 import Data.Foldable(Foldable)
+import Control.Monad(liftM2)
+--import Control.Applicative(<*>)
 
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -71,5 +73,42 @@ myLength5' = foldr (const (+1)) 0       :: [a] -> Int
 myLength6' = foldl (const . (+1)) 0     :: [a] -> Int
 
 myLength1'' xs = snd $ last $ zip xs [1..]  -- Just for fun
-myLength2'' = snd . last . (flip zip [1..]) :: [a] -> Int-- Because point-free is also fun
-myLength3'' = fst . last . zip [1..] :: [a] -> Int -- same, but easier
+myLength2'' = snd . last . (flip zip [1..]) :: [a] -> Int -- Because point-free is also fun
+myLength3'' = fst . last . zip [1..]        :: [a] -> Int -- same, but easier
+
+
+-- P05
+reverse' :: [a] -> [a]
+reverse' = foldl (flip (:)) []
+
+reverse'' :: [a] -> [a]
+reverse'' [] = []
+reverse'' (x:xs) = reverse'' xs ++ [x]
+
+reverse''' :: [a] -> [a]
+reverse''' list = reverse_ list []
+  where
+    reverse_ [] reversed     = reversed
+    reverse_ (x:xs) reversed = reverse_ xs (x:reversed)
+
+reverse'''' :: [a] -> [a]
+reverse'''' xs = foldr (\x fId empty -> fId (x : empty)) id xs []
+
+
+-- P06
+isPalindrome :: (Eq a) => [a] -> Bool
+isPalindrome xs = xs == (reverse xs)
+
+isPalindrome' []  = True
+isPalindrome' [_] = True
+isPalindrome' xs  = (head xs) == (last xs) && (isPalindrome' $ init $ tail xs)
+
+isPalindrome'' :: (Eq a) => [a] -> Bool
+isPalindrome'' xs = foldl (\acc (a,b) -> if a == b then acc else False) True input
+	where input = zip xs (reverse xs)
+
+isPalindrome''' :: (Eq a) => [a] -> Bool
+isPalindrome''' = Control.Monad.liftM2 (==) id reverse
+
+--isPalindrome'''' :: (Eq a) => [a] -> Bool
+--isPalindrome'''' = (==) Control.Applicative.<*> reverse
