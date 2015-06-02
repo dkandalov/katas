@@ -3,12 +3,14 @@ module P00_ (
     myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe,
     elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
     myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'',
-    reverse', reverse'', reverse''', reverse''''
+    reverse', reverse'', reverse''', reverse'''',
+    isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6
 ) where
 
 import Data.Foldable(Foldable)
 import Control.Monad(liftM2)
---import Control.Applicative(<*>)
+import Control.Applicative((<*>))
+import Control.Arrow((&&&))
 
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -99,16 +101,31 @@ reverse'''' xs = foldr (\x fId empty -> fId (x : empty)) id xs []
 isPalindrome :: (Eq a) => [a] -> Bool
 isPalindrome xs = xs == (reverse xs)
 
-isPalindrome' []  = True
-isPalindrome' [_] = True
-isPalindrome' xs  = (head xs) == (last xs) && (isPalindrome' $ init $ tail xs)
+isPalindrome'1 :: (Eq a) => [a] -> Bool
+isPalindrome'1 []  = True
+isPalindrome'1 [_] = True
+isPalindrome'1 xs  = (head xs) == (last xs) && (isPalindrome'1 $ init $ tail xs)
 
-isPalindrome'' :: (Eq a) => [a] -> Bool
-isPalindrome'' xs = foldl (\acc (a,b) -> if a == b then acc else False) True input
+isPalindrome'2 :: (Eq a) => [a] -> Bool -- this seems to be just more vebose version of isPalindrome
+isPalindrome'2 xs = foldl (\acc (a,b) -> if a == b then acc else False) True input
 	where input = zip xs (reverse xs)
 
-isPalindrome''' :: (Eq a) => [a] -> Bool
-isPalindrome''' = Control.Monad.liftM2 (==) id reverse
+isPalindrome'3 :: (Eq a) => [a] -> Bool
+isPalindrome'3 = Control.Monad.liftM2 (==) id reverse
 
---isPalindrome'''' :: (Eq a) => [a] -> Bool
---isPalindrome'''' = (==) Control.Applicative.<*> reverse
+isPalindrome'4 :: (Eq a) => [a] -> Bool
+isPalindrome'4 = (==) Control.Applicative.<*> reverse
+
+isPalindrome'5 :: (Eq a) => [a] -> Bool
+isPalindrome'5 xs = p [] xs xs
+   where p rev (x:xs) (_:_:ys) = p (x:rev) xs ys
+         p rev (_:xs) [_] = rev == xs
+         p rev xs [] = rev == xs
+
+isPalindrome'6 :: (Eq a) => [a] -> Bool
+isPalindrome'6 xs = and $ zipWith (==) xs (reverse xs)
+
+isPalindrome1'7 :: (Eq a) => [a] -> Bool
+isPalindrome1'7 xs = (uncurry (==) . (id &&& reverse)) xs
+
+

@@ -23,5 +23,10 @@ main = do
         (\f -> expectEqual "P05" [8, 5, 3, 2, 1, 1] (f [1, 1, 2, 3, 5, 8])) `mapM_`
             [reverse', reverse'', reverse''', reverse'''']
 
+        let isPalindromFunctions = [isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3,
+                                    isPalindrome'4, isPalindrome'5, isPalindrome'6] :: [[Int] -> Bool]
+        (\f -> expectEqual "P06" False (f [1, 2, 3, 4, 5])) `mapM_` isPalindromFunctions
+        (\f -> expectEqual "P06" True (f [1, 2, 3, 2, 1])) `mapM_` isPalindromFunctions
+
         return $ (Counts 0 0 0 0)
 
