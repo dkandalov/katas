@@ -4,7 +4,7 @@ module P00_ (
     elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
     myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'',
     reverse', reverse'', reverse''', reverse'''',
-    isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6
+    isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7
 ) where
 
 import Data.Foldable(Foldable)
@@ -125,7 +125,5 @@ isPalindrome'5 xs = p [] xs xs
 isPalindrome'6 :: (Eq a) => [a] -> Bool
 isPalindrome'6 xs = and $ zipWith (==) xs (reverse xs)
 
-isPalindrome1'7 :: (Eq a) => [a] -> Bool
-isPalindrome1'7 xs = (uncurry (==) . (id &&& reverse)) xs
-
-
+isPalindrome'7 :: (Eq a) => [a] -> Bool
+isPalindrome'7 xs = (uncurry (==) . (id &&& reverse)) xs

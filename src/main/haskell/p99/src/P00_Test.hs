@@ -24,7 +24,7 @@ main = do
             [reverse', reverse'', reverse''', reverse'''']
 
         let isPalindromFunctions = [isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3,
-                                    isPalindrome'4, isPalindrome'5, isPalindrome'6] :: [[Int] -> Bool]
+                                    isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7] :: [[Int] -> Bool]
         (\f -> expectEqual "P06" False (f [1, 2, 3, 4, 5])) `mapM_` isPalindromFunctions
         (\f -> expectEqual "P06" True (f [1, 2, 3, 2, 1])) `mapM_` isPalindromFunctions
 
