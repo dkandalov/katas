@@ -4,10 +4,11 @@ module P00_ (
     elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
     myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'',
     reverse', reverse'', reverse''', reverse'''',
-    isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7
+    isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
+    NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3
 ) where
 
-import Data.Foldable(Foldable)
+import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>))
 import Control.Arrow((&&&))
@@ -127,3 +128,25 @@ isPalindrome'6 xs = and $ zipWith (==) xs (reverse xs)
 
 isPalindrome'7 :: (Eq a) => [a] -> Bool
 isPalindrome'7 xs = (uncurry (==) . (id &&& reverse)) xs
+
+-- P07
+data NestedList a = Elem a | List[NestedList a] deriving (Show, Eq)
+nestedList :: [a] -> NestedList a
+nestedList xs = List $ (\it -> Elem it) `map` xs
+
+flatten :: NestedList a -> [a]
+flatten (Elem x) = [x]
+flatten (List x) = concatMap flatten x
+
+flatten' :: NestedList a -> [a]
+flatten' (Elem a)      = [a]
+flatten' (List (x:xs)) = flatten' x ++ flatten' (List xs)
+flatten' (List [])     = []
+
+flatten'2 :: NestedList a -> [a]
+flatten'2 (Elem x) = return x
+flatten'2 (List x) = flatten'2 =<< x
+
+flatten'3 :: NestedList a -> [a]
+flatten'3 (Elem x) = [x]
+flatten'3 (List x) = foldMap flatten'3 x

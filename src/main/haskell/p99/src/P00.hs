@@ -43,12 +43,14 @@ import Data.Time.Clock.POSIX
 import Control.DeepSeq
 
 
+-- P01
 last' :: [a] -> a
 last' [] = error "Can't get last element of empty list"
 last' [x] = x
 last' (_:xs) = last' xs
 
 
+-- P02
 penultimate :: [a] -> a
 penultimate [] = error "Can't get penultimate element"
 penultimate [_] = error "Can't get penultimate element"
@@ -56,32 +58,36 @@ penultimate [x, _] = x
 penultimate (_:xs) = penultimate(xs)
 
 
+-- P03
 kth :: Int -> [a] -> a
 --kth n xs = xs !! n
 kth _ [] = error "Can't get element of empty list"
 kth n (x:xs) = if n == 0 then x else kth (n - 1) xs
 
 
+-- P04
 length' :: [a] -> Int
 length' [] = 0
 length' (_:xs) = 1 + length' xs
 
 
+-- P05
 reverse' :: [a] -> [a]
 reverse' [] = []
 reverse' (x:xs) = (reverse' xs) ++ [x]
 
 
+-- P06
 isPalindrome :: (Eq a) => [a] -> Bool
 isPalindrome xs = xs == (reverse xs)
 
 
+-- P07
 -- http://stackoverflow.com/questions/6479444/is-there-a-type-any-in-haskell
 data AList a = AList [AList a] | Value a
 aList :: [a] -> AList a
 aList [] = AList []
 aList xs = AList ((\x -> Value x) `map` xs)
-
 
 flatten :: [AList a] -> [a]
 flatten [] = []
