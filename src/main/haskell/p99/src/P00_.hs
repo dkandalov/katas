@@ -5,13 +5,15 @@ module P00_ (
     myLength, myLength1', myLength2', myLength3', myLength4', myLength5', myLength6', myLength1'', myLength2'', myLength3'',
     reverse', reverse'', reverse''', reverse'''',
     isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
-    NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3
+    NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6,
+    compress, compress', compress'2
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>))
 import Control.Arrow((&&&))
+import Data.List(group)
 
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -150,3 +152,36 @@ flatten'2 (List x) = flatten'2 =<< x
 flatten'3 :: NestedList a -> [a]
 flatten'3 (Elem x) = [x]
 flatten'3 (List x) = foldMap flatten'3 x
+
+flatten'4 :: NestedList a -> [a]
+flatten'4 a = flt' a []
+  where flt' (Elem x)      xs = x:xs
+        flt' (List (x:ls)) xs = flt' x (flt' (List ls) xs)
+        flt' (List [])     xs = xs
+
+flatten'5 :: NestedList a -> [a] -- same as version with concatMap above
+flatten'5 (Elem x ) = [x]
+flatten'5 (List xs) =  foldr (++) [] $ map flatten'5 xs
+
+flatten'6 :: NestedList a -> [a]
+flatten'6 = reverse . rec []
+  where rec acc (List []) = acc
+        rec acc (Elem x)  = x:acc
+        rec acc (List (x:xs)) = rec (rec acc x) (List xs)
+
+
+-- P08
+compress :: Eq a => [a] -> [a]
+compress = map head . group
+
+compress' :: Eq a => [a] -> [a]
+compress' (x:ys@(y:_))
+    | x == y    = compress' ys
+    | otherwise = x : compress' ys
+compress' ys = ys
+
+compress'2 :: Eq a => [a] -> [a]
+compress'2 xs = foldr f (const []) xs Nothing
+  where
+    f x r a@(Just q) | x == q = r a
+    f x r _ = x : r (Just x)

@@ -28,8 +28,14 @@ main = do
         (\f -> expectEqual "P06" False (f [1, 2, 3, 4, 5])) `mapM_` isPalindromFunctions
         (\f -> expectEqual "P06" True (f [1, 2, 3, 2, 1])) `mapM_` isPalindromFunctions
 
-        (\f -> expectEqual "P07" [1, 1, 2] (f $ List[nestedList [1, 1], Elem 2])) `mapM_`
-            [flatten, flatten', flatten'2, flatten'3]
+        let flattenFunctions = [flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6]
+        (\f -> expectEqual "P07" [1, 2] (f $ List[Elem 1, Elem 2])) `mapM_` flattenFunctions
+        (\f -> expectEqual "P07" [1, 2, 3] (f $ List[nestedList [1, 2], Elem 3])) `mapM_` flattenFunctions
+        (\f -> expectEqual "P07" [1, 2, 3] (f $ List[List[Elem 1, Elem 2], List[Elem 3]])) `mapM_` flattenFunctions
+
+        let compressFunctions = [compress, compress', compress'2] :: [[Char] -> [Char]]
+        (\f -> expectEqual "P08" "abcade" (f "aaaabccaadeeee")) `mapM_` compressFunctions
+
 
         return $ (Counts 0 0 0 0)
 
