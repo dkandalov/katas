@@ -33,9 +33,11 @@ main = do
         (\f -> expectEqual "P07" [1, 2, 3] (f $ List[nestedList [1, 2], Elem 3])) `mapM_` flattenFunctions
         (\f -> expectEqual "P07" [1, 2, 3] (f $ List[List[Elem 1, Elem 2], List[Elem 3]])) `mapM_` flattenFunctions
 
-        let compressFunctions = [compress, compress', compress'2] :: [[Char] -> [Char]]
+        let compressFunctions = [compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7] :: [[Char] -> [Char]]
         (\f -> expectEqual "P08" "abcade" (f "aaaabccaadeeee")) `mapM_` compressFunctions
 
+        let packFunctions = [pack, pack', pack'2]
+        (\f -> expectEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (f "aaaabccaadeeee")) `mapM_` packFunctions
 
         return $ (Counts 0 0 0 0)
 

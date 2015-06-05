@@ -6,14 +6,15 @@ module P00_ (
     reverse', reverse'', reverse''', reverse'''',
     isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
     NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6,
-    compress, compress', compress'2
+    compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7,
+    pack, pack', pack'2
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>))
 import Control.Arrow((&&&))
-import Data.List(group)
+import Data.List(group, findIndex)
 
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -179,9 +180,42 @@ compress' (x:ys@(y:_))
     | x == y    = compress' ys
     | otherwise = x : compress' ys
 compress' ys = ys
-
-compress'2 :: Eq a => [a] -> [a]
-compress'2 xs = foldr f (const []) xs Nothing
+compress'2 xs = (foldr f (const []) xs) Nothing
   where
     f x r a@(Just q) | x == q = r a
     f x r _ = x : r (Just x)
+compress'3 :: Eq a => [a] -> [a]
+compress'3 = foldr skipDups []
+    where skipDups x [] = [x]
+          skipDups x acc
+                | x == head acc = acc
+                | otherwise = x : acc
+compress'4 []     = []
+compress'4 (x:xs) = x : (compress'4 $ dropWhile (== x) xs)
+compress'5 xs = foldr (\a b -> if a == (head b) then b else a:b) [last xs] xs
+compress'6 x = foldl (\a b -> if (last a) == b then a else a ++ [b]) [head x] x
+compress'7 x = reverse $ foldl (\a b -> if (head a) == b then a else b:a) [head x] x
+
+
+-- P09
+pack :: Eq a => [a] -> [[a]]
+pack (x:xs) = let (first,rest) = span (==x) xs
+               in (x:first) : pack rest
+pack [] = []
+
+pack' :: Eq a => [a] -> [[a]]
+pack' [] = []
+pack' (x:xs) = (x:first) : pack' rest
+         where
+           getReps [] = ([], [])
+           getReps (y:ys)
+                   | y == x = let (f,r) = getReps ys in (y:f, r)
+                   | otherwise = ([], (y:ys))
+           (first, rest) = getReps xs
+
+pack'2 :: Eq a => [a] -> [[a]]
+pack'2 [] = []
+pack'2 (x:xs) = (x:reps) : (pack'2 rest)
+    where
+        (reps, rest) = maybe (xs,[]) (\i -> splitAt i xs)
+                         (findIndex (/=x) xs)

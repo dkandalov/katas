@@ -95,7 +95,7 @@ flatten (x:xs) = case x of
         Value it -> it : flatten xs
         AList it -> flatten it ++ flatten xs
 
-
+-- P08
 compress :: [Char] -> [Char]
 compress [] = []
 compress (x:xs) = x : compress (consumeHead x xs)
@@ -105,7 +105,7 @@ compress (x:xs) = x : compress (consumeHead x xs)
             if (head ys) /= char then ys
             else consumeHead char (tail ys)
 
-
+-- P09
 pack :: (Eq a) => [a] -> [[a]]
 pack' :: (Eq a) => [a] -> [a] -> [[a]]
 pack xs = pack' xs []
@@ -115,7 +115,7 @@ pack' (x:xs) list =
     if (length list == 0) || x == (head list) then pack' xs (x:list)
     else list : (pack' xs [x])
 
-
+-- P10
 encode :: (Eq a) => [a] -> [(Int, a)]
 encode list = (\x -> (length x, head x)) `map` (pack list)
 
