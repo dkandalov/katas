@@ -223,3 +223,10 @@ pack'2 (x:xs) = (x:reps) : (pack'2 rest)
 pack'3 :: (Eq a) => [a] -> [[a]]
 pack'3 [] = []
 pack'3 (x:xs) = (x : takeWhile (==x) xs) : pack (dropWhile (==x) xs)
+
+pack'4 :: (Eq a) => [a] -> [[a]]
+pack'4 [] = []
+pack'4 [x] = [[x]]
+pack'4 (x:xs) = if x `elem` (head (pack'4 xs))
+              then (x:(head (pack'4 xs))):(tail (pack'4 xs))
+              else [x]:(pack xs)
