@@ -7,7 +7,7 @@ module P00_ (
     isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
     NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6,
     compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7,
-    pack, pack', pack'2
+    pack, pack', pack'2, 'pack'3
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -218,4 +218,8 @@ pack'2 [] = []
 pack'2 (x:xs) = (x:reps) : (pack'2 rest)
     where
         (reps, rest) = maybe (xs,[]) (\i -> splitAt i xs)
-                         (findIndex (/=x) xs)
+                       (findIndex (/=x) xs)
+
+pack'3 :: (Eq a) => [a] -> [[a]]
+pack'3 [] = []
+pack'3 (x:xs) = (x : takeWhile (==x) xs) : pack (dropWhile (==x) xs)
