@@ -7,7 +7,7 @@ module P00_ (
     isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
     NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6,
     compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7,
-    pack, pack', pack'2, 'pack'3
+    pack, pack', pack'2, pack'3, pack'4, pack'5
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -230,3 +230,23 @@ pack'4 [x] = [[x]]
 pack'4 (x:xs) = if x `elem` (head (pack'4 xs))
               then (x:(head (pack'4 xs))):(tail (pack'4 xs))
               else [x]:(pack xs)
+
+pack'5 [] = []
+pack'5 (y:ys) = reverse $ impl ys [[y]]
+	where
+		impl [] packed = packed
+		impl (x:xs) p@(z:zs)
+			| x == (head z) = impl xs ((x:z):zs)
+			| otherwise     = impl xs ([x]:p)
+
+-- P10
+encode xs = map (\x -> (length x,head x)) (group xs)
+
+encode' :: Eq a => [a] -> [(Int, a)]
+encode' = map (\x -> (length x, head x)) . group
+
+encode'2 :: Eq a => [a] -> [(Int, a)]
+encode'2 xs = map (length &&& head) $ group xs
+
+encode'3 :: Eq a => [a] -> [(Int, a)]
+encode'3 = map ((,) <$> length <*> head) . pack

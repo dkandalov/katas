@@ -36,7 +36,7 @@ main = do
         let compressFunctions = [compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7] :: [[Char] -> [Char]]
         (\f -> expectEqual "P08" "abcade" (f "aaaabccaadeeee")) `mapM_` compressFunctions
 
-        let packFunctions = [pack, pack', pack'2, pack'3]
+        let packFunctions = [pack, pack', pack'2, pack'3, pack'4]
         (\f -> expectEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (f "aaaabccaadeeee")) `mapM_` packFunctions
 
         return $ (Counts 0 0 0 0)
