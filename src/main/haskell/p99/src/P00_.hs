@@ -7,12 +7,14 @@ module P00_ (
     isPalindrome, isPalindrome'1, isPalindrome'2, isPalindrome'3, isPalindrome'4, isPalindrome'5, isPalindrome'6, isPalindrome'7,
     NestedList(..), nestedList, flatten, flatten', flatten'2, flatten'3, flatten'4, flatten'5, flatten'6,
     compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7,
-    pack, pack', pack'2, pack'3, pack'4, pack'5
+    pack, pack', pack'2, pack'3, pack'4, pack'5,
+    encode, encode', encode'2, encode'3, encode'4, encode'5, encode'6, encode'7,
+    ListItem(..), encodeModified, encodeModified'
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
-import Control.Applicative((<*>))
+import Control.Applicative((<*>), (<$>))
 import Control.Arrow((&&&))
 import Data.List(group, findIndex)
 
@@ -199,9 +201,9 @@ compress'7 x = reverse $ foldl (\a b -> if (head a) == b then a else b:a) [head 
 
 -- P09
 pack :: Eq a => [a] -> [[a]]
+pack [] = []
 pack (x:xs) = let (first,rest) = span (==x) xs
                in (x:first) : pack rest
-pack [] = []
 
 pack' :: Eq a => [a] -> [[a]]
 pack' [] = []
@@ -218,7 +220,7 @@ pack'2 [] = []
 pack'2 (x:xs) = (x:reps) : (pack'2 rest)
     where
         (reps, rest) = maybe (xs,[]) (\i -> splitAt i xs)
-                       (findIndex (/=x) xs)
+                             (findIndex (/=x) xs)
 
 pack'3 :: (Eq a) => [a] -> [[a]]
 pack'3 [] = []
@@ -228,9 +230,10 @@ pack'4 :: (Eq a) => [a] -> [[a]]
 pack'4 [] = []
 pack'4 [x] = [[x]]
 pack'4 (x:xs) = if x `elem` (head (pack'4 xs))
-              then (x:(head (pack'4 xs))):(tail (pack'4 xs))
-              else [x]:(pack xs)
+                then (x:(head (pack'4 xs))):(tail (pack'4 xs))
+                else [x]:(pack'4 xs)
 
+pack'5 :: (Eq a) => [a] -> [[a]]
 pack'5 [] = []
 pack'5 (y:ys) = reverse $ impl ys [[y]]
 	where
@@ -240,7 +243,8 @@ pack'5 (y:ys) = reverse $ impl ys [[y]]
 			| otherwise     = impl xs ([x]:p)
 
 -- P10
-encode xs = map (\x -> (length x,head x)) (group xs)
+encode :: Eq a => [a] -> [(Int, a)]
+encode xs = map (\x -> (length x, head x)) (group xs)
 
 encode' :: Eq a => [a] -> [(Int, a)]
 encode' = map (\x -> (length x, head x)) . group
@@ -250,3 +254,40 @@ encode'2 xs = map (length &&& head) $ group xs
 
 encode'3 :: Eq a => [a] -> [(Int, a)]
 encode'3 = map ((,) <$> length <*> head) . pack
+
+encode'4 :: Eq a => [a] -> [(Int, a)]
+encode'4 xs = (enc . pack) xs
+	where enc = foldr (\x acc -> (length x, head x) : acc) []
+
+encode'5 :: Eq a => [a] -> [(Int, a)]
+encode'5 [] = []
+encode'5 (x:xs) = (length $ x : takeWhile (==x) xs, x)
+                    : encode'5 (dropWhile (==x) xs)
+
+encode'6 :: Eq a => [a] -> [(Int, a)]
+encode'6 []     = []
+encode'6 (x:xs) = encode'' 1 x xs
+        where encode'' n x [] = [(n, x)]
+              encode'' n x (y:ys)
+                | x == y    = encode'' (n + 1) x ys
+                | otherwise = (n, x) : encode'' 1 y ys
+
+encode'7 :: Eq a => [a] -> [(Int, a)]
+encode'7 xs = zip (map length l) h
+        where l = group xs
+              h = map head l
+
+-- P11
+data ListItem a = Single a | Multiple Int a deriving (Show, Eq)
+
+encodeModified :: Eq a => [a] -> [ListItem a]
+encodeModified = map encodeHelper . encode
+    where
+      encodeHelper (1,x) = Single x
+      encodeHelper (n,x) = Multiple n x
+
+encodeModified' :: Eq a => [a] -> [ListItem a]
+encodeModified' xs = [y | x <- group xs,
+    let y = if (length x) == 1 then
+                Single (head x) else
+                Multiple (length x) (head x)]
