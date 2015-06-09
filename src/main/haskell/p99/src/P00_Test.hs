@@ -43,8 +43,20 @@ main = do
         (\f -> expectEqual "P10" [(4,'a'), (1,'b'), (2,'c'), (2,'a'), (1,'d'), (4,'e')] (f "aaaabccaadeeee")) `mapM_` encodeFunctions
 
         let encodeModifiedFunctions = [encodeModified, encodeModified'] :: Eq a => [[a] -> [ListItem a]]
-        (\f -> expectEqual "P11" [(Multiple 4 'a'), Single 'b', (Multiple 2 'c'),
-                        (Multiple 2 'a'), Single 'd', (Multiple 4 'e')] (f "aaaabccaadeeee")) `mapM_` encodeModifiedFunctions
+        (\f -> expectEqual "P11"
+            [(Multiple 4 'a'), Single 'b', (Multiple 2 'c'), (Multiple 2 'a'), Single 'd', (Multiple 4 'e')]
+            (f "aaaabccaadeeee")) `mapM_` encodeModifiedFunctions
+
+        let decodeFunctions = [decode, decode', decode'2] :: Eq a => [[(Int, a)] -> [a]]
+        (\f -> expectEqual "P12" "aaaabccaadeeee"
+            (f [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')]))
+            `mapM_` decodeFunctions
+
+        let decodeModifiedFunctions = [decodeModified, decodeModified', decodeModified'2, decodeModified'3]
+        (\f -> expectEqual "P12"
+            "aaaabccaadeeee"
+            (f [(Multiple 4 'a'), Single 'b', (Multiple 2 'c'), (Multiple 2 'a'), Single 'd', (Multiple 4 'e')]))
+            `mapM_` decodeModifiedFunctions
 
         return $ (Counts 0 0 0 0)
 

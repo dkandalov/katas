@@ -20,7 +20,7 @@ main =
         runTestTT $ TestCase $ assertEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (pack "aaaabccaadeeee")
 
         runTestTT $ TestCase $ assertEqual "P10" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encode "aaaabccaadeeee")
-        runTestTT $ TestCase $ assertEqual "P11" "" "" -- not implemented because it's cumbersome to do in type syst
+        runTestTT $ TestCase $ assertEqual "P11" "" "" -- not implemented because it's cumbersome to do in type system
         runTestTT $ TestCase $ assertEqual "P12" "aaaabccaadeeee" (decode [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')])
         runTestTT $ TestCase $ assertEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee")
         runTestTT $ TestCase $ assertEqual "P14" "aabbccccdd" (duplicate "abccd")

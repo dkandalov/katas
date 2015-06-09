@@ -9,7 +9,9 @@ module P00_ (
     compress, compress', compress'2, compress'3, compress'4, compress'5, compress'6, compress'7,
     pack, pack', pack'2, pack'3, pack'4, pack'5,
     encode, encode', encode'2, encode'3, encode'4, encode'5, encode'6, encode'7,
-    ListItem(..), encodeModified, encodeModified'
+    ListItem(..), encodeModified, encodeModified',
+    decode, decode', decode'2,
+    decodeModified, decodeModified', decodeModified'2, decodeModified'3
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -17,6 +19,7 @@ import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>))
 import Control.Arrow((&&&))
 import Data.List(group, findIndex)
+import GHC.Exts(build)
 
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -291,3 +294,47 @@ encodeModified' xs = [y | x <- group xs,
     let y = if (length x) == 1 then
                 Single (head x) else
                 Multiple (length x) (head x)]
+
+-- P12
+decodeModified :: [ListItem a] -> [a]
+decodeModified = concatMap decodeHelper
+    where
+      decodeHelper (Single x)     = [x]
+      decodeHelper (Multiple n x) = replicate n x
+
+decode :: Eq a => [(Int, a)] -> [a]
+decode = concatMap (uncurry replicate)
+
+toTuple :: ListItem a -> (Int, a)
+toTuple (Single x)     = (1, x)
+toTuple (Multiple n x) = (n, x)
+
+decodeModified' :: [ListItem a] -> [a]
+decodeModified' = concatMap (uncurry replicate . toTuple)
+
+decodeModified'2 :: [ListItem a]-> [a]
+decodeModified'2 = foldl (\x y -> x ++ decodeHelper y) []
+    where decodeHelper :: ListItem a -> [a]
+          decodeHelper (Single x)     = [x]
+          decodeHelper (Multiple n x) = replicate n x
+
+decodeModified'3 :: [ListItem a] -> [a]
+decodeModified'3 = (\acc e ->
+        case e of
+            Single x -> acc ++ [x]
+            Multiple n x -> acc ++ replicate n x
+    ) `foldl` []
+
+decode' :: Eq a => [(Int,a)] -> [a]
+decode' xs = foldr f [] xs
+    where f (1, x) r = x : r
+          f (k, x) r = x : f (k-1, x) r
+
+{-# INLINE decode #-}
+decode'2 :: Eq a => [(Int,a)] -> [a]
+decode'2 xs = build (\c n ->
+  let
+    f (1, x) r = x `c` r
+    f (k, x) r = x `c` f (k-1, x) r
+  in
+    foldr f n xs)
