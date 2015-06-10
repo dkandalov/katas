@@ -44,7 +44,7 @@ main = do
 
         let encodeModifiedFunctions = [encodeModified, encodeModified'] :: Eq a => [[a] -> [ListItem a]]
         (\f -> expectEqual "P11"
-            [(Multiple 4 'a'), Single 'b', (Multiple 2 'c'), (Multiple 2 'a'), Single 'd', (Multiple 4 'e')]
+            [Multiple 4 'a', Single 'b', Multiple 2 'c', Multiple 2 'a', Single 'd', Multiple 4 'e']
             (f "aaaabccaadeeee")) `mapM_` encodeModifiedFunctions
 
         let decodeFunctions = [decode, decode', decode'2] :: Eq a => [[(Int, a)] -> [a]]
@@ -55,8 +55,19 @@ main = do
         let decodeModifiedFunctions = [decodeModified, decodeModified', decodeModified'2, decodeModified'3]
         (\f -> expectEqual "P12"
             "aaaabccaadeeee"
-            (f [(Multiple 4 'a'), Single 'b', (Multiple 2 'c'), (Multiple 2 'a'), Single 'd', (Multiple 4 'e')]))
+            (f [Multiple 4 'a', Single 'b', Multiple 2 'c', Multiple 2 'a', Single 'd', Multiple 4 'e']))
             `mapM_` decodeModifiedFunctions
+
+        let encodeDirectFunctions = [encodeDirect, encodeDirect']
+        (\f -> expectEqual "P13"
+            [Multiple 4 'a', Single 'b', Multiple 2 'c', Multiple 2 'a', Single 'd', Multiple 4 'e']
+            (f "aaaabccaadeeee")) `mapM_` encodeDirectFunctions
+
+        let duplicateFunctions = [dupli, dupli', dupli'2, dupli'3, dupli'4, dupli'5, dupli'6, dupli'7, dupli'8, dupli'9]
+        (\f -> expectEqual "P14" "aabbccccdd" (f "abccd")) `mapM_` duplicateFunctions
+
+        let replicateFunctions = [repli, repli', repli'2, repli'3]
+        (\f -> expectEqual "P15" "aaabbbccccccddd" (f "abccd" 3)) `mapM_` replicateFunctions
 
         return $ (Counts 0 0 0 0)
 

@@ -11,12 +11,15 @@ module P00_ (
     encode, encode', encode'2, encode'3, encode'4, encode'5, encode'6, encode'7,
     ListItem(..), encodeModified, encodeModified',
     decode, decode', decode'2,
-    decodeModified, decodeModified', decodeModified'2, decodeModified'3
+    decodeModified, decodeModified', decodeModified'2, decodeModified'3,
+    encodeDirect, encodeDirect',
+    dupli, dupli', dupli'2, dupli'3, dupli'4, dupli'5, dupli'6, dupli'7, dupli'8, dupli'9,
+    repli, repli', repli'2, repli'3
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
-import Control.Applicative((<*>), (<$>))
+import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
 import Data.List(group, findIndex)
 import GHC.Exts(build)
@@ -338,3 +341,67 @@ decode'2 xs = build (\c n ->
     f (k, x) r = x `c` f (k-1, x) r
   in
     foldr f n xs)
+
+
+-- P13
+encodeDirect :: (Eq a) => [a] -> [ListItem a]
+encodeDirect [] = []
+encodeDirect (x:xs) = encodeDirect_ 1 x xs
+encodeDirect_ n y [] = [encodeElement n y]
+encodeDirect_ n y (x:xs) | y == x    = encodeDirect_ (n+1) y xs
+                         | otherwise = encodeElement n y : (encodeDirect_ 1 x xs)
+encodeElement 1 y = Single y
+encodeElement n y = Multiple n y
+
+encodeDirect' :: (Eq a)=> [a] -> [ListItem a]
+encodeDirect' [] = []
+encodeDirect' (x:xs)
+    | count == 1  = (Single x) : (encodeDirect' xs)
+    | otherwise   = (Multiple count x) : (encodeDirect' rest)
+    where
+        (matched, rest) = span (==x) xs
+        count = 1 + (length matched)
+
+-- P14
+dupli :: [a] -> [a]
+dupli [] = []
+dupli (x:xs) = x:x:dupli xs
+dupli' list = concat [[x,x] | x <- list]
+dupli'2 xs = xs >>= (\x -> [x,x])
+dupli'3 = (<**> [id,id])
+dupli'4 = concatMap (\x -> [x,x])
+dupli'5 = concatMap (replicate 2)
+dupli'6 = foldl (\acc x -> acc ++ [x,x]) []
+dupli'7 = foldr (\ x xs -> x : x : xs) []
+dupli'8 = foldr (\x -> (x:) . (x:)) []
+dupli'9 = foldr ((.) <$> (:) <*> (:)) []
+
+-- P15
+repli :: [a] -> Int -> [a]
+repli xs n = concatMap (replicate n) xs
+
+repli' :: [a] -> Int -> [a]
+repli' = flip $ concatMap . replicate
+
+repli'2 :: [a] -> Int -> [a]
+repli'2 xs n = concatMap (take n . repeat) xs
+
+repli'3 :: [a] -> Int -> [a]
+repli'3 xs n = xs >>= replicate n
+
+-- P16
+dropEvery :: [a] -> Int -> [a]
+dropEvery [] _ = []
+dropEvery (x:xs) n = dropEvery' (x:xs) n 1 where
+    dropEvery' (x:xs) n i = (if (n `divides` i) then
+        [] else
+        [x])
+        ++ (dropEvery' xs n (i+1))
+    dropEvery' [] _ _ = []
+    divides x y = y `mod` x == 0
+
+dropEvery' :: [a] -> Int -> [a]
+dropEvery' list count = helper list count count
+  where helper [] _ _ = []
+        helper (x:xs) count 1 = helper xs count count
+        helper (x:xs) count n = x : (helper xs count (n - 1))

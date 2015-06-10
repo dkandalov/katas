@@ -119,12 +119,12 @@ pack' (x:xs) list =
 encode :: (Eq a) => [a] -> [(Int, a)]
 encode list = (\x -> (length x, head x)) `map` (pack list)
 
-
+-- P12
 decode :: [(Int, a)] -> [a]
 decode [] = []
 decode ((n, c):xs) = (nCopiesOf c n) ++ decode xs
 
-
+-- P13
 encodeDirect :: (Eq a) => [a] -> [(Int, a)]
 encodeDirect [] = []
 encodeDirect list = (countHeadIn list, head list) : encodeDirect (dropHeadIn list)
@@ -132,17 +132,17 @@ encodeDirect list = (countHeadIn list, head list) : encodeDirect (dropHeadIn lis
         countHeadIn xs = length (takeWhile (== head xs) xs)
         dropHeadIn xs = dropWhile (== head xs) xs
 
-
+-- P14
 duplicate :: (Eq a) => [a] -> [a]
 duplicate [] = []
 duplicate (x:xs) = [x, x] ++ duplicate xs
 
-
+-- P15
 duplicateN :: (Eq a) => Int -> [a] -> [a]
 duplicateN _ [] = []
 duplicateN n (x:xs) = nCopiesOf x n ++ duplicateN n xs
 
-
+-- P16
 dropEveryNth :: Int -> [a] -> [a]
 dropEveryNth _ [] = []
 dropEveryNth amount list = drop' amount amount list
