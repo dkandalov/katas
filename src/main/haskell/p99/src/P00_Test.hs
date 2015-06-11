@@ -69,5 +69,8 @@ main = do
         let replicateFunctions = [repli, repli', repli'2, repli'3]
         (\f -> expectEqual "P15" "aaabbbccccccddd" (f "abccd" 3)) `mapM_` replicateFunctions
 
+        let dropEveryFunctions = [dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10]
+        (\f -> expectEqual "P16" "abdeghjk" (f "abcdefghijk" 3)) `mapM_` dropEveryFunctions
+
         return $ (Counts 0 0 0 0)
 

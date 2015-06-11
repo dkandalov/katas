@@ -14,7 +14,8 @@ module P00_ (
     decodeModified, decodeModified', decodeModified'2, decodeModified'3,
     encodeDirect, encodeDirect',
     dupli, dupli', dupli'2, dupli'3, dupli'4, dupli'5, dupli'6, dupli'7, dupli'8, dupli'9,
-    repli, repli', repli'2, repli'3
+    repli, repli', repli'2, repli'3,
+    dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -392,16 +393,55 @@ repli'3 xs n = xs >>= replicate n
 -- P16
 dropEvery :: [a] -> Int -> [a]
 dropEvery [] _ = []
-dropEvery (x:xs) n = dropEvery' (x:xs) n 1 where
-    dropEvery' (x:xs) n i = (if (n `divides` i) then
-        [] else
-        [x])
-        ++ (dropEvery' xs n (i+1))
-    dropEvery' [] _ _ = []
-    divides x y = y `mod` x == 0
+dropEvery (x:xs) n = dropEvery' (x:xs) n 1
+    where dropEvery' (x:xs) n i =
+            (if (n `divides` i) then [] else [x]) ++ (dropEvery' xs n (i+1))
+          dropEvery' [] _ _ = []
+          divides x y = y `mod` x == 0
 
 dropEvery' :: [a] -> Int -> [a]
 dropEvery' list count = helper list count count
   where helper [] _ _ = []
         helper (x:xs) count 1 = helper xs count count
         helper (x:xs) count n = x : (helper xs count (n - 1))
+
+dropEvery'2 :: [a] -> Int -> [a]
+dropEvery'2 xs n = helper xs n
+    where helper [] _ = []
+          helper (x:xs) 1 = helper xs n
+          helper (x:xs) k = x : helper xs (k-1)
+
+dropEvery'3 :: [a] -> Int -> [a]
+dropEvery'3 [] _ = []
+dropEvery'3 list count = (take (count-1) list) ++ dropEvery'3 (drop count list) count
+
+dropEvery'4 :: [a] -> Int -> [a]
+dropEvery'4 xs n
+      | length xs < n = xs
+      | otherwise     = take (n-1) xs ++ dropEvery'4 (drop n xs) n
+
+dropEvery'5 :: [a] -> Int -> [a]
+dropEvery'5 = flip $ \n -> map snd . filter ((n/=) . fst) . zip (cycle [1..n])
+
+dropEvery'6 :: [a] -> Int -> [a]
+dropEvery'6 xs n = [i | (i,c) <- (zip xs [1,2..]), (mod c n) /= 0]
+
+dropEvery'7 :: [a] -> Int -> [a]
+dropEvery'7 xs n = map fst $ filter (\(_,i) -> i `mod` n /= 0) $ zip xs [1..]
+
+dropEvery'8 :: [a] -> Int -> [a]
+dropEvery'8 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
+
+dropEvery'9 :: [a] -> Int -> [a]
+dropEvery'9 xs n = snd $
+    foldl (\acc e -> if fst acc > 1
+        then (fst acc - 1, snd acc ++ [e])
+        else (n, snd acc))
+    (n, []) xs
+
+dropEvery'10 :: [a] -> Int -> [a]
+dropEvery'10 xs n = fst $ foldr
+        (\x (xs, i) -> (if mod i n == 0 then xs else x:xs, i - 1))
+        ([], length xs) xs
+
+

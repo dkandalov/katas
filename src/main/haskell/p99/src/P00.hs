@@ -152,7 +152,7 @@ dropEveryNth amount list = drop' amount amount list
             | counter == 1 = drop' n n (tail xs)
             | otherwise = (head xs) : (drop' n (counter - 1) (tail xs))
 
-
+-- P17
 split :: Int -> [a] -> ([a], [a])
 split index list = split' index [] list
     where
