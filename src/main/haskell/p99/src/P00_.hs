@@ -15,7 +15,9 @@ module P00_ (
     encodeDirect, encodeDirect',
     dupli, dupli', dupli'2, dupli'3, dupli'4, dupli'5, dupli'6, dupli'7, dupli'8, dupli'9,
     repli, repli', repli'2, repli'3,
-    dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10
+    dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10,
+    split, split', split'2, split'3, split'4, split'5, split'6, split'7,
+    slice, slice'2, slice'3, slice'4, slice'5, slice'6
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -444,4 +446,78 @@ dropEvery'10 xs n = fst $ foldr
         (\x (xs, i) -> (if mod i n == 0 then xs else x:xs, i - 1))
         ([], length xs) xs
 
+-- P17
+split :: [a] -> Int -> ([a], [a])
+split xs n = (take n xs, drop n xs)
+split' = flip splitAt
 
+split'2 :: [a] -> Int -> ([a], [a])
+split'2 [] _ = ([], [])
+split'2 list@(x : xs) n
+    | n > 0     = (x : ys, zs)
+    | otherwise = ([], list)
+    where (ys, zs) = split'2 xs (n - 1)
+
+split'3 :: [a] -> Int -> ([a], [a])
+split'3 (x:xs) n | n > 0 = (:) x . fst &&& snd $ split'3 xs (n - 1)
+split'3 xs _             = ([], xs)
+
+split'4 :: [a] -> Int -> ([a], [a])
+split'4 [] _ = ([], [])
+split'4 list n
+  | n < 0 = (list, [])
+  | otherwise  = (first output, second output)
+    where output = foldl (\acc e -> if third acc > 0
+            then (first acc ++ [e], second acc, third acc - 1)
+            else (first acc, second acc ++ [e], third acc)) ([], [], n) list
+          first (x, _, _) = x
+          second (_, y, _) = y
+          third (_, _, z) = z
+
+split'5 :: [a] -> Int -> ([a],[a])
+split'5 lst n = snd $ foldl helper (0,([],[])) lst
+    where helper (i, (left, right)) x = if i >= n
+            then (i + 1, (left, right ++ [x]))
+            else (i + 1, (left ++ [x], right))
+
+split'6 :: [a] -> Int -> ([a], [a])
+split'6 xs n = let (a, b) = helper [] xs n in (reverse a, b)
+  where helper left right@(r:rs) n
+         | n == 0    = (left, right)
+         | otherwise = helper (r:left) rs (n - 1)
+
+split'7 :: [a] -> Int -> ([a], [a])
+split'7 [] _ = ([], [])
+split'7 (x:xs) n
+  | n > 0  = (x : (fst (split xs (n-1))), snd (split xs (n-1)))
+  | n <= 0 = (fst (split xs 0), x : (snd (split xs 0)))
+
+-- P18
+slice :: [a] -> Int -> Int -> [a]
+slice xs i k | i > 0 = take (k - i + 1) $ drop (i - 1) xs
+
+slice'2 :: [a] -> Int -> Int -> [a]
+slice'2 lst 1 m = slice_ lst m []
+        where slice_ _ 0 acc = reverse acc
+              slice_ (x:xs) n acc = slice_ xs (n - 1) (x:acc)
+              slice_ [] _ _ = []
+slice'2 (_:xs) n m = slice xs (n - 1) (m - 1)
+slice'2 []     _ _ = []
+
+slice'3 :: [a] -> Int -> Int -> [a]
+slice'3 [] _ _  = []
+slice'3 (x:xs) i k
+ | i > 1      = slice'3 xs (i - 1) (k - 1)
+ | k < 1      = []
+ | otherwise  = x:slice'3 xs (i - 1) (k - 1)
+
+slice'4 :: [a] -> Int -> Int -> [a]
+slice'4 xs i j = map snd
+        $ filter (\(x,_) -> x >= i && x <= j)
+        $ zip [1..] xs
+
+slice'5 :: [a] -> Int -> Int -> [a]
+slice'5 xs i k = [x | (x,j) <- zip xs [1..k], i <= j]
+
+slice'6 :: [a] -> Int -> Int -> [a]
+slice'6 xs a b = fst $ unzip $ filter ((>=a) . snd) $ zip xs [1..b]

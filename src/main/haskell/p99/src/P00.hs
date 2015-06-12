@@ -160,7 +160,7 @@ split index list = split' index [] list
         split' _ xs [] = (xs, [])
         split' n xs (y:ys) = split' (n - 1) (xs ++ [y]) ys
 
-
+-- P18
 slice :: Int -> Int -> [a] -> [a]
 slice _ _ [] = []
 slice from to list = fst (split (to - from) (snd (split from list)))

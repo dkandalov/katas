@@ -72,5 +72,11 @@ main = do
         let dropEveryFunctions = [dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10]
         (\f -> expectEqual "P16" "abdeghjk" (f "abcdefghijk" 3)) `mapM_` dropEveryFunctions
 
+        let splitFunctions = [split, split', split'2, split'3, split'4, split'5, split'6, split'7]
+        (\f -> expectEqual "P17" ("abc", "defghijk") (f "abcdefghijk" 3)) `mapM_` splitFunctions
+
+        let sliceFunctions = [slice, slice'2, slice'3, slice'4, slice'5, slice'6]
+        (\f -> expectEqual "P18" "cdefg" (f "abcdefghijk" 3 7)) `mapM_` sliceFunctions
+
         return $ (Counts 0 0 0 0)
 
