@@ -17,7 +17,9 @@ module P00_ (
     repli, repli', repli'2, repli'3,
     dropEvery, dropEvery', dropEvery'2, dropEvery'3, dropEvery'4, dropEvery'5, dropEvery'6, dropEvery'7, dropEvery'8, dropEvery'9, dropEvery'10,
     split, split', split'2, split'3, split'4, split'5, split'6, split'7,
-    slice, slice'2, slice'3, slice'4, slice'5, slice'6
+    slice, slice'2, slice'3, slice'4, slice'5, slice'6,
+    rotate, rotate', rotate'2, rotate'3, rotate'4, rotate'5, rotate'6, rotate'7,
+    removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -521,3 +523,68 @@ slice'5 xs i k = [x | (x,j) <- zip xs [1..k], i <= j]
 
 slice'6 :: [a] -> Int -> Int -> [a]
 slice'6 xs a b = fst $ unzip $ filter ((>=a) . snd) $ zip xs [1..b]
+
+-- P19
+rotate :: [a] -> Int -> [a]
+rotate xs n = take len . drop (n `mod` len) . cycle $ xs
+              where len = length xs
+
+rotate' :: [a] -> Int -> [a]
+rotate' xs n = take (length xs) $ drop (length xs + n) $ cycle xs
+
+rotate'2 :: [a] -> Int -> [a]
+rotate'2 xs n = if n >= 0 then
+                  drop n xs ++ take n xs
+                else let l = ((length xs) + n) in
+                  drop l xs ++ take l xs
+
+rotate'3 :: [a] -> Int -> [a]
+rotate'3 xs n | n >= 0 = drop n xs ++ take n xs
+              | n < 0 = drop len xs ++ take len xs
+                        where len = n+length xs
+rotate'4 :: [a] -> Int -> [a]
+rotate'4 xs n = drop nn xs ++ take nn xs
+        where
+          nn = n `mod` length xs
+
+rotate'5 :: [a] -> Int -> [a]
+rotate'5 xs n
+    | n < 0 = rotate xs (n+len)
+    | n > len = rotate xs (n-len)
+    | otherwise = let (f,s) = splitAt n xs in s ++ f
+    where len = length xs
+
+-- original version rotates right for positive number what is incosistent with other functions
+rotate'6 :: [a] -> Int -> [a]
+rotate'6 xs n
+    | n > 0 = (drop n xs) ++ (take n xs)
+    | n <= 0 = (reverse . take (negate n) . reverse $ xs) ++ (reverse . drop (negate n) . reverse $ xs)
+
+rotate'7 :: [a] -> Int -> [a]
+rotate'7 [] _ = []
+rotate'7 x 0 = x
+rotate'7 x y
+  | y > 0 = rotate'7 (tail x ++ [head x]) (y-1)
+  | otherwise = rotate'7 (last x : init x) (y+1)
+
+-- P20 (modified to zero-indexed)
+removeAt :: Int -> [a] -> (a, [a])
+removeAt k xs = case back of
+        [] -> error "removeAt: index too large"
+        x:rest -> (x, front ++ rest)
+  where (front, back) = splitAt k xs
+
+removeAt' :: Int -> [a] -> (a, [a])
+removeAt' n xs = (xs !! n, take n xs ++ drop (n + 1) xs)
+
+removeAt'2 :: Int -> [a] -> (a, [a])
+removeAt'2 n xs = let (front, back) = splitAt n xs in
+                  (head back, front ++ tail back)
+
+removeAt'3 :: Int -> [a] -> (a, [a])
+removeAt'3 n = (\(a, b) -> (head b, a ++ tail b)) . splitAt n
+
+removeAt'4 :: Int -> [a] -> (a, [a])
+removeAt'4 0 (x:xs) = (x, xs)
+removeAt'4 n (x:xs) = (l, x:r)
+	where (l, r) = removeAt (n - 1) xs

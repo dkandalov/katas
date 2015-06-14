@@ -165,7 +165,7 @@ slice :: Int -> Int -> [a] -> [a]
 slice _ _ [] = []
 slice from to list = fst (split (to - from) (snd (split from list)))
 
-
+-- P19
 rotate :: Int -> [a] -> [a]
 rotate _ [] = []
 rotate shift list
@@ -175,7 +175,7 @@ rotate shift list
     | otherwise = (snd tuple) ++ (fst tuple)
         where tuple = split shift list
 
-
+-- P20
 removeAt :: Int -> [a] -> ([a], a)
 removeAt _ [] = error "Cannot remove element from empty list"
 removeAt n list =

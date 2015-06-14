@@ -78,5 +78,11 @@ main = do
         let sliceFunctions = [slice, slice'2, slice'3, slice'4, slice'5, slice'6]
         (\f -> expectEqual "P18" "cdefg" (f "abcdefghijk" 3 7)) `mapM_` sliceFunctions
 
+        let rotateFunctions = [rotate, rotate', rotate'2, rotate'3, rotate'4, rotate'5, rotate'6, rotate'7]
+        (\f -> expectEqual "P19" "defghijkabc" (f "abcdefghijk" 3)) `mapM_` rotateFunctions
+
+        let removeAtFunctions = [removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4]
+        (\f -> expectEqual "P20" ('b', "acd") (f 1 "abcd")) `mapM_` removeAtFunctions
+
         return $ (Counts 0 0 0 0)
 
