@@ -380,6 +380,39 @@ goldbachListLimited list limit = Map.fromList $ filter (primesAbove limit) (Map.
     where primesAbove n entry = (fst $ snd entry) >= n && (snd $ snd entry) >= n
 
 
+-- P46
+not' :: Bool -> Bool
+not' False = True
+not' True = False
+
+and' :: Bool -> Bool -> Bool
+and' True True = True
+and' _ _ = False
+
+or' :: Bool -> Bool -> Bool
+or' True _ = True
+or' _ True = True
+or' _ _ = False
+
+equ' :: Bool -> Bool -> Bool
+equ' True True = True
+equ' False False = True
+equ' _ _ = False
+
+xor' :: Bool -> Bool -> Bool
+xor' a b = not' $ equ' a b
+
+nor' :: Bool -> Bool -> Bool
+nor' a b = not' $ or' a b
+
+nand' :: Bool -> Bool -> Bool
+nand' a b = not' $ and' a b
+
+impl' :: Bool -> Bool -> Bool
+impl' True False = False
+impl' _ _ = True
+
+
 
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
