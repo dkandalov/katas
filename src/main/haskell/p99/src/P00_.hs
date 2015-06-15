@@ -567,7 +567,7 @@ rotate'7 x y
   | y > 0 = rotate'7 (tail x ++ [head x]) (y-1)
   | otherwise = rotate'7 (last x : init x) (y+1)
 
--- P20 (modified to zero-indexed)
+-- P20 (modified to be zero-indexed)
 removeAt :: Int -> [a] -> (a, [a])
 removeAt k xs = case back of
         [] -> error "removeAt: index too large"

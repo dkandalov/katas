@@ -184,20 +184,20 @@ removeAt n list =
         removeElement = (head (snd tuple))
     in (newList, removeElement)
 
-
+-- P21
 insertAt :: Int -> a -> [a] -> [a]
 insertAt _ value [] = [value]
 insertAt n value list = (fst s) ++ [value] ++ (snd s)
     where s = split n list
 
-
+-- P22
 range :: Int -> Int -> [Int]
 range from to
     | from == to = [to]
     | from < to = from : range (from + 1) to
     | otherwise = []
 
-
+-- P23
 randomSelect :: Int -> [a] -> IO [a]
 randomSelect amount list = do
     g <- newStdGen
@@ -212,7 +212,7 @@ randomSelect' randomGen amount list = element : (randomSelect' newGenerator (amo
           element = kth index list
           updatedList = fst (removeAt index list)
 
-
+-- P24
 lotto :: Int -> Int -> IO [Int]
 lotto amount maxNumber = do
     g <- newStdGen
@@ -221,7 +221,7 @@ lotto amount maxNumber = do
 lotto' :: (RandomGen g) => g -> Int -> Int -> [Int]
 lotto' randomGen amount maxNumber = randomSelect' randomGen amount (range 1 maxNumber)
 
-
+-- P25
 randomPermute :: [a] -> IO [a]
 randomPermute list =
     newStdGen >>= (\ g -> return $ randomPermute' g list)
@@ -230,7 +230,7 @@ randomPermute' :: (RandomGen g) => g -> [a] -> [a]
 randomPermute' _ [] = []
 randomPermute' randomGen list = randomSelect' randomGen (length list) list
 
-
+-- P26
 combinations :: Int -> [a] -> [[a]]
 combinations amount list
     | amount == 0 = [[]]
@@ -239,7 +239,7 @@ combinations amount list
         (\ subCombination -> head list : subCombination) `map` (combinations (amount - 1) (tail list)) ++
         (combinations amount $ tail list)
 
-
+-- P27
 group3 :: (Eq a) => [a] -> [[[a]]]
 group3 list
     | length list /= 9 = error ("Expected group size to be 9 but was " ++ show (length list))
@@ -251,7 +251,7 @@ group3 list
         where
             exclude comb xs = filter (\it -> notElem it comb) xs
 
-
+-- P28
 group :: (Eq a) => [Int] -> [a] -> [[[a]]]
 group sizes list
     | sizes == [] = [[]]
@@ -271,6 +271,7 @@ lsortFreq listOfLists = sortBy (\a b -> compare (lengthFreqOf a) (lengthFreqOf b
     where lengthFreqOf list = length (filter (\it -> (length it) == (length list)) listOfLists)
 
 
+-- P31
 isPrime :: Int -> Bool
 isPrime n
     | n < 2 = False
@@ -281,6 +282,7 @@ notDivisable n n2
     | otherwise = ((n `rem` n2) /= 0) && (notDivisable n (n2 - 1))
 
 
+-- P32
 gcd' :: Int -> Int -> Int
 gcd' a b
     | a < b = gcd' b a
@@ -288,15 +290,17 @@ gcd' a b
     | otherwise = gcd b (a - b)
 
 
+-- P33
 isCoprimeTo :: Int -> Int -> Bool
 isCoprimeTo a b = (gcd' a b) == 1
 
 
+-- P34
 totient :: Int -> Int
 totient n = amountOfComprimes [1..n]
     where amountOfComprimes = length . filter (isCoprimeTo n)
 
-
+-- P35
 primeFactors :: Int -> [Int]
 primeFactors n = case firstPrimeOf n of
         Just value -> value : primeFactors (n `div` value)
@@ -304,6 +308,7 @@ primeFactors n = case firstPrimeOf n of
     where firstPrimeOf number = find (\it -> (isPrime it) && (number `rem` it == 0)) [2..n]
 
 
+-- P36
 primeFactorsMultiplicity :: Int -> [(Int, Int)]
 primeFactorsMultiplicity n = case firstPrimeOf n of
         Just value -> add value (primeFactorsMultiplicity (n `div` value))
@@ -328,13 +333,18 @@ primeFactorsMultiplicity' n = case firstPrimeOf n of
 
 
 -- http://stackoverflow.com/questions/6400568/exponentiation-in-haskell
+-- P37
 totient2 :: Int -> Int
 totient2 n = foldl (\acc entry -> acc * (phi (fst entry) (snd entry))) 1 factors
     where
         factors = (Map.toList (primeFactorsMultiplicity' n))
         phi p m = (p - 1) * (p ^ (m - 1))
 
+-- P38
+-- see test
 
+
+-- P39
 listPrimesInRange :: [Int] -> [Int]
 listPrimesInRange valuesRange = filter isPrime valuesRange
 
@@ -349,10 +359,13 @@ goldbach' :: Int -> [Int] -> Maybe (Int, Int)
 goldbach' n primes = find (sumsUpTo n) primePairs
      where sumsUpTo value it = (fst it) + (snd it) == value
            primePairs = [(i, j) | i <- primes, j <- primes]
+
+-- P40
 goldbach :: Int -> Maybe (Int, Int)
 goldbach n = goldbach' n (listPrimesInRange [2..n])
 
 
+-- P41
 goldbachList :: [Int] -> Map.Map Int (Int, Int)
 goldbachList aRange = Map.fromList nonEmptyResults
     where
