@@ -98,3 +98,7 @@ main =
             (False, False, False)
 --            ] (table2 (\a b -> (and' a (or' a b))))
             ] (table2 (\a -> and' a . or' a))
+
+        runTestTT $ TestCase $ assertEqual "P49" ["0", "1"] (gray 1)
+        runTestTT $ TestCase $ assertEqual "P49" ["00", "01", "11", "10"] (gray 2)
+        runTestTT $ TestCase $ assertEqual "P49" ["000", "001", "011", "010", "110", "111", "101", "100"] (gray 3)

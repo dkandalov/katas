@@ -33,7 +33,8 @@ module P00 (
     runAndMeasure,
     listPrimesInRange,
     goldbachAll, goldbach, goldbachList, goldbachListLimited,
-    table2, impl', nand', nor', xor', equ', or', and', not'
+    table2, impl', nand', nor', xor', equ', or', and', not',
+    gray
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -415,6 +416,17 @@ impl' _ _ = True
 
 table2 :: (Bool -> Bool -> Bool) -> [(Bool, Bool, Bool)]
 table2 f = [(a, b, (f a b)) | a <- [True, False], b <- [True, False]]
+
+
+-- P47,48 skipped
+
+
+-- P49
+gray :: Int -> [String]
+gray 0 = [""]
+gray n = (\it -> "0" ++ it) `map` prevGrayCode ++
+         (\it -> "1" ++ it) `map` reverse prevGrayCode
+         where prevGrayCode = gray (n - 1)
 
 
 nCopiesOf :: a -> Int -> [a]
