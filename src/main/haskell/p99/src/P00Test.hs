@@ -90,3 +90,11 @@ main =
                 (Map.fromList [(992,(73,919)),(1382,(61,1321)),(1856,(67,1789)),(1928,(61,1867))])
                 (fst p41)
         else return $ Counts 0 0 0 0
+
+        runTestTT $ TestCase $ assertEqual "P46" [
+            (True, True, True),
+            (True, False, True),
+            (False, True, False),
+            (False, False, False)
+--            ] (table2 (\a b -> (and' a (or' a b))))
+            ] (table2 (\a -> and' a . or' a))

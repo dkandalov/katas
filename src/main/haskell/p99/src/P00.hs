@@ -32,7 +32,8 @@ module P00 (
     totient2,
     runAndMeasure,
     listPrimesInRange,
-    goldbachAll, goldbach, goldbachList, goldbachListLimited
+    goldbachAll, goldbach, goldbachList, goldbachListLimited,
+    table2, impl', nand', nor', xor', equ', or', and', not'
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -412,6 +413,8 @@ impl' :: Bool -> Bool -> Bool
 impl' True False = False
 impl' _ _ = True
 
+table2 :: (Bool -> Bool -> Bool) -> [(Bool, Bool, Bool)]
+table2 f = [(a, b, (f a b)) | a <- [True, False], b <- [True, False]]
 
 
 nCopiesOf :: a -> Int -> [a]
