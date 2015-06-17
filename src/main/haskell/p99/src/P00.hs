@@ -34,7 +34,8 @@ module P00 (
     listPrimesInRange,
     goldbachAll, goldbach, goldbachList, goldbachListLimited,
     table2, impl', nand', nor', xor', equ', or', and', not',
-    gray
+    gray,
+    huffman
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -428,6 +429,20 @@ gray n = (\it -> "0" ++ it) `map` prevGrayCode ++
          (\it -> "1" ++ it) `map` reverse prevGrayCode
          where prevGrayCode = gray (n - 1)
 
+-- P50
+huffman :: [(Char, Int)] -> [(Char, String)]
+huffman code = []
+--    where q1 = PQ.empty :: PQ.PQueue Int Int
+--          q2 = PQ.empty :: PQ.PQueue Int Int
+
+data Tree a =
+    Leaf { value :: a } |
+    Node { left :: Tree a, right :: Tree a }
+    deriving (Show, Eq)
+
+
+
+-- internal functions
 
 nCopiesOf :: a -> Int -> [a]
 nCopiesOf _ 0 = []
