@@ -103,6 +103,12 @@ main =
         runTestTT $ TestCase $ assertEqual "P49" ["00", "01", "11", "10"] (gray 2)
         runTestTT $ TestCase $ assertEqual "P49" ["000", "001", "011", "010", "110", "111", "101", "100"] (gray 3)
 
+        runTestTT $ TestCase $ assertEqual "P50" True (isEmpty emptyQueue)
+        runTestTT $ TestCase $ assertEqual "P50" False (isEmpty (Queue [1, 2, 3]))
+        runTestTT $ TestCase $ assertEqual "P50" 1 (peek (Queue [1, 2, 3]))
+        runTestTT $ TestCase $ assertEqual "P50" (1, Queue [2,3]) (pop (Queue [1, 2, 3]))
+        runTestTT $ TestCase $ assertEqual "P50" (Queue [1,2,3,4]) (push 4 (Queue [1, 2, 3]))
+
         runTestTT $ TestCase $ assertEqual "P50"
             [('a', "0"), ('b', "101"), ('c', "100"), ('d', "111"), ('e', "1101"), ('f', "1100")]
-            (huffman [('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)])
+            (huffman $ reverse [('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)])

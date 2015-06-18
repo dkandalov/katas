@@ -35,7 +35,8 @@ module P00 (
     goldbachAll, goldbach, goldbachList, goldbachListLimited,
     table2, impl', nand', nor', xor', equ', or', and', not',
     gray,
-    huffman
+    huffman,
+    Queue(..), push, pop, peek, isEmpty, emptyQueue
 ) where
 
 import Data.List(sortBy, find, findIndex)
@@ -431,15 +432,45 @@ gray n = (\it -> "0" ++ it) `map` prevGrayCode ++
 
 -- P50
 huffman :: [(Char, Int)] -> [(Char, String)]
-huffman code = []
---    where q1 = PQ.empty :: PQ.PQueue Int Int
---          q2 = PQ.empty :: PQ.PQueue Int Int
+huffman code = decodeHuffman (huffman' q1 q2)
+    where q1 = Queue leaves
+          q2 = emptyQueue
+          leaves = (\it -> Leaf it) `map` code
+
+huffman' :: Queue (Tree (Char, Int)) -> Queue (Tree (Char, Int)) -> Tree (Char, Int)
+huffman' q1 q2 = Leaf ('_', 1)
+
 
 data Tree a =
     Leaf { value :: a } |
     Node { left :: Tree a, right :: Tree a }
     deriving (Show, Eq)
 
+decodeHuffman :: Tree (Char, Int) -> [(Char, String)]
+decodeHuffman tree = []
+
+
+-- really basic implementation of queue
+-- should probably try something from here http://rafal.io/posts/haskell-queues.html
+data Queue a = Queue { list :: [a] } deriving (Show, Eq)
+
+emptyQueue :: Queue a
+emptyQueue = Queue []
+
+isEmpty :: Queue a -> Bool
+isEmpty (Queue []) = True
+isEmpty (Queue _) = False
+
+peek :: Queue a -> a
+peek (Queue []) = error "peeked empty queue"
+peek (Queue (x:_)) = x
+
+pop :: Queue a -> (a, Queue a)
+pop (Queue []) = error "popped empty queue"
+pop (Queue (x:xs)) = (x, Queue xs)
+
+push :: a -> Queue a -> Queue a
+push x (Queue xs) = Queue (xs ++ [x])
 
 
 -- internal functions
