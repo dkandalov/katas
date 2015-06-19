@@ -433,20 +433,40 @@ gray n = (\it -> "0" ++ it) `map` prevGrayCode ++
 -- P50
 huffman :: [(Char, Int)] -> [(Char, String)]
 huffman code = decodeHuffman (huffman' q1 q2)
-    where q1 = Queue leaves
+    where q1 = Queue ((\it -> Leaf (fst it) (snd it)) `map` code)
           q2 = emptyQueue
-          leaves = (\it -> Leaf it) `map` code
 
-huffman' :: Queue (Tree (Char, Int)) -> Queue (Tree (Char, Int)) -> Tree (Char, Int)
-huffman' q1 q2 = Leaf ('_', 1)
+huffman' :: CharQueue -> CharQueue -> CharTree
+huffman' q1 q2 =
+    if ((sizeOf q1) + (sizeOf q2) == 1) then
+        (if (isEmpty q1) then peek q2 else peek q1)
+    else
+        huffman' newQ1 newQ2
+        where
+            (min1, q1', q2') = chooseMin q1 q2
+            (min2, q1'', q2'') = chooseMin q1' q2'
+            newQ1 = q1''
+            newQ2 = push (Node min1 min2 (freq min1 + freq min2)) q2''
 
+
+chooseMin :: CharQueue -> CharQueue -> (CharTree, CharQueue, CharQueue)
+chooseMin (Queue []) (Queue []) = error "can't choose min value, both queues are empty"
+chooseMin q1 (Queue []) = (peek q1, snd $ pop q1, (Queue []))
+chooseMin (Queue []) q2 = (peek q2, (Queue []), snd $ pop q2)
+chooseMin q1 q2 =
+    if ((freq $ peek q1) < (freq $ peek q2)) then (peek q1, snd $ pop q2, (Queue []))
+    else (peek q2, (Queue []), snd $ pop q2)
+
+
+type CharTree = Tree Char
+type CharQueue = Queue CharTree
 
 data Tree a =
-    Leaf { value :: a } |
-    Node { left :: Tree a, right :: Tree a }
+    Leaf { value :: a, freq :: Int } |
+    Node { left :: Tree a, right :: Tree a, freq :: Int }
     deriving (Show, Eq)
 
-decodeHuffman :: Tree (Char, Int) -> [(Char, String)]
+decodeHuffman :: Tree (Char) -> [(Char, String)]
 decodeHuffman tree = []
 
 
@@ -460,6 +480,9 @@ emptyQueue = Queue []
 isEmpty :: Queue a -> Bool
 isEmpty (Queue []) = True
 isEmpty (Queue _) = False
+
+sizeOf :: Queue a -> Int
+sizeOf (Queue xs) = length xs
 
 peek :: Queue a -> a
 peek (Queue []) = error "peeked empty queue"
