@@ -432,14 +432,16 @@ gray n = (\it -> "0" ++ it) `map` prevGrayCode ++
 
 -- P50
 huffman :: [(Char, Int)] -> [(Char, String)]
-huffman code = decodeHuffman (huffman' q1 q2)
-    where q1 = Queue ((\it -> Leaf (fst it) (snd it)) `map` code)
+huffman code = sortedResult
+    where sortedResult = sortBy (\a b -> compare (fst a) (fst b)) result :: [(Char, String)]
+          result = decodeHuffman (huffman' q1 q2) :: [(Char, String)]
+          q1 = Queue ((\it -> Leaf (fst it) (snd it)) `map` code)
           q2 = emptyQueue
 
 huffman' :: CharQueue -> CharQueue -> CharTree
 huffman' q1 q2 =
     if ((sizeOf q1) + (sizeOf q2) == 1) then
-        (if (isEmpty q1) then peek q2 else peek q1)
+        if (isEmpty q1) then peek q2 else peek q1
     else
         huffman' newQ1 newQ2
         where
@@ -454,8 +456,14 @@ chooseMin (Queue []) (Queue []) = error "can't choose min value, both queues are
 chooseMin q1 (Queue []) = (peek q1, snd $ pop q1, (Queue []))
 chooseMin (Queue []) q2 = (peek q2, (Queue []), snd $ pop q2)
 chooseMin q1 q2 =
-    if ((freq $ peek q1) < (freq $ peek q2)) then (peek q1, snd $ pop q2, (Queue []))
-    else (peek q2, (Queue []), snd $ pop q2)
+    if ((freq $ peek q1) < (freq $ peek q2)) then (peek q1, snd $ pop q1, q2)
+    else (peek q2, q1, snd $ pop q2)
+
+decodeHuffman :: Tree (Char) -> [(Char, String)]
+decodeHuffman (Leaf value _) = [(value, "")]
+decodeHuffman (Node left right _) =
+    (\it -> (fst it, "0" ++ snd it)) `map` (decodeHuffman left) ++
+    (\it -> (fst it, "1" ++ snd it)) `map` (decodeHuffman right)
 
 
 type CharTree = Tree Char
@@ -465,9 +473,6 @@ data Tree a =
     Leaf { value :: a, freq :: Int } |
     Node { left :: Tree a, right :: Tree a, freq :: Int }
     deriving (Show, Eq)
-
-decodeHuffman :: Tree (Char) -> [(Char, String)]
-decodeHuffman tree = []
 
 
 -- really basic implementation of queue
