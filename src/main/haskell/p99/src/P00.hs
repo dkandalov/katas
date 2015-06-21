@@ -435,8 +435,9 @@ huffman :: [(Char, Int)] -> [(Char, String)]
 huffman code = sortedResult
     where sortedResult = sortBy (\a b -> compare (fst a) (fst b)) result :: [(Char, String)]
           result = decodeHuffman (huffman' q1 q2) :: [(Char, String)]
-          q1 = Queue ((\it -> Leaf (fst it) (snd it)) `map` code)
+          q1 = Queue ((\it -> Leaf (fst it) (snd it)) `map` sortedCode)
           q2 = emptyQueue
+          sortedCode = sortBy (\a b -> compare (snd a) (snd b)) code
 
 huffman' :: CharQueue -> CharQueue -> CharTree
 huffman' q1 q2 =

@@ -110,5 +110,8 @@ main =
         runTestTT $ TestCase $ assertEqual "P50" (Queue [1,2,3,4]) (push 4 (Queue [1, 2, 3]))
 
         runTestTT $ TestCase $ assertEqual "P50"
+            [('a', "1"), ('b', "0")]
+            (huffman $ reverse [('a', 45), ('b', 13)])
+        runTestTT $ TestCase $ assertEqual "P50"
             [('a', "0"), ('b', "101"), ('c', "100"), ('d', "111"), ('e', "1101"), ('f', "1100")]
             (huffman $ reverse [('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)])
