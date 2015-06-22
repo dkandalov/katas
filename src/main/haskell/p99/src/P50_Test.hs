@@ -6,7 +6,17 @@ expectEqual desc expected actual = (runTestTT (TestCase (assertEqual desc expect
 
 main :: IO Counts
 main = do
-        runTestTT $ TestCase $ assertEqual "P55"
-            []
+        runTestTT $ TestCase $ assertEqual "P55" [
+                (Node 'x'
+                    (Node 'x'
+                        (Node 'x' End End)
+                        End)
+                    (Node 'x' End End)),
+                (Node 'x'
+                    (Node 'x'
+                        End
+                        (Node 'x' End End))
+                    (Node 'x' End End))
+            ]
             (cBalanced 4 'x')
 
