@@ -1,5 +1,6 @@
 module P50 (
-    Tree(..),
+    Tree(..), node, leafNode,
+    sizeOf, isBalanced,
     cBalanced
 ) where
 
@@ -7,6 +8,8 @@ data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
               deriving (Eq)
 leafNode :: a -> Tree a
 leafNode value = Node value End End
+node :: a -> Tree a -> Tree a -> Tree a
+node value left right = Node value left right
 
 instance (Show a) => Show (Tree a) where
     show End = "."
@@ -34,6 +37,21 @@ cBalanced n value =
             ) `concatMap` nodes2
           balancedHalf = cBalanced (n `div` 2) value
           balancedHalf1 = cBalanced ((n `div` 2) - 1) value
+
+sizeOf :: Tree a -> Int
+sizeOf End = 0
+sizeOf (Node _ left right) = 1 + (sizeOf left) + (sizeOf right)
+
+isBalanced :: Tree a -> Bool
+isBalanced End = True
+isBalanced (Node _ left right) = (abs (sizeOf(left) - sizeOf(right))) <= 1
+
+
+-- P56
+isMirrorOf :: Tree a -> Tree a -> Bool
+isMirrorOf End End = True
+-- TODO
+
 
 addLeafNode :: a -> Tree a -> [Tree a]
 addLeafNode value End = [leafNode value]
