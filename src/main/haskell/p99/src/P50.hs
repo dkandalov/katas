@@ -1,7 +1,8 @@
 module P50 (
     Tree(..), node, leafNode,
     sizeOf, isBalanced,
-    cBalanced
+    cBalanced,
+    isMirrorOf, isSymmetric
 ) where
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
@@ -50,7 +51,16 @@ isBalanced (Node _ left right) = (abs (sizeOf(left) - sizeOf(right))) <= 1
 -- P56
 isMirrorOf :: Tree a -> Tree a -> Bool
 isMirrorOf End End = True
--- TODO
+isMirrorOf End (Node _ _ _) = False
+isMirrorOf (Node _ _ _) End = False
+isMirrorOf (Node _ left1 right1) (Node _ left2 right2) =
+    (left1 `isMirrorOf` right2) && (right1 `isMirrorOf` left2)
+
+isSymmetric :: Tree a -> Bool
+isSymmetric End = True
+isSymmetric (Node _ left right) = left `isMirrorOf` right
+
+
 
 
 addLeafNode :: a -> Tree a -> [Tree a]

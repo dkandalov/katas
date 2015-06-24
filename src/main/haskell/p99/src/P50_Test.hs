@@ -28,4 +28,8 @@ main = do
             ]
             (cBalanced 4 'x')
         runTestTT $ TestCase $ assertEqual "P55" True ((\it -> isBalanced it) `all` (cBalanced 5 'x'))
+        runTestTT $ TestCase $ assertEqual "P56" True (isSymmetric End)
+        runTestTT $ TestCase $ assertEqual "P56" True (isSymmetric xLeaf)
+        runTestTT $ TestCase $ assertEqual "P56" True (isSymmetric (xNode (xNode xLeaf End) (xNode End xLeaf)))
+        runTestTT $ TestCase $ assertEqual "P56" False (isSymmetric (xNode (xNode xLeaf End) (xNode xLeaf End)))
 
