@@ -2,7 +2,8 @@ module P50 (
     Tree(..), node, leafNode,
     sizeOf, isBalanced,
     cBalanced,
-    isMirrorOf, isSymmetric
+    isMirrorOf, isSymmetric,
+    addValue, fromList
 ) where
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
@@ -61,6 +62,15 @@ isSymmetric End = True
 isSymmetric (Node _ left right) = left `isMirrorOf` right
 
 
+-- P57
+addValue :: Ord a => Tree a -> a -> Tree a
+addValue End value = Node value End End
+addValue (Node value left right) newValue =
+    if (newValue <= value) then Node value (addValue left newValue) right
+    else Node value left (addValue right newValue)
+
+fromList :: Ord a => [a] -> Tree a
+fromList list = foldl (\tree value -> addValue tree value) End list
 
 
 addLeafNode :: a -> Tree a -> [Tree a]
