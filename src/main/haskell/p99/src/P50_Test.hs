@@ -11,7 +11,6 @@ testList description tests = TestLabel description (TestList tests)
 xNode = node 'x'
 xLeaf = leafNode 'x'
 
-
 p55 = testList "P55" [
     expectEqual 3 (sizeOf $ xNode xLeaf xLeaf),
     expectEqual True (isBalanced $ xNode xLeaf xLeaf),
@@ -50,8 +49,14 @@ p57 = testList "P57" [
     expectEqual False (isSymmetric $ fromList [3, 2, 5, 7, 4])
  ]
 
+p58 = testList "P58" [
+    expectEqual
+        [(t 'x' (t 'x' (t_ 'x') e) (t 'x' e (t_ 'x'))),
+         (t 'x' (t 'x' e (t_ 'x')) (t 'x' (t_ 'x') e))]
+        (symmetricBalancedTrees 5 'x')
+ ]
 
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58 ]
 
 

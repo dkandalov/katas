@@ -1,9 +1,10 @@
 module P50 (
-    Tree(..), node, leafNode,
+    Tree(..), node, leafNode, t, t_, e,
     sizeOf, isBalanced,
     cBalanced,
     isMirrorOf, isSymmetric,
-    addValue, fromList
+    addValue, fromList,
+    symmetricBalancedTrees
 ) where
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
@@ -13,12 +14,18 @@ leafNode value = Node value End End
 node :: a -> Tree a -> Tree a -> Tree a
 node value left right = Node value left right
 
+-- shortcut names for tree construction in code
+t = Node
+t_ value = Node value End End
+e = End
+
+
 instance (Show a) => Show (Tree a) where
-    show End = "."
-    show (Node value End End) = "T(" ++ (show value) ++ ")"
+    show End = "e"
+    show (Node value End End) = "(t_ " ++ (show value) ++ ")"
     show (Node value left right) =
-            "T(" ++ (show value) ++ "," ++
-            (show left) ++ "," ++ (show right) ++ ")"
+            "(t " ++ (show value) ++ " " ++
+            (show left) ++ " " ++ (show right) ++ ")"
 
 -- P55
 cBalanced :: Int -> a -> [Tree a]
@@ -73,11 +80,7 @@ fromList :: Ord a => [a] -> Tree a
 fromList list = foldl (\tree value -> addValue tree value) End list
 
 
-addLeafNode :: a -> Tree a -> [Tree a]
-addLeafNode value End = [leafNode value]
-addLeafNode value (Node _ left right) =
-    (\it -> Node value it right) `map` leftTrees ++
-    (\it -> Node value left it) `map` rightTrees
-    where leftTrees = addLeafNode value left
-          rightTrees = addLeafNode value right
+-- P58
+symmetricBalancedTrees :: Int -> a -> [Tree a]
+symmetricBalancedTrees size value = filter isSymmetric (cBalanced size value)
 
