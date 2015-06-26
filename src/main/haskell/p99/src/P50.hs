@@ -4,7 +4,8 @@ module P50 (
     cBalanced,
     isMirrorOf, isSymmetric,
     addValue, fromList,
-    symmetricBalancedTrees
+    symmetricBalancedTrees,
+    heightOf, isHeightBalanced, hbalTrees
 ) where
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
@@ -84,3 +85,23 @@ fromList list = foldl (\tree value -> addValue tree value) End list
 symmetricBalancedTrees :: Int -> a -> [Tree a]
 symmetricBalancedTrees size value = filter isSymmetric (cBalanced size value)
 
+-- P59
+hbalTrees :: Int -> a -> [Tree a]
+hbalTrees 0 _ = [End]
+hbalTrees 1 value = [(Node value End End)]
+hbalTrees height value = combinedTrees
+    where combinedTrees =
+           (combine fullTree fullTree) ++
+           (combine smallTree fullTree) ++
+           (combine fullTree smallTree)
+          combine left right = [(Node value l r) | l <- left, r <- right]
+          fullTree = hbalTrees (height - 1) value
+          smallTree = hbalTrees (height - 2) value
+
+heightOf :: Tree a -> Int
+heightOf End = 0
+heightOf (Node _ left right) = 1 + (max (heightOf left) (heightOf right))
+
+isHeightBalanced :: Tree a -> Bool
+isHeightBalanced End = True
+isHeightBalanced (Node _ left right) = (abs $ heightOf left - heightOf right) <= 1

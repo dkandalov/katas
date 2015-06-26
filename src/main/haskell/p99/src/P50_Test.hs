@@ -56,7 +56,24 @@ p58 = testList "P58" [
         (symmetricBalancedTrees 5 'x')
  ]
 
+p59 = testList "P59" [
+    expectEqual 3 (heightOf (t 'x' (t 'x' e (t_ 'x')) e)),
+    expectEqual True (isHeightBalanced (t 'x' (t_ 'x') e)),
+    expectEqual True (isHeightBalanced (t 'x' (t_ 'x') (t_ 'x') )),
+    expectEqual False (isHeightBalanced (t 'x' (t 'x' e (t_ 'x')) e)),
+    expectEqual [
+            (t 'x' (t_ 'x') (t_ 'x')),
+            (t 'x' e (t_ 'x')),
+            (t 'x' (t_ 'x') e)
+        ]
+        (hbalTrees 2 'x'),
+    expectEqual 15 (length $ hbalTrees 3 'x'),
+    expectEqual True (all (\it -> (heightOf it) == 3) (hbalTrees 3 'x')),
+    expectEqual True (all isHeightBalanced (hbalTrees 3 'x'))
+    --expectEqual [] (hbalTrees 3 'x')
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59 ]
 
 
