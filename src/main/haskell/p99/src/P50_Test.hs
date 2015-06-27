@@ -73,7 +73,29 @@ p59 = testList "P59" [
     --expectEqual [] (hbalTrees 3 'x')
  ]
 
+p60 = testList "P60" [
+    expectEqual 7 (maxHbalNodes 3),
+    expectEqual 4 (minHbalNodes 3),
+    expectEqual [ (t 'x' (t_ 'x') (t_ 'x')) ]
+        (hbalTreesWithNodes 3 'x'),
+    expectEqual [
+        (t 'x'
+            (t_ 'x')
+            (t 'x' (t_ 'x') e)),
+        (t 'x'
+            (t_ 'x')
+            (t 'x' e (t_ 'x'))),
+        (t 'x'
+            (t 'x' (t_ 'x') e)
+            (t_ 'x')),
+        (t 'x'
+            (t 'x' e (t_ 'x'))
+            (t_ 'x'))
+        ]
+        (hbalTreesWithNodes 4 'x'),
+    expectEqual 123 (length $ hbalTreesWithNodes 7 'x'),
+    expectEqual 1553 (length $ hbalTreesWithNodes 15 'x')
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59 ]
-
-
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60 ]

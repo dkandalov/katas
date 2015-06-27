@@ -5,7 +5,8 @@ module P50 (
     isMirrorOf, isSymmetric,
     addValue, fromList,
     symmetricBalancedTrees,
-    heightOf, isHeightBalanced, hbalTrees
+    heightOf, isHeightBalanced, hbalTrees,
+    maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes
 ) where
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
@@ -105,3 +106,25 @@ heightOf (Node _ left right) = 1 + (max (heightOf left) (heightOf right))
 isHeightBalanced :: Tree a -> Bool
 isHeightBalanced End = True
 isHeightBalanced (Node _ left right) = (abs $ heightOf left - heightOf right) <= 1
+
+
+-- P60
+maxHbalNodes :: Int -> Int
+maxHbalNodes height = (2 ^ height) - 1
+
+minHbalNodes :: Int -> Int
+minHbalNodes 0 = 0
+minHbalNodes 1 = 1
+minHbalNodes height = 1 + (minHbalNodes (height - 1)) + (minHbalNodes (height - 2))
+
+minHbalHeight :: Int -> Int
+minHbalHeight 0 = 0
+minHbalHeight nodeAmount = 1 + (minHbalHeight (nodeAmount `div` 2))
+
+maxHbalHeight :: Int -> Int
+maxHbalHeight 0 = 0
+maxHbalHeight 1 = 1 -- TODO
+
+hbalTreesWithNodes :: Int -> a -> [Tree a]
+hbalTreesWithNodes nodeAmount value = []
+
