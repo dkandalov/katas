@@ -9,6 +9,8 @@ module P50 (
     maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes
 ) where
 
+import Data.List
+
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
               deriving (Eq)
 leafNode :: a -> Tree a
@@ -117,14 +119,26 @@ minHbalNodes 0 = 0
 minHbalNodes 1 = 1
 minHbalNodes height = 1 + (minHbalNodes (height - 1)) + (minHbalNodes (height - 2))
 
+maxHbalHeight :: Int -> Int
+maxHbalHeight nodeAmount = case result of
+    Just height -> height - 1
+    Nothing -> -1
+    where result = find (\i -> (minHbalNodes i) > nodeAmount) [1..]
+
 minHbalHeight :: Int -> Int
 minHbalHeight 0 = 0
-minHbalHeight nodeAmount = 1 + (minHbalHeight (nodeAmount `div` 2))
+minHbalHeight nodeAmount =
+    let amount = nodeAmount - 1 in
+    if (amount `rem` 2 == 0) then 1 + (minHbalHeight (amount `div` 2))
+    else 1 + (min (minHbalHeight (amount `div` 2)) (minHbalHeight (1 + (amount `div` 2))))
 
-maxHbalHeight :: Int -> Int
-maxHbalHeight 0 = 0
-maxHbalHeight 1 = 1 -- TODO
+nodeCount :: Tree a -> Int
+nodeCount End = 0
+nodeCount (Node _ left right) = 1 + (nodeCount left) + (nodeCount right)
 
 hbalTreesWithNodes :: Int -> a -> [Tree a]
-hbalTreesWithNodes nodeAmount value = []
+hbalTreesWithNodes nodeAmount value =
+    (\it -> (nodeCount it) == nodeAmount) `filter` trees
+    where range = [(minHbalHeight nodeAmount)..(maxHbalHeight nodeAmount)]
+          trees = (\height -> hbalTrees height value) `concatMap` range
 

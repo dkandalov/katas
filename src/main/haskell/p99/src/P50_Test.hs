@@ -76,24 +76,18 @@ p59 = testList "P59" [
 p60 = testList "P60" [
     expectEqual 7 (maxHbalNodes 3),
     expectEqual 4 (minHbalNodes 3),
+    expectEqual 2 (minHbalHeight 3),
+    expectEqual 2 (maxHbalHeight 3),
     expectEqual [ (t 'x' (t_ 'x') (t_ 'x')) ]
         (hbalTreesWithNodes 3 'x'),
     expectEqual [
-        (t 'x'
-            (t_ 'x')
-            (t 'x' (t_ 'x') e)),
-        (t 'x'
-            (t_ 'x')
-            (t 'x' e (t_ 'x'))),
-        (t 'x'
-            (t 'x' (t_ 'x') e)
-            (t_ 'x')),
-        (t 'x'
-            (t 'x' e (t_ 'x'))
-            (t_ 'x'))
+        (t 'x' (t_ 'x') (t 'x' e (t_ 'x'))),
+        (t 'x' (t_ 'x') (t 'x' (t_ 'x') e)),
+        (t 'x' (t 'x' e (t_ 'x')) (t_ 'x')),
+        (t 'x' (t 'x' (t_ 'x') e) (t_ 'x'))
         ]
         (hbalTreesWithNodes 4 'x'),
-    expectEqual 123 (length $ hbalTreesWithNodes 7 'x'),
+    expectEqual 17 (length $ hbalTreesWithNodes 7 'x'),
     expectEqual 1553 (length $ hbalTreesWithNodes 15 'x')
  ]
 
