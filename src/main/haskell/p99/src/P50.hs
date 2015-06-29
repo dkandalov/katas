@@ -6,7 +6,9 @@ module P50 (
     addValue, fromList,
     symmetricBalancedTrees,
     heightOf, isHeightBalanced, hbalTrees,
-    maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes
+    maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes,
+    leafCount, leafList,
+    internalList, atLevel
 ) where
 
 import Data.List
@@ -141,4 +143,31 @@ hbalTreesWithNodes nodeAmount value =
     (\it -> (nodeCount it) == nodeAmount) `filter` trees
     where range = [(minHbalHeight nodeAmount)..(maxHbalHeight nodeAmount)]
           trees = (\height -> hbalTrees height value) `concatMap` range
+
+
+-- P61
+leafCount :: Tree a -> Int
+leafCount End = 0
+leafCount (Node _ End End) = 1
+leafCount (Node _ left right) = (leafCount left) + (leafCount right)
+
+-- P61A
+leafList :: Tree a -> [a]
+leafList End = []
+leafList (Node value End End) = [value]
+leafList (Node _ left right) = (leafList left) ++ (leafList right)
+
+
+-- P62
+internalList :: Tree a -> [a]
+internalList End = []
+internalList (Node _ End End) = []
+internalList (Node value left right) = [value] ++ (internalList left) ++ (internalList right)
+
+-- P62B
+atLevel :: Int -> Tree a -> [a]
+atLevel _ End = []
+atLevel 0 _ = error "Level must be >= 1"
+atLevel 1 (Node value _ _) = [value]
+atLevel level (Node _ left right) = (atLevel (level - 1) left) ++ (atLevel (level - 1) right)
 

@@ -91,5 +91,18 @@ p60 = testList "P60" [
     expectEqual 1553 (length $ hbalTreesWithNodes 15 'x')
  ]
 
+p61 = testList "P61" [
+    expectEqual 0 (leafCount End),
+    expectEqual 2 (leafCount (t 'x' (t 'x' (t_ 'x') e) (t_ 'x'))),
+    expectEqual [] (leafList End :: [Char]),
+    expectEqual ['b', 'd', 'e'] (leafList (t 'a' (t_ 'b') (t 'c' (t_ 'd') (t_ 'e'))))
+ ]
+
+p62 = testList "P62" [
+    expectEqual [] (internalList End :: [Char]),
+    expectEqual ['a', 'c'] (internalList (t 'a' (t_ 'b') (t 'c' (t_ 'd') (t_ 'e')))),
+    expectEqual ['b', 'c'] (atLevel 2 (t 'a' (t_ 'b') (t 'c' (t_ 'd') (t_ 'e'))))
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62 ]
