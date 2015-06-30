@@ -8,7 +8,8 @@ module P50 (
     heightOf, isHeightBalanced, hbalTrees,
     maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes,
     leafCount, leafList,
-    internalList, atLevel
+    internalList, atLevel,
+    completeBinaryTree
 ) where
 
 import Data.List
@@ -171,3 +172,10 @@ atLevel 0 _ = error "Level must be >= 1"
 atLevel 1 (Node value _ _) = [value]
 atLevel level (Node _ left right) = (atLevel (level - 1) left) ++ (atLevel (level - 1) right)
 
+
+-- P63
+completeBinaryTree :: Int -> a -> Tree a
+completeBinaryTree nodeAmount value = generate 1
+    where generate amount =
+            if (amount > nodeAmount) then End
+            else Node value (generate (amount * 2)) (generate (amount * 2 + 1))

@@ -104,5 +104,18 @@ p62 = testList "P62" [
     expectEqual ['b', 'c'] (atLevel 2 (t 'a' (t_ 'b') (t 'c' (t_ 'd') (t_ 'e'))))
  ]
 
+p63 = testList "P63" [
+    expectEqual End (completeBinaryTree 0 'x'),
+    expectEqual (t_ 'x') (completeBinaryTree 1 'x'),
+    expectEqual (t 'x' (t_ 'x') e) (completeBinaryTree 2 'x'),
+    expectEqual (t 'x' (t_ 'x') (t_ 'x')) (completeBinaryTree 3 'x'),
+    expectEqual (t 'x' (t 'x' (t_ 'x') e) (t_ 'x')) (completeBinaryTree 4 'x'),
+    expectEqual
+        (t 'x'
+            (t 'x' (t_ 'x') (t_ 'x'))
+            (t 'x' (t_ 'x') e))
+        (completeBinaryTree 6 'x')
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63 ]
