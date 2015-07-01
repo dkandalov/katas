@@ -117,5 +117,30 @@ p63 = testList "P63" [
         (completeBinaryTree 6 'x')
  ]
 
+p64 = testList "P64" [
+    expectEqual End ((layoutBinaryTree End) :: Tree (XY Char)),
+    expectEqual
+        (t (XY 3 1 'a')
+            (t (XY 1 2 'b')
+                e
+                (t_ (XY 2 3 'c')))
+            (t_ (XY 4 2 'd')))
+        (layoutBinaryTree
+            (t 'a' (t 'b' e (t_ 'c')) (t_ 'd'))),
+    expectEqual
+        (t (XY 8 1 'n')
+            (t (XY 6 2 'k')
+                (t (XY 2 3 'c')
+                    (t_ (XY 1 4 'a'))
+                    (t (XY 5 4 'h') (t (XY 4 5 'g') (t_ (XY 3 6 'e')) e) e))
+                (t_ (XY 7 3 'm')))
+            (t (XY 12 2 'u')
+                (t (XY 9 3 'p')
+                    e
+                    (t (XY 11 4 's') (t_ (XY 10 5 'q')) e))
+                e))
+        (layoutBinaryTree (fromList ['n','k','m','c','a','h','g','e','u','p','s','q']))
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63, p64 ]

@@ -9,7 +9,8 @@ module P50 (
     maxHbalNodes, minHbalNodes, minHbalHeight, maxHbalHeight, hbalTreesWithNodes,
     leafCount, leafList,
     internalList, atLevel,
-    completeBinaryTree
+    completeBinaryTree,
+    XY(..), layoutBinaryTree
 ) where
 
 import Data.List
@@ -33,6 +34,13 @@ instance (Show a) => Show (Tree a) where
     show (Node value left right) =
             "(t " ++ (show value) ++ " " ++
             (show left) ++ " " ++ (show right) ++ ")"
+
+
+data XY a = XY Int Int a deriving (Eq)
+
+instance (Show a) => Show (XY a) where
+    show (XY x y value) = "(XY " ++ (show x) ++ " " ++ (show y) ++ " " ++ (show value) ++ ")"
+
 
 -- P55
 cBalanced :: Int -> a -> [Tree a]
@@ -179,3 +187,25 @@ completeBinaryTree nodeAmount value = generate 1
     where generate amount =
             if (amount > nodeAmount) then End
             else Node value (generate (amount * 2)) (generate (amount * 2 + 1))
+
+-- P64
+layoutBinaryTree :: Tree a -> Tree (XY a)
+layoutBinaryTree tree = (layoutRight tree 0 1)
+    where
+          layoutRight End _ _ = End
+          layoutRight (Node value left right) parentShift depth =
+            (Node
+                (XY rightShift depth value)
+                (layoutLeft left rightShift (depth + 1))
+                (layoutRight right rightShift (depth + 1))
+            )
+            where rightShift = 1 + parentShift + (nodeCount left)
+
+          layoutLeft End _ _ = End
+          layoutLeft (Node value left right) parentShift depth =
+            (Node
+                (XY leftShift depth value)
+                (layoutLeft left leftShift (depth + 1))
+                (layoutRight right leftShift (depth + 1))
+            )
+            where leftShift = parentShift - (nodeCount right) - 1
