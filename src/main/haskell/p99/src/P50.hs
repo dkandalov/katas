@@ -214,28 +214,25 @@ layoutBinaryTree tree = (layoutRight tree 0 1)
 layoutBinaryTree2 :: Tree a -> Tree (XY a)
 layoutBinaryTree2 tree = shiftX shiftToOne layedoutTree
     where
-        shiftToOne = 0 -- 1 - (leftmostX layedoutTree)
+        shiftToOne = 1 - (leftmostX layedoutTree)
         layedoutTree = layoutRight tree 0 1 ((heightOf tree) - 1)
         layoutRight End _ _ _ = End
-        layoutRight (Node value left right) parentShift depth level =
-            (Node
-                (XY x y value)
-                (layoutLeft left x (y + 1) (level - 1))
-                (layoutRight right x (y + 1) (level - 1)))
-            where x = (parentShift + (2 ^ level))
+        layoutRight (Node value left right) parentX depth level = xyNode x y value left right level
+            where x = parentX + (2 ^ level)
                   y = depth
         layoutLeft End _ _ _ = End
-        layoutLeft (Node value left right) parentShift depth level =
+        layoutLeft (Node value left right) parentX depth level = xyNode x y value left right level
+            where x = parentX - (2 ^ level)
+                  y = depth
+        xyNode x y value left right level =
             (Node
                 (XY x y value)
                 (layoutLeft left x (y + 1) (level - 1))
                 (layoutRight right x (y + 1) (level - 1)))
-            where x = (parentShift - (2 ^ level))
-                  y = depth
 
 leftmostX :: Tree (XY a) -> Int
 leftmostX End = error "Can't find leftmost leaf of empty tree"
-leftmostX (Node (XY x y _) End _) = x
+leftmostX (Node (XY x _ _) End _) = x
 leftmostX (Node _ left _) = leftmostX left
 
 shiftX :: Int -> Tree (XY a) -> Tree (XY a)

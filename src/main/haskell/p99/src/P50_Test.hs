@@ -46,7 +46,20 @@ p57 = testList "P57" [
         (Node 3 (Node 2 (Node 1 End End) End) (Node 5 End (Node 7 End End)))
         (fromList [3, 2, 5, 7, 1]),
     expectEqual True (isSymmetric $ fromList [5, 3, 18, 1, 4, 12, 21]),
-    expectEqual False (isSymmetric $ fromList [3, 2, 5, 7, 4])
+    expectEqual False (isSymmetric $ fromList [3, 2, 5, 7, 4]),
+    expectEqual -- tree for P65
+        (t 'n'
+            (t 'k'
+                (t 'c'
+                    (t_ 'a')
+                    (t 'e' (t_ 'd') (t_ 'g')))
+                (t_ 'm'))
+            (t 'u'
+                (t 'p'
+                    e
+                    (t_ 'q'))
+                e))
+        (fromList ['n','k','m','c','a','e','d','g','u','p','q'])
  ]
 
 p58 = testList "P58" [
@@ -158,11 +171,11 @@ p65 = testList "P65" [
                 (t (XY 3 3 'c')
                     (t_ (XY 1 4 'a'))
                     (t (XY 5 4 'e') (t_ (XY 4 5 'd')) (t_ (XY 6 5 'g'))))
-                (t_ (XY 7 3 'm')))
+                (t_ (XY 11 3 'm')))
             (t (XY 23 2 'u')
                 (t (XY 19 3 'p') e (t_ (XY 21 4 'q')))
                 e))
-        (layoutBinaryTree (fromList ['n','k','m','c','a','e','d','g','u','p','q']))
+        (layoutBinaryTree2 (fromList ['n','k','m','c','a','e','d','g','u','p','q']))
  ]
 
 main :: IO Counts
