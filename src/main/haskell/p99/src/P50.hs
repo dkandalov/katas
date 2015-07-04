@@ -10,7 +10,7 @@ module P50 (
     leafCount, leafList,
     internalList, atLevel,
     completeBinaryTree,
-    XY(..), layoutBinaryTree, layoutBinaryTree2
+    XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3
 ) where
 
 import Data.List
@@ -239,3 +239,24 @@ shiftX :: Int -> Tree (XY a) -> Tree (XY a)
 shiftX _ End = End
 shiftX shift (Node (XY x y value) left right) =
     (Node (XY (x + shift) y value) (shiftX shift left) (shiftX shift right))
+
+
+-- P66
+layoutBinaryTree3 :: Tree a -> Tree (XY a)
+layoutBinaryTree3 tree = shiftX shiftToOne layedoutTree
+    where shiftToOne = 1 - (leftmostX layedoutTree)
+          layedoutTree = doLayout tree 1 1
+          doLayout End _ _ = End
+          doLayout (Node value left right) x y =
+            adjustChildren node
+            where node = (Node (XY x y value)
+                    (doLayout left (x - 1) (y + 1))
+                    (doLayout right (x + 1) (y + 1)))
+
+          adjustChildren End = End
+          adjustChildren node@(Node value left right) =
+            if (haveOverlap left right) then node
+            else (adjustChildren (Node value (shiftX (-1) left) (shiftX 1 right)))
+
+          haveOverlap left right = False
+
