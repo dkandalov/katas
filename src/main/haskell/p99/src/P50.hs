@@ -41,6 +41,9 @@ data XY a = XY Int Int a deriving (Eq)
 instance (Show a) => Show (XY a) where
     show (XY x y value) = "(XY " ++ (show x) ++ " " ++ (show y) ++ " " ++ (show value) ++ ")"
 
+equalXY :: XY a -> XY a -> Bool
+equalXY (XY x1 y1 _) (XY x2 y2 _) = x1 == x2 && y1 == y2
+
 
 -- P55
 cBalanced :: Int -> a -> [Tree a]
@@ -255,8 +258,18 @@ layoutBinaryTree3 tree = shiftX shiftToOne layedoutTree
 
           adjustChildren End = End
           adjustChildren node@(Node value left right) =
-            if (haveOverlap left right) then node
-            else (adjustChildren (Node value (shiftX (-1) left) (shiftX 1 right)))
+            if (haveOverlap (toList left) (toList right)) then
+                (adjustChildren (Node value (shiftX (-1) left) (shiftX 1 right)))
+            else node
 
-          haveOverlap left right = False
+haveOverlap :: [XY a] -> [XY a] -> Bool
+haveOverlap [] _ = False
+haveOverlap leftList rightList =
+    case (find (\it -> (equalXY it (head leftList))) rightList) of
+        Nothing -> haveOverlap (tail leftList) rightList
+        Just _ -> True
+
+toList :: Tree a -> [a]
+toList End = []
+toList (Node value left right) = value : (toList left) ++ (toList right)
 

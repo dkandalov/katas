@@ -187,7 +187,29 @@ p66 = testList "P66" [
                     (t_ (XY 2 3 'c')))
                 (t_ (XY 3 2 'd')))
             (layoutBinaryTree3
-                (t 'a' (t 'b' e (t_ 'c')) (t_ 'd')))
+                (t 'a' (t 'b' e (t_ 'c')) (t_ 'd'))),
+        expectEqual
+            (t (XY 5 1 'n')
+                (t (XY 3 2 'k')
+                    (t (XY 2 3 'c')
+                        (t_ (XY 1 4 'a'))
+                        (t (XY 3 4 'e') (t_ (XY 2 5 'd')) (t_ (XY 4 5 'g'))))
+                    (t_ (XY 4 3 'm')))
+                (t (XY 7 2 'u')
+                    (t (XY 6 3 'p') e (t_ (XY 7 4 'q')))
+                    e)
+            )
+            (layoutBinaryTree3
+               (t 'n'
+                   (t 'k'
+                       (t 'c'
+                           (t_ 'a')
+                           (t 'e' (t_ 'd') (t_ 'g')))
+                       (t_ 'm'))
+                   (t 'u'
+                       (t 'p' e (t_ 'q'))
+                       e)
+               ))
  ]
 
 main :: IO Counts
