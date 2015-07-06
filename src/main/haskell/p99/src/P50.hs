@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 module P50 (
     Tree(..), node, leafNode, t, t_, e,
     sizeOf, isBalanced,
@@ -10,7 +12,8 @@ module P50 (
     leafCount, leafList,
     internalList, atLevel,
     completeBinaryTree,
-    XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3
+    XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3,
+    toString, fromString
 ) where
 
 import Data.List
@@ -273,3 +276,23 @@ toList :: Tree a -> [a]
 toList End = []
 toList (Node value left right) = value : (toList left) ++ (toList right)
 
+
+-- P67
+-- http://stackoverflow.com/questions/3740621/removing-string-double-quotes-in-haskell
+-- http://stackoverflow.com/questions/2125674/what-is-the-effect-of-type-synonyms-on-instances-of-type-classes-what-does-the
+class (Show a) => GShow a where
+   gShow :: a -> String
+   gShow = show
+instance GShow Char where
+   gShow = id
+instance GShow String where
+   gShow = id
+
+toString :: (GShow a) => Tree a -> String
+toString End = ""
+toString (Node value End End) = (gShow value)
+toString (Node value left right) =
+    (gShow value) ++ "(" ++ (toString left) ++ "," ++ (toString right) ++ ")"
+
+fromString :: String -> Tree Char
+fromString _ = End

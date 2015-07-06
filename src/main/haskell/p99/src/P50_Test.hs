@@ -212,5 +212,15 @@ p66 = testList "P66" [
                ))
  ]
 
+p67 = testList "P67" [
+    expectEqual
+        "a(b(d,e),c(,f(g,)))"
+        (toString
+            (t 'a'
+                (t 'b' (t_ 'd') (t_ 'e'))
+                (t 'c' e
+                    (t 'f' (t_ 'g') e))))
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66 ]
+main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67 ]
