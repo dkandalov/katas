@@ -212,14 +212,19 @@ p66 = testList "P66" [
                ))
  ]
 
-p67 = testList "P67" [
-    expectEqual
-        "a(b(d,e),c(,f(g,)))"
-        (toString
-            (t 'a'
-                (t 'b' (t_ 'd') (t_ 'e'))
-                (t 'c' e
-                    (t 'f' (t_ 'g') e))))
+p67 =
+    let tree = (t 'a'
+                   (t 'b'
+                      (t_ 'd')
+                      (t_ 'e'))
+                   (t 'c'
+                      e
+                      (t 'f'
+                        (t_ 'g') e)))
+        treeString = "a(b(d,e),c(,f(g,)))" in
+    testList "P67" [
+        expectEqual treeString (toString tree),
+        expectEqual tree (fromString treeString)
  ]
 
 main :: IO Counts

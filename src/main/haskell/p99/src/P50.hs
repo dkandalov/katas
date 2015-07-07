@@ -280,11 +280,12 @@ toList (Node value left right) = value : (toList left) ++ (toList right)
 -- P67
 -- http://stackoverflow.com/questions/3740621/removing-string-double-quotes-in-haskell
 -- http://stackoverflow.com/questions/2125674/what-is-the-effect-of-type-synonyms-on-instances-of-type-classes-what-does-the
+-- Use the class below to avoid quotes when displaying chars, strings
 class (Show a) => GShow a where
    gShow :: a -> String
    gShow = show
 instance GShow Char where
-   gShow = id
+   gShow it = gShow [it]
 instance GShow String where
    gShow = id
 
@@ -294,5 +295,10 @@ toString (Node value End End) = (gShow value)
 toString (Node value left right) =
     (gShow value) ++ "(" ++ (toString left) ++ "," ++ (toString right) ++ ")"
 
+-- TODO try also http://book.realworldhaskell.org/read/using-parsec.html
+
 fromString :: String -> Tree Char
-fromString _ = End
+fromString "" = End
+fromString (x:[]) = Node x End End
+fromString (x1:x2:[]) = End
+
