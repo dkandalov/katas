@@ -298,7 +298,14 @@ toString (Node value left right) =
 -- TODO try also http://book.realworldhaskell.org/read/using-parsec.html
 
 fromString :: String -> Tree Char
-fromString "" = End
-fromString (x:[]) = Node x End End
-fromString (x1:x2:[]) = End
+fromString xs = snd (fromString' xs)
+
+fromString' :: String -> (String, Tree Char)
+fromString' xs@(',':_) = (xs, End)
+fromString' xs@(')':_) = (xs, End)
+fromString' (x:'(':xs) = (rest, Node x left right)
+    where (restLeft, left) = fromString' xs
+          (restRight, right) = fromString' (tail restLeft) -- skip ','
+          rest = tail restRight -- skip ')'
+fromString' (x:xs) = (xs, Node x End End)
 
