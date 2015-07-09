@@ -13,10 +13,12 @@ module P50 (
     internalList, atLevel,
     completeBinaryTree,
     XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3,
-    toString, fromString
+    toString, fromString,
+    preorder, inorder, preInTree
 ) where
 
 import Data.List
+import Data.Maybe(fromJust)
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
               deriving (Eq)
@@ -309,3 +311,25 @@ fromString' (x:'(':xs) = (rest, Node x left right)
           rest = tail restRight -- skip ')'
 fromString' (x:xs) = (xs, Node x End End)
 
+
+-- P68
+preorder :: Tree a -> [a]
+preorder End = []
+preorder (Node value left right) = value : (preorder left) ++ (preorder right)
+
+inorder :: Tree a -> [a]
+inorder End = []
+inorder (Node value left right) = (inorder left) ++ [value] ++ (inorder right)
+
+preInTree :: (Eq a) => [a] -> [a] -> Tree a
+preInTree [] [] = End
+preInTree preOrdered inOrdered = (Node value
+    (preInTree leftPreOrdered leftInOrdered)
+    (preInTree rightPreOrdered rightInOrdered))
+    where
+        value = head preOrdered
+        leftPreOrdered = take valueIndexInOrdered (tail preOrdered)
+        rightPreOrdered = drop valueIndexInOrdered (tail preOrdered)
+        leftInOrdered = take valueIndexInOrdered inOrdered
+        rightInOrdered = drop (valueIndexInOrdered + 1) inOrdered
+        valueIndexInOrdered = (fromJust (elemIndex value inOrdered)) :: Int

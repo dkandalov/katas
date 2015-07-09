@@ -228,5 +228,15 @@ p67 =
         expectEqual tree (fromString treeString)
  ]
 
+p68 = testList "P68" [
+    expectEqual "abdecfg" (preorder $ fromString "a(b(d,e),c(,f(g,)))"),
+    expectEqual "dbeacgf" (inorder $ fromString "a(b(d,e),c(,f(g,)))"),
+    expectEqual (fromString "a(b(d,e),c(,f(g,)))")
+        (preInTree "abdecfg" "dbeacgf")
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [ p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67 ]
+main = runTestTT $ TestList [
+    p55, p56, p57, p58, p59,
+    p60, p61, p62, p63, p64, p65, p66, p67, p68
+ ]
