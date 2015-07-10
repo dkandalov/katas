@@ -14,7 +14,8 @@ module P50 (
     completeBinaryTree,
     XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3,
     toString, fromString,
-    preorder, inorder, preInTree
+    preorder, inorder, preInTree,
+    toDotString, fromDotString
 ) where
 
 import Data.List
@@ -333,3 +334,19 @@ preInTree preOrdered inOrdered = (Node value
         leftInOrdered = take valueIndexInOrdered inOrdered
         rightInOrdered = drop (valueIndexInOrdered + 1) inOrdered
         valueIndexInOrdered = (fromJust (elemIndex value inOrdered)) :: Int
+
+
+-- P69
+toDotString :: Tree Char -> String
+toDotString End = "."
+toDotString (Node value left right) = value : (toDotString left) ++ (toDotString right)
+
+fromDotString :: String -> Tree Char
+fromDotString s = fst $ fromDotString' s
+
+fromDotString' :: String -> (Tree Char, String)
+fromDotString' ('.':xs) = (End, xs)
+fromDotString' (value:xs) = ((Node value left right), rightRest)
+    where (left, leftRest) = fromDotString' xs
+          (right, rightRest) = fromDotString' leftRest
+
