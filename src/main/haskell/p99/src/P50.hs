@@ -20,6 +20,7 @@ module P50 (
 
 import Data.List
 import Data.Maybe(fromJust)
+import Text.ParserCombinators.Parsec
 
 data Tree a = Node { value :: a, left :: Tree a, right :: Tree a } | End
               deriving (Eq)
