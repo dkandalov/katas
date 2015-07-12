@@ -20,6 +20,7 @@ p70 = testList "P70" [
             ])
         ])
         (stringToMTree "afg^^c^bd^e^^^"),
+
     expectEqual
         "afg^^c^bd^e^^^"
         (toString
