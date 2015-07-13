@@ -13,7 +13,7 @@ module P50 (
     internalList, atLevel,
     completeBinaryTree,
     XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3,
-    toString, fromString,
+    GShow(..), toString, fromString,
     preorder, inorder, preInTree,
     toDotString, fromDotString
 ) where

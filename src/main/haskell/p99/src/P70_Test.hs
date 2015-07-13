@@ -35,5 +35,13 @@ p70 = testList "P70" [
         )
  ]
 
+p71 = testList "P71" [
+    expectEqual 9 (internalPathLength (stringToMTree "afg^^c^bd^e^^^"))
+ ]
+
+p72 = testList "P72" [
+    expectEqual "gfcdeba" (postorder (stringToMTree "afg^^c^bd^e^^^"))
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [p70]
+main = runTestTT $ TestList [p70, p71, p72]

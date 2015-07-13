@@ -1,8 +1,12 @@
 module P70(
     MTree(..),
     nodeCount,
-    stringToMTree, toString
+    stringToMTree, toString,
+    internalPathLength,
+    postorder
 ) where
+
+import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
 
 data MTree a = MNode a [MTree a] deriving (Show, Eq)
 
@@ -23,3 +27,15 @@ stringToMTree' (x:xs) = (MNode x children, rest)
 
 toString :: MTree Char -> String
 toString (MNode value children) = value : (concat (toString `map` children)) ++ "^"
+
+
+-- P71
+internalPathLength :: MTree a -> Int
+internalPathLength tree = internalPathLength' 0 tree
+    where internalPathLength' depth (MNode _ children) =
+            depth + (sum $ (internalPathLength' (depth + 1)) `map` children)
+
+
+-- P72
+postorder :: MTree a -> [a]
+postorder (MNode value children) = (postorder `concatMap` children) ++ [value]
