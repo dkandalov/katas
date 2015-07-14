@@ -43,5 +43,9 @@ p72 = testList "P72" [
     expectEqual "gfcdeba" (postorder (stringToMTree "afg^^c^bd^e^^^"))
  ]
 
+p73 = testList "P73" [
+    expectEqual "(a (f g) c (b d e))" (lispyTree (stringToMTree "afg^^c^bd^e^^^"))
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [p70, p71, p72]
+main = runTestTT $ TestList [p70, p71, p72, p73]

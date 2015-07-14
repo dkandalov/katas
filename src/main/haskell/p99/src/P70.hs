@@ -3,7 +3,8 @@ module P70(
     nodeCount,
     stringToMTree, toString,
     internalPathLength,
-    postorder
+    postorder,
+    lispyTree
 ) where
 
 import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
@@ -39,3 +40,11 @@ internalPathLength tree = internalPathLength' 0 tree
 -- P72
 postorder :: MTree a -> [a]
 postorder (MNode value children) = (postorder `concatMap` children) ++ [value]
+
+
+-- P73
+lispyTree :: GShow a => MTree a -> String
+lispyTree (MNode value children) =
+    if (null children) then (gShow value)
+    else "(" ++ (gShow value) ++ " " ++ childrenAsString ++ ")"
+    where childrenAsString = unwords (lispyTree `map` children)
