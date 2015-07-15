@@ -4,7 +4,7 @@ module P70(
     stringToMTree, toString,
     internalPathLength,
     postorder,
-    lispyTree
+    toLispyTree, fromLispyTree
 ) where
 
 import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
@@ -19,6 +19,7 @@ stringToMTree :: String -> MTree Char
 stringToMTree s = fst $ stringToMTree' s
 
 stringToMTree' :: String -> (MTree Char, String)
+stringToMTree' [] = error "Failed to parse string as multiway tree"
 stringToMTree' (x:xs) = (MNode x children, rest)
     where (children, rest) = consumeChildren xs
           consumeChildren ('^':s) = ([], s)
@@ -43,8 +44,11 @@ postorder (MNode value children) = (postorder `concatMap` children) ++ [value]
 
 
 -- P73
-lispyTree :: GShow a => MTree a -> String
-lispyTree (MNode value children) =
+toLispyTree :: GShow a => MTree a -> String
+toLispyTree (MNode value children) =
     if (null children) then (gShow value)
     else "(" ++ (gShow value) ++ " " ++ childrenAsString ++ ")"
-    where childrenAsString = unwords (lispyTree `map` children)
+    where childrenAsString = unwords (toLispyTree `map` children)
+
+fromLispyTree :: String -> MTree Char
+fromLispyTree _ = MNode ' ' []
