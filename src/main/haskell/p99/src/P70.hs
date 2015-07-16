@@ -16,7 +16,7 @@ nodeCount :: MTree a -> Int
 nodeCount (MNode _ children) = 1 + (sum (nodeCount `map` children))
 
 stringToMTree :: String -> MTree Char
-stringToMTree s = fst $ stringToMTree' s
+stringToMTree s = fst $ stringToMTree' s -- TODO catch and report in nicer way
 
 stringToMTree' :: String -> (MTree Char, String)
 stringToMTree' [] = error "Failed to parse string as multiway tree"
@@ -51,4 +51,6 @@ toLispyTree (MNode value children) =
     where childrenAsString = unwords (toLispyTree `map` children)
 
 fromLispyTree :: String -> MTree Char
-fromLispyTree _ = MNode ' ' []
+fromLispyTree (x:[]) = MNode x []
+fromLispyTree ('(':x:' ':xs) = MNode x children
+    where children = []

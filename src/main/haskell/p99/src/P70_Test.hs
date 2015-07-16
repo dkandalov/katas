@@ -50,10 +50,10 @@ p73 = testList "P73" [
     expectEqual "a" (toLispyTree (stringToMTree "a^")),
     expectEqual "(a b c)" (toLispyTree (stringToMTree "ab^c^^")),
     expectEqual "(a (b c))" (toLispyTree (stringToMTree "abc^^^")),
-    expectEqual "(a (f g) c (b d e))" (toLispyTree (stringToMTree "afg^^c^bd^e^^^"))
---    expectEqual (stringToMTree "a^") (fromLispyTree "(a)"),
---    expectEqual (stringToMTree "abc^^") (fromLispyTree "(a (b c))"),
---    expectEqual (stringToMTree "afg^^c^bd^e^^^") (fromLispyTree "(a (f g) c (b d e))")
+    expectEqual "(a (f g) c (b d e))" (toLispyTree (stringToMTree "afg^^c^bd^e^^^")),
+    expectEqual (stringToMTree "a^") (fromLispyTree "a"),
+    expectEqual (stringToMTree "abc^^^") (fromLispyTree "(a (b c))"),
+    expectEqual (stringToMTree "afg^^c^bd^e^^^") (fromLispyTree "(a (f g) c (b d e))")
  ]
 
 main :: IO Counts
