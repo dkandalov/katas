@@ -51,6 +51,22 @@ toLispyTree (MNode value children) =
     where childrenAsString = unwords (toLispyTree `map` children)
 
 fromLispyTree :: String -> MTree Char
-fromLispyTree (x:[]) = MNode x []
-fromLispyTree ('(':x:' ':xs) = MNode x children
-    where children = []
+fromLispyTree xs = case (fst $ readNode xs) of
+    Nothing -> error ""
+    Just node -> node
+
+readNode :: String -> (Maybe (MTree Char), String)
+readNode "" = (Nothing, "")
+readNode ('(':x:' ':xs) = (Just (MNode x children), rest)
+    where (children, rest) = readNodes xs
+readNode (')':xs) = (Nothing, xs)
+readNode (x:' ':xs) = (Just (MNode x []), xs)
+readNode (x:xs) = (Just (MNode x []), xs)
+
+readNodes :: String -> ([MTree Char], String)
+readNodes xs = (nodes, xs'')
+    where nodes = case mayBeNode of
+            Nothing -> []
+            Just node -> node : nextNodes
+          (mayBeNode, xs') = readNode xs
+          (nextNodes, xs'') = readNodes xs'
