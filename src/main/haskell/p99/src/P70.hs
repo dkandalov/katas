@@ -58,12 +58,14 @@ fromLispyTree xs = case (fst $ readNode xs) of
 readNode :: String -> (Maybe (MTree Char), String)
 readNode "" = (Nothing, "")
 readNode ('(':x:' ':xs) = (Just (MNode x children), rest)
-    where (children, rest) = readNodes xs
-readNode (')':xs) = (Nothing, xs)
+    where (children, xs') = readNodes xs
+          rest = tail xs' -- drop ')'
 readNode (x:' ':xs) = (Just (MNode x []), xs)
 readNode (x:xs) = (Just (MNode x []), xs)
 
 readNodes :: String -> ([MTree Char], String)
+readNodes xs@(')':_) = ([], xs)
+readNodes (' ':xs) = readNodes xs
 readNodes xs = (nodes, xs'')
     where nodes = case mayBeNode of
             Nothing -> []
