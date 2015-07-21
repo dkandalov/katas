@@ -1,4 +1,4 @@
-import CsvParsec(parseCSV)
+import ParsecPlayground
 
 main :: IO ()
 main = do
@@ -6,6 +6,11 @@ main = do
             Left parseError -> show parseError
             Right x -> show x
     putStrLn s
+
+    let s2 = case (parseStringAsMTree "abc^^^") of
+            Left parseError -> show parseError
+            Right x -> show x
+    putStrLn s2
 
 --    putStrLn "hello"
 --    putStrLn $ show $ [(i,j) | i <- "ab", j <- [1..4]]
