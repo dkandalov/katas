@@ -1,22 +1,9 @@
 module ParsecPlayground(
-    parseCSV,
-    parseStringAsMTree
+    parseCSV
 )
 where
 
 import Text.ParserCombinators.Parsec
-import P70
-
-
-parseStringAsMTree :: String -> Either ParseError (MTree Char)
-parseStringAsMTree input = parse node "" input
-
-node :: Parser (MTree Char)
-node =
-    do name <- noneOf "^"
-       children <- many node
-       char '^'
-       return (MNode name children)
 
 
 parseCSV :: String -> Either ParseError [[String]]

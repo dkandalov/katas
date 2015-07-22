@@ -1,13 +1,14 @@
 module P70(
     MTree(..),
     nodeCount,
-    stringToMTree, toString,
+    stringToMTree, toString, parseStringAsMTree,
     internalPathLength,
     postorder,
     toLispyTree, fromLispyTree
 ) where
 
 import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
+import Text.ParserCombinators.Parsec
 
 data MTree a = MNode a [MTree a] deriving (Show, Eq)
 
@@ -30,6 +31,19 @@ stringToMTree' (x:xs) = (MNode x children, rest)
 toString :: MTree Char -> String
 toString (MNode value children) = value : (concat (toString `map` children)) ++ "^"
 
+parseStringAsMTree :: String -> MTree Char
+parseStringAsMTree input = getEither $ parse node "" input
+    where node :: Parser (MTree Char)
+          node =
+              do name <- noneOf "^"
+                 children <- many node
+                 char '^'
+                 return (MNode name children)
+
+getEither :: (Show left) => (Either left right) -> right
+getEither e = case e of
+    Left parseError -> error $ show parseError
+    Right value -> value
 
 -- P71
 internalPathLength :: MTree a -> Int

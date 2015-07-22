@@ -24,6 +24,20 @@ p70 = testList "P70" [
         ])
         (stringToMTree "afg^^c^bd^e^^^"),
 
+    expectEqual (MNode 'a' []) (parseStringAsMTree "a^"),
+    expectEqual (MNode 'a' [(MNode 'b' [(MNode 'c' [])])]) (parseStringAsMTree "abc^^^"),
+    expectEqual (MNode 'a' [(MNode 'b' []), (MNode 'c' [])]) (parseStringAsMTree "ab^c^^"),
+    expectEqual
+        (MNode 'a' [
+            (MNode 'f' [MNode 'g' []]),
+            (MNode 'c' []),
+            (MNode 'b' [
+                (MNode 'd' []),
+                (MNode 'e' [])
+            ])
+        ])
+        (parseStringAsMTree "afg^^c^bd^e^^^"),
+
     expectEqual
         "afg^^c^bd^e^^^"
         (toString
