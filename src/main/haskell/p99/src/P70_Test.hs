@@ -24,9 +24,9 @@ p70 = testList "P70" [
         ])
         (stringToMTree "afg^^c^bd^e^^^"),
 
-    expectEqual (MNode 'a' []) (parseStringAsMTree "a^"),
-    expectEqual (MNode 'a' [(MNode 'b' [(MNode 'c' [])])]) (parseStringAsMTree "abc^^^"),
-    expectEqual (MNode 'a' [(MNode 'b' []), (MNode 'c' [])]) (parseStringAsMTree "ab^c^^"),
+    expectEqual (MNode 'a' []) (parseAsMTree "a^"),
+    expectEqual (MNode 'a' [(MNode 'b' [(MNode 'c' [])])]) (parseAsMTree "abc^^^"),
+    expectEqual (MNode 'a' [(MNode 'b' []), (MNode 'c' [])]) (parseAsMTree "ab^c^^"),
     expectEqual
         (MNode 'a' [
             (MNode 'f' [MNode 'g' []]),
@@ -36,7 +36,7 @@ p70 = testList "P70" [
                 (MNode 'e' [])
             ])
         ])
-        (parseStringAsMTree "afg^^c^bd^e^^^"),
+        (parseAsMTree "afg^^c^bd^e^^^"),
 
     expectEqual
         "afg^^c^bd^e^^^"
@@ -69,7 +69,12 @@ p73 = testList "P73" [
     expectEqual (stringToMTree "a^") (fromLispyTree "a"),
     expectEqual (stringToMTree "ab^c^^") (fromLispyTree "(a b c)"),
     expectEqual (stringToMTree "abc^^^") (fromLispyTree "(a (b c))"),
-    expectEqual (stringToMTree "afg^^c^bd^e^^^") (fromLispyTree "(a (f g) c (b d e))")
+    expectEqual (stringToMTree "afg^^c^bd^e^^^") (fromLispyTree "(a (f g) c (b d e))"),
+
+    expectEqual (stringToMTree "a^") (parseAsLispyTree "a"),
+    expectEqual (stringToMTree "ab^c^^") (parseAsLispyTree "(a b c)"),
+    expectEqual (stringToMTree "abc^^^") (parseAsLispyTree "(a (b c))"),
+    expectEqual (stringToMTree "afg^^c^bd^e^^^") (parseAsLispyTree "(a (f g) c (b d e))")
  ]
 
 main :: IO Counts

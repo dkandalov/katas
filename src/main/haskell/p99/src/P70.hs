@@ -1,10 +1,10 @@
 module P70(
     MTree(..),
     nodeCount,
-    stringToMTree, toString, parseStringAsMTree,
+    stringToMTree, toString, parseAsMTree,
     internalPathLength,
     postorder,
-    toLispyTree, fromLispyTree
+    toLispyTree, fromLispyTree, parseAsLispyTree
 ) where
 
 import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
@@ -31,8 +31,8 @@ stringToMTree' (x:xs) = (MNode x children, rest)
 toString :: MTree Char -> String
 toString (MNode value children) = value : (concat (toString `map` children)) ++ "^"
 
-parseStringAsMTree :: String -> MTree Char
-parseStringAsMTree input = getEither $ parse node "" input
+parseAsMTree :: String -> MTree Char
+parseAsMTree input = getEither $ parse node "" input
     where node :: Parser (MTree Char)
           node =
               do name <- noneOf "^"
@@ -86,3 +86,21 @@ readNodes xs = (nodes, xs'')
             Just node -> node : nextNodes
           (mayBeNode, xs') = readNode xs
           (nextNodes, xs'') = readNodes xs'
+
+parseAsLispyTree :: String -> MTree Char
+parseAsLispyTree input = getEither $ parse node "" input
+    where node :: Parser (MTree Char)
+          node = leafNode <|> internalNode
+          leafNode =
+            do name <- nodeName
+               return $ MNode name []
+          internalNode =
+            do char '('
+               name <- nodeName
+               children <- many
+                 (do char ' '
+                     node)
+               char ')'
+               return $ MNode name children
+          nodeName = noneOf "() "
+
