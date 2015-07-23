@@ -13,7 +13,7 @@ module P50 (
     internalList, atLevel,
     completeBinaryTree,
     XY(..), layoutBinaryTree, layoutBinaryTree2, layoutBinaryTree3,
-    GShow(..), toString, fromString,
+    GShow(..), toString, fromString, parseFromString,
     preorder, inorder, preInTree,
     toDotString, fromDotString
 ) where
@@ -299,7 +299,6 @@ toString (Node value End End) = (gShow value)
 toString (Node value left right) =
     (gShow value) ++ "(" ++ (toString left) ++ "," ++ (toString right) ++ ")"
 
--- TODO try also http://book.realworldhaskell.org/read/using-parsec.html
 
 fromString :: String -> Tree Char
 fromString xs = snd (fromString' xs)
@@ -312,6 +311,28 @@ fromString' (x:'(':xs) = (rest, Node x left right)
           (restRight, right) = fromString' (tail restLeft) -- skip ','
           rest = tail restRight -- skip ')'
 fromString' (x:xs) = (xs, Node x End End)
+
+parseFromString :: String -> Tree Char
+parseFromString input = getEither $ parse node "" input
+    where node :: Parser (Tree Char)
+          node = internalNode <|> leafNode
+          internalNode =
+            do name <- nodeName -- TODO need lookahead?
+               char '('
+               left <- node
+               char ','
+               right <- node
+               char ')'
+               return $ Node name left right
+          leafNode =
+            do name <- nodeName
+               return $ Node name End End
+          nodeName = noneOf "(),"
+
+getEither :: (Show left) => (Either left right) -> right
+getEither e = case e of
+    Left parseError -> error $ show parseError
+    Right value -> value
 
 
 -- P68

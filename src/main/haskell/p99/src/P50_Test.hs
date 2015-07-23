@@ -225,7 +225,9 @@ p67 =
     testList "P67" [
         expectEqual treeString (toString tree),
         expectEqual (t 'a' (t_ 'b') (t_ 'c')) (fromString "a(b,c)"),
-        expectEqual tree (fromString treeString)
+        expectEqual tree (fromString treeString),
+        expectEqual (t 'a' (t_ 'b') (t_ 'c')) (parseFromString "a(b,c)"),
+        expectEqual tree (parseFromString treeString)
  ]
 
 p68 = testList "P68" [

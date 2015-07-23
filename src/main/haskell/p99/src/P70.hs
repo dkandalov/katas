@@ -97,9 +97,7 @@ parseAsLispyTree input = getEither $ parse node "" input
           internalNode =
             do char '('
                name <- nodeName
-               children <- many
-                 (do char ' '
-                     node)
+               children <- many $ (char ' ') >> node
                char ')'
                return $ MNode name children
           nodeName = noneOf "() "
