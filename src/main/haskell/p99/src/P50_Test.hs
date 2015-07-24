@@ -222,11 +222,14 @@ p67 =
                       (t 'f'
                         (t_ 'g') e)))
         treeString = "a(b(d,e),c(,f(g,)))" in
+
     testList "P67" [
         expectEqual treeString (toString tree),
         expectEqual (t 'a' (t_ 'b') (t_ 'c')) (fromString "a(b,c)"),
         expectEqual tree (fromString treeString),
         expectEqual (t 'a' (t_ 'b') (t_ 'c')) (parseFromString "a(b,c)"),
+        expectEqual (t 'a' (t_ 'b') e) (parseFromString "a(b,)"),
+        expectEqual (t 'a' e (t_ 'c')) (parseFromString "a(,c)"),
         expectEqual tree (parseFromString treeString)
  ]
 

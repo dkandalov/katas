@@ -315,15 +315,18 @@ fromString' (x:xs) = (xs, Node x End End)
 parseFromString :: String -> Tree Char
 parseFromString input = getEither $ parse node "" input
     where node :: Parser (Tree Char)
-          node = internalNode <|> leafNode
+          node = try internalNode <|> leafNode
           internalNode =
-            do name <- nodeName -- TODO need lookahead?
+            do name <- nodeName
                char '('
-               left <- node
+               left <- node <|> emptyNode
                char ','
-               right <- node
+               right <- node <|> emptyNode
                char ')'
                return $ Node name left right
+          emptyNode =
+            do lookAhead $ oneOf ",)"
+               return $ End
           leafNode =
             do name <- nodeName
                return $ Node name End End
