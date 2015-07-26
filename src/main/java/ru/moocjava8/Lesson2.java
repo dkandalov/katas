@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
@@ -92,7 +93,7 @@ public class Lesson2 {
         try (BufferedReader reader = Files.newBufferedReader(sonnetPath, UTF_8)) {
 
             Set<String> words = reader.lines()
-                    .flatMap(it -> asList(it.split("\\W")).stream())
+                    .flatMap(it -> Stream.of(it.split("\\W")))
                     .filter(it -> it.length() > 1)
                     .map(String::toLowerCase)
                     .collect(toCollection(TreeSet::new));
@@ -124,7 +125,7 @@ public class Lesson2 {
         try (BufferedReader reader = Files.newBufferedReader(sonnetPath, UTF_8)) {
 
             Set<String> words = reader.lines()
-                    .flatMap(it -> asList(it.split("\\W")).stream())
+                    .flatMap(it -> Stream.of(it.split("\\W")))
                     .filter(it -> it.length() > 1)
                     .map(String::toLowerCase)
                     .sorted((a, b) -> Integer.compare(a.length(), b.length()))
