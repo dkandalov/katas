@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -36,13 +38,29 @@ public class Lesson3 {
 //    measure("Parallel", () -> processWords(wordList, true));
     }
 
-    @Test
-    public void loadingWords() throws IOException {
+    @Test public void loadingWords() throws IOException {
         RandomWords randomWords = new RandomWords(wordsPath);
         assertThat(randomWords.allWords().size(), equalTo(235886));
 
         List<String> wordList = randomWords.createList(1000);
         assertThat(wordList.size(), equalTo(1000));
+    }
+
+    @Test public void resultOfLevenshteinDifference() {
+        assertThat(levenshteinDistance("", ""), equalTo(0));
+        assertThat(levenshteinDistance("abc", ""), equalTo(3));
+        assertThat(levenshteinDistance("", "abc"), equalTo(3));
+        assertThat(levenshteinDistance("abc", "def"), equalTo(3));
+        assertThat(levenshteinDistance("abc", "cde"), equalTo(3));
+        assertThat(levenshteinDistance("abc", "bcd"), equalTo(2));
+        assertThat(levenshteinDistance("abc", "abc"), equalTo(0));
+        assertThat(levenshteinDistance("kitten", "sitting"), equalTo(3));
+    }
+    @Test
+    public void resultOfLevenshteinDifferenceMatrix() {
+        assertThat(computeLevenshtein(asList("kitten", "sitting"), false), equalTo(new int[][]{
+
+        }));
     }
 
     /**
@@ -78,13 +96,44 @@ public class Lesson3 {
      * @param parallel Whether to run in parallel
      * @return Matrix of Levenshtein distances
      */
-    static int[][] computeLevenshtein(List<String> wordList, boolean parallel) {
-        final int LIST_SIZE = wordList.size();
-        int[][] distances = new int[LIST_SIZE][LIST_SIZE];
+    private static int[][] computeLevenshtein(List<String> wordList, boolean parallel) {
+        int listSize = wordList.size();
+        int[][] distances = new int[listSize][listSize];
 
-        // YOUR CODE HERE
+        IntStream stream = IntStream.range(0, listSize * listSize);
+        if (parallel) stream = stream.parallel();
 
+        stream.forEach(position -> {
+            int i = position / listSize;
+            int j = position % listSize;
+            distances[i][j] = Levenshtein.lev(wordList.get(i), wordList.get(j));
+        });
         return distances;
+    }
+
+    /**
+     * https://en.wikipedia.org/wiki/Levenshtein_distance
+     */
+    private static int levenshteinDistance(String word1, String word2) {
+        if (word1.isEmpty()) return word2.length();
+        if (word2.isEmpty()) return word1.length();
+        return min(
+            levenshteinDistance(initOf(word1), word2) + 1,
+            levenshteinDistance(word1, initOf(word2)) + 1,
+            levenshteinDistance(initOf(word1), initOf(word2)) + (last(word1) == last(word2) ? 0 : 1)
+        );
+    }
+
+    private static char last(String word) {
+        return word.charAt(word.length() - 1);
+    }
+
+    private static String initOf(String word) {
+        return word.substring(0, word.length() - 1);
+    }
+
+    private static int min(int i, int i1, int i2) {
+        return Math.min(i, Math.min(i1, i2));
     }
 
     /**
@@ -94,7 +143,7 @@ public class Lesson3 {
      * @param parallel Whether to run in parallel
      * @return The list processed in whatever way you want
      */
-    static List<String> processWords(List<String> wordList, boolean parallel) {
+    private static List<String> processWords(List<String> wordList, boolean parallel) {
         // YOUR CODE HERE
 
         return null;
