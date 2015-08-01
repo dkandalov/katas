@@ -3,12 +3,26 @@ module P80(
 
 import qualified Data.Map as Map
 
-data Edge a b = Edge (Node b a) (Node b a) a
-data Node a b = Node a [Edge b a]
-data Graph a b = Graph (Map.Map a [Node a b]) [Edge b a]
+-- Edge
+data Edge u t = Edge (Node t u) (Node t u) u
 
-toTuple :: Edge a b -> (b, b, a)
+toTuple :: Edge u t -> (t, t, u)
 toTuple (Edge (Node value1 _) (Node value2 _) edgeValue) = (value1, value2, edgeValue)
 
-equal :: Graph a b -> Graph a b -> Bool
+-- Node
+data Node t u = Node t [Edge u t]
+
+neighbours :: Node t u -> [Node t u]
+neighbours _ = []
+
+-- Graph
+data Graph t u = Graph (Map.Map t [Node t u]) [Edge u t]
+
+edgeTarget :: Edge u t -> Node t u -> Maybe (Node t u)
+edgeTarget _ node = Just node
+
+equal :: Graph t u -> Graph t u -> Bool
 equal g1 g2 = False
+
+addNode :: Graph a b -> a -> Graph a b
+addNode graph _ = graph
