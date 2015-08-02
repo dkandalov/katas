@@ -4,7 +4,8 @@ module P70(
     stringToMTree, toString, parseAsMTree,
     internalPathLength,
     postorder,
-    toLispyTree, fromLispyTree, parseAsLispyTree
+    toLispyTree, fromLispyTree, parseAsLispyTree,
+    getEither
 ) where
 
 import P50(GShow(..)) -- don't really need this, left it here to check importing class instances

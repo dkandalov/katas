@@ -1,3 +1,6 @@
+module P70_Test(
+    expectEqual, testList
+) where
 import Test.HUnit
 import P70
 

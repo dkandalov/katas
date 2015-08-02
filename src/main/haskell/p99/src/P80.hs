@@ -1,28 +1,52 @@
 module P80(
+    Graph(..), Edge(..),
+    graphFromString
 ) where
 
-import qualified Data.Map as Map
+import Text.ParserCombinators.Parsec
+import P70(getEither)
 
--- Edge
-data Edge u t = Edge (Node t u) (Node t u) u
 
-toTuple :: Edge u t -> (t, t, u)
-toTuple (Edge (Node value1 _) (Node value2 _) edgeValue) = (value1, value2, edgeValue)
+data Edge nodeType labelType = Edge nodeType nodeType labelType deriving(Eq, Show)
+data Graph nodeType labelType = Graph [Edge nodeType labelType] deriving(Eq, Show)
+data Digraph nodeType labelType = Digraph [Edge nodeType labelType] deriving(Eq, Show)
 
--- Node
-data Node t u = Node t [Edge u t]
+graphFromString :: String -> Graph Char ()
+graphFromString input = Graph $ getEither $ parse edgeList "" input
+    where edgeList :: Parser [Edge Char ()]
+          edgeList =
+            do char '['
+               edges <- sepBy (try edge <|> oneNodeEdge) (string ", ")
+               char ']'
+               return edges
+          edge =
+            do n1 <- nodeValue
+               char '-'
+               n2 <- nodeValue
+               return $ Edge n1 n2 ()
+          oneNodeEdge =
+            do n <- nodeValue
+               return $ Edge n n ()
+          nodeValue = noneOf "[]-,/"
 
-neighbours :: Node t u -> [Node t u]
-neighbours _ = []
 
--- Graph
-data Graph t u = Graph (Map.Map t [Node t u]) [Edge u t]
+graphFromStringLabel :: String -> Graph Char Int
+graphFromStringLabel input = Graph $ getEither $ parse edgeList "" input
+    where edgeList :: Parser [Edge Char Int]
+          edgeList =
+            do char '['
+               edges <- sepBy (try edge <|> oneNodeEdge) (string ", ")
+               char ']'
+               return edges
+          edge =
+            do n1 <- nodeValue
+               char '-'
+               n2 <- nodeValue
+               char '/'
+               -- TODO label <- integer
+               return $ Edge n1 n2 0
+          oneNodeEdge =
+            do n <- nodeValue
+               return $ Edge n n 0
+          nodeValue = noneOf "[]-,/"
 
-edgeTarget :: Edge u t -> Node t u -> Maybe (Node t u)
-edgeTarget _ node = Just node
-
-equal :: Graph t u -> Graph t u -> Bool
-equal g1 g2 = False
-
-addNode :: Graph a b -> a -> Graph a b
-addNode graph _ = graph
