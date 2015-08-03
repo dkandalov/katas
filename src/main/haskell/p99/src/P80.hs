@@ -1,6 +1,7 @@
 module P80(
-    Graph(..), Edge(..),
-    graphFromString
+    Graph(..), Digraph(..), Edge(..),
+    graphFromString, graphFromStringLabel,
+    digraphFromString
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -43,10 +44,27 @@ graphFromStringLabel input = Graph $ getEither $ parse edgeList "" input
                char '-'
                n2 <- nodeValue
                char '/'
-               -- TODO label <- integer
-               return $ Edge n1 n2 0
+               label <- many digit
+               return $ Edge n1 n2 (read label)
           oneNodeEdge =
             do n <- nodeValue
                return $ Edge n n 0
           nodeValue = noneOf "[]-,/"
 
+digraphFromString :: String -> Digraph Char ()
+digraphFromString input = Digraph $ getEither $ parse edgeList "" input
+    where edgeList :: Parser [Edge Char ()]
+          edgeList =
+            do char '['
+               edges <- sepBy (try edge <|> oneNodeEdge) (string ", ")
+               char ']'
+               return edges
+          edge =
+            do n1 <- nodeValue
+               char '-'
+               n2 <- nodeValue
+               return $ Edge n1 n2 ()
+          oneNodeEdge =
+            do n <- nodeValue
+               return $ Edge n n ()
+          nodeValue = noneOf "[]-,/"
