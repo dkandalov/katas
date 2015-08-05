@@ -33,7 +33,14 @@ p80 = testList "P80" [
             (Edge 'd' 'd' 0), (Edge 'f' 'b' 4), (Edge 'k' 'f' 5),
             (Edge 'h' 'g' 6)
         ])
-        (digraphFromStringLabel "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]")
+        (digraphFromStringLabel "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]"),
+
+    expectEqual
+        ("bcfghdk", [
+            (Edge 'b' 'c' ()), (Edge 'f' 'c' ()), (Edge 'g' 'h' ()),
+            (Edge 'f' 'b' ()), (Edge 'k' 'f' ()), (Edge 'h' 'g' ())
+        ])
+        (toTermForm $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
  ]
 
 main :: IO Counts

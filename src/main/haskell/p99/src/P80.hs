@@ -1,16 +1,28 @@
 module P80(
     Graph(..), Digraph(..), Edge(..),
     graphFromString, graphFromStringLabel,
-    digraphFromString, digraphFromStringLabel
+    digraphFromString, digraphFromStringLabel,
+    toTermForm
 ) where
 
 import Text.ParserCombinators.Parsec
 import P70(getEither)
+import Data.List
 
 
-data Edge nodeType labelType = Edge nodeType nodeType labelType deriving(Eq, Show)
-data Graph nodeType labelType = Graph [Edge nodeType labelType] deriving(Eq, Show)
-data Digraph nodeType labelType = Digraph [Edge nodeType labelType] deriving(Eq, Show)
+data Edge nodeType labelType = Edge {
+    fromNode :: nodeType,
+    toNode:: nodeType,
+    label :: labelType
+} deriving(Eq, Show)
+
+data Graph nodeType labelType = Graph {
+    edges :: [Edge nodeType labelType]
+} deriving(Eq, Show)
+
+data Digraph nodeType labelType = Digraph {
+    directedEdges :: [Edge nodeType labelType]
+} deriving(Eq, Show)
 
 graphFromString :: String -> Graph Char ()
 graphFromString input = Graph $ getEither $ parse edges "" input
@@ -19,6 +31,11 @@ graphFromString input = Graph $ getEither $ parse edges "" input
 graphFromStringLabel :: String -> Graph Char Int
 graphFromStringLabel input = Graph $ getEither $ parse edges "" input
     where edges = edgeList (try edgeWithLabel <|> oneNodeEdgeZero)
+
+toTermForm :: Eq a => Graph a b -> ([a], [Edge a b])
+toTermForm graph = (allNodes, connections)
+    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (edges graph)
+          connections = (\it -> (fromNode it) /= (toNode it)) `filter` (edges graph)
 
 digraphFromString :: String -> Digraph Char ()
 digraphFromString input = Digraph $ getEither $ parse edges "" input
