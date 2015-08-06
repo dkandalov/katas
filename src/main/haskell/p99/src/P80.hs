@@ -2,7 +2,7 @@ module P80(
     Graph(..), Digraph(..), Edge(..),
     graphFromString, graphFromStringLabel,
     digraphFromString, digraphFromStringLabel,
-    toTermForm
+    toTermForm, toAdjacentForm
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -24,6 +24,8 @@ data Digraph nodeType labelType = Digraph {
     directedEdges :: [Edge nodeType labelType]
 } deriving(Eq, Show)
 
+
+
 graphFromString :: String -> Graph Char ()
 graphFromString input = Graph $ getEither $ parse edges "" input
     where edges = edgeList (try edge <|> oneNodeEdgeUnit)
@@ -32,10 +34,21 @@ graphFromStringLabel :: String -> Graph Char Int
 graphFromStringLabel input = Graph $ getEither $ parse edges "" input
     where edges = edgeList (try edgeWithLabel <|> oneNodeEdgeZero)
 
-toTermForm :: Eq a => Graph a b -> ([a], [Edge a b])
+toTermForm :: Eq n => Graph n l -> ([n], [Edge n l])
 toTermForm graph = (allNodes, connections)
     where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (edges graph)
           connections = (\it -> (fromNode it) /= (toNode it)) `filter` (edges graph)
+
+toAdjacentForm :: Eq n => Graph n l -> [(n, [n])]
+toAdjacentForm graph = (\it -> (it, allNeighborsOf it)) `map` allNodes
+    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (edges graph)
+          allNeighborsOf node = nub $ (neighborOf node) `concatMap` (edges graph)
+          neighborOf node edge =
+            if ((fromNode edge) == node && (toNode edge) == node) then []
+            else if ((fromNode edge) == node) then [toNode edge]
+            else if ((toNode edge) == node) then [fromNode edge]
+            else []
+
 
 digraphFromString :: String -> Digraph Char ()
 digraphFromString input = Digraph $ getEither $ parse edges "" input
