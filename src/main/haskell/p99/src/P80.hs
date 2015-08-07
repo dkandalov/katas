@@ -1,13 +1,30 @@
+-- https://wiki.haskell.org/Multi-parameter_type_class
+-- https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/type-class-extensions.html
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE InstanceSigs #-}
+
 module P80(
     Graph(..), Digraph(..), Edge(..),
     graphFromString, graphFromStringLabel,
     digraphFromString, digraphFromStringLabel,
-    toTermForm, toAdjacentForm
+    toTermForm, toAdjacentForm, toTermForm2
 ) where
 
 import Text.ParserCombinators.Parsec
 import P70(getEither)
 import Data.List
+
+class GraphReader graphType nodeType labelType where
+    fromString :: String -> graphType Char labelType
+
+instance GraphReader Graph n () where
+    fromString input = Graph $ getEither $ parse edges "" input
+       where edges = edgeList (try edge <|> oneNodeEdgeUnit)
+
+instance GraphReader Digraph n () where
+    fromString input = Digraph $ getEither $ parse edges "" input
+       where edges = edgeList (try edge <|> oneNodeEdgeUnit)
 
 
 data Edge nodeType labelType = Edge {
@@ -57,6 +74,13 @@ digraphFromString input = Digraph $ getEither $ parse edges "" input
 digraphFromStringLabel :: String -> Digraph Char Int
 digraphFromStringLabel input = Digraph $ getEither $ parse edges "" input
     where edges = edgeList (try edgeWithLabel <|> oneNodeEdgeZero)
+
+toTermForm2 :: Eq n => Digraph n l -> ([n], [Edge n l])
+toTermForm2 graph = (allNodes, connections)
+    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (directedEdges graph)
+          connections = (\it -> (fromNode it) /= (toNode it)) `filter` (directedEdges graph)
+
+-- TODO toAdjacentForm2
 
 
 edgeList :: Parser (Edge Char a) -> Parser [Edge Char a]
