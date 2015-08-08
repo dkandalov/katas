@@ -40,18 +40,18 @@ p80 = testList "P80" [
             (Edge 'b' 'c' ()), (Edge 'f' 'c' ()), (Edge 'g' 'h' ()),
             (Edge 'f' 'b' ()), (Edge 'k' 'f' ()), (Edge 'h' 'g' ())
         ])
-        (toTermForm $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
+        (graphToTermForm $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
 
     expectEqual
         [('b', "cf"), ('c',"bf"), ('f',"cbk"), ('g',"h"), ('h',"g"), ('d',""), ('k',"f")]
-        (toAdjacentForm $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
+        (graphToAdjacentForm $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
 
     expectEqual
         ("bcfghdk", [
             (Edge 'b' 'c' ()), (Edge 'f' 'c' ()), (Edge 'g' 'h' ()),
             (Edge 'f' 'b' ()), (Edge 'k' 'f' ()), (Edge 'h' 'g' ())
         ])
-        (toTermForm2 $ digraphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
+        (digraphToTermForm $ digraphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
  ]
 
 main :: IO Counts

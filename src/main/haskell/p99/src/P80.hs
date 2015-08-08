@@ -8,20 +8,20 @@ module P80(
     Graph(..), Digraph(..), Edge(..),
     graphFromString, graphFromStringLabel,
     digraphFromString, digraphFromStringLabel,
-    toTermForm, toAdjacentForm, toTermForm2
+    graphToTermForm, graphToAdjacentForm,
+    digraphToTermForm, digraphToAdjacentForm
 ) where
 
 import Text.ParserCombinators.Parsec
 import P70(getEither)
 import Data.List
 
+-- not used, left here for reference
 class GraphReader graphType nodeType labelType where
     fromString :: String -> graphType Char labelType
-
 instance GraphReader Graph n () where
     fromString input = Graph $ getEither $ parse edges "" input
        where edges = edgeList (try edge <|> oneNodeEdgeUnit)
-
 instance GraphReader Digraph n () where
     fromString input = Digraph $ getEither $ parse edges "" input
        where edges = edgeList (try edge <|> oneNodeEdgeUnit)
@@ -44,44 +44,53 @@ data Digraph nodeType labelType = Digraph {
 
 
 graphFromString :: String -> Graph Char ()
-graphFromString input = Graph $ getEither $ parse edges "" input
-    where edges = edgeList (try edge <|> oneNodeEdgeUnit)
+graphFromString input = Graph $ getEither $ parseEdges input
 
 graphFromStringLabel :: String -> Graph Char Int
-graphFromStringLabel input = Graph $ getEither $ parse edges "" input
+graphFromStringLabel input = Graph $ getEither $ parseLabeledEdges input
+
+graphToTermForm :: Eq n => Graph n l -> ([n], [Edge n l])
+graphToTermForm graph = toTermForm' (edges graph)
+
+graphToAdjacentForm :: Eq n => Graph n l -> [(n, [n])]
+graphToAdjacentForm graph = toAdjacentForm (edges graph)
+
+digraphFromString :: String -> Digraph Char ()
+digraphFromString input = Digraph $ getEither $ parseEdges input
+
+digraphFromStringLabel :: String -> Digraph Char Int
+digraphFromStringLabel input = Digraph $ getEither $ parseLabeledEdges input
+
+digraphToTermForm :: Eq n => Digraph n l -> ([n], [Edge n l])
+digraphToTermForm graph = toTermForm' (directedEdges graph)
+
+digraphToAdjacentForm :: Eq n => Digraph n l -> [(n, [n])]
+digraphToAdjacentForm graph = toAdjacentForm (directedEdges graph)
+
+
+
+parseEdges :: String -> Either ParseError [Edge Char ()]
+parseEdges input = parse edges "" input
+    where edges = edgeList (try edge <|> oneNodeEdgeUnit)
+
+parseLabeledEdges :: String -> Either ParseError [Edge Char Int]
+parseLabeledEdges input = parse edges "" input
     where edges = edgeList (try edgeWithLabel <|> oneNodeEdgeZero)
 
-toTermForm :: Eq n => Graph n l -> ([n], [Edge n l])
-toTermForm graph = (allNodes, connections)
-    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (edges graph)
-          connections = (\it -> (fromNode it) /= (toNode it)) `filter` (edges graph)
+toTermForm' :: Eq n => [Edge n l] -> ([n], [Edge n l])
+toTermForm' edges = (allNodes, connections)
+    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` edges
+          connections = (\it -> (fromNode it) /= (toNode it)) `filter` edges
 
-toAdjacentForm :: Eq n => Graph n l -> [(n, [n])]
-toAdjacentForm graph = (\it -> (it, allNeighborsOf it)) `map` allNodes
-    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (edges graph)
-          allNeighborsOf node = nub $ (neighborOf node) `concatMap` (edges graph)
+toAdjacentForm :: Eq n => [Edge n l] -> [(n, [n])]
+toAdjacentForm edges = (\it -> (it, allNeighborsOf it)) `map` allNodes
+    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` edges
+          allNeighborsOf node = nub $ (neighborOf node) `concatMap` edges
           neighborOf node edge =
             if ((fromNode edge) == node && (toNode edge) == node) then []
             else if ((fromNode edge) == node) then [toNode edge]
             else if ((toNode edge) == node) then [fromNode edge]
             else []
-
-
-digraphFromString :: String -> Digraph Char ()
-digraphFromString input = Digraph $ getEither $ parse edges "" input
-    where edges = edgeList (try edge <|> oneNodeEdgeUnit)
-
-digraphFromStringLabel :: String -> Digraph Char Int
-digraphFromStringLabel input = Digraph $ getEither $ parse edges "" input
-    where edges = edgeList (try edgeWithLabel <|> oneNodeEdgeZero)
-
-toTermForm2 :: Eq n => Digraph n l -> ([n], [Edge n l])
-toTermForm2 graph = (allNodes, connections)
-    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` (directedEdges graph)
-          connections = (\it -> (fromNode it) /= (toNode it)) `filter` (directedEdges graph)
-
--- TODO toAdjacentForm2
-
 
 edgeList :: Parser (Edge Char a) -> Parser [Edge Char a]
 edgeList element = do
