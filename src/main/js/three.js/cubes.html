@@ -13,6 +13,8 @@
         }
     </style>
     <script type="text/javascript" src="three.js"></script>
+    <script type="text/javascript" src="d3.v3.min.js"></script>
+    <script type="text/javascript" src="underscore-min.js"></script>
 </head>
 <body>
 
@@ -100,11 +102,23 @@
     var mousePosition = new THREE.Vector2();
     var intersected;
     var theta = 0;
+    var stats;
 
-    init(container);
+    var data = {
+        "name": "root",
+        "value": 90,
+        "height": 10,
+        "children": [
+            {"name": "a", "value": 10, "height": 30},
+            {"name": "b", "value": 20, "height": 50},
+            {"name": "c", "value": 60, "height": 20}
+        ]
+    };
+
+    init(container, data);
     animate();
 
-    function init(container) {
+    function init(container, rootNode) {
         document.body.appendChild(container);
 
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
@@ -114,25 +128,52 @@
         light.position.set(1, 1, 1).normalize();
         scene.add(light);
 
-        var geometry = new THREE.BoxGeometry(20, 20, 20);
 
-        for (var i = 0; i < 200; i++) {
+        var width = 800;
+        var height = 800;
+        var pad = 20;
+        var treemap = d3.layout.treemap()
+                .size([width, height])
+                .padding(pad)
+                .round(true)
+                .value(_.property("value"));
+        treemap.nodes(rootNode);
+
+        var createNodeObjects = function(node, z) {
+            console.log(node);
+            console.log(node.name);
+
+            var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height);
             var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffffff}));
+            object.position.x = node.x;
+            object.position.y = node.y;
+            object.position.z = z;
+            scene.add(object);
 
+            if (node.children !== undefined) {
+                node.children.forEach(function(child) {
+                    createNodeObjects(child, z + node.height); // TODO scale
+                })
+            }
+        };
+        createNodeObjects(rootNode, 0);
+
+/*
+        for (var i = 0; i < 200; i++) {
+            var geometry = new THREE.BoxGeometry(20, 20, 20);
+            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffffff}));
             object.position.x = Math.random() * 800 - 400;
             object.position.y = Math.random() * 800 - 400;
             object.position.z = Math.random() * 800 - 400;
-
             object.rotation.x = Math.random() * 2 * Math.PI;
             object.rotation.y = Math.random() * 2 * Math.PI;
             object.rotation.z = Math.random() * 2 * Math.PI;
-
             object.scale.x = Math.random() + 0.5;
             object.scale.y = Math.random() + 0.5;
             object.scale.z = Math.random() + 0.5;
-
             scene.add(object);
         }
+*/
 
         raycaster = new THREE.Raycaster();
 
@@ -143,7 +184,7 @@
         renderer.sortObjects = false;
         container.appendChild(renderer.domElement);
 
-        var stats = new Stats();
+        stats = new Stats();
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.top = '0px';
         container.appendChild(stats.domElement);
