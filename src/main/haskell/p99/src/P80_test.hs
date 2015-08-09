@@ -25,7 +25,7 @@ p80 = testList "P80" [
             (Edge 'd' 'd' ()), (Edge 'f' 'b' ()), (Edge 'k' 'f' ()),
             (Edge 'h' 'g' ())
         ])
-        (digraphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
+        (digraphFromString "[b>c, f>c, g>h, d, f>b, k>f, h>g]"),
 
     expectEqual
         (Digraph [
@@ -33,7 +33,7 @@ p80 = testList "P80" [
             (Edge 'd' 'd' 0), (Edge 'f' 'b' 4), (Edge 'k' 'f' 5),
             (Edge 'h' 'g' 6)
         ])
-        (digraphFromStringLabel "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6]"),
+        (digraphFromStringLabel "[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6]"),
 
     expectEqual
         ("bcfghdk", [
@@ -51,8 +51,18 @@ p80 = testList "P80" [
             (Edge 'b' 'c' ()), (Edge 'f' 'c' ()), (Edge 'g' 'h' ()),
             (Edge 'f' 'b' ()), (Edge 'k' 'f' ()), (Edge 'h' 'g' ())
         ])
-        (digraphToTermForm $ digraphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
+        (digraphToTermForm $ digraphFromString "[b>c, f>c, g>h, d, f>b, k>f, h>g]"),
+
+    expectEqual
+        [('b', "cf"), ('c',"bf"), ('f',"cbk"), ('g',"h"), ('h',"g"), ('d',""), ('k',"f")]
+        (digraphToAdjacentForm $ digraphFromString "[b>c, f>c, g>h, d, f>b, k>f, h>g]")
+ ]
+
+p81 = testList "P81" [
+    expectEqual
+        ["pq", "pmq"]
+        (findPaths 'p' 'q' $ digraphFromStringLabel "[p>q/9, m>q/7, k, p>m/5]")
  ]
 
 main :: IO Counts
-main = runTestTT $ TestList [p80]
+main = runTestTT $ TestList [p80, p81]
