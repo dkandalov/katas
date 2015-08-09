@@ -23,14 +23,18 @@ class XO {
     def myPlayer = board.count("X") > board.count("0") ? "0" : "X"
     def otherPlayer = Game.other(myPlayer)
 
-    def immediateWin = tree.children.find {it.move.winner == myPlayer}
-    if (immediateWin != null) return immediateWin.move.move
+    def winPath = tree.find { it.move.winner == myPlayer }
+    def loosePath = tree.find { it.move.winner == otherPlayer }
+    if (winPath.size() == loosePath.size())
+
+    def immediateWin = tree.children.find({ it.move.winner == myPlayer })
+    // doesn't compile anymore ----> if (immediateWin != null) return immediateWin.move.move
 
     def winPaths = tree.children.collect{ child -> child.find{ it.move.winner == myPlayer }}
     def loosePaths = tree.children.collect{ child -> child.find{ it.move.winner == otherPlayer }}
     def valueOfPath = { it.empty ? 1000000 : it.size() }
     def pathPairsByValue = [loosePaths, winPaths].transpose().groupBy{ valueOfPath(it[0]) - valueOfPath(it[1]) }
-    def bestPathPairs = pathPairsByValue[pathPairsByValue.keySet().max()]
+    def bestPathPairs = pathPairsByValue[pathPairsByValue.entrySet().max{ entry ->  }]
 
     bestPathPairs.max{ pathPair ->
       movesScore[myPlayer][pathPair.first().first().board] - movesScore[otherPlayer][pathPair.first().first().board]
