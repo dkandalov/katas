@@ -61,8 +61,20 @@ p80 = testList "P80" [
 p81 = testList "P81" [
     expectEqual
         ["pq", "pmq"]
-        (findPaths 'p' 'q' $ digraphFromStringLabel "[p>q/9, m>q/7, k, p>m/5]")
+        (graphFindPaths 'p' 'q' $ graphFromStringLabel "[p-q/9, m-q/7, k, p-m/5]"),
+    expectEqual
+        ["pq", "pmq"]
+        (digraphFindPaths 'p' 'q' $ digraphFromStringLabel "[p>q/9, m>q/7, k, p>m/5]"),
+    expectEqual
+        []
+        (digraphFindPaths 'p' 'k' $ digraphFromStringLabel "[p>q/9, m>q/7, k, p>m/5]")
+ ]
+
+p82 = testList "P82" [
+    expectEqual
+        ["fcbf", "fbcf"]
+        (graphFindCycles 'f' $ graphFromStringLabel "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
  ]
 
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81]
+main = runTestTT $ TestList [p80, p81, p82]

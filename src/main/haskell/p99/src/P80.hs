@@ -10,7 +10,8 @@ module P80(
     digraphFromString, digraphFromStringLabel,
     graphToTermForm, graphToAdjacentForm,
     digraphToTermForm, digraphToAdjacentForm,
-    findPaths
+    graphFindPaths, digraphFindPaths,
+    graphFindCycles
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -130,16 +131,37 @@ nodeValue = noneOf "[]-,/"
 
 
 -- P81
-findPaths :: Eq n => n -> n -> Digraph n l -> [[n]]
-findPaths from to graph = findPaths' from to graph []
+graphFindPaths :: Eq n => n -> n -> Graph n l -> [[n]]
+graphFindPaths from to graph = findPaths' from to graph []
 
-findPaths' :: Eq n => n -> n -> Digraph n l -> [n] -> [[n]]
+digraphFindPaths :: Eq n => n -> n -> Digraph n l -> [[n]]
+digraphFindPaths from to graph = findPaths'' from to graph []
+
+-- TODO refactor findPaths' and findPaths''
+findPaths' :: Eq n => n -> n -> Graph n l -> [n] -> [[n]]
 findPaths' from to graph path =
     if (from == to && not (null path)) then [path ++ [to]]
     else if (elem from path) then [[]]
-    else (\node -> findPaths' node to graph (path ++ [from])) `concatMap` (neighborsOf from)
+    else (\it -> not $ null it) `filter` ((\node -> findPaths' node to graph (path ++ [from])) `concatMap` (neighborsOf from))
+    where neighborsOf node =
+            (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
+            ((\edge ->
+                (fromNode edge) /= (toNode edge) &&
+                (node == fromNode edge || node == toNode edge)
+             ) `filter`
+            (edges graph))
+
+findPaths'' :: Eq n => n -> n -> Digraph n l -> [n] -> [[n]]
+findPaths'' from to graph path =
+    if (from == to && not (null path)) then [path ++ [to]]
+    else if (elem from path) then [[]]
+    else (\node -> findPaths'' node to graph (path ++ [from])) `concatMap` (neighborsOf from)
     where neighborsOf node =
             (\edge -> toNode edge) `map`
-            ((\edge -> from == (fromNode edge) && (fromNode edge) /= (toNode edge)) `filter`
+            ((\edge -> node == (fromNode edge) && (fromNode edge) /= (toNode edge)) `filter`
             (directedEdges graph))
 
+
+-- P82
+graphFindCycles :: n -> Graph n l -> [[n]]
+graphFindCycles from graph = []
