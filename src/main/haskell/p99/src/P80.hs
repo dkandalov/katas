@@ -163,5 +163,18 @@ findPaths'' from to graph path =
 
 
 -- P82
-graphFindCycles :: n -> Graph n l -> [[n]]
-graphFindCycles from graph = []
+graphFindCycles :: Eq n => n -> Graph n l -> [[n]]
+graphFindCycles from graph = graphFindCycles' from graph []
+
+graphFindCycles' :: Eq n => n -> Graph n l -> [n] -> [[n]]
+graphFindCycles' from graph path =
+    if (length path > 2 && from == head path) then [path ++ [from]]
+    else if (length path > 0 && elem from path) then []
+    else (\node -> graphFindCycles' node graph (path ++ [from])) `concatMap` (neighborsOf from)
+    where neighborsOf node =
+            (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
+            ((\edge ->
+                (fromNode edge) /= (toNode edge) &&
+                (node == fromNode edge || node == toNode edge)
+             ) `filter`
+            (edges graph))
