@@ -11,7 +11,7 @@ module P80(
     graphToTermForm, graphToAdjacentForm,
     digraphToTermForm, digraphToAdjacentForm,
     graphFindPaths, digraphFindPaths,
-    graphFindCycles
+    graphFindCycles, digraphFindCycles
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -142,24 +142,13 @@ findPaths' :: Eq n => n -> n -> Graph n l -> [n] -> [[n]]
 findPaths' from to graph path =
     if (from == to && not (null path)) then [path ++ [to]]
     else if (elem from path) then [[]]
-    else (\it -> not $ null it) `filter` ((\node -> findPaths' node to graph (path ++ [from])) `concatMap` (neighborsOf from))
-    where neighborsOf node =
-            (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
-            ((\edge ->
-                (fromNode edge) /= (toNode edge) &&
-                (node == fromNode edge || node == toNode edge)
-             ) `filter`
-            (edges graph))
+    else (\it -> not $ null it) `filter` ((\node -> findPaths' node to graph (path ++ [from])) `concatMap` (graphNeighborsOf from graph))
 
 findPaths'' :: Eq n => n -> n -> Digraph n l -> [n] -> [[n]]
 findPaths'' from to graph path =
     if (from == to && not (null path)) then [path ++ [to]]
     else if (elem from path) then [[]]
-    else (\node -> findPaths'' node to graph (path ++ [from])) `concatMap` (neighborsOf from)
-    where neighborsOf node =
-            (\edge -> toNode edge) `map`
-            ((\edge -> node == (fromNode edge) && (fromNode edge) /= (toNode edge)) `filter`
-            (directedEdges graph))
+    else (\node -> findPaths'' node to graph (path ++ [from])) `concatMap` (digraphNeighborsOf from graph)
 
 
 -- P82
@@ -170,11 +159,30 @@ graphFindCycles' :: Eq n => n -> Graph n l -> [n] -> [[n]]
 graphFindCycles' from graph path =
     if (length path > 2 && from == head path) then [path ++ [from]]
     else if (length path > 0 && elem from path) then []
-    else (\node -> graphFindCycles' node graph (path ++ [from])) `concatMap` (neighborsOf from)
-    where neighborsOf node =
-            (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
-            ((\edge ->
-                (fromNode edge) /= (toNode edge) &&
-                (node == fromNode edge || node == toNode edge)
-             ) `filter`
-            (edges graph))
+    else (\node -> graphFindCycles' node graph (path ++ [from])) `concatMap` (graphNeighborsOf from graph)
+
+
+digraphFindCycles :: Eq n => n -> Digraph n l -> [[n]]
+digraphFindCycles from graph = digraphFindCycles' from graph []
+
+digraphFindCycles' :: Eq n => n -> Digraph n l -> [n] -> [[n]]
+digraphFindCycles' from graph path =
+    if (length path > 2 && from == head path) then [path ++ [from]]
+    else if (length path > 0 && elem from path) then []
+    else (\node -> digraphFindCycles' node graph (path ++ [from])) `concatMap` (digraphNeighborsOf from graph)
+
+
+graphNeighborsOf :: Eq n => n -> Graph n l -> [n]
+graphNeighborsOf node graph =
+    (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
+    ((\edge ->
+        (fromNode edge) /= (toNode edge) &&
+        (node == fromNode edge || node == toNode edge)
+    ) `filter`
+    (edges graph))
+
+digraphNeighborsOf :: Eq n => n -> Digraph n l -> [n]
+digraphNeighborsOf node graph =
+    (\edge -> toNode edge) `map`
+    ((\edge -> node == (fromNode edge) && (fromNode edge) /= (toNode edge)) `filter`
+    (directedEdges graph))

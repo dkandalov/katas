@@ -73,7 +73,11 @@ p81 = testList "P81" [
 p82 = testList "P82" [
     expectEqual
         ["fcbf", "fbcf"]
-        (graphFindCycles 'f' $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]")
+        (graphFindCycles 'f' $ graphFromString "[b-c, f-c, g-h, d, f-b, k-f, h-g]"),
+    expectEqual
+        ["abca"]
+        (digraphFindCycles 'a' $ digraphFromString "[a>b, b>c, c>a, d]")
+
  ]
 
 main :: IO Counts
