@@ -11,7 +11,8 @@ module P80(
     graphToTermForm, graphToAdjacentForm,
     digraphToTermForm, digraphToAdjacentForm,
     graphFindPaths, digraphFindPaths,
-    graphFindCycles, digraphFindCycles
+    graphFindCycles, digraphFindCycles,
+    spanningTrees
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -39,11 +40,15 @@ data Edge nodeType labelType = Edge {
 
 data Graph nodeType labelType = Graph {
     edges :: [Edge nodeType labelType]
-} deriving(Eq, Show)
+} deriving (Eq)
 
 data Digraph nodeType labelType = Digraph {
     directedEdges :: [Edge nodeType labelType]
-} deriving(Eq, Show)
+} deriving (Eq, Show)
+
+instance Show (Graph nodeType labelType) where
+    show graph = "[" ++ (intercalate ", " edges) ++ "]"
+        where edges = [] -- TODO
 
 
 -- P80
@@ -186,3 +191,11 @@ digraphNeighborsOf node graph =
     (\edge -> toNode edge) `map`
     ((\edge -> node == (fromNode edge) && (fromNode edge) /= (toNode edge)) `filter`
     (directedEdges graph))
+
+
+-- P83
+spanningTrees :: Eq n => Graph n l -> [Graph n l]
+spanningTrees graph = spanningTrees' graph []
+
+spanningTrees' :: Eq n => Graph n l -> [Edge n l] -> [Graph n l]
+spanningTrees' graph path = []

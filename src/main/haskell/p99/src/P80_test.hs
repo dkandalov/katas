@@ -77,8 +77,13 @@ p82 = testList "P82" [
     expectEqual
         ["abca"]
         (digraphFindCycles 'a' $ digraphFromString "[a>b, b>c, c>a, d]")
+ ]
 
+p83 = testList "P83" [
+    expectEqual
+        (graphFromString `map` ["[a-b, b-c]", "[a-c, b-c]", "[a-b, a-c]"])
+        (spanningTrees $ graphFromString "[a-b, b-c, a-c]")
  ]
 
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82]
+main = runTestTT $ TestList [p80, p81, p82, p83]
