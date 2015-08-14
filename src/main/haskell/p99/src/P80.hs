@@ -87,19 +87,20 @@ parseLabeledEdges nodeSeparator input = parse edges "" input
     where edges = edgeList (try (edgeWithLabel nodeSeparator) <|> oneNodeEdgeZero)
 
 toTermForm' :: Eq n => [Edge n l] -> ([n], [Edge n l])
-toTermForm' edges = (allNodes, connections)
-    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` edges
-          connections = (\it -> (fromNode it) /= (toNode it)) `filter` edges
+toTermForm' edges = (allNodes edges, connections)
+    where connections = (\it -> (fromNode it) /= (toNode it)) `filter` edges
 
 toAdjacentForm :: Eq n => [Edge n l] -> [(n, [n])]
-toAdjacentForm edges = (\it -> (it, allNeighborsOf it)) `map` allNodes
-    where allNodes = nub $ (\it -> [fromNode it, toNode it]) `concatMap` edges
-          allNeighborsOf node = nub $ (neighborOf node) `concatMap` edges
+toAdjacentForm edges = (\it -> (it, allNeighborsOf it)) `map` (allNodes edges)
+    where allNeighborsOf node = nub $ (neighborOf node) `concatMap` edges
           neighborOf node edge =
             if ((fromNode edge) == node && (toNode edge) == node) then []
             else if ((fromNode edge) == node) then [toNode edge]
             else if ((toNode edge) == node) then [fromNode edge]
             else []
+
+allNodes :: Eq n => [Edge n l] -> [n]
+allNodes edges = nub $ (\it -> [fromNode it, toNode it]) `concatMap` edges
 
 edgeList :: Parser (Edge Char a) -> Parser [Edge Char a]
 edgeList element = do
@@ -198,4 +199,9 @@ spanningTrees :: Eq n => Graph n l -> [Graph n l]
 spanningTrees graph = spanningTrees' graph []
 
 spanningTrees' :: Eq n => Graph n l -> [Edge n l] -> [Graph n l]
-spanningTrees' graph path = []
+spanningTrees' graph path = (\node -> spanningTreesOf node []) `concatMap` (allNodes $ edges graph) -- TODO make unique
+    where spanningTreesOf node nodePath = []
+
+
+
+
