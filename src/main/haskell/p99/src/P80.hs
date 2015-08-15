@@ -17,6 +17,7 @@ module P80(
 
 import Text.ParserCombinators.Parsec
 import P70(getEither)
+import P50(GShow(..))
 import Data.List
 
 {-
@@ -46,9 +47,9 @@ data Digraph nodeType labelType = Digraph {
     directedEdges :: [Edge nodeType labelType]
 } deriving (Eq, Show)
 
-instance Show (Graph nodeType labelType) where
-    show graph = "[" ++ (intercalate ", " edges) ++ "]"
-        where edges = [] -- TODO
+instance (GShow nodeType, GShow labelType) => Show (Graph nodeType labelType) where
+    show graph = "[" ++ (intercalate ", " stringEdges) ++ "]"
+        where stringEdges = (\edge -> (gShow (fromNode edge)) ++ "-" ++ (gShow (toNode edge))) `map` (edges graph)
 
 
 -- P80
@@ -195,13 +196,25 @@ digraphNeighborsOf node graph =
 
 
 -- P83
-spanningTrees :: Eq n => Graph n l -> [Graph n l]
+spanningTrees :: (Eq n, Eq l) => Graph n l -> [Graph n l]
 spanningTrees graph = spanningTrees' graph []
 
-spanningTrees' :: Eq n => Graph n l -> [Edge n l] -> [Graph n l]
-spanningTrees' graph path = (\node -> spanningTreesOf node []) `concatMap` (allNodes $ edges graph) -- TODO make unique
-    where spanningTreesOf node nodePath = []
+spanningTrees' :: (Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
+spanningTrees' graph path = (\path -> Graph path) `map`
+                            (unique $
+                            (\node -> spanningTreesFrom node (edges graph) []) `concatMap`
+                            (allNodes $ edges graph))
+    where unique spanningTrees = spanningTrees -- TODO
 
+
+spanningTreesFrom :: (Eq n, Eq l) => n -> [Edge n l] -> [Edge n l] -> [[Edge n l]]
+spanningTreesFrom node edgeList path =
+    (\edge -> spanningTreesFrom (other node edge) (Data.List.delete edge edgeList) (path ++ [edge]))
+     `concatMap` ((\edge -> elem edge path) `filter` (edgesWith node edgeList))
+    where edgesWith :: Eq n => n -> [Edge n l] -> [Edge n l]
+          edgesWith node edgeList = (\it -> fromNode it == node || toNode it == node) `filter` edgeList
+          other :: Eq n => n -> Edge n l -> n
+          other node edge = if (fromNode edge == node) then toNode edge else fromNode edge
 
 
 

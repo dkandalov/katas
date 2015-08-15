@@ -292,6 +292,8 @@ instance GShow Char where
    gShow it = gShow [it]
 instance GShow String where
    gShow = id
+instance GShow Int
+instance GShow ()
 
 toString :: (GShow a) => Tree a -> String
 toString End = ""
