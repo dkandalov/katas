@@ -207,14 +207,15 @@ spanningTrees' graph path = (\path -> Graph path) `map`
     where unique spanningTrees = spanningTrees -- TODO
 
 
-spanningTreesFrom :: (Eq n, Eq l) => n -> [Edge n l] -> [Edge n l] -> [[Edge n l]]
-spanningTreesFrom node edgeList path =
-    (\edge -> spanningTreesFrom (other node edge) (Data.List.delete edge edgeList) (path ++ [edge]))
-     `concatMap` ((\edge -> elem edge path) `filter` (edgesWith node edgeList))
-    where edgesWith :: Eq n => n -> [Edge n l] -> [Edge n l]
-          edgesWith node edgeList = (\it -> fromNode it == node || toNode it == node) `filter` edgeList
-          other :: Eq n => n -> Edge n l -> n
+spanningTreesFrom :: (Eq n, Eq l) => n -> [Edge n l] -> [n] -> [[Edge n l]]
+spanningTreesFrom node edgeList visitedNodes =
+    if (elem node visitedNodes) then []
+    else if (null edgeList) then [[]]
+    else result
+    where result = subResult `concatMap` edgesWithNode
+          subResult edge =
+            (spanningTreesFrom node (Data.List.delete edge edgeList) visitedNodes) ++
+            (\it -> it ++ [edge]) `map` (spanningTreesFrom (other node edge) (Data.List.delete edge edgeList) (node : visitedNodes))
+          edgesWithNode = (\it -> fromNode it == node || toNode it == node) `filter` edgeList
           other node edge = if (fromNode edge == node) then toNode edge else fromNode edge
-
-
 
