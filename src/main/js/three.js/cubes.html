@@ -100,9 +100,13 @@
     var container = document.createElement('div');
     var camera, scene, raycaster, renderer;
     var mousePosition = new THREE.Vector2();
-    var intersected;
+    var intersected = null;
     var theta = 0;
     var stats;
+
+    var width = 1800;
+    var height = 1800;
+    var pad = 20;
 
     var data = {
         "name": "root",
@@ -122,16 +126,18 @@
         document.body.appendChild(container);
 
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.x = 0;
+        camera.position.y = 0;
+        camera.position.z = 2000;
         scene = new THREE.Scene();
+        scene.position.x = 0;
+        scene.position.y = 0;
+        scene.position.z = 0;
 
         var light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(1, 1, 1).normalize();
         scene.add(light);
 
-
-        var width = 800;
-        var height = 800;
-        var pad = 20;
         var treemap = d3.layout.treemap()
                 .size([width, height])
                 .padding(pad)
@@ -140,14 +146,12 @@
         treemap.nodes(rootNode);
 
         var createNodeObjects = function(node, z) {
-            console.log(node);
-            console.log(node.name);
-
             var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height);
             var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffffff}));
-            object.position.x = node.x;
-            object.position.y = node.y;
+            object.position.x = node.x + (node.dx / 2);
+            object.position.y = node.y + (node.dy / 2);
             object.position.z = z;
+            object.node = node;
             scene.add(object);
 
             if (node.children !== undefined) {
@@ -157,23 +161,6 @@
             }
         };
         createNodeObjects(rootNode, 0);
-
-/*
-        for (var i = 0; i < 200; i++) {
-            var geometry = new THREE.BoxGeometry(20, 20, 20);
-            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffffff}));
-            object.position.x = Math.random() * 800 - 400;
-            object.position.y = Math.random() * 800 - 400;
-            object.position.z = Math.random() * 800 - 400;
-            object.rotation.x = Math.random() * 2 * Math.PI;
-            object.rotation.y = Math.random() * 2 * Math.PI;
-            object.rotation.z = Math.random() * 2 * Math.PI;
-            object.scale.x = Math.random() + 0.5;
-            object.scale.y = Math.random() + 0.5;
-            object.scale.z = Math.random() + 0.5;
-            scene.add(object);
-        }
-*/
 
         raycaster = new THREE.Raycaster();
 
@@ -190,7 +177,6 @@
         container.appendChild(stats.domElement);
 
         document.addEventListener('mousemove', onDocumentMouseMove, false);
-
         window.addEventListener('resize', onWindowResize, false);
     }
 
@@ -207,35 +193,60 @@
         mousePosition.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }
 
+//    function onDocumentMouseMove(event) {
+//        var windowHalfX = window.innerWidth / 2;
+//        var windowHalfY = window.innerHeight / 2;
+//        mousePosition.x = event.clientX - windowHalfX;
+//        mousePosition.y = event.clientY - windowHalfY;
+//    }
+
+    /*function onDocumentTouchStart(event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+            mouseX = event.touches[0].pageX - windowHalfX;
+            mouseY = event.touches[0].pageY - windowHalfY;
+        }
+    }
+
+    function onDocumentTouchMove(event) {
+        if (event.touches.length == 1) {
+            event.preventDefault();
+            mouseX = event.touches[0].pageX - windowHalfX;
+            mouseY = event.touches[0].pageY - windowHalfY;
+        }
+    }*/
+
     function animate() {
-//        requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
         render();
         stats.update();
     }
 
     function render() {
-//        theta += 0.1;
-
         var radius = 100;
-        camera.position.x = radius * Math.sin(THREE.Math.degToRad(theta));
-        camera.position.y = radius * Math.sin(THREE.Math.degToRad(theta));
-        camera.position.z = radius * Math.cos(THREE.Math.degToRad(theta));
-        camera.lookAt(scene.position);
+//        camera.position.x = radius * Math.sin(THREE.Math.degToRad(theta));
+//        camera.position.y = radius * Math.sin(THREE.Math.degToRad(theta));
+//        camera.position.x += (mousePosition.x * window.innerWidth - camera.position.x) * .05;
+//        camera.position.y += (-mousePosition.y * window.innerHeight + 200 - camera.position.y) * .05;
+//        camera.position.z = 700;
+        camera.lookAt(new THREE.Vector3(width / 2, height / 2, 0));
 
         camera.updateMatrixWorld();
 
         raycaster.setFromCamera(mousePosition, camera);
         var intersects = raycaster.intersectObjects(scene.children);
+        var newIntersected = intersects.length > 0 ? intersects[0].object : null;
 
-        if (intersects.length > 0) {
-            if (intersected != intersects[0].object) {
-                if (intersected) intersected.material.emissive.setHex(intersected.currentHex);
-                intersected = intersects[0].object;
+        if (newIntersected !== null) {
+            if (intersected !== newIntersected) {
+                if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
+                intersected = newIntersected;
                 intersected.currentHex = intersected.material.emissive.getHex();
                 intersected.material.emissive.setHex(0xff0000);
+                console.log(intersected.node.name);
             }
         } else {
-            if (intersected) intersected.material.emissive.setHex(intersected.currentHex);
+            if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
             intersected = null;
         }
 
