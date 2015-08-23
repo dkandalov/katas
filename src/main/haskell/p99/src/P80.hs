@@ -196,26 +196,29 @@ digraphNeighborsOf node graph =
 
 
 -- P83
-spanningTrees :: (Eq n, Eq l) => Graph n l -> [Graph n l]
+spanningTrees :: (Ord n, Eq n, Eq l) => Graph n l -> [Graph n l]
 spanningTrees graph = spanningTrees' graph []
 
-spanningTrees' :: (Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
+spanningTrees' :: (Ord n, Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
 spanningTrees' graph path = (\path -> Graph path) `map`
                             (unique $
                             (\node -> spanningTreesFrom node (edges graph) []) `concatMap`
                             (allNodes $ edges graph))
-    where unique spanningTrees = spanningTrees -- TODO
+    where unique spanningTrees = nub $ ordered `map` spanningTrees
+          ordered edges = Data.List.sortBy compareEdges edges
+          compareEdges edge1 edge2 =
+            case (compare (fromNode edge1) (fromNode edge2)) of
+                EQ -> compare (toNode edge1) (toNode edge2)
+                result@_ -> result
 
-
-spanningTreesFrom :: (Eq n, Eq l) => n -> [Edge n l] -> [n] -> [[Edge n l]]
+spanningTreesFrom :: (Ord n, Eq n, Eq l) => n -> [Edge n l] -> [n] -> [[Edge n l]]
 spanningTreesFrom node edgeList visitedNodes =
-    if (elem node visitedNodes) then []
+    if (elem node visitedNodes) then [[]]
     else if (null edgeList) then [[]]
     else result
     where result = subResult `concatMap` edgesWithNode
           subResult edge =
-            (spanningTreesFrom node (Data.List.delete edge edgeList) visitedNodes) ++
-            (\it -> it ++ [edge]) `map` (spanningTreesFrom (other node edge) (Data.List.delete edge edgeList) (node : visitedNodes))
-          edgesWithNode = (\it -> fromNode it == node || toNode it == node) `filter` edgeList
+            (\it -> it ++ [edge]) `map` (spanningTreesFrom (other node edge) ((\edge -> not (hasNode node edge)) `filter` edgeList) (node : visitedNodes))
+          edgesWithNode = (hasNode node) `filter` edgeList
+          hasNode node edge = fromNode edge == node || toNode edge == node
           other node edge = if (fromNode edge == node) then toNode edge else fromNode edge
-

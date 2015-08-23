@@ -83,6 +83,9 @@ p83 = testList "P83" [
     expectEqual
         (graphFromString `map` ["[a-b, b-c]", "[a-c, b-c]", "[a-b, a-c]"])
         (spanningTrees $ graphFromString "[a-b, b-c, a-c]")
+--    expectEqual
+--        []
+--        (spanningTrees $ graphFromString "[a-b, b-c, a-c, d]")
  ]
 
 main :: IO Counts
