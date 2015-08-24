@@ -3,6 +3,8 @@ package ru._99_problems
 import org.scalatest.Matchers
 import org.junit.Test
 
+import scala.collection.immutable.ListMap
+
 
 class P7 extends Matchers {
 	import P7._
@@ -116,7 +118,7 @@ class P7 extends Matchers {
 	@Test def `P82 (*) Cycle from a given node.`() {
 		Graph.fromString("[a-b, b-c]").findCycles('a') should equal(List())
 		Graph.fromString("[b-c, f-c, g-h, d, f-b, k-f, h-g]").findCycles('f') should equal(List(
-			List('f', 'c', 'b', 'f'), List('f', 'b', 'c', 'f')
+			List('f', 'b', 'c', 'f'), List('f', 'c', 'b', 'f')
 		))
 
 		Graph.fromString("[a-b, b-c]").findAllCycles() should equal(List())
@@ -127,13 +129,16 @@ class P7 extends Matchers {
 			List('c', 'b', 'a', 'c')
 		))
 		Graph.fromString("[a-b, b-c, c-a, x-y, y-z, z-x]").findAllUniqueCycles() should equal(List(
-			List('x', 'z', 'y', 'x'), List('a', 'c', 'b', 'a')
+			List('z', 'x', 'y', 'z'), List('c', 'b', 'a', 'c')
 		))
 	}
 
 	@Test def `P83 (**) Construct all spanning trees.`() {
 		import Graph._
 		fromString("[a-b, b-c, a-c]").spanningTrees should equal(List(
+			fromString("[a-b, a-c]"), fromString("[a-c, b-c]"), fromString("[a-b, b-c]")
+		))
+		fromString("[a-b, b-c, d]").spanningTrees should equal(List(
 			fromString("[a-b, a-c]"), fromString("[a-c, b-c]"), fromString("[a-b, b-c]")
 		))
 
@@ -162,7 +167,8 @@ class P7 extends Matchers {
 				('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)
 			)
 		).minimalSpanningTree should equal(
-			fromLabelString("[e-b/4, f-d/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]")
+//			fromLabelString("[e-b/4, f-d/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]") // old expectation before scala upgrade, also seems correct
+			fromLabelString("[e-b/4, f-g/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]")
 		)
 	}
 
@@ -216,7 +222,7 @@ class P7 extends Matchers {
 		Graph.fromString("[a]").nodesByDepthFrom('a') should equal(Seq('a'))
 		Graph.fromString("[a-b]").nodesByDepthFrom('a') should equal(Seq('a', 'b'))
 		Graph.fromString("[a-b, c-b]").nodesByDepthFrom('a') should equal(Seq('a', 'b', 'c'))
-		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('d', 'a', 'b', 'c'))
+		Graph.fromString("[a-b, b-c, e, a-c, a-d]").nodesByDepthFrom('d') should equal(Seq('d', 'a', 'c', 'b'))
 	}
 
 	@Test def `P88 (**) Connected components.`() {
@@ -257,7 +263,7 @@ object P7 {
 		}
 		type NodePath = List[Node]
 
-		var nodesByValue: Map[T, Node] = Map()
+		var nodesByValue: ListMap[T, Node] = ListMap()
 		var edges: Set[Edge] = Set()
 
 
@@ -325,11 +331,10 @@ object P7 {
 			def applyColor(color: Int, uncolored: List[Node], colored: List[(Node,Int)], adjacentNodes: Set[Node]): List[(Node,Int)] =
 				uncolored match {
 					case List() => colored
-					case n :: tail => {
+					case n :: tail =>
 						val newAdjacent = adjacentNodes ++ n.neighbors
 						// strange that it's "dropWhile" and not "filterNot" (seems like some neighbors might be not removed with dropWhile)
 						applyColor(color, tail.dropWhile(newAdjacent.apply), (n, color) :: colored, newAdjacent)
-					}
 				}
 
 			def colorNodesR(color: Int, uncolored: List[Node], colored: List[(Node,Int)]): List[(Node,Int)] =
@@ -433,7 +438,7 @@ object P7 {
 
 		def addNode(value: T) = {
 			val node = new Node(value)
-			nodesByValue = Map(value -> node) ++ nodesByValue
+			nodesByValue = ListMap(value -> node) ++ nodesByValue
 			node
 		}
 	}
@@ -571,13 +576,13 @@ object P7 {
 			}
 
 			spanningTreesR(edges.toList, nodesByValue.values.toList.tail, List()).foldLeft(List[Graph[T, U]]()) { (result, graph) =>
-				if (result.exists(_ == graph)) result
+				if (result.contains(graph)) result
 				else result :+ graph
 			}
 		}
 		def isTree: Boolean = spanningTrees().length == 1
 
-		def isConnected: Boolean = spanningTrees().length > 0
+		def isConnected: Boolean = spanningTrees().nonEmpty
 
 		def addEdge(value1: T, value2: T, edgeValue: U) = {
 			if (!nodesByValue.contains(value1) || !nodesByValue.contains(value2)) throw new IllegalStateException
@@ -592,8 +597,8 @@ object P7 {
 				val thisValues = nodesByValue.keys.toList
 				val thatValues = graph.nodesByValue.keys.toList
 
-				thisValues.filterNot(thatValues.contains(_)).isEmpty &&
-				thatValues.filterNot(thisValues.contains(_)).isEmpty &&
+				thisValues.forall(thatValues.contains(_)) &&
+				thatValues.forall(thisValues.contains(_)) &&
 				(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty &&
 				(graph.edges.map(_.toTuple) -- edges.map(_.toTuple)).isEmpty
 			case _ =>
@@ -614,11 +619,10 @@ object P7 {
 			}
 				.map {
 				case Left(nodeValue) => nodeValue
-				case Right((fromValue, toValue, weight)) => {
+				case Right((fromValue, toValue, weight)) =>
 					val weightPostfix = if (weight.isInstanceOf[Unit]) "" else "/" + weight.toString
 					fromValue.toString + "-" + toValue.toString + weightPostfix
 				}
-			}
 			"[" + result.mkString(", ") + "]"
 		}
 
@@ -686,7 +690,7 @@ object P7 {
 
 		override def equals(o: Any) = o match {
 			case graph: Digraph[T, U] =>
-				nodesByValue.keys.toList.filterNot(graph.nodesByValue.keys.toList.contains(_)).isEmpty &&
+				nodesByValue.keys.toList.forall(graph.nodesByValue.keys.toList.contains(_)) &&
 					(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
 			case _ =>
 				false
