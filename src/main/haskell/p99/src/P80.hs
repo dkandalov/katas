@@ -202,7 +202,7 @@ spanningTrees graph = spanningTrees' graph []
 spanningTrees' :: (Ord n, Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
 spanningTrees' graph path = (\path -> Graph path) `map`
                             (unique $
-                            (\node -> spanningTreesFrom node (edges graph) (Data.List.delete node allNodesInGraph) []) `concatMap`
+                            (\node -> spanningTreesFrom node (edges graph) allNodesInGraph) `concatMap`
                             allNodesInGraph)
     where allNodesInGraph = allNodes $ edges graph
           unique spanningTrees = nub $ ordered `map` spanningTrees
@@ -212,16 +212,16 @@ spanningTrees' graph path = (\path -> Graph path) `map`
                 EQ -> compare (toNode edge1) (toNode edge2)
                 result@_ -> result
 
-spanningTreesFrom :: (Ord n, Eq n, Eq l) => n -> [Edge n l] -> [n] -> [n] -> [[Edge n l]]
-spanningTreesFrom node edgeList nodes visitedNodes =
-    if (null nodes) then [[]]
-    else if (elem node visitedNodes) then []
+spanningTreesFrom :: (Ord n, Eq n, Eq l) => n -> [Edge n l] -> [n] -> [[Edge n l]]
+spanningTreesFrom node edgeList nodes =
+    if (not $ elem node nodes) then []
+    else if (null remaningNodes) then [[]]
     else if (null edgeList) then []
     else result
     where result = subResult `concatMap` edgesWithNode
           subResult edge =
-            (\it -> edge : it) `map`
-            (spanningTreesFrom (other node edge) edgesWithoutNode (Data.List.delete (other node edge) nodes) (node : visitedNodes))
+            (\it -> edge : it) `map` (spanningTreesFrom (other node edge) edgesWithoutNode remaningNodes)
+          remaningNodes = Data.List.delete node nodes
           edgesWithNode = (hasNode node) `filter` edgeList
           edgesWithoutNode = (not . (hasNode node)) `filter` edgeList
           hasNode node edge = fromNode edge == node || toNode edge == node
