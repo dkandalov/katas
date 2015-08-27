@@ -201,9 +201,7 @@ spanningTrees graph = spanningTrees' graph []
 
 spanningTrees' :: (Ord n, Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
 spanningTrees' graph path = (\path -> Graph path) `map`
-                            (unique $
-                            (\node -> spanningTreesFrom node (edges graph) allNodesInGraph) `concatMap`
-                            allNodesInGraph)
+                            (unique $ spanningTrees'' [head allNodesInGraph] (edges graph) (tail allNodesInGraph))
     where allNodesInGraph = allNodes $ edges graph
           unique spanningTrees = nub $ ordered `map` spanningTrees
           ordered edges = Data.List.sortBy compareEdges edges
@@ -212,17 +210,18 @@ spanningTrees' graph path = (\path -> Graph path) `map`
                 EQ -> compare (toNode edge1) (toNode edge2)
                 result@_ -> result
 
-spanningTreesFrom :: (Ord n, Eq n, Eq l) => n -> [Edge n l] -> [n] -> [[Edge n l]]
-spanningTreesFrom node edgeList nodes =
-    if (not $ elem node nodes) then []
-    else if (null remaningNodes) then [[]]
-    else if (null edgeList) then []
+spanningTrees'' :: (Ord n, Eq n, Eq l) => [n] -> [Edge n l] -> [n] -> [[Edge n l]]
+spanningTrees'' visitedNodes graphEdges graphNodes =
+    if (null graphNodes) then [[]]
+    else if (null graphEdges) then []
     else result
-    where result = subResult `concatMap` edgesWithNode
-          subResult edge =
-            (\it -> edge : it) `map` (spanningTreesFrom (other node edge) edgesWithoutNode remaningNodes)
-          remaningNodes = Data.List.delete node nodes
-          edgesWithNode = (hasNode node) `filter` edgeList
-          edgesWithoutNode = (not . (hasNode node)) `filter` edgeList
+    where result =
+            (\node ->
+                (\edge -> subResult node edge) `concatMap` (edgesWithNode node)
+            ) `concatMap` visitedNodes
+          subResult node edge =
+            (\it -> edge : it) `map`
+            (spanningTrees'' ((other node edge) : visitedNodes) (Data.List.delete edge graphEdges) (Data.List.delete (other node edge) graphNodes))
+          edgesWithNode node = (hasNode node) `filter` graphEdges
           hasNode node edge = fromNode edge == node || toNode edge == node
           other node edge = if (fromNode edge == node) then toNode edge else fromNode edge
