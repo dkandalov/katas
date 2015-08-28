@@ -197,11 +197,12 @@ digraphNeighborsOf node graph =
 
 -- P83
 spanningTrees :: (Ord n, Eq n, Eq l) => Graph n l -> [Graph n l]
-spanningTrees graph = spanningTrees' graph []
+spanningTrees graph =
+    if (length (edges graph) == 1) then [graph] else spanningTrees' graph []
 
 spanningTrees' :: (Ord n, Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
 spanningTrees' graph path = (\path -> Graph path) `map`
-                            (unique $ spanningTrees'' [head allNodesInGraph] (edges graph) (tail allNodesInGraph))
+                            (unique $ spanningTrees'' (edges graph) (tail allNodesInGraph))
     where allNodesInGraph = allNodes $ edges graph
           unique spanningTrees = nub $ ordered `map` spanningTrees
           ordered edges = Data.List.sortBy compareEdges edges
@@ -210,18 +211,16 @@ spanningTrees' graph path = (\path -> Graph path) `map`
                 EQ -> compare (toNode edge1) (toNode edge2)
                 result@_ -> result
 
-spanningTrees'' :: (Ord n, Eq n, Eq l) => [n] -> [Edge n l] -> [n] -> [[Edge n l]]
-spanningTrees'' visitedNodes graphEdges graphNodes =
+spanningTrees'' :: (Ord n, Eq n, Eq l) => [Edge n l] -> [n] -> [[Edge n l]]
+spanningTrees'' graphEdges graphNodes =
     if (null graphNodes) then [[]]
     else if (null graphEdges) then []
     else result
-    where result =
-            (\node ->
-                (\edge -> subResult node edge) `concatMap` (edgesWithNode node)
-            ) `concatMap` visitedNodes
-          subResult node edge =
+    where result = (\edge -> subResult edge) `concatMap` halfConnectedEdges
+          subResult edge =
             (\it -> edge : it) `map`
-            (spanningTrees'' ((other node edge) : visitedNodes) (Data.List.delete edge graphEdges) (Data.List.delete (other node edge) graphNodes))
-          edgesWithNode node = (hasNode node) `filter` graphEdges
+            (spanningTrees'' (Data.List.delete edge graphEdges) ((notInEdge edge) `filter` graphNodes))
+          halfConnectedEdges =
+            (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
+          notInEdge edge node = not $ hasNode node edge
           hasNode node edge = fromNode edge == node || toNode edge == node
-          other node edge = if (fromNode edge == node) then toNode edge else fromNode edge
