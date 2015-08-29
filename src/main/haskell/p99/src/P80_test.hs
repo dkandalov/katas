@@ -217,7 +217,14 @@ p83 = testList "P83" [
 p84 = testList "P84" [
     expectEqual
         (graphFromString "[a-a]")
-        (minimalSpanningTree $ graphFromString "[a-a]")
+        (minimalSpanningTree $ graphFromString "[a-a]"),
+    expectEqual
+        (graphFromStringLabel "[a-b/1, b-c/2]")
+        (minimalSpanningTree $ graphFromStringLabel "[a-b/1, b-c/2, a-c/3]"),
+    expectEqual
+        (graphFromStringLabel "[a-d/3, d-g/3, g-h/1, d-f/4, a-b/5, b-c/2, b-e/4]")
+        (minimalSpanningTree $ graphFromStringLabel
+            "[a-b/5, a-d/3, b-c/2, b-e/4, c-e/6, d-e/7, d-f/4, d-g/3, e-h/5, f-g/4, g-h/1]")
  ]
 
 main :: IO Counts

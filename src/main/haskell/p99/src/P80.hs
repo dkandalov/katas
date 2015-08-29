@@ -199,19 +199,18 @@ digraphNeighborsOf node graph =
 -- P83
 spanningTrees :: (Ord n, Eq n, Eq l) => Graph n l -> [Graph n l]
 spanningTrees graph =
-    if (length (edges graph) == 1) then [graph] else spanningTrees' graph
-    where spanningTrees' graph = Graph `map`
-            (unique $ spanningTrees'' (edges graph) (tail $ allNodes $ edges graph))
+    if (length (edges graph) == 1) then [graph]
+    else Graph `map` (unique $ spanningTrees' (edges graph) (tail $ allNodes $ edges graph))
 
-spanningTrees'' :: (Ord n, Eq n, Eq l) => [Edge n l] -> [n] -> [[Edge n l]]
-spanningTrees'' graphEdges graphNodes =
+spanningTrees' :: (Ord n, Eq n, Eq l) => [Edge n l] -> [n] -> [[Edge n l]]
+spanningTrees' graphEdges graphNodes =
     if (null graphNodes) then [[]]
     else if (null graphEdges) then []
     else result
     where result = subResult `concatMap` halfConnectedEdges
           subResult edge =
             (\it -> edge : it) `map`
-            (spanningTrees'' (Data.List.delete edge graphEdges) ((notInEdge edge) `filter` graphNodes))
+            (spanningTrees' (Data.List.delete edge graphEdges) ((notInEdge edge) `filter` graphNodes))
           halfConnectedEdges =
             (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
           notInEdge edge node = not $ hasNode node edge
@@ -232,5 +231,26 @@ unique trees = nub $ ordered `map` trees
                 result@_ -> result
 
 -- P84
-minimalSpanningTree :: (Ord n, Eq n, Eq l) => Graph n l -> Graph n l
-minimalSpanningTree graph = Graph []
+minimalSpanningTree :: (Ord l, Eq n, Eq l) => Graph n l -> Graph n l
+minimalSpanningTree graph =
+    if (length (edges graph) == 1) then graph
+    else Graph (minimalSpanningTree' (edges graph) (tail $ allNodes $ edges graph))
+
+minimalSpanningTree' :: (Ord l, Eq n, Eq l) => [Edge n l] -> [n] -> [Edge n l]
+minimalSpanningTree' graphEdges graphNodes =
+    if (null graphNodes) then []
+    else if (null graphEdges) then []
+    else result
+    where result = subResult minHalfConnectedEdge
+          subResult edge =
+            edge : (minimalSpanningTree' (Data.List.delete edge graphEdges) ((notInEdge edge) `filter` graphNodes))
+          minHalfConnectedEdge = Data.List.minimumBy edgeLabelOrder halfConnectedEdges
+          halfConnectedEdges =
+            (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
+          notInEdge edge node = not $ hasNode node edge
+          hasNode node edge = fromNode edge == node || toNode edge == node
+
+edgeLabelOrder :: (Ord l) => Edge n l -> Edge n l -> Ordering
+edgeLabelOrder edge1 edge2 = compare (edgeLabel edge1) (edgeLabel edge2)
+                             where edgeLabel edge = case edge of
+                                    Edge _ _ label -> label
