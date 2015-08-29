@@ -214,5 +214,11 @@ p83 = testList "P83" [
                 "[a-b, a-d, b-c, b-e, c-e, d-e, d-f, d-g, e-h, f-g, g-h]")
  ]
 
+p84 = testList "P84" [
+    expectEqual
+        (graphFromString "[a-a]")
+        (minimalSpanningTree $ graphFromString "[a-a]")
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82, p83]
+main = runTestTT $ TestList [p80, p81, p82, p83, p84]

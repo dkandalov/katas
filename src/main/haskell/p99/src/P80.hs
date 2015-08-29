@@ -12,7 +12,8 @@ module P80(
     digraphToTermForm, digraphToAdjacentForm,
     graphFindPaths, digraphFindPaths,
     graphFindCycles, digraphFindCycles,
-    spanningTrees
+    spanningTrees, isTree, isConnected,
+    minimalSpanningTree
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -198,25 +199,16 @@ digraphNeighborsOf node graph =
 -- P83
 spanningTrees :: (Ord n, Eq n, Eq l) => Graph n l -> [Graph n l]
 spanningTrees graph =
-    if (length (edges graph) == 1) then [graph] else spanningTrees' graph []
-
-spanningTrees' :: (Ord n, Eq n, Eq l) => Graph n l -> [Edge n l] -> [Graph n l]
-spanningTrees' graph path = (\path -> Graph path) `map`
-                            (unique $ spanningTrees'' (edges graph) (tail allNodesInGraph))
-    where allNodesInGraph = allNodes $ edges graph
-          unique spanningTrees = nub $ ordered `map` spanningTrees
-          ordered edges = Data.List.sortBy compareEdges edges
-          compareEdges edge1 edge2 =
-            case (compare (fromNode edge1) (fromNode edge2)) of
-                EQ -> compare (toNode edge1) (toNode edge2)
-                result@_ -> result
+    if (length (edges graph) == 1) then [graph] else spanningTrees' graph
+    where spanningTrees' graph = Graph `map`
+            (unique $ spanningTrees'' (edges graph) (tail $ allNodes $ edges graph))
 
 spanningTrees'' :: (Ord n, Eq n, Eq l) => [Edge n l] -> [n] -> [[Edge n l]]
 spanningTrees'' graphEdges graphNodes =
     if (null graphNodes) then [[]]
     else if (null graphEdges) then []
     else result
-    where result = (\edge -> subResult edge) `concatMap` halfConnectedEdges
+    where result = subResult `concatMap` halfConnectedEdges
           subResult edge =
             (\it -> edge : it) `map`
             (spanningTrees'' (Data.List.delete edge graphEdges) ((notInEdge edge) `filter` graphNodes))
@@ -224,3 +216,21 @@ spanningTrees'' graphEdges graphNodes =
             (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
           notInEdge edge node = not $ hasNode node edge
           hasNode node edge = fromNode edge == node || toNode edge == node
+
+isTree :: (Ord n, Eq n, Eq l) => Graph n l -> Bool
+isTree graph = length (spanningTrees graph) == 1
+
+isConnected :: (Ord n, Eq n, Eq l) => Graph n l -> Bool
+isConnected graph = length (spanningTrees graph) > 0
+
+unique :: (Ord n, Eq n, Eq l) => [[Edge n l]] -> [[Edge n l]]
+unique trees = nub $ ordered `map` trees
+    where ordered edges = Data.List.sortBy compareEdges edges
+          compareEdges edge1 edge2 =
+              case (compare (fromNode edge1) (fromNode edge2)) of
+                EQ -> compare (toNode edge1) (toNode edge2)
+                result@_ -> result
+
+-- P84
+minimalSpanningTree :: (Ord n, Eq n, Eq l) => Graph n l -> Graph n l
+minimalSpanningTree graph = Graph []
