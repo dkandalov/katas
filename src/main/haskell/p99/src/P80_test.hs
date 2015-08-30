@@ -227,5 +227,12 @@ p84 = testList "P84" [
             "[a-b/5, a-d/3, b-c/2, b-e/4, c-e/6, d-e/7, d-f/4, d-g/3, e-h/5, f-g/4, g-h/1]")
  ]
 
+p85 = testList "P85" [
+    expectEqual True (areIsomorphic
+        (graphFromString "[a-a]")
+        (graphFromString "[1-1]"))
+ ]
+
+
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82, p83, p84]
+main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85]

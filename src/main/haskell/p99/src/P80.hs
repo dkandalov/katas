@@ -13,7 +13,8 @@ module P80(
     graphFindPaths, digraphFindPaths,
     graphFindCycles, digraphFindCycles,
     spanningTrees, isTree, isConnected,
-    minimalSpanningTree
+    minimalSpanningTree,
+    areIsomorphic
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -254,3 +255,7 @@ edgeLabelOrder :: (Ord l) => Edge n l -> Edge n l -> Ordering
 edgeLabelOrder edge1 edge2 = compare (edgeLabel edge1) (edgeLabel edge2)
                              where edgeLabel edge = case edge of
                                     Edge _ _ label -> label
+
+-- P85
+areIsomorphic :: Graph n l -> Graph n l -> Bool
+areIsomorphic graph1 graph2 = False
