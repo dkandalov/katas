@@ -1,6 +1,7 @@
 import Test.HUnit
 import P70_Test(expectEqual, testList)
 import P80
+import qualified Data.Map.Strict as Map
 
 p80 = testList "P80" [
     expectEqual
@@ -228,9 +229,17 @@ p84 = testList "P84" [
  ]
 
 p85 = testList "P85" [
+    expectEqual (Just(Map.fromList [('a','1')]))
+        (isomorphicMapping
+        (graphFromString "[a-a]") (graphFromString "[1-1]")),
     expectEqual True (areIsomorphic
-        (graphFromString "[a-a]")
-        (graphFromString "[1-1]"))
+        (graphFromString "[a-a]") (graphFromString "[1-1]")),
+
+    expectEqual (Just(Map.fromList [('a','1'), ('b','2')]))
+        (isomorphicMapping
+        (graphFromString "[a-b]") (graphFromString "[1-2]")),
+    expectEqual True (areIsomorphic
+        (graphFromString "[a-b]") (graphFromString "[1-2]"))
  ]
 
 

@@ -14,13 +14,15 @@ module P80(
     graphFindCycles, digraphFindCycles,
     spanningTrees, isTree, isConnected,
     minimalSpanningTree,
-    areIsomorphic
+    areIsomorphic, isomorphicMapping
 ) where
 
 import Text.ParserCombinators.Parsec
 import P70(getEither)
 import P50(GShow(..))
 import Data.List
+import qualified Data.Map.Strict as Map
+import qualified Data.Maybe as Maybe
 
 {-
 -- not used, left here for reference
@@ -257,5 +259,29 @@ edgeLabelOrder edge1 edge2 = compare (edgeLabel edge1) (edgeLabel edge2)
                                     Edge _ _ label -> label
 
 -- P85
-areIsomorphic :: Graph n l -> Graph n l -> Bool
-areIsomorphic graph1 graph2 = False
+areIsomorphic :: (Ord n, Eq n, Eq n') => Graph n l -> Graph n' l' -> Bool
+areIsomorphic graph1 graph2 =
+    case ((isValidMappingFor graph1 graph2) `find`
+          (allMappings (allNodes $ edges graph1) (allNodes $ edges graph2))) of
+        Just(_) -> True
+        Nothing -> False
+
+isomorphicMapping :: (Ord n, Eq n, Eq n') => Graph n l -> Graph n' l' -> Maybe (Map.Map n n')
+isomorphicMapping graph1 graph2 =
+    (isValidMappingFor graph1 graph2) `find`
+    (allMappings (allNodes $ edges graph1) (allNodes $ edges graph2))
+
+isValidMappingFor :: (Ord n, Eq n, Eq n') => Graph n l -> Graph n' l' -> Map.Map n n' -> Bool
+isValidMappingFor graph1 graph2 mapping =
+    (\(n1, n2) ->
+        Maybe.maybeToList `concatMap` ((\it -> (Map.lookup it mapping)) `map` (graphNeighborsOf n1 graph1))
+        ==
+        (\it -> graphNeighborsOf it graph2) `concatMap` (Maybe.maybeToList $ (Map.lookup n1 mapping))
+    ) `all` (Map.assocs mapping)
+
+allMappings :: (Ord n, Eq n, Eq n') => [n] -> [n'] -> [Map.Map n n']
+allMappings nodes1 nodes2 =
+    if (null nodes1 && null nodes2) then [Map.empty]
+    else (\n1 -> (\n2 ->
+        (\mapping -> Map.insert n1 n2 mapping) `map` (allMappings (Data.List.delete n1 nodes1) (Data.List.delete n2 nodes2))
+     ) `concatMap` nodes2) `concatMap` nodes1
