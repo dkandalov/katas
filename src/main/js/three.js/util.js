@@ -1,3 +1,18 @@
+function xyzMouseController(target, env, speed, onUpdate) {
+    speed = speed || {x: 0.5, y: 0.5};
+    var mouseX = 0;
+    var mouseY = 0;
+    env.addRenderListener(function() {
+        target.setX(target.getX() + (mouseX - target.getX() * speed.x));
+        target.setY(target.getY() + (-mouseY - target.getY() * speed.y));
+        if (onUpdate !== undefined) onUpdate();
+    })
+    return function(event) {
+        mouseX = (event.clientX / env.window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / env.window.innerHeight) * 2 + 1;
+    };
+}
+
 function xyzKeyController(target, stepSize, onUpdate) {
     if (stepSize === undefined) stepSize = 100;
     var dx, dy, dz;
@@ -80,4 +95,27 @@ function newPositionOnSphere(delegate) {
             return this;
         }
     };
+}
+
+function showXYZPlanesOn(scene, planeSize, opacity, colors) {
+    planeSize = planeSize || 5000;
+    opacity = opacity || 0.2;
+    colors = colors || [0x000000, 0xaa0000, 0x00aa00];
+    colors = (_.isArray(colors) ? colors : [colors, colors, colors]);
+    var planeGeometry = new THREE.PlaneBufferGeometry(planeSize, planeSize, 1, 1);
+
+    var xyPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[0], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+    xyPlane.position.set(planeSize / 2, planeSize / 2, 0);
+    xyPlane.rotation.set(0, 0, Math.PI / 2);
+    scene.add(xyPlane);
+
+    var xzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[1], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+    xzPlane.position.set(planeSize / 2, 0, planeSize / 2);
+    xzPlane.rotation.set(Math.PI / 2, 0, 0);
+    scene.add(xzPlane);
+
+    var yzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[2], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+    yzPlane.position.set(0, planeSize / 2, planeSize / 2);
+    yzPlane.rotation.set(0, Math.PI / 2, 0);
+    scene.add(yzPlane);
 }

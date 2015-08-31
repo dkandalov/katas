@@ -119,7 +119,7 @@
     newEnv(container, window, createCodeCity).animate();
 
     function createCodeCity(env) {
-        env.showXYZPlanes();
+        showXYZPlanesOn(env.scene);
 
         var light = new THREE.DirectionalLight(0xffffff, 1.2);
         light.position.set(0, -1, 1).normalize();
@@ -156,16 +156,20 @@
 
         var positionOnSphere = newPositionOnSphere(env.camera.position)
                 .center(width/2, height/2, 0)
-                .bounds(undefined, [0.6, 1.5], [2000, 3000])
+                .bounds(undefined, [0.6, 5.0], [2000, 3000])
                 .set(0.9, 1.1, 3000);
         env.window.addEventListener("keypress", xyzKeyController(positionOnSphere, [0.1, -0.1, 50], function () {
             env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
         }));
+//        env.window.addEventListener("mousemove", xyzMouseController(positionOnSphere, env, {x: 0.8, y: 0.8}, function () {
+//            env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
+//        }));
     }
 
     function newEnv(container, window, onInit) {
-        var mousePosition = new THREE.Vector2();
-        var raycastedObjects = null;
+        var mouse = new THREE.Vector2();
+        var rayCastedObjects = null;
+        var renderListeners = [];
 
         var scene = new THREE.Scene();
         scene.position.set(0, 0, 0);
@@ -189,8 +193,8 @@
 
         window.addEventListener('mousemove', function () {
             event.preventDefault();
-            mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mousePosition.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         });
         window.addEventListener('resize', function () {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -201,24 +205,25 @@
         function render() {
             camera.updateMatrixWorld();
 
-            raycaster.setFromCamera(mousePosition, camera);
+            raycaster.setFromCamera(mouse, camera);
             var intersects = raycaster.intersectObjects(scene.children);
-            var newRaycasted = intersects.length > 0 ? intersects[0].object : null;
+            var newRayCasted = intersects.length > 0 ? intersects[0].object : null;
 
-            if (newRaycasted !== null) {
-                if (raycastedObjects !== newRaycasted && newRaycasted.material.emissive !== undefined) {
-                    if (raycastedObjects !== null) raycastedObjects.material.emissive.setHex(raycastedObjects.currentHex);
-                    raycastedObjects = newRaycasted;
-                    raycastedObjects.currentHex = raycastedObjects.material.emissive.getHex();
-                    raycastedObjects.material.emissive.setHex(0x111111);
-//                console.log(raycastedObjects.node.name); TODO
+            if (newRayCasted !== null) {
+                if (rayCastedObjects !== newRayCasted && newRayCasted.material.emissive !== undefined) {
+                    if (rayCastedObjects !== null) rayCastedObjects.material.emissive.setHex(rayCastedObjects.currentHex);
+                    rayCastedObjects = newRayCasted;
+                    rayCastedObjects.currentHex = rayCastedObjects.material.emissive.getHex();
+                    rayCastedObjects.material.emissive.setHex(0x111111);
+//                console.log(rayCastedObjects.node.name); TODO
                 }
             } else {
-                if (raycastedObjects !== null) raycastedObjects.material.emissive.setHex(raycastedObjects.currentHex);
-                raycastedObjects = null;
+                if (rayCastedObjects !== null) rayCastedObjects.material.emissive.setHex(rayCastedObjects.currentHex);
+                rayCastedObjects = null;
             }
 
             renderer.render(scene, camera);
+            renderListeners.forEach(function(it) { it(); });
 
             stats.update();
         }
@@ -228,38 +233,17 @@
             render();
         }
 
-        function showXYZPlanes(planeSize, opacity, colors) {
-            planeSize = planeSize || 5000;
-            opacity = opacity || 0.2;
-            colors = colors || [0x000000, 0xaa0000, 0x00aa00];
-            colors = (_.isArray(colors) ? colors : [colors, colors, colors]);
-            var planeGeometry = new THREE.PlaneBufferGeometry(planeSize, planeSize, 1, 1);
-
-            var xyPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[0], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
-            xyPlane.position.set(planeSize / 2, planeSize / 2, 0);
-            xyPlane.rotation.set(0, 0, Math.PI / 2);
-            scene.add(xyPlane);
-
-            var xzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[1], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
-            xzPlane.position.set(planeSize / 2, 0, planeSize / 2);
-            xzPlane.rotation.set(Math.PI / 2, 0, 0);
-            scene.add(xzPlane);
-
-            var yzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[2], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
-            yzPlane.position.set(0, planeSize / 2, planeSize / 2);
-            yzPlane.rotation.set(0, Math.PI / 2, 0);
-            scene.add(yzPlane);
-        }
-
         var it = {
             scene: scene,
             camera: camera,
             window: window,
-            animate: animate,
-            showXYZPlanes: showXYZPlanes,
             raycastedObjects: function() {
-                return raycastedObjects;
-            }
+                return rayCastedObjects;
+            },
+            addRenderListener: function (listener) {
+                renderListeners.push(listener);
+            },
+            animate: animate
         };
         if (onInit !== undefined) {
             onInit(it);
