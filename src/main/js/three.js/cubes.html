@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>three.js webgl - interactive cubes</title>
+    <title></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
@@ -10,6 +10,16 @@
             background-color: #f0f0f0;
             margin: 0;
             overflow: hidden;
+        }
+        #selectedItemLabel {
+            color: #111;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 15px;
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            top: 20px;
         }
     </style>
     <script type="text/javascript" src="three.js"></script>
@@ -99,6 +109,11 @@
 </script>
 
 <script>
+    var selectedItemLabel = document.createElement("div");
+    selectedItemLabel.id = "selectedItemLabel";
+    selectedItemLabel.innerHTML = "";
+    document.body.appendChild(selectedItemLabel);
+
     var container = document.createElement('div');
     document.body.appendChild(container);
 
@@ -390,6 +405,7 @@
                        .domain([0, maxValueInTree(rootNode, zValue)])
                        .range([0, zSize]);
         treemapZNodes(rootNode, zScale, zValue, pad / 2);
+        addParentReference(rootNode, null);
 
         function createNodeObjects(node) {
             var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.dz, 5, 5, 5);
@@ -429,17 +445,25 @@
                 .center(cityCenter.x, cityCenter.y, cityCenter.z)
                 .bounds(undefined, [0.1, 1.5], [1000, 4000])
                 .set(0.9, 1.1, 2000);
-        env.window.addEventListener("keypress", xyzKeyController(positionOnSphere, [0.1, -0.1, 50], function () {
+        env.window.addEventListener("keypress", xyzKeyController(positionOnSphere, [0.1, -0.1, 50], function() {
             env.camera.lookAt(cityCenter);
         }));
-//        env.window.addEventListener("mousemove", xyzMouseController(positionOnSphere, env, {x: 0.8, y: 0.8}, function () {
+//        env.window.addEventListener("mousemove", xyzMouseController(positionOnSphere, env, {x: 0.8, y: 0.8}, function() {
 //            env.camera.lookAt(new THREE.Vector3(xSize/2, ySize/2, 0));
 //        }));
+        env.window.addEventListener("mousemove", function() {
+            var object = env.rayCastedObject();
+            if (object !== null) {
+                selectedItemLabel.innerHTML = fullNameOfNode(object.node);
+            } else {
+                selectedItemLabel.innerHTML = "&nbsp;";
+            }
+        });
     }
 
     function newEnv(container, window, onInit) {
         var mouse = new THREE.Vector2();
-        var rayCastedObjects = null;
+        var rayCastedObject = null;
         var renderListeners = [];
 
         var scene = new THREE.Scene();
@@ -481,16 +505,15 @@
             var newRayCasted = intersects.length > 0 ? intersects[0].object : null;
 
             if (newRayCasted !== null) {
-                if (rayCastedObjects !== newRayCasted && newRayCasted.material.emissive !== undefined) {
-                    if (rayCastedObjects !== null) rayCastedObjects.material.emissive.setHex(rayCastedObjects.currentHex);
-                    rayCastedObjects = newRayCasted;
-                    rayCastedObjects.currentHex = rayCastedObjects.material.emissive.getHex();
-                    rayCastedObjects.material.emissive.setHex(0x111111);
-//                console.log(rayCastedObjects.node.name); TODO
+                if (rayCastedObject !== newRayCasted && newRayCasted.material.emissive !== undefined) {
+                    if (rayCastedObject !== null) rayCastedObject.material.emissive.setHex(rayCastedObject.currentHex);
+                    rayCastedObject = newRayCasted;
+                    rayCastedObject.currentHex = rayCastedObject.material.emissive.getHex();
+                    rayCastedObject.material.emissive.setHex(0x111111);
                 }
             } else {
-                if (rayCastedObjects !== null) rayCastedObjects.material.emissive.setHex(rayCastedObjects.currentHex);
-                rayCastedObjects = null;
+                if (rayCastedObject !== null) rayCastedObject.material.emissive.setHex(rayCastedObject.currentHex);
+                rayCastedObject = null;
             }
 
             renderer.render(scene, camera);
@@ -508,8 +531,8 @@
             scene: scene,
             camera: camera,
             window: window,
-            raycastedObjects: function() {
-                return rayCastedObjects;
+            rayCastedObject: function() {
+                return rayCastedObject;
             },
             addRenderListener: function (listener) {
                 renderListeners.push(listener);
@@ -519,7 +542,6 @@
         if (onInit !== undefined) {
             onInit(it);
         }
-
         return it;
     }
 
@@ -545,6 +567,20 @@
             }));
         }
         return Math.max(+valueGetter(node), maxChildValue);
+    }
+
+    function fullNameOfNode(node) {
+        if (node.parent === null) return node.name;
+        else return fullNameOfNode(node.parent) + "/" + node.name;
+    }
+
+    function addParentReference(node, parent) {
+        node.parent = parent;
+        if (node.children !== undefined) {
+            node.children.forEach(function(child) {
+                addParentReference(child, node);
+            });
+        }
     }
 
 </script>
