@@ -30,7 +30,7 @@
             b.preventDefault();
             t(++s % 2)
         }, !1);
-        f.style.cssText = "width:80px;opacity:0.9;cursor:pointer";
+        f.style.cssText = "xSize:80px;opacity:0.9;cursor:pointer";
         var a = document.createElement("div");
         a.id = "fps";
         a.style.cssText = "padding:0 0 3px 3px;text-align:left;background-color:#002";
@@ -42,10 +42,10 @@
         a.appendChild(i);
         var c = document.createElement("div");
         c.id = "fpsGraph";
-        c.style.cssText = "position:relative;width:74px;height:30px;background-color:#0ff";
+        c.style.cssText = "position:relative;xSize:74px;height:30px;background-color:#0ff";
         for (a.appendChild(c); 74 > c.children.length;) {
             var j = document.createElement("span");
-            j.style.cssText = "width:1px;height:30px;float:left;background-color:#113";
+            j.style.cssText = "xSize:1px;height:30px;float:left;background-color:#113";
             c.appendChild(j)
         }
         var d = document.createElement("div");
@@ -59,8 +59,8 @@
         d.appendChild(k);
         var e = document.createElement("div");
         e.id = "msGraph";
-        e.style.cssText = "position:relative;width:74px;height:30px;background-color:#0f0";
-        for (d.appendChild(e); 74 > e.children.length;)j = document.createElement("span"), j.style.cssText = "width:1px;height:30px;float:left;background-color:#131", e.appendChild(j);
+        e.style.cssText = "position:relative;xSize:74px;height:30px;background-color:#0f0";
+        for (d.appendChild(e); 74 > e.children.length;)j = document.createElement("span"), j.style.cssText = "xSize:1px;height:30px;float:left;background-color:#131", e.appendChild(j);
         var t = function (b) {
             s = b;
             switch (s) {
@@ -101,10 +101,6 @@
     var container = document.createElement('div');
     document.body.appendChild(container);
 
-    var width = 1800;
-    var height = 1800;
-    var pad = 50;
-
     var rootNode = {
         "name": "root",
         "value": 90,
@@ -129,40 +125,51 @@
         light2.position.set(1, 1, 1).normalize();
         env.scene.add(light2);
 
+        var xSize = 1800;
+        var ySize = 1800;
+        var zSize = 900;
+        var pad = 50;
+        var xyValue = _.property("value");
+        var zValue = _.property("height");
+
         var color = d3.scale.category20();
         var treemap = d3.layout.treemap()
-                .size([width, height])
+                .size([xSize, ySize])
                 .padding(pad)
                 .round(true)
-                .value(_.property("value"));
+                .value(xyValue);
         treemap.nodes(rootNode);
+        var zScale = d3.scale.linear()
+                       .domain([0, maxValueInTree(rootNode, zValue)])
+                       .range([0, zSize]);
+        treemapZNodes(rootNode, zScale, zValue);
 
-        var createNodeObjects = function(node, z) {
-            var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height * 10);
+        function createNodeObjects(node) {
+            var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.dz);
             var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: color(node.name)}));
             object.position.x = node.x + (node.dx / 2);
             object.position.y = node.y + (node.dy / 2);
-            object.position.z = z + (node.height * 10 / 2);
+            object.position.z = node.z + (node.dz / 2);
             object.node = node;
             env.scene.add(object);
 
             if (node.children !== undefined) {
                 node.children.forEach(function(child) {
-                    createNodeObjects(child, z + node.height); // TODO scale
+                    createNodeObjects(child);
                 })
             }
         };
-        createNodeObjects(rootNode, 0);
+        createNodeObjects(rootNode);
 
         var positionOnSphere = newPositionOnSphere(env.camera.position)
-                .center(width/2, height/2, 0)
-                .bounds(undefined, [0.6, 5.0], [2000, 3000])
+                .center(xSize/2, ySize/2, 0)
+                .bounds(undefined, [0.1, 1.5], [2000, 3000])
                 .set(0.9, 1.1, 3000);
         env.window.addEventListener("keypress", xyzKeyController(positionOnSphere, [0.1, -0.1, 50], function () {
-            env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
+            env.camera.lookAt(new THREE.Vector3(xSize/2, ySize/2, 0));
         }));
 //        env.window.addEventListener("mousemove", xyzMouseController(positionOnSphere, env, {x: 0.8, y: 0.8}, function () {
-//            env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
+//            env.camera.lookAt(new THREE.Vector3(xSize/2, ySize/2, 0));
 //        }));
     }
 
@@ -250,6 +257,27 @@
         }
 
         return it;
+    }
+
+    function treemapZNodes(node, scale, valueGetter) {
+        if (node.children !== undefined) {
+            _.max(node.children, function (child) {
+                return treemapZNodes(child, scale, valueGetter);
+            });
+        }
+        node.z = scale(scale.range()[0]);
+        node.dz = node.z + scale(valueGetter(node));
+        return node;
+    }
+
+    function maxValueInTree(node, valueGetter) {
+        var maxChildValue = Number.NEGATIVE_INFINITY;
+        if (node.children !== undefined) {
+            maxChildValue = +valueGetter(_.max(node.children, function(childNode) {
+                return maxValueInTree(childNode, valueGetter);
+            }));
+        }
+        return Math.max(+valueGetter(node), maxChildValue);
     }
 
 </script>
