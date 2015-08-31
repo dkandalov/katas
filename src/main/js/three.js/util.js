@@ -27,31 +27,57 @@ function xyzKeyController(target, stepSize, onUpdate) {
     }
 }
 
-function newSpherePosition(delegate, radius, x, y, z) {
-    var r = radius === undefined ? 100 : radius;
+function newPositionOnSphere(delegate) {
+    var r = 1000;
     var theta = 0;
     var phi = 0;
+    var center = new THREE.Vector3(0, 0, 0);
+    var bounds = {x: undefined, y: undefined, z: undefined};
+
     function update() {
-        delegate.x = x + r * Math.cos(theta) * Math.sin(phi);
-        delegate.y = y + r * Math.sin(theta) * Math.sin(phi);
-        delegate.z = z + r * Math.cos(phi);
+        if (bounds.x !== undefined) theta = THREE.Math.clamp(theta, bounds.x[0], bounds.x[1]);
+        if (bounds.y !== undefined) phi = THREE.Math.clamp(phi, bounds.y[0], bounds.y[1]);
+        if (bounds.z !== undefined) r = THREE.Math.clamp(r, bounds.z[0], bounds.z[1]);
+
+        delegate.x = center.x + r * Math.cos(theta) * Math.sin(phi);
+        delegate.y = center.y + r * Math.sin(theta) * Math.sin(phi);
+        delegate.z = center.z + r * Math.cos(phi);
     }
     update();
+
     return {
         getX: function () { return theta; },
         getY: function () { return phi; },
         getZ: function () { return r; },
+        set: function (x, y, z) {
+            theta = x;
+            phi = y;
+            r = z;
+            update();
+            return this;
+        },
         setX: function (value) {
             theta = value;
             update();
+            return this;
         },
         setY: function (value) {
             phi = value;
             update();
+            return this;
         },
         setZ: function (value) {
             r = value;
             update();
+            return this;
+        },
+        center: function(x, y, z) {
+            center = new THREE.Vector3(x, y, z);
+            return this;
+        },
+        bounds: function (xRange, yRange, zRange) {
+            bounds = {x: xRange, y: yRange, z: zRange};
+            return this;
         }
     };
 }

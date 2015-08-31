@@ -116,8 +116,10 @@
         ]
     };
 
-    newEnv(container, window, function(env) {
-        //env.showXYZPlanes();
+    newEnv(container, window, createCodeCity).animate();
+
+    function createCodeCity(env) {
+        env.showXYZPlanes();
 
         var light = new THREE.DirectionalLight(0xffffff, 1.2);
         light.position.set(0, -1, 1).normalize();
@@ -135,7 +137,6 @@
                 .value(_.property("value"));
         treemap.nodes(rootNode);
 
-        // create 3d treemap nodes
         var createNodeObjects = function(node, z) {
             var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height * 10);
             var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: color(node.name)}));
@@ -153,11 +154,14 @@
         };
         createNodeObjects(rootNode, 0);
 
-        var xyzSphere = newSpherePosition(env.camera.position, 3300, width/2, height/2, 0);
-        env.window.addEventListener("keypress", xyzKeyController(xyzSphere, [0.1, -0.1, 50], function () {
+        var positionOnSphere = newPositionOnSphere(env.camera.position)
+                .center(width/2, height/2, 0)
+                .bounds(undefined, [0.6, 1.5], [2000, 3000])
+                .set(0.9, 1.1, 3000);
+        env.window.addEventListener("keypress", xyzKeyController(positionOnSphere, [0.1, -0.1, 50], function () {
             env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
         }));
-    }).animate();
+    }
 
     function newEnv(container, window, onInit) {
         var mousePosition = new THREE.Vector2();
