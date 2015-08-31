@@ -101,15 +101,11 @@
     var container = document.createElement('div');
     document.body.appendChild(container);
 
-    var mousePosition = new THREE.Vector2();
-    var intersected = null;
-    var stats;
-
     var width = 1800;
     var height = 1800;
     var pad = 50;
 
-    var data = {
+    var rootNode = {
         "name": "root",
         "value": 90,
         "height": 10,
@@ -120,15 +116,58 @@
         ]
     };
 
-    init(container, data);
+    newEnv(container, window, function(env) {
+        //env.showXYZPlanes();
 
-    function init(container, rootNode) {
+        var light = new THREE.DirectionalLight(0xffffff, 1.2);
+        light.position.set(0, -1, 1).normalize();
+        env.scene.add(light);
+
+        var light2 = new THREE.DirectionalLight(0xffffff, 1.2);
+        light2.position.set(1, 1, 1).normalize();
+        env.scene.add(light2);
+
+        var color = d3.scale.category20();
+        var treemap = d3.layout.treemap()
+                .size([width, height])
+                .padding(pad)
+                .round(true)
+                .value(_.property("value"));
+        treemap.nodes(rootNode);
+
+        // create 3d treemap nodes
+        var createNodeObjects = function(node, z) {
+            var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height * 10);
+            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: color(node.name)}));
+            object.position.x = node.x + (node.dx / 2);
+            object.position.y = node.y + (node.dy / 2);
+            object.position.z = z + (node.height * 10 / 2);
+            object.node = node;
+            env.scene.add(object);
+
+            if (node.children !== undefined) {
+                node.children.forEach(function(child) {
+                    createNodeObjects(child, z + node.height); // TODO scale
+                })
+            }
+        };
+        createNodeObjects(rootNode, 0);
+
+        var xyzSphere = newSpherePosition(env.camera.position, 3300, width/2, height/2, 0);
+        env.window.addEventListener("keypress", xyzKeyController(xyzSphere, [0.1, -0.1, 50], function () {
+            env.camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
+        }));
+    }).animate();
+
+    function newEnv(container, window, onInit) {
+        var mousePosition = new THREE.Vector2();
+        var raycastedObjects = null;
+
         var scene = new THREE.Scene();
         scene.position.set(0, 0, 0);
 
         var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
         camera.up.set(0, 0, 1);
-//        updateCamera();
 
         var raycaster = new THREE.Raycaster();
 
@@ -139,81 +178,10 @@
         renderer.sortObjects = false;
         container.appendChild(renderer.domElement);
 
-        stats = new Stats();
+        var stats = new Stats();
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.top = '0px';
         container.appendChild(stats.domElement);
-
-        var planeGeometry = new THREE.PlaneBufferGeometry(5000, 5000, 1, 1);
-        var material = new THREE.MeshBasicMaterial({color: 0x000000, side: THREE.DoubleSide, transparent: true, opacity: 0.2});
-        var xyPlane = new THREE.Mesh(planeGeometry, material);
-        xyPlane.position.set(5000 / 2, 5000 / 2, 0);
-        xyPlane.rotation.set(0, 0, Math.PI / 2);
-        scene.add(xyPlane);
-
-        var planeGeometry = new THREE.PlaneBufferGeometry(5000, 5000, 1, 1);
-        var material = new THREE.MeshBasicMaterial({color: 0xaa0000, side: THREE.DoubleSide, transparent: true, opacity: 0.2});
-        var xzPlane = new THREE.Mesh(planeGeometry, material);
-        xzPlane.position.set(5000 / 2, 0, 5000 / 2);
-        xzPlane.rotation.set(Math.PI / 2, 0, 0);
-        scene.add(xzPlane);
-
-        var planeGeometry = new THREE.PlaneBufferGeometry(5000, 5000, 1, 1);
-        var material = new THREE.MeshBasicMaterial({color: 0x00aa00, side: THREE.DoubleSide, transparent: true, opacity: 0.2});
-        var yzPlane = new THREE.Mesh(planeGeometry, material);
-        yzPlane.position.set(0, 5000 / 2, 5000 / 2);
-        yzPlane.rotation.set(0, Math.PI / 2, 0);
-        scene.add(yzPlane);
-
-        var light = new THREE.DirectionalLight(0xffffff, 1.2);
-        light.position.set(0, -1, 1).normalize();
-        scene.add(light);
-
-        var light2 = new THREE.DirectionalLight(0xffffff, 1.2);
-        light2.position.set(1, 1, 1).normalize();
-        scene.add(light2);
-
-        var color = d3.scale.category20();
-        var treemap = d3.layout.treemap()
-                .size([width, height])
-                .padding(pad)
-                .round(true)
-                .value(_.property("value"));
-        treemap.nodes(rootNode);
-
-        // draw sphere
-        var r = 1000;
-        var step = 0.3;
-        for (var t = 0; t <= Math.PI * 3; t += step) {
-            for (var p = 0; p <= Math.PI * 3; p += step) {
-                var x = (width / 2) + r * Math.cos(t) * Math.sin(p);
-                var y = (height / 2) + r * Math.sin(t) * Math.sin(p);
-                var z = r * Math.cos(p);
-
-                var geometry = new THREE.BoxGeometry(5, 5, 5);
-                var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0}));
-                object.position.set(x, y, z);
-                scene.add(object);
-            }
-        }
-
-        // create 3d treemap nodes
-        var createNodeObjects = function(node, z) {
-            var geometry = new THREE.BoxGeometry(node.dx, node.dy, node.height * 10);
-            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: color(node.name)}));
-            object.position.x = node.x + (node.dx / 2);
-            object.position.y = node.y + (node.dy / 2);
-            object.position.z = z + (node.height * 10 / 2);
-            object.node = node;
-            scene.add(object);
-
-            if (node.children !== undefined) {
-                node.children.forEach(function(child) {
-                    createNodeObjects(child, z + node.height); // TODO scale
-                })
-            }
-        };
-        createNodeObjects(rootNode, 0);
 
         window.addEventListener('mousemove', function () {
             event.preventDefault();
@@ -226,29 +194,24 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        var xyzSphere = newSpherePosition(camera.position, 3300, width/2, height/2, 0);
-        window.addEventListener("keypress", xyzKeyController(xyzSphere, [0.1, 0.1, 50], function () {
-            camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
-        }));
-
         function render() {
             camera.updateMatrixWorld();
 
             raycaster.setFromCamera(mousePosition, camera);
             var intersects = raycaster.intersectObjects(scene.children);
-            var newIntersected = intersects.length > 0 ? intersects[0].object : null;
+            var newRaycasted = intersects.length > 0 ? intersects[0].object : null;
 
-            if (newIntersected !== null) {
-                if (intersected !== newIntersected && newIntersected.material.emissive !== undefined) {
-                    if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
-                    intersected = newIntersected;
-                    intersected.currentHex = intersected.material.emissive.getHex();
-                    intersected.material.emissive.setHex(0x111111);
-//                console.log(intersected.node.name); TODO
+            if (newRaycasted !== null) {
+                if (raycastedObjects !== newRaycasted && newRaycasted.material.emissive !== undefined) {
+                    if (raycastedObjects !== null) raycastedObjects.material.emissive.setHex(raycastedObjects.currentHex);
+                    raycastedObjects = newRaycasted;
+                    raycastedObjects.currentHex = raycastedObjects.material.emissive.getHex();
+                    raycastedObjects.material.emissive.setHex(0x111111);
+//                console.log(raycastedObjects.node.name); TODO
                 }
             } else {
-                if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
-                intersected = null;
+                if (raycastedObjects !== null) raycastedObjects.material.emissive.setHex(raycastedObjects.currentHex);
+                raycastedObjects = null;
             }
 
             renderer.render(scene, camera);
@@ -260,7 +223,45 @@
             requestAnimationFrame(animate);
             render();
         }
-        animate();
+
+        function showXYZPlanes(planeSize, opacity, colors) {
+            planeSize = planeSize || 5000;
+            opacity = opacity || 0.2;
+            colors = colors || [0x000000, 0xaa0000, 0x00aa00];
+            colors = (_.isArray(colors) ? colors : [colors, colors, colors]);
+            var planeGeometry = new THREE.PlaneBufferGeometry(planeSize, planeSize, 1, 1);
+
+            var xyPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[0], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+            xyPlane.position.set(planeSize / 2, planeSize / 2, 0);
+            xyPlane.rotation.set(0, 0, Math.PI / 2);
+            scene.add(xyPlane);
+
+            var xzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[1], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+            xzPlane.position.set(planeSize / 2, 0, planeSize / 2);
+            xzPlane.rotation.set(Math.PI / 2, 0, 0);
+            scene.add(xzPlane);
+
+            var yzPlane = new THREE.Mesh(planeGeometry, new THREE.MeshBasicMaterial({color: colors[2], side: THREE.DoubleSide, transparent: true, opacity: opacity}));
+            yzPlane.position.set(0, planeSize / 2, planeSize / 2);
+            yzPlane.rotation.set(0, Math.PI / 2, 0);
+            scene.add(yzPlane);
+        }
+
+        var it = {
+            scene: scene,
+            camera: camera,
+            window: window,
+            animate: animate,
+            showXYZPlanes: showXYZPlanes,
+            raycastedObjects: function() {
+                return raycastedObjects;
+            }
+        };
+        if (onInit !== undefined) {
+            onInit(it);
+        }
+
+        return it;
     }
 
 </script>
