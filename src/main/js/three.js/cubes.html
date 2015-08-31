@@ -15,6 +15,7 @@
     <script type="text/javascript" src="three.js"></script>
     <script type="text/javascript" src="d3.v3.min.js"></script>
     <script type="text/javascript" src="underscore-min.js"></script>
+    <script type="text/javascript" src="util.js"></script>
 </head>
 <body>
 
@@ -98,8 +99,8 @@
 
 <script>
     var container = document.createElement('div');
-    var camera, scene, raycaster, renderer;
-    var plane;
+    document.body.appendChild(container);
+
     var mousePosition = new THREE.Vector2();
     var intersected = null;
     var stats;
@@ -119,31 +120,29 @@
         ]
     };
 
-    var radius = 3300;
-    var theta = 0;
-    var phi = 0;
-
     init(container, data);
-    animate();
 
     function init(container, rootNode) {
-        function updateCamera() {
-            camera.position.x = (width / 2) + radius * Math.cos(theta) * Math.sin(phi);
-            camera.position.y = (height / 2) + radius * Math.sin(theta) * Math.sin(phi);
-            camera.position.z = radius * Math.cos(phi);
-            camera.lookAt(new THREE.Vector3(width / 2, height / 2, 0));
-        }
+        var scene = new THREE.Scene();
+        scene.position.set(0, 0, 0);
 
-        document.body.appendChild(container);
-
-        scene = new THREE.Scene();
-        scene.position.x = 0;
-        scene.position.y = 0;
-        scene.position.z = 0;
-
-        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+        var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
         camera.up.set(0, 0, 1);
-        updateCamera();
+//        updateCamera();
+
+        var raycaster = new THREE.Raycaster();
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xf0f0f0);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.sortObjects = false;
+        container.appendChild(renderer.domElement);
+
+        stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '0px';
+        container.appendChild(stats.domElement);
 
         var planeGeometry = new THREE.PlaneBufferGeometry(5000, 5000, 1, 1);
         var material = new THREE.MeshBasicMaterial({color: 0x000000, side: THREE.DoubleSide, transparent: true, opacity: 0.2});
@@ -193,9 +192,7 @@
 
                 var geometry = new THREE.BoxGeometry(5, 5, 5);
                 var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0}));
-                object.position.x = x;
-                object.position.y = y;
-                object.position.z = z;
+                object.position.set(x, y, z);
                 scene.add(object);
             }
         }
@@ -218,99 +215,54 @@
         };
         createNodeObjects(rootNode, 0);
 
-        raycaster = new THREE.Raycaster();
-
-        renderer = new THREE.WebGLRenderer();
-        renderer.setClearColor(0xf0f0f0);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.sortObjects = false;
-        container.appendChild(renderer.domElement);
-
-
-        stats = new Stats();
-        stats.domElement.style.position = 'absolute';
-        stats.domElement.style.top = '0px';
-        container.appendChild(stats.domElement);
-
-        document.addEventListener('mousemove', function () {
+        window.addEventListener('mousemove', function () {
             event.preventDefault();
             mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1;
             mousePosition.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        }, false);
+        });
         window.addEventListener('resize', function () {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false);
-
-        window.rotationMode = false;
-        console.log("Rotation mode: " + window.rotationMode);
-        window.addEventListener("keypress", function(event) {
-            var key = (event.key !== undefined ? event.key : event.keyCode);
-//            console.log(key);
-
-            if (key === 114/*r*/) {
-                window.rotationMode = !window.rotationMode;
-                console.log("Rotation mode: " + window.rotationMode);
-            }
-            if (key === 106/*j*/) theta -= 0.1;
-            if (key === 108/*l*/) theta += 0.1;
-            if (key === 105/*i*/) phi -= 0.1;
-            if (key === 107/*k*/) phi += 0.1;
-            if (key === 117/*u*/) radius -= 50;
-            if (key === 111/*o*/) radius += 50;
-
-            function doStep(key, target, stepSize) {
-                if (key === 122/*z*/) target.z += stepSize;
-                if (key === 90/*Z*/) target.z -= stepSize;
-                if (key === 121/*y*/) target.y += stepSize;
-                if (key === 89/*Y*/) target.y -= stepSize;
-                if (key === 120/*x*/) target.x += stepSize;
-                if (key === 88/*X*/) target.x -= stepSize;
-            }
-            if (window.rotationMode) {
-                doStep(key, camera.rotation, 0.1);
-            } else {
-                doStep(key, camera.position, 20);
-            }
-            updateCamera();
         });
-    }
 
-    function animate() {
-        requestAnimationFrame(animate);
-        render();
-        stats.update();
-    }
+        var xyzSphere = newSpherePosition(camera.position, 3300, width/2, height/2, 0);
+        window.addEventListener("keypress", xyzKeyController(xyzSphere, [0.1, 0.1, 50], function () {
+            camera.lookAt(new THREE.Vector3(width/2, height/2, 0));
+        }));
 
-    function render() {
-//        camera.position.x = radius * Math.sin(THREE.Math.degToRad(theta));
-//        camera.position.y = radius * Math.sin(THREE.Math.degToRad(theta));
-//        camera.position.x += (mousePosition.x * window.innerWidth - camera.position.x) * .05;
-//        camera.position.y += (-mousePosition.y * window.innerHeight + 200 - camera.position.y) * .05;
-//        camera.position.z = 700;
-        camera.updateMatrixWorld();
+        function render() {
+            camera.updateMatrixWorld();
 
-        raycaster.setFromCamera(mousePosition, camera);
-        var intersects = raycaster.intersectObjects(scene.children);
-        var newIntersected = intersects.length > 0 ? intersects[0].object : null;
+            raycaster.setFromCamera(mousePosition, camera);
+            var intersects = raycaster.intersectObjects(scene.children);
+            var newIntersected = intersects.length > 0 ? intersects[0].object : null;
 
-        if (newIntersected !== null) {
-            if (intersected !== newIntersected && newIntersected.material.emissive !== undefined) {
-                if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
-                intersected = newIntersected;
-                intersected.currentHex = intersected.material.emissive.getHex();
-                intersected.material.emissive.setHex(0x111111);
+            if (newIntersected !== null) {
+                if (intersected !== newIntersected && newIntersected.material.emissive !== undefined) {
+                    if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
+                    intersected = newIntersected;
+                    intersected.currentHex = intersected.material.emissive.getHex();
+                    intersected.material.emissive.setHex(0x111111);
 //                console.log(intersected.node.name); TODO
+                }
+            } else {
+                if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
+                intersected = null;
             }
-        } else {
-            if (intersected !== null) intersected.material.emissive.setHex(intersected.currentHex);
-            intersected = null;
+
+            renderer.render(scene, camera);
+
+            stats.update();
         }
 
-        renderer.render(scene, camera);
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+        animate();
     }
+
 </script>
 </body>
 </html>
