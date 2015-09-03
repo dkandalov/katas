@@ -239,9 +239,21 @@ p85 = testList "P85" [
         (isomorphicMapping
         (graphFromString "[a-b]") (graphFromString "[1-2]")),
     expectEqual True (areIsomorphic
-        (graphFromString "[a-b]") (graphFromString "[1-2]"))
+        (graphFromString "[a-b]") (graphFromString "[1-2]")),
+
+    expectEqual (Just(Map.fromList [('a','1'), ('b','2'), ('b', '2'), ('c', '3'), ('d', '4')]))
+        (isomorphicMapping
+        (graphFromString "[a-b, b-c, c-a, c-d]") (graphFromString "[1-2, 2-3, 3-1, 3-4]")),
+    expectEqual True (areIsomorphic
+        (graphFromString "[a-b, b-c, c-a, c-d]") (graphFromString "[1-2, 2-3, 3-1, 3-4]"))
+ ]
+
+p86 = testList "P86" [
+    expectEqual 0 (nodeDegree (graphFromString "[a-a]") 'a'),
+    expectEqual 1 (nodeDegree (graphFromString "[a-b]") 'a'),
+    expectEqual 2 (nodeDegree (graphFromString "[a-b, b-c, c-a]") 'a')
  ]
 
 
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85]
+main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85, p86]

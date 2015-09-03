@@ -14,7 +14,8 @@ module P80(
     graphFindCycles, digraphFindCycles,
     spanningTrees, isTree, isConnected,
     minimalSpanningTree,
-    areIsomorphic, isomorphicMapping
+    areIsomorphic, isomorphicMapping,
+    nodeDegree, nodesByDegree, colorNodes
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -55,6 +56,11 @@ instance (GShow nodeType, GShow labelType) => Show (Graph nodeType labelType) wh
     show graph = "[" ++ (intercalate ", " stringEdges) ++ "]"
         where stringEdges = (\edge -> (gShow (fromNode edge)) ++ "-" ++ (gShow (toNode edge))) `map` (edges graph)
 
+hasNode :: (Eq n) => n -> Edge n l -> Bool
+hasNode node edge = fromNode edge == node || toNode edge == node
+
+isSelfReferred :: (Eq n) => Edge n l -> Bool
+isSelfReferred edge = fromNode edge == toNode edge
 
 -- P80
 
@@ -187,8 +193,7 @@ graphNeighborsOf :: Eq n => n -> Graph n l -> [n]
 graphNeighborsOf node graph =
     (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
     ((\edge ->
-        (fromNode edge) /= (toNode edge) &&
-        (node == fromNode edge || node == toNode edge)
+        (fromNode edge) /= (toNode edge) && (hasNode node edge)
     ) `filter`
     (edges graph))
 
@@ -217,7 +222,6 @@ spanningTrees' graphEdges graphNodes =
           halfConnectedEdges =
             (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
           notInEdge edge node = not $ hasNode node edge
-          hasNode node edge = fromNode edge == node || toNode edge == node
 
 isTree :: (Ord n, Eq n, Eq l) => Graph n l -> Bool
 isTree graph = length (spanningTrees graph) == 1
@@ -251,7 +255,6 @@ minimalSpanningTree' graphEdges graphNodes =
           halfConnectedEdges =
             (\edge -> (elem (fromNode edge) graphNodes) /= (elem (toNode edge) graphNodes)) `filter` graphEdges
           notInEdge edge node = not $ hasNode node edge
-          hasNode node edge = fromNode edge == node || toNode edge == node
 
 edgeLabelOrder :: (Ord l) => Edge n l -> Edge n l -> Ordering
 edgeLabelOrder edge1 edge2 = compare (edgeLabel edge1) (edgeLabel edge2)
@@ -285,3 +288,15 @@ allMappings nodes1 nodes2 =
     else (\n1 -> (\n2 ->
         (\mapping -> Map.insert n1 n2 mapping) `map` (allMappings (Data.List.delete n1 nodes1) (Data.List.delete n2 nodes2))
      ) `concatMap` nodes2) `concatMap` nodes1
+
+
+-- P86
+nodeDegree :: (Eq n) => Graph n l -> n -> Int
+nodeDegree graph node = length $
+    (\edge -> (not $ isSelfReferred edge) && (hasNode node edge)) `filter` (edges graph)
+
+nodesByDegree :: Graph n l -> [n]
+nodesByDegree graph = []
+
+colorNodes :: Graph n l -> [(n, Int)]
+colorNodes graph = []
