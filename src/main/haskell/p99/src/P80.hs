@@ -295,8 +295,10 @@ nodeDegree :: (Eq n) => Graph n l -> n -> Int
 nodeDegree graph node = length $
     (\edge -> (not $ isSelfReferred edge) && (hasNode node edge)) `filter` (edges graph)
 
-nodesByDegree :: Graph n l -> [n]
-nodesByDegree graph = []
+nodesByDegree :: (Ord n) => Graph n l -> [n]
+nodesByDegree graph = reverse $ (\it -> fst it) `map` sortedNodesWithDegree
+    where sortedNodesWithDegree = sortOn (\it -> snd it) nodesWithDegree
+          nodesWithDegree = (\node -> (node, nodeDegree graph node)) `map` (allNodes $ edges graph)
 
 colorNodes :: Graph n l -> [(n, Int)]
 colorNodes graph = []

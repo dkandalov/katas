@@ -251,7 +251,12 @@ p85 = testList "P85" [
 p86 = testList "P86" [
     expectEqual 0 (nodeDegree (graphFromString "[a-a]") 'a'),
     expectEqual 1 (nodeDegree (graphFromString "[a-b]") 'a'),
-    expectEqual 2 (nodeDegree (graphFromString "[a-b, b-c, c-a]") 'a')
+    expectEqual "a" (nodesByDegree (graphFromString "[a-a]")),
+    expectEqual 3 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'a'),
+    expectEqual 2 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'b'),
+    expectEqual 2 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'c'),
+    expectEqual 1 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'd'),
+    expectEqual "acbd" (nodesByDegree (graphFromString "[a-b, b-c, c-a, a-d]"))
  ]
 
 
