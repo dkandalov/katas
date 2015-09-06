@@ -300,5 +300,19 @@ nodesByDegree graph = reverse $ (\it -> fst it) `map` sortedNodesWithDegree
     where sortedNodesWithDegree = sortOn (\it -> snd it) nodesWithDegree
           nodesWithDegree = (\node -> (node, nodeDegree graph node)) `map` (allNodes $ edges graph)
 
-colorNodes :: Graph n l -> [(n, Int)]
-colorNodes graph = []
+colorNodes :: (Ord n, Eq n) => Graph n l -> [(n, Int)]
+colorNodes graph = colorNodes' (nodesByDegree graph) 0
+
+
+colorNodes' :: (Ord n, Eq n) => [n] -> Int -> [(n, Int)]
+colorNodes' [] _ = []
+colorNodes' nodes color = colored ++ (colorNodes' remainingNodes (nextColor))
+    where colored = (head nodes, color) : (colorNotConnected (head nodes) (tail nodes) color)
+          remainingNodes = (\it -> elem (it, color) colored) `filter` nodes
+          nextColor = color + 1
+
+colorNotConnected :: (Ord n) => [n] -> [n] -> Int -> [(n, Int)]
+colorNotConnected _ [] _ = []
+colorNotConnected coloredNodes nodes color = if (hasColoredNeighbor (head nodes))
+    then colorNotConnected coloredNodes (tail nodes) color
+    else colorNotConnected ((head nodes) : coloredNodes)
