@@ -192,9 +192,7 @@ digraphFindCycles' from graph path =
 graphNeighborsOf :: Eq n => n -> Graph n l -> [n]
 graphNeighborsOf node graph =
     (\edge -> if (node == fromNode edge) then toNode edge else fromNode edge) `map`
-    ((\edge ->
-        (fromNode edge) /= (toNode edge) && (hasNode node edge)
-    ) `filter`
+    ((\edge -> (not $ isSelfReferred edge) && (hasNode node edge) ) `filter`
     (edges graph))
 
 digraphNeighborsOf :: Eq n => n -> Digraph n l -> [n]
@@ -301,21 +299,21 @@ nodesByDegree graph = reverse $ (\it -> fst it) `map` sortedNodesWithDegree
           nodesWithDegree = (\node -> (node, nodeDegree graph node)) `map` (allNodes $ edges graph)
 
 colorNodes :: (Ord n, Eq n) => Graph n l -> [(n, Int)]
-colorNodes graph = colorNodes' (nodesByDegree graph) graph 0
+colorNodes graph = colorNodes' (nodesByDegree graph) graph 1
 
 
 colorNodes' :: (Ord n, Eq n) => [n] -> Graph n l -> Int -> [(n, Int)]
 colorNodes' [] _ _ = []
 colorNodes' nodes graph color = colored ++ (colorNodes' remainingNodes graph nextColor)
-    where colored = (head nodes, color) : (colorNotConnected [] nodes graph color)
-          remainingNodes = (\it -> elem (it, color) colored) `filter` nodes
+    where remainingNodes = (\it -> not $ elem (it, color) colored) `filter` nodes
+          colored = (head nodes, color) : (colorNotConnected [] (tail nodes) graph color)
           nextColor = color + 1
 
 colorNotConnected :: (Ord n) => [(n, Int)] -> [n] -> Graph n l -> Int -> [(n, Int)]
 colorNotConnected coloredNodes [] graph _ = coloredNodes
-colorNotConnected coloredNodes nodes graph color = if (hasColoredNeighbor (head nodes))
+colorNotConnected coloredNodes nodes graph color =
+    if (hasColoredNeighbor (head nodes))
     then colorNotConnected coloredNodes (tail nodes) graph color
     else colorNotConnected ((head nodes, color) : coloredNodes) (tail nodes) graph color
-    where hasColoredNeighbor node = any (\it -> colorOf it == color) (neighborsOf node graph)
-          neighborsOf node graph = []
-          colorOf node = color
+    where hasColoredNeighbor node = any (\it -> colorOf it == color) (graphNeighborsOf node graph)
+          colorOf node = snd $ Maybe.fromMaybe (node, -1) (find (\it -> (fst it) == node) coloredNodes)
