@@ -301,18 +301,21 @@ nodesByDegree graph = reverse $ (\it -> fst it) `map` sortedNodesWithDegree
           nodesWithDegree = (\node -> (node, nodeDegree graph node)) `map` (allNodes $ edges graph)
 
 colorNodes :: (Ord n, Eq n) => Graph n l -> [(n, Int)]
-colorNodes graph = colorNodes' (nodesByDegree graph) 0
+colorNodes graph = colorNodes' (nodesByDegree graph) graph 0
 
 
-colorNodes' :: (Ord n, Eq n) => [n] -> Int -> [(n, Int)]
-colorNodes' [] _ = []
-colorNodes' nodes color = colored ++ (colorNodes' remainingNodes (nextColor))
-    where colored = (head nodes, color) : (colorNotConnected (head nodes) (tail nodes) color)
+colorNodes' :: (Ord n, Eq n) => [n] -> Graph n l -> Int -> [(n, Int)]
+colorNodes' [] _ _ = []
+colorNodes' nodes graph color = colored ++ (colorNodes' remainingNodes graph nextColor)
+    where colored = (head nodes, color) : (colorNotConnected [] nodes graph color)
           remainingNodes = (\it -> elem (it, color) colored) `filter` nodes
           nextColor = color + 1
 
-colorNotConnected :: (Ord n) => [n] -> [n] -> Int -> [(n, Int)]
-colorNotConnected _ [] _ = []
-colorNotConnected coloredNodes nodes color = if (hasColoredNeighbor (head nodes))
-    then colorNotConnected coloredNodes (tail nodes) color
-    else colorNotConnected ((head nodes) : coloredNodes)
+colorNotConnected :: (Ord n) => [(n, Int)] -> [n] -> Graph n l -> Int -> [(n, Int)]
+colorNotConnected coloredNodes [] graph _ = coloredNodes
+colorNotConnected coloredNodes nodes graph color = if (hasColoredNeighbor (head nodes))
+    then colorNotConnected coloredNodes (tail nodes) graph color
+    else colorNotConnected ((head nodes, color) : coloredNodes) (tail nodes) graph color
+    where hasColoredNeighbor node = any (\it -> colorOf it == color) (neighborsOf node graph)
+          neighborsOf node graph = []
+          colorOf node = color
