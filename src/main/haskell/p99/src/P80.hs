@@ -10,7 +10,7 @@ module P80(
     digraphFromString, digraphFromStringLabel,
     graphToTermForm, graphToAdjacentForm,
     digraphToTermForm, digraphToAdjacentForm,
-    graphFindPaths, digraphFindPaths,
+    graphFindPaths, digraphFindPaths, graphNeighborsOf,
     graphFindCycles, digraphFindCycles,
     spanningTrees, isTree, isConnected,
     minimalSpanningTree,
@@ -306,7 +306,7 @@ colorNodes' :: (Ord n, Eq n) => [n] -> Graph n l -> Int -> [(n, Int)]
 colorNodes' [] _ _ = []
 colorNodes' nodes graph color = colored ++ (colorNodes' remainingNodes graph nextColor)
     where remainingNodes = (\it -> not $ elem (it, color) colored) `filter` nodes
-          colored = (head nodes, color) : (colorNotConnected [] (tail nodes) graph color)
+          colored = colorNotConnected [(head nodes, color)] (tail nodes) graph color
           nextColor = color + 1
 
 colorNotConnected :: (Ord n) => [(n, Int)] -> [n] -> Graph n l -> Int -> [(n, Int)]

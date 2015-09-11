@@ -259,7 +259,7 @@ p86 = testList "P86" [
     expectEqual 2 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'c'),
     expectEqual 1 (nodeDegree (graphFromString "[a-b, b-c, c-a, a-d]") 'd'),
     expectEqual "acbd" (nodesByDegree (graphFromString "[a-b, b-c, c-a, a-d]")),
-    expectEqual [('a', 1), ('b', 2), ('c', 3), ('d', 2)]
+    expectEqual [('a', 1), ('d', 2), ('c', 2), ('b', 3)]
         (colorNodes (graphFromString "[a-b, b-c, c-a, a-d]"))
  ]
 
