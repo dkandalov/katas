@@ -15,7 +15,8 @@ module P80(
     spanningTrees, isTree, isConnected,
     minimalSpanningTree,
     areIsomorphic, isomorphicMapping,
-    nodeDegree, nodesByDegree, colorNodes
+    nodeDegree, nodesByDegree, colorNodes,
+    nodesByDepthFrom
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -317,3 +318,17 @@ colorNotConnected coloredNodes nodes graph color =
     else colorNotConnected ((head nodes, color) : coloredNodes) (tail nodes) graph color
     where hasColoredNeighbor node = any (\it -> colorOf it == color) (graphNeighborsOf node graph)
           colorOf node = snd $ Maybe.fromMaybe (node, -1) (find (\it -> (fst it) == node) coloredNodes)
+
+
+-- P87
+nodesByDepthFrom :: (Eq n) => n -> Graph n l -> [n]
+nodesByDepthFrom node graph = nodesByDepthFrom' [node] graph []
+
+nodesByDepthFrom' :: (Eq n) => [n] -> Graph n l -> [n] -> [n]
+nodesByDepthFrom' [] _ visitedNodes = visitedNodes
+nodesByDepthFrom' nodes graph visitedNodes =
+    if (elem node visitedNodes) then nodesByDepthFrom' otherNodes graph visitedNodes
+    else nodesByDepthFrom' (otherNodes ++ neighborNodes) graph (node : visitedNodes)
+    where node = head nodes
+          otherNodes = tail nodes
+          neighborNodes = graphNeighborsOf node graph
