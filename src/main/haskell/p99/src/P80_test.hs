@@ -268,8 +268,17 @@ p87 = testList "P87" [
     expectEqual "cba" (nodesByDepthFrom 'a' (graphFromString "[a-b, b-c, a-c]")),
     expectEqual "cab" (nodesByDepthFrom 'b' (graphFromString "[a-b, b-c, a-c]")),
     expectEqual "abc" (nodesByDepthFrom 'c' (graphFromString "[a-b, b-c, a-c]")),
-        expectEqual "cbad" (nodesByDepthFrom 'd' (graphFromString "[a-b, b-c, e-e, a-c, a-d]"))
+    expectEqual "cbad" (nodesByDepthFrom 'd' (graphFromString "[a-b, b-c, e-e, a-c, a-d]"))
+ ]
+
+p88 = testList "P88" [
+    expectEqual [graphFromString "[a-a]"]
+        (splitGraph $ graphFromString "[a-a]"),
+    expectEqual [graphFromString "[a-b, b-c]"]
+        (splitGraph $ graphFromString "[a-b, b-c]"),
+    expectEqual [graphFromString "[a-b]", graphFromString "[c-c]"]
+        (splitGraph $ graphFromString "[a-b, c-c]")
  ]
 
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85, p86, p87]
+main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85, p86, p87, p88]

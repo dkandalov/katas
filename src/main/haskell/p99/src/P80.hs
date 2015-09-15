@@ -16,7 +16,8 @@ module P80(
     minimalSpanningTree,
     areIsomorphic, isomorphicMapping,
     nodeDegree, nodesByDegree, colorNodes,
-    nodesByDepthFrom
+    nodesByDepthFrom,
+    splitGraph
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -332,3 +333,14 @@ nodesByDepthFrom' nodes graph visitedNodes =
     where node = head nodes
           otherNodes = tail nodes
           neighborNodes = graphNeighborsOf node graph
+
+
+-- P88
+splitGraph :: (Eq n) => Graph n l -> [Graph n l]
+splitGraph graph =
+    if (null $ edges graph) then []
+    else headGraph : (splitGraph tailGraph)
+    where headGraph = (\node -> elem node headNodes) `filterGraph` graph
+          tailGraph = (\node -> not (elem node headNodes)) `filterGraph` graph
+          headNodes = nodesByDepthFrom (fromNode $ head $ edges graph) graph
+          filterGraph f graph = Graph ((\edge -> (f (fromNode edge)) || (f (toNode edge))) `filter` (edges graph))
