@@ -1,3 +1,4 @@
+/*
 package ru.misc
 
 import com.cmcmarkets.storage.Storage
@@ -6,9 +7,11 @@ import twitter4j.*
 import static com.cmcmarkets.beans.Bean.bean
 import com.cmcmarkets.csv.CsvWriter
 
+*/
 /**
  * @author DKandalov
- */
+ *//*
+
 class GTwitter {
 
   private static final String CONSUMER_KEY = ""
@@ -36,12 +39,14 @@ class GTwitter {
     println tweets.findAll{it.text.contains("#kata")}.size()
     println tweets.findAll{it.text.contains("#gym")}.size()
 
+*/
 /*
     println "by calendar day:"
     CsvWriter.write("by-cal-day.csv", smByCalDay(tweets))
     println "by day:"
     CsvWriter.write("by-day.csv", smByDay(tweets))
-*/
+*//*
+
 
     CsvWriter.write("by-time.csv", smByTime(tweets))
 
@@ -49,7 +54,8 @@ class GTwitter {
     println tweets.min { it.getCreatedAt() }
 
 
-    /*twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
+    */
+/*twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
     def requestToken = twitter.getOAuthRequestToken()
 
     AccessToken accessToken = null;
@@ -76,7 +82,8 @@ class GTwitter {
     println accessToken.token
     println accessToken.tokenSecret
 
-    println(twitter.updateStatus("hi!!!!"))*/
+    println(twitter.updateStatus("hi!!!!"))*//*
+
   }
 
   static List smByTime(ResponseList tweets) {
@@ -97,7 +104,8 @@ class GTwitter {
     def byDay = [:]
     tweets.sort {it.createdAt}.each { twit ->
       if (twit.text.contains("#sm")) {
-        def match = twit.text =~ /(\d+).*/
+        def match = twit.text =~ /(\d+).*//*
+
         if (match.count == 1) {
           count = match[0][1].toInteger()
           if (count < lastCount) {
@@ -114,3 +122,4 @@ class GTwitter {
     return byDay
   }
 }
+*/

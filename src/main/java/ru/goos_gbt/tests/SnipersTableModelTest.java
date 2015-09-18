@@ -125,7 +125,7 @@ public class SnipersTableModelTest {
 
     private Matcher<TableModelEvent> anInsertionAtRow(final int row) {
         return new TypeSafeMatcher<TableModelEvent>() {
-            @Override protected boolean matchesSafely(TableModelEvent event) {
+            @Override public boolean matchesSafely(TableModelEvent event) {
                 return event.getFirstRow() == row;
             }
 

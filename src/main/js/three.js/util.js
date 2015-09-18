@@ -2,11 +2,11 @@ function xyzMouseController(target, env, speed, onUpdate) {
     speed = speed || {x: 0.5, y: 0.5};
     var mouseX = 0;
     var mouseY = 0;
-    env.addRenderListener(function() {
+    env.addRenderListener(function () {
         target.setX(target.getX() + (mouseX - target.getX() * speed.x));
         target.setY(target.getY() + (-mouseY - target.getY() * speed.y));
         if (onUpdate !== undefined) onUpdate();
-    })
+    });
     return function(event) {
         mouseX = (event.clientX / env.window.innerWidth) * 2 - 1;
         mouseY = -(event.clientY / env.window.innerHeight) * 2 + 1;

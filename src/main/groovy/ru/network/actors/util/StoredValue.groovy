@@ -1,6 +1,5 @@
 package ru.network.actors.util
 
-import com.cmcmarkets.storage.Storage
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -24,13 +23,12 @@ class StoredValue<T> {
 
   private StoredValue(String id, Closure defaultValue, def overrideValue = null) {
     this.id = id
-    this.value = (overrideValue != null ? overrideValue : Storage.cached(id, defaultValue))
+    this.value = (overrideValue != null ? overrideValue : defaultValue)
 
     Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
       @Override
       void run() {
         synchronized (StoredValue.this) {
-          Storage.save(id, StoredValue.this.value)
           valueChanged = false
         }
       }

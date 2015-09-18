@@ -3,7 +3,6 @@ package ru.network.actors.trades
 import groovyx.gpars.activeobject.ActiveMethod
 import groovyx.gpars.activeobject.ActiveObject
 import ru.network.actors.util.StoredValue
-import static com.cmcmarkets.Util.runSafely
 import ru.network.actors.Bus
 
 /**
@@ -30,9 +29,7 @@ class TradeSequencer {
   }
 
   private def handle(message) {
-    runSafely {
-      bus.publish(new SequencedMessage(nextSequenceId(), message, id))
-    }
+    bus.publish(new SequencedMessage(nextSequenceId(), message, id))
   }
 
   def nextSequenceId() {

@@ -104,27 +104,21 @@
             <version>1.2</version>
         </dependency>
 
-        <dependency> <!-- this depends on local repo -->
-            <groupId>com.objogate.wl</groupId>
+        <dependency>
+            <groupId>com.googlecode.windowlicker</groupId>
             <artifactId>windowlicker-swing</artifactId>
-            <version>1.0.0</version>
+            <version>r268</version>
         </dependency>
-        <dependency> <!-- this depends on local repo -->
-            <groupId>com.objogate.wl</groupId>
+        <dependency>
+            <groupId>com.googlecode.windowlicker</groupId>
             <artifactId>windowlicker-core</artifactId>
-            <version>1.0.0</version>
+            <version>r268</version>
         </dependency>
 
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
             <version>6.1.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.cmcmarkets</groupId>
-            <artifactId>gbeans</artifactId>
-            <version>0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

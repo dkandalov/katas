@@ -69,7 +69,7 @@ public class Lesson2 {
     private static void exercise3() {
         List<String> list = asList("The", "quick", "brown", "fox", "jumped", "over", "the", "lazy", "dog");
         String result = list.stream()
-                .substream(2, 5)
+                .skip(2)
                 .collect(joining("-"));
         assertThat(result, equalTo("brown-fox-jumped"));
     }

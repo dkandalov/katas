@@ -3,11 +3,6 @@ package ru.sort
 import org.scalatest.Matchers
 import org.junit.Test
 
-/**
- * User: dima
- * Date: 27/06/2012
- */
-
 trait SeqSortTest extends Matchers {
 
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T])): Seq[T]

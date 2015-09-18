@@ -5,7 +5,6 @@ import groovyx.gpars.activeobject.ActiveObject
 import javax.swing.DefaultListModel
 import javax.swing.JPanel
 import ru.network.actors.Bus
-import static com.cmcmarkets.Util.runSafely
 import static javax.swing.SwingUtilities.invokeLater
 
 /**
@@ -39,11 +38,9 @@ class BusListeningForm {
   }
 
   private def handle(message) {
-    runSafely {
-      if (!acceptMessage(message)) return
-      invokeLater {
-        listModel.addElement(message)
-      }
+    if (!acceptMessage(message)) return
+    invokeLater {
+      listModel.addElement(message)
     }
   }
 }
