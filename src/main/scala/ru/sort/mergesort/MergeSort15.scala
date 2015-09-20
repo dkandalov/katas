@@ -3,9 +3,11 @@ package ru.sort.mergesort
 import org.scalatest.Matchers
 import ru.sort.SeqSortTest
 
+import scala.reflect.ClassTag
+
 
 class MergeSort15 extends SeqSortTest with Matchers {
-	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T]): Seq[T] = {
+	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		def merge(seq1: Seq[T], seq2: Seq[T]): Seq[T] = {
 			if (seq1.isEmpty) seq2
 			else if (seq2.isEmpty) seq1

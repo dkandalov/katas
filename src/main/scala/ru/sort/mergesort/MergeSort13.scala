@@ -3,9 +3,11 @@ package ru.sort.mergesort
 import org.scalatest.Matchers
 import ru.sort.SeqSortTest
 
+import scala.reflect.ClassTag
+
 
 class MergeSort13 extends SeqSortTest with Matchers {
-	def sort[T](seq: Seq[T])(implicit ordering: (T) => Ordered[T]): Seq[T] = {
+	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		if (seq.size <= 1) seq
 		else {
 			val (part1, part2) = seq.splitAt(middleOf(seq))

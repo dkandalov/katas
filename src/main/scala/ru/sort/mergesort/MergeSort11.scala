@@ -3,13 +3,15 @@ package ru.sort.mergesort
 import ru.sort.SeqSortTest
 import org.scalatest.Matchers
 
+import scala.reflect.ClassTag
+
 /**
  * User: dima
  * Date: 08/07/2012
  */
 
 class MergeSort11 extends SeqSortTest with Matchers {
-	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T]): Seq[T] = {
+	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		def split(seq: Seq[T]): (Seq[T], Seq[T]) = {
 			seq.splitAt(seq.size / 2)
 		}

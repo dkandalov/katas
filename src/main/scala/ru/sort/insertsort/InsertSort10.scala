@@ -3,6 +3,7 @@ package ru.sort.insertsort
 import org.scalatest.Matchers
 import ru.sort.SeqSortTest
 import collection.mutable.ArrayBuffer
+import scala.reflect.ClassTag
 
 /**
  * User: dima
@@ -11,7 +12,7 @@ import collection.mutable.ArrayBuffer
 
 class InsertSort10 extends SeqSortTest with Matchers {
 
-	def sort[T](seq: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
+	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		val array = ArrayBuffer(seq: _*)
 		1.until(array.size).foreach{ i =>
 			1.to(i).reverse.foreach{ j =>
@@ -29,7 +30,7 @@ class InsertSort10 extends SeqSortTest with Matchers {
 		buffer(i2) = tmp
 	}
 
-	def sort_[T](seq: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
+	def sort_[T](seq: Seq[T])(implicit ordered: T => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		if (seq.isEmpty) seq
 		else insert(seq.head, sort(seq.tail))
 	}
