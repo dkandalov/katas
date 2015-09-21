@@ -16,22 +16,19 @@ class QuickSort1 extends SeqSortTest with Matchers {
 		}
 		def quickSort(array: Array[T], from: Int, to: Int): Array[T] = {
 			if (to - from <= 1) return array
-			val pivotIndex = (from + to) / 2
+			val pivotIndex = to - 1
 			val pivot = array(pivotIndex)
 
-			var fromIndex = from
-			var toIndex = to
-			while (fromIndex < toIndex) {
-				val i1 = Range(from, pivotIndex).find(array(_) >= pivot).getOrElse(-1)
-				val i2 = Range(pivotIndex + 1, to).find(array(_) <= pivot).getOrElse(-1)
-				if (i1 == -1 || i2 == -1) fromIndex = toIndex
-				else {
+			var i1 = from
+			var i2 = pivotIndex
+			while (i1 < pivotIndex && i1 < i2) {
+				i1 = Range(i1, pivotIndex).find(array(_) >= pivot).getOrElse(pivotIndex)
+				i2 = Range(i1, i2).reverse.find(array(_) <= pivot).getOrElse(i1)
+				if (i1 < pivotIndex && i1 < i2) {
 					swap(array, i1, i2)
-					fromIndex = i1
-					toIndex = i2
 				}
 			}
-			swap(array, from, pivotIndex)
+			swap(array, i1, pivotIndex)
 
 			quickSort(array, from, pivotIndex)
 			quickSort(array, pivotIndex, array.length)

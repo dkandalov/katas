@@ -17,7 +17,7 @@ public class QuickSorter extends SortAlgorithm {
         int i = from;
         int j = to - 1;
         while (true) {
-            while (i < pivot && values[i] <= values[pivot]) i++;
+            while (i < pivot && values[i] < values[pivot]) i++;
             while (j > i && values[j] >= values[pivot]) j--;
             if (i >= pivot || j <= i) break;
 
