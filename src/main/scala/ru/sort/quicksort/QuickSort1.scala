@@ -22,16 +22,8 @@ class QuickSort1 extends SeqSortTest with Matchers {
 			var i1 = from
 			var i2 = pivotIndex
 			while (i1 < pivotIndex && i1 < i2) {
-				var i = i1
-				while (i <= pivotIndex && array(i) < pivot) { i = i + 1 }
-				i1 = i
-				// i1 = Range(i1, pivotIndex).find(array(_) >= pivot).getOrElse(pivotIndex)
-
-				i = i2 - 1
-				while (i >= i1 && array(i) > pivot) { i = i - 1 }
-				i2 = i
-				// i2 = Range(i1, i2).reverse.find(array(_) <= pivot).getOrElse(i1)
-
+				i1 = findIndex(array, i1, pivotIndex){ _ >= pivot }
+				i2 = findIndex(array, i2 - 1, i1){ _ <= pivot }
 				if (i1 < pivotIndex && i1 < i2) {
 					swap(array, i1, i2)
 				}
@@ -45,5 +37,17 @@ class QuickSort1 extends SeqSortTest with Matchers {
 
 		if (seq.size <= 1) return seq
 		quickSort(seq.toArray[T], 0, seq.size).toSeq
+	}
+
+	def findIndex[T](array: Array[T], from: Int, to: Int)(f: T => Boolean): Int = {
+		if (from < to) {
+			var i = from
+			while (i <= to && !f(array(i))) i = i + 1
+			i
+		} else {
+			var i = from
+			while (i >= to && !f(array(i))) i = i - 1
+			i
+		}
 	}
 }
