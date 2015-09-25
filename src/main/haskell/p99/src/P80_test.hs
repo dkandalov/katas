@@ -280,5 +280,13 @@ p88 = testList "P88" [
         (splitGraph $ graphFromString "[a-b, c-c]")
  ]
 
+p89 = testList "P89" [
+    expectEqual True (isBipartite $ graphFromString "[a-b]"),
+    expectEqual True (isBipartite $ graphFromString "[a-b, b-c]"),
+    expectEqual True (isBipartite $ graphFromString "[a-b, b-c, d-d]"),
+    expectEqual False (isBipartite $ graphFromString "[a-b, b-c, c-a]"),
+    expectEqual False (isBipartite $ graphFromString "[a-b, b-c, e-f, f-g, g-e]")
+ ]
+
 main :: IO Counts
-main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85, p86, p87, p88]
+main = runTestTT $ TestList [p80, p81, p82, p83, p84, p85, p86, p87, p88, p89]

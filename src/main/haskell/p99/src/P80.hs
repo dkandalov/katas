@@ -17,7 +17,8 @@ module P80(
     areIsomorphic, isomorphicMapping,
     nodeDegree, nodesByDegree, colorNodes,
     nodesByDepthFrom,
-    splitGraph
+    splitGraph,
+    isBipartite
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -291,6 +292,7 @@ allMappings nodes1 nodes2 =
 
 
 -- P86
+-- http://graphstream-project.org/doc/Algorithms/Welsh-Powell_1.0/
 nodeDegree :: (Eq n) => Graph n l -> n -> Int
 nodeDegree graph node = length $
     (\edge -> (not $ isSelfReferred edge) && (hasNode node edge)) `filter` (edges graph)
@@ -344,3 +346,8 @@ splitGraph graph =
           tailGraph = (\node -> not (elem node headNodes)) `filterGraph` graph
           headNodes = nodesByDepthFrom (fromNode $ head $ edges graph) graph
           filterGraph f graph = Graph ((\edge -> (f (fromNode edge)) || (f (toNode edge))) `filter` (edges graph))
+
+-- p89
+isBipartite :: (Ord n, Eq n) => Graph n l -> Bool
+isBipartite graph = 2 == (length $ nub $ colors graph)
+    where colors graph = (\it -> snd it) `map` (colorNodes graph)
