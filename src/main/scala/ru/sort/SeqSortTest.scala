@@ -2,6 +2,10 @@ package ru.sort
 
 import org.scalatest.Matchers
 import org.junit.Test
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.matchers.{MatchFailed, MatchResult, Matcher}
+import org.specs2.matcher.MatchFailureException
+import org.scalatest.enablers.Collecting._
 
 import scala.reflect.ClassTag
 
@@ -25,10 +29,9 @@ trait SeqSortTest extends Matchers {
 		sort(Seq(3, 1, 2)) should equal(Seq(1, 2, 3))
 		sort(Seq(3, 2, 1)) should equal(Seq(1, 2, 3))
 
-		val seq = Range(1, 4).flatMap { n => Array.fill(n){n}.toSeq }
-		seq.permutations.foreach { perm =>
-				sort(perm) should equal(seq)
-		}
+		val seq: Seq[Int] = Range(1, 4).flatMap { n => Array.fill(n){n}.toSeq }
+		all(seq.permutations)(collectingNatureOfGenTraversable[Seq[Int], Iterator]) should equal(seq)
+//		allPermutationsShouldBeEqual(seq)
 
 		(1 to 8).map(Range(1, _).toSeq).foreach { seq =>
 				seq.permutations.foreach { perm =>
@@ -37,4 +40,18 @@ trait SeqSortTest extends Matchers {
 		}
 	}
 
+	private def allPermutationsShouldBeEqual[T](seq: Seq[T]): Unit = {
+		seq.permutations.foreach{ it =>
+			val matchResult = equal(seq).matcher[Seq[T]].apply(it)
+			matchResult match {
+				case MatchFailed(failureMessage) => throw new TestFailedException(failureMessage, 0)
+				case _ =>
+			}
+		}
+//		new Matcher[Seq[T]] {
+//			override def apply(left: Seq[T]): MatchResult = {
+//				new MatchResult(false, "", "")
+//			}
+//		}
+	}
 }
