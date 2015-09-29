@@ -16,23 +16,26 @@ class QuickSort4 extends SeqSortTest with Matchers {
 		}
 		def findIndex(array: Array[T], from: Int, to: Int)(f: T => Boolean): Int = {
 			var i = from
-			if (from < to) {
-				while (i != to && !f(array(i))) i = i + 1
-			} else {
-				while (i != to && !f(array(i))) i = i - 1
-			}
+			val step = if (from < to) 1 else -1
+			do {
+				i = i + step
+			} while (i != to && !f(array(i)))
 			i
 		}
 		def quickSort(array: Array[T], from: Int, to: Int): Array[T] = {
 			if (to - from <= 1) return array
+			if (to - from == 2) {
+				if (array(from) > array(to - 1)) swap(array, from, to - 1)
+				return array
+			}
 			val pivotIndex = to - 1
 			val pivot = array(pivotIndex)
 
-			var i1 = from
+			var i1 = from - 1
 			var i2 = pivotIndex
 			while (i1 < i2) {
 				i1 = findIndex(array, i1, pivotIndex){ _ >= pivot }
-				i2 = findIndex(array, i2 - 1, i1){ _ <= pivot }
+				i2 = findIndex(array, i2, from){ _ <= pivot }
 				if (i1 < i2) {
 					swap(array, i1, i2)
 				}
@@ -45,6 +48,5 @@ class QuickSort4 extends SeqSortTest with Matchers {
 		}
 		quickSort(seq.toArray[T], 0, seq.size).toSeq
 	}
-
 
 }
