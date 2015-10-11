@@ -47,7 +47,8 @@ p90 = testList "P90" [
                     "---Q",
                     "Q---",
                     "--Q-"
-                 ]] (findQueenPositions 4)
+                 ]] (findQueenPositions 4),
+    expectEqual [] (findQueenPositions 5) -- TODO very slow
  ]
 
 main :: IO Counts
