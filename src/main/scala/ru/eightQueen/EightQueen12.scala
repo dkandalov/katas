@@ -18,10 +18,10 @@ class EightQueen12 extends Matchers {
 	}
 
 	@Test def `generate all positions on the board`() {
-		val allPositions = ListBuffer[(Int, Int)]()
+		val allPositions = ListBuffer[Position]()
 		val boardSize = 3
 
-		var position = (-1, boardSize - 1)
+		var position = Position(-1, boardSize - 1)
 		while (!isLast(boardSize, position)) {
 			position = nextPosition(boardSize, position)
 			allPositions += position
@@ -34,11 +34,11 @@ class EightQueen12 extends Matchers {
 		))
 	}
 
-	private def findPositions(boardSize: Int): Seq[Seq[(Int, Int)]] = {
+	private def findPositions(boardSize: Int): Seq[Seq[Position]] = {
 		findPositions(boardSize, (-1, boardSize - 1), Seq()).filter(it => isComplete(boardSize, it))
 	}
 
-	private def findPositions(boardSize: Int, position: (Int, Int), result: Seq[(Int, Int)]): Seq[Seq[(Int, Int)]] = {
+	private def findPositions(boardSize: Int, position: Position, result: Seq[Position]): Seq[Seq[Position]] = {
 		if (isLast(boardSize, position)) return Seq(result)
 		val newPosition = nextPosition(boardSize, position)
 		val newLinePosition = newLine(newPosition)
@@ -50,29 +50,35 @@ class EightQueen12 extends Matchers {
 		}
 	}
 
-	private def isComplete(boardSize: Int, positions: Seq[(Int, Int)]): Boolean = {
+	private case class Position(row: Int, column: Int)
+
+	private implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = {
+		Position(tuple._1, tuple._2)
+	}
+
+	private def isComplete(boardSize: Int, positions: Seq[Position]): Boolean = {
 		positions.size == boardSize
 	}
 
-	private def isValid(positions: Seq[(Int, Int)]): Boolean = {
+	private def isValid(positions: Seq[Position]): Boolean = {
 		positions.forall{ thisPosition =>
 			positions.filter(_ != thisPosition).forall { thatPosition =>
-				(thisPosition._1 != thatPosition._1 && thisPosition._2 != thatPosition._2) &&
-				((thisPosition._1 - thatPosition._1).abs != (thisPosition._2 - thatPosition._2).abs)
+				(thisPosition.row != thatPosition.row && thisPosition.column != thatPosition.column) &&
+				((thisPosition.row - thatPosition.row).abs != (thisPosition.column - thatPosition.column).abs)
 			}
 		}
 	}
 
-	private def isLast(boardSize: Int, position: (Int, Int)): Boolean = {
-		(position._1 == boardSize - 1 && position._2 == boardSize - 1) ||
-		 position._1 > boardSize - 1
+	private def isLast(boardSize: Int, position: Position): Boolean = {
+		(position.row == boardSize - 1 && position.column == boardSize - 1) ||
+		 position.row > boardSize - 1
 	}
 
-	private def nextPosition(boardSize: Int, position: (Int, Int)): (Int, Int) = {
-		if (position._2 == boardSize - 1) (position._1 + 1, 0) else (position._1, position._2 + 1)
+	private def nextPosition(boardSize: Int, position: Position): Position = {
+		if (position.column == boardSize - 1) (position.row + 1, 0) else (position.row, position.column + 1)
 	}
 
-	private def newLine(position: (Int, Int)): (Int, Int) = {
-		(position._1 + 1, -1)
+	private def newLine(position: Position): Position = {
+		(position.row + 1, -1)
 	}
 }
