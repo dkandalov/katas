@@ -14,7 +14,7 @@ class EightQueen12 extends Matchers {
 		findPositions(boardSize = 3).size should equal(0)
 		findPositions(boardSize = 4).size should equal(2)
 		findPositions(boardSize = 5).size should equal(10)
-		//findPositions(boardSize = 8).size should equal(92) TODO too slow
+		findPositions(boardSize = 8).size should equal(92)
 	}
 
 	@Test def `generate all positions on the board`() {
@@ -35,17 +35,19 @@ class EightQueen12 extends Matchers {
 	}
 
 	private def findPositions(boardSize: Int): Seq[Seq[(Int, Int)]] = {
-		findPositions(boardSize, (-1, boardSize - 1)).filter(it => isComplete(boardSize, it))
+		findPositions(boardSize, (-1, boardSize - 1), Seq()).filter(it => isComplete(boardSize, it))
 	}
 
-	private def findPositions(boardSize: Int, position: (Int, Int)): Seq[Seq[(Int, Int)]] = {
-		if (isLast(boardSize, position)) return Seq(Seq())
+	private def findPositions(boardSize: Int, position: (Int, Int), result: Seq[(Int, Int)]): Seq[Seq[(Int, Int)]] = {
+		if (isLast(boardSize, position)) return Seq(result)
 		val newPosition = nextPosition(boardSize, position)
 		val newLinePosition = newLine(newPosition)
-		val result =
-			findPositions(boardSize, newLinePosition).map{it => newPosition +: it} ++
-			findPositions(boardSize, newPosition)
-		result.filter(isValid)
+		if (isValid(newPosition +: result)) {
+			findPositions(boardSize, newLinePosition, newPosition +: result) ++
+			findPositions(boardSize, newPosition, result)
+		} else {
+			findPositions(boardSize, newPosition, result)
+		}
 	}
 
 	private def isComplete(boardSize: Int, positions: Seq[(Int, Int)]): Boolean = {
