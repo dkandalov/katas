@@ -32,23 +32,23 @@ p90 = testList "P90" [
     expectEqual [(1,1)] (boardToPositions ["--", "-Q"]),
     expectEqual [(0,0), (1,1)] (boardToPositions ["Q-", "-Q"]),
 
-    expectEqual [boardToPositions ["Q"]]
-                (findQueenPositions 1),
+    expectEqual [["Q"]]
+                ((positionsToBoard 1) `map` (findQueenPositions 1)),
     expectEqual [] (findQueenPositions 2),
     expectEqual [] (findQueenPositions 3),
-    expectEqual [boardToPositions [
-                    "--Q-",
-                    "Q---",
-                    "---Q",
-                    "-Q--"
-                 ],
-                 boardToPositions [
+    expectEqual [[
                     "-Q--",
                     "---Q",
                     "Q---",
                     "--Q-"
-                 ]] (findQueenPositions 4),
-    expectEqual [] (findQueenPositions 5) -- TODO very slow
+                 ], [
+                    "--Q-",
+                    "Q---",
+                    "---Q",
+                    "-Q--"
+                 ]] ((positionsToBoard 4) `map` (findQueenPositions 4)),
+    expectEqual 10 (length $ findQueenPositions 5),
+    expectEqual 92 (length $ findQueenPositions 8)
  ]
 
 main :: IO Counts

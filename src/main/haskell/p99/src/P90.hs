@@ -7,15 +7,16 @@ import qualified Data.Maybe as Maybe
 
 findQueenPositions :: Int -> [[(Int, Int)]]
 findQueenPositions boardSize =
-    filter (\it -> length it == boardSize) (findQueenPositions' boardSize (0, 0))
+    filter (\it -> length it == boardSize) (findQueenPositions' boardSize (0, 0) [])
 
-findQueenPositions' :: Int -> (Int, Int) -> [[(Int, Int)]]
-findQueenPositions' boardSize position =
-    if (fst position >= boardSize) then [[]]
-    else filter isValid positionsList
-    where positionsList = subResult
-          subResult = (findQueenPositions' boardSize (next boardSize position)) ++
-                      (\it -> position : it) `map` (findQueenPositions' boardSize (next boardSize position))
+findQueenPositions' :: Int -> (Int, Int) -> [(Int, Int)] -> [[(Int, Int)]]
+findQueenPositions' boardSize position positions =
+    if (fst position == boardSize) then [positions]
+    else if (isValid newPositions) then
+        subResultWithPosition ++ subResultWithoutPosition else subResultWithoutPosition
+    where newPositions = position : positions
+          subResultWithPosition = findQueenPositions' boardSize (next boardSize position) newPositions
+          subResultWithoutPosition = findQueenPositions' boardSize (next boardSize position) positions
 
 isValid :: [(Int, Int)] -> Bool
 isValid positions = all (\(row1, col1) -> all (\(row2, col2) ->
