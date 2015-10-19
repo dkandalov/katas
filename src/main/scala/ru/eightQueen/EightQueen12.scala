@@ -22,39 +22,59 @@ class EightQueen12 extends Matchers {
 		val boardSize = 3
 
 		var position = Position(-1, boardSize - 1)
-		while (!isLast(boardSize, position)) {
-			position = nextPosition(boardSize, position)
+		while (!position.isLast(boardSize)) {
+			position = position.next(boardSize)
 			allPositions += position
 		}
 
-		allPositions should equal(Seq(
-			(0,0), (0,1), (0,2),
-			(1,0), (1,1), (1,2),
-			(2,0), (2,1), (2,2)
-		))
+		val expectedPositions: Seq[Position] = Seq(
+			(0, 0), (0, 1), (0, 2),
+			(1, 0), (1, 1), (1, 2),
+			(2, 0), (2, 1), (2, 2)
+		)
+		allPositions should equal(expectedPositions)
 	}
 
 	private def findPositions(boardSize: Int): Seq[Seq[Position]] = {
-		findPositions(boardSize, (-1, boardSize - 1), Seq()).filter(it => isComplete(boardSize, it))
+		findPositions(boardSize, Position.none(boardSize), Seq()).filter(it => isComplete(boardSize, it))
 	}
 
 	private def findPositions(boardSize: Int, position: Position, result: Seq[Position]): Seq[Seq[Position]] = {
-		if (isLast(boardSize, position)) return Seq(result)
-		val newPosition = nextPosition(boardSize, position)
-		val newLinePosition = newLine(newPosition)
-		if (isValid(newPosition +: result)) {
-			findPositions(boardSize, newLinePosition, newPosition +: result) ++
-			findPositions(boardSize, newPosition, result)
+		if (position.isLast(boardSize)) return Seq(result)
+		val nextPosition = position.next(boardSize)
+		val newLinePosition = nextPosition.newLine()
+		if (isValid(nextPosition +: result)) {
+			findPositions(boardSize, newLinePosition, nextPosition +: result) ++
+			findPositions(boardSize, nextPosition, result)
 		} else {
-			findPositions(boardSize, newPosition, result)
+			findPositions(boardSize, nextPosition, result)
 		}
 	}
 
-	private case class Position(row: Int, column: Int)
+	private case class Position(row: Int, column: Int) {
+		def next(boardSize: Int): Position = {
+			if (column == boardSize - 1) (row + 1, 0) else (row, column + 1)
+		}
 
-	private implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = {
-		Position(tuple._1, tuple._2)
+		def isLast(boardSize: Int): Boolean = {
+			(row == boardSize - 1 && column == boardSize - 1) || row > boardSize - 1
+		}
+
+		def newLine(): Position = {
+			(row + 1, -1)
+		}
 	}
+
+	private object Position {
+		def none(boardSize: Int): Position = {
+			Position(-1, boardSize - 1)
+		}
+
+		implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = {
+			Position(tuple._1, tuple._2)
+		}
+	}
+
 
 	private def isComplete(boardSize: Int, positions: Seq[Position]): Boolean = {
 		positions.size == boardSize
@@ -67,18 +87,5 @@ class EightQueen12 extends Matchers {
 				((thisPosition.row - thatPosition.row).abs != (thisPosition.column - thatPosition.column).abs)
 			}
 		}
-	}
-
-	private def isLast(boardSize: Int, position: Position): Boolean = {
-		(position.row == boardSize - 1 && position.column == boardSize - 1) ||
-		 position.row > boardSize - 1
-	}
-
-	private def nextPosition(boardSize: Int, position: Position): Position = {
-		if (position.column == boardSize - 1) (position.row + 1, 0) else (position.row, position.column + 1)
-	}
-
-	private def newLine(position: Position): Position = {
-		(position.row + 1, -1)
 	}
 }
