@@ -21,7 +21,7 @@ class EightQueen12 extends Matchers {
 		val allPositions = ListBuffer[Position]()
 		val boardSize = 3
 
-		var position = Position(-1, boardSize - 1)
+		var position = Position.none(boardSize)
 		while (!position.isLast(boardSize)) {
 			position = position.next(boardSize)
 			allPositions += position
@@ -36,15 +36,17 @@ class EightQueen12 extends Matchers {
 	}
 
 	private def findPositions(boardSize: Int): Seq[Seq[Position]] = {
-		findPositions(boardSize, Position.none(boardSize), Seq()).filter(it => isComplete(boardSize, it))
+		findPositions(boardSize, Position.none(boardSize), Positions.none())
+				.filter(it => it.isComplete(boardSize))
+				.map(_.toSeq)
 	}
 
-	private def findPositions(boardSize: Int, position: Position, result: Seq[Position]): Seq[Seq[Position]] = {
+	private def findPositions(boardSize: Int, position: Position, result: Positions): Seq[Positions] = {
 		if (position.isLast(boardSize)) return Seq(result)
 		val nextPosition = position.next(boardSize)
 		val newLinePosition = nextPosition.newLine()
-		if (isValid(nextPosition +: result)) {
-			findPositions(boardSize, newLinePosition, nextPosition +: result) ++
+		if (result.add(nextPosition).isValid) {
+			findPositions(boardSize, newLinePosition, result.add(nextPosition)) ++
 			findPositions(boardSize, nextPosition, result)
 		} else {
 			findPositions(boardSize, nextPosition, result)
@@ -63,6 +65,11 @@ class EightQueen12 extends Matchers {
 		def newLine(): Position = {
 			(row + 1, -1)
 		}
+
+		def onSameRowOrDiagonal(that: Position): Boolean = {
+			(this.row == that.row || this.column == that.column) ||
+			((this.row - that.row).abs == (this.column - that.column).abs)
+		}
 	}
 
 	private object Position {
@@ -75,17 +82,31 @@ class EightQueen12 extends Matchers {
 		}
 	}
 
+	private case class Positions(value: Seq[Position]) {
+		def add(position: Position): Positions = {
+			Positions(position +: value)
+		}
 
-	private def isComplete(boardSize: Int, positions: Seq[Position]): Boolean = {
-		positions.size == boardSize
+		def isValid: Boolean = {
+			value.forall{ thisPosition =>
+				value.filter(_ != thisPosition).forall {
+					!thisPosition.onSameRowOrDiagonal(_)
+				}
+			}
+		}
+
+		def isComplete(boardSize: Int): Boolean = {
+			value.size == boardSize
+		}
 	}
 
-	private def isValid(positions: Seq[Position]): Boolean = {
-		positions.forall{ thisPosition =>
-			positions.filter(_ != thisPosition).forall { thatPosition =>
-				(thisPosition.row != thatPosition.row && thisPosition.column != thatPosition.column) &&
-				((thisPosition.row - thatPosition.row).abs != (thisPosition.column - thatPosition.column).abs)
-			}
+	private object Positions {
+		def none(): Positions = {
+			Positions(Seq())
+		}
+
+		implicit def toSeq(positions: Positions): Seq[Position] = {
+			positions.value
 		}
 	}
 }
