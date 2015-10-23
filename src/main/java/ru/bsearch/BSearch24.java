@@ -18,17 +18,21 @@ public class BSearch24 {
     }
 
     private static int binarysearch(int value, List<Integer> list) {
+        return binarysearch(value, list, 0);
+    }
+
+    private static int binarysearch(int value, List<Integer> list, int shift) {
         if (list.isEmpty()) return -1;
 
-        int middleIndex = (list.size()-1) / 2;
+        int middleIndex = list.size() / 2;
         int middleValue = list.get(middleIndex);
 
         if (middleValue == value){
             return middleIndex;
-        } else if (middleValue < value) {
-            return binarysearch(value, list.subList(0, middleIndex));
+        } else if (value < middleValue) {
+            return binarysearch(value, list.subList(0, middleIndex), shift);
         } else {
-            return binarysearch(value, list.subList(middleIndex, list.size()));
+            return binarysearch(value, list.subList(middleIndex, list.size()), middleIndex);
         }
 
     }
