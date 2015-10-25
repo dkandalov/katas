@@ -21,10 +21,10 @@ class EightQueen12 extends Matchers {
 		val allPositions = ListBuffer[Position]()
 		val boardSize = BoardSize(3)
 
-		var position = Position.none(boardSize)
-		while (!position.isLast(boardSize)) {
-			position = position.next(boardSize)
+		var position = Position.zero
+		while (!position.isAfterLast(boardSize)) {
 			allPositions += position
+			position = position.next(boardSize)
 		}
 
 		val expectedPositions: Seq[Position] = Seq(
@@ -36,26 +36,24 @@ class EightQueen12 extends Matchers {
 	}
 
 	private def findPositions(boardSize: BoardSize): PositionsSet = {
-		findPositions(boardSize, Position.none(boardSize), Positions.none())
+		findPositions(boardSize, Position.zero, Positions.empty())
 	}
 
 	private def findPositions(boardSize: BoardSize, position: Position, result: Positions): PositionsSet = {
-		if (position.isLast(boardSize)) {
+		if (position.isAfterLast(boardSize)) {
 			return if (result.isComplete(boardSize)) PositionsSet(result) else PositionsSet.empty()
 		}
-		val nextPosition = position.next(boardSize)
-		val newLinePosition = nextPosition.newLine()
-		if (result.add(nextPosition).isValid) {
-			findPositions(boardSize, newLinePosition, result.add(nextPosition)) ++
-			findPositions(boardSize, nextPosition, result)
+		if (result.add(position).isValid) {
+			findPositions(boardSize, position.newLine(), result.add(position)) ++
+			findPositions(boardSize, position.next(boardSize), result)
 		} else {
-			findPositions(boardSize, nextPosition, result)
+			findPositions(boardSize, position.next(boardSize), result)
 		}
 	}
 
 	private case class BoardSize(value: Int) {
-		def maxRow = Row(value - 1)
-		def maxColumn = Column(value - 1)
+		def isLast(column: Column) = column.value == value - 1
+		def isAfterLast(row: Row) = row.value > value - 1
 	}
 
 	private case class Row(value: Int) extends Ordered[Row] {
@@ -64,7 +62,7 @@ class EightQueen12 extends Matchers {
 		def distanceTo(that: Row): Int = (this.value - that.value).abs
 	}
 	private object Row {
-		val none = Row(-1)
+		val zero = Row(0)
 	}
 	private case class Column(value: Int) extends Ordered[Column] {
 		override def compare(that: Column): Int = this.value.compare(that.value)
@@ -72,20 +70,19 @@ class EightQueen12 extends Matchers {
 		def distanceTo(that: Column): Int = (this.value - that.value).abs
 	}
 	private object Column {
-		val none = Column(-1)
 		val zero = Column(0)
 	}
 
 
 	private case class Position(row: Row, column: Column) {
 		def next(boardSize: BoardSize): Position = {
-			if (column == boardSize.maxColumn) Position(row.next, Column.zero) else Position(row, column.next)
+			if (boardSize.isLast(column)) Position(row.next, Column.zero) else Position(row, column.next)
 		}
-		def isLast(boardSize: BoardSize): Boolean = {
-			(row == boardSize.maxRow && column == boardSize.maxColumn) || row > boardSize.maxRow
+		def isAfterLast(boardSize: BoardSize): Boolean = {
+			boardSize.isAfterLast(row)
 		}
 		def newLine(): Position = {
-			Position(row.next, Column.none)
+			Position(row.next, Column.zero)
 		}
 		def onSameRowOrDiagonal(that: Position): Boolean = {
 			(this.row == that.row || this.column == that.column) ||
@@ -93,7 +90,7 @@ class EightQueen12 extends Matchers {
 		}
 	}
 	private object Position {
-		def none(boardSize: BoardSize): Position = Position(Row.none, boardSize.maxColumn)
+		val zero = Position(Row.zero, Column.zero)
 		implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = Position(Row(tuple._1), Column(tuple._2))
 	}
 
@@ -125,7 +122,7 @@ class EightQueen12 extends Matchers {
 	}
 
 	private object Positions {
-		def none(): Positions = {
+		def empty(): Positions = {
 			Positions(Seq())
 		}
 		implicit def toSeq(positions: Positions): Seq[Position] = {
