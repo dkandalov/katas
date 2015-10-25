@@ -35,14 +35,14 @@ class EightQueen12 extends Matchers {
 		allPositions should equal(expectedPositions)
 	}
 
-	private def findPositions(boardSize: BoardSize): Seq[Seq[Position]] = {
+	private def findPositions(boardSize: BoardSize): PositionsSet = {
 		findPositions(boardSize, Position.none(boardSize), Positions.none())
-				.filter(it => it.isComplete(boardSize))
-				.map(_.toSeq)
 	}
 
-	private def findPositions(boardSize: BoardSize, position: Position, result: Positions): Seq[Positions] = {
-		if (position.isLast(boardSize)) return Seq(result)
+	private def findPositions(boardSize: BoardSize, position: Position, result: Positions): PositionsSet = {
+		if (position.isLast(boardSize)) {
+			return if (result.isComplete(boardSize)) PositionsSet(result) else PositionsSet.empty()
+		}
 		val nextPosition = position.next(boardSize)
 		val newLinePosition = nextPosition.newLine()
 		if (result.add(nextPosition).isValid) {
@@ -92,17 +92,26 @@ class EightQueen12 extends Matchers {
 			(this.row.distanceTo(that.row) == this.column.distanceTo(that.column))
 		}
 	}
-
 	private object Position {
 		def none(boardSize: BoardSize): Position = Position(Row.none, boardSize.maxColumn)
 		implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = Position(Row(tuple._1), Column(tuple._2))
+	}
+
+	private case class PositionsSet(value: Seq[Positions]) {
+		def ++(that: PositionsSet): PositionsSet = {
+			PositionsSet(this.value ++ that.value)
+		}
+	}
+	private object PositionsSet {
+		def apply(positions: Positions): PositionsSet = PositionsSet(Seq(positions))
+		def empty(): PositionsSet = PositionsSet(Seq())
+		implicit def toSequence(positionsSet: PositionsSet): Seq[Positions] = positionsSet.value
 	}
 
 	private case class Positions(value: Seq[Position]) {
 		def add(position: Position): Positions = {
 			Positions(position +: value)
 		}
-
 		def isValid: Boolean = {
 			value.forall{ thisPosition =>
 				value.filter(_ != thisPosition).forall {
@@ -110,7 +119,6 @@ class EightQueen12 extends Matchers {
 				}
 			}
 		}
-
 		def isComplete(boardSize: BoardSize): Boolean = {
 			value.size == boardSize.value
 		}
@@ -120,7 +128,6 @@ class EightQueen12 extends Matchers {
 		def none(): Positions = {
 			Positions(Seq())
 		}
-
 		implicit def toSeq(positions: Positions): Seq[Position] = {
 			positions.value
 		}
