@@ -24,7 +24,7 @@ class EightQueen12 extends Matchers {
 		var position = Position.zero
 		while (!position.isAfterLast(boardSize)) {
 			allPositions += position
-			position = position.next(boardSize)
+			position = boardSize.next(position)
 		}
 
 		val expectedPositions: Seq[Position] = Seq(
@@ -45,15 +45,19 @@ class EightQueen12 extends Matchers {
 		}
 		if (result.add(position).isValid) {
 			findPositions(boardSize, position.newLine(), result.add(position)) ++
-			findPositions(boardSize, position.next(boardSize), result)
+			findPositions(boardSize, boardSize.next(position), result)
 		} else {
-			findPositions(boardSize, position.next(boardSize), result)
+			findPositions(boardSize, boardSize.next(position), result)
 		}
 	}
 
 	private case class BoardSize(value: Int) {
 		def isLast(column: Column) = column.value == value - 1
 		def isAfterLast(row: Row) = row.value > value - 1
+		def next(position: Position) = {
+			if (isLast(position.column)) Position(position.row.next, Column.zero)
+			else Position(position.row, position.column.next)
+		}
 	}
 
 	private case class Row(value: Int) extends Ordered[Row] {
@@ -75,9 +79,6 @@ class EightQueen12 extends Matchers {
 
 
 	private case class Position(row: Row, column: Column) {
-		def next(boardSize: BoardSize): Position = {
-			if (boardSize.isLast(column)) Position(row.next, Column.zero) else Position(row, column.next)
-		}
 		def isAfterLast(boardSize: BoardSize): Boolean = {
 			boardSize.isAfterLast(row)
 		}
