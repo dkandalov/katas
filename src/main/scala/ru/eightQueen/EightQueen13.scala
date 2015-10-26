@@ -15,24 +15,24 @@ class EightQueen13 extends Matchers {
 		queens(8).size should equal(92)
 	}
 
-	private def queens(n: Int): List[List[Int]] = {
-		def placeQueens(k: Int): List[List[Int]] =
-			if (k == 0) List(List())
+	private def queens(boardSize: Int): List[List[Int]] = {
+		def placeQueens(rowCount: Int): List[List[Int]] = {
+			if (rowCount == 0) List(List())
 			else for {
-				queens <- placeQueens(k - 1)
-				column <- Range(1, n + 1)
-				if isSafe(column, queens)
+				queens <- placeQueens(rowCount - 1)
+				column <- Range.inclusive(1, boardSize)
+				if isValidMove(column, queens)
 			} yield column :: queens
-
-		placeQueens(n)
+		}
+		placeQueens(boardSize)
 	}
 
-	private def isSafe(column: Int, queens: List[Int]): Boolean = {
+	private def isValidMove(column: Int, queenColumns: List[Int]): Boolean = {
 		val row = 1
-		queens.zipWithIndex.forall{ it =>
-			val thatColumn = it._1
-			val thatRow = it._2 + 2
-			column != thatColumn && (row - thatRow).abs != (column - thatColumn).abs
+		queenColumns.zipWithIndex.forall{ it =>
+			val queenColumn = it._1
+			val queenRow = it._2 + 2
+			column != queenColumn && (row - queenRow).abs != (column - queenColumn).abs
 		}
 	}
 }
