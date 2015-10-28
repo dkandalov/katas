@@ -22,7 +22,7 @@ class EightQueen12 extends Matchers {
 		val boardSize = BoardSize(3)
 
 		var position = Position.zero
-		while (!position.isAfterLast(boardSize)) {
+		while (boardSize.includes(position)) {
 			allPositions += position
 			position = boardSize.next(position)
 		}
@@ -35,30 +35,37 @@ class EightQueen12 extends Matchers {
 		allPositions should equal(expectedPositions)
 	}
 
-	private def findPositions(boardSize: BoardSize): PositionsSet = {
-		findPositions(boardSize, Position.zero, Positions.empty())
+	private def findPositions(boardSize: BoardSize): PositionSets = {
+		findPositions(boardSize, Position.zero, PositionSet.empty())
 	}
 
-	private def findPositions(boardSize: BoardSize, position: Position, result: Positions): PositionsSet = {
-		if (position.isAfterLast(boardSize)) {
-			return if (result.isComplete(boardSize)) PositionsSet(result) else PositionsSet.empty()
+	private def findPositions(boardSize: BoardSize, position: Position, positions: PositionSet): PositionSets = {
+		if (!boardSize.includes(position)) {
+			return if (boardSize.isCompletedWith(positions)) PositionSets(positions) else PositionSets.empty()
 		}
-		if (result.add(position).isValid) {
-			findPositions(boardSize, position.newLine(), result.add(position)) ++
-			findPositions(boardSize, boardSize.next(position), result)
+		if (positions.add(position).isValid) {
+			findPositions(boardSize, position.newLine(), positions.add(position)) ++
+			findPositions(boardSize, boardSize.next(position), positions)
 		} else {
-			findPositions(boardSize, boardSize.next(position), result)
+			findPositions(boardSize, boardSize.next(position), positions)
 		}
 	}
 
-	private case class BoardSize(value: Int) {
-		def isLast(column: Column) = column.value == value - 1
-		def isAfterLast(row: Row) = row.value > value - 1
+
+	private case class BoardSize(private val size: Int) {
+		def includes(position: Position): Boolean = {
+			position.row.value < size
+		}
+		def isCompletedWith(positions: PositionSet): Boolean = {
+			positions.value.size == size
+		}
 		def next(position: Position) = {
 			if (isLast(position.column)) Position(position.row.next, Column.zero)
 			else Position(position.row, position.column.next)
 		}
+		private def isLast(column: Column) = column.value == size - 1
 	}
+
 
 	private case class Row(value: Int) extends Ordered[Row] {
 		override def compare(that: Row): Int = this.value.compare(that.value)
@@ -68,6 +75,8 @@ class EightQueen12 extends Matchers {
 	private object Row {
 		val zero = Row(0)
 	}
+
+
 	private case class Column(value: Int) extends Ordered[Column] {
 		override def compare(that: Column): Int = this.value.compare(that.value)
 		def next = Column(value + 1)
@@ -79,13 +88,10 @@ class EightQueen12 extends Matchers {
 
 
 	private case class Position(row: Row, column: Column) {
-		def isAfterLast(boardSize: BoardSize): Boolean = {
-			boardSize.isAfterLast(row)
-		}
 		def newLine(): Position = {
 			Position(row.next, Column.zero)
 		}
-		def onSameRowOrDiagonal(that: Position): Boolean = {
+		def onTheSameRowOrDiagonal(that: Position): Boolean = {
 			(this.row == that.row || this.column == that.column) ||
 			(this.row.distanceTo(that.row) == this.column.distanceTo(that.column))
 		}
@@ -95,39 +101,37 @@ class EightQueen12 extends Matchers {
 		implicit def tupleToBoardPosition(tuple: (Int, Int)): Position = Position(Row(tuple._1), Column(tuple._2))
 	}
 
-	private case class PositionsSet(value: Seq[Positions]) {
-		def ++(that: PositionsSet): PositionsSet = {
-			PositionsSet(this.value ++ that.value)
-		}
-	}
-	private object PositionsSet {
-		def apply(positions: Positions): PositionsSet = PositionsSet(Seq(positions))
-		def empty(): PositionsSet = PositionsSet(Seq())
-		implicit def toSequence(positionsSet: PositionsSet): Seq[Positions] = positionsSet.value
-	}
 
-	private case class Positions(value: Seq[Position]) {
-		def add(position: Position): Positions = {
-			Positions(position +: value)
+	private case class PositionSet(value: Seq[Position]) {
+		def add(position: Position): PositionSet = {
+			PositionSet(position +: value)
 		}
 		def isValid: Boolean = {
 			value.forall{ thisPosition =>
 				value.filter(_ != thisPosition).forall {
-					!thisPosition.onSameRowOrDiagonal(_)
+					!thisPosition.onTheSameRowOrDiagonal(_)
 				}
 			}
 		}
-		def isComplete(boardSize: BoardSize): Boolean = {
-			value.size == boardSize.value
+	}
+	private object PositionSet {
+		def empty(): PositionSet = {
+			PositionSet(Seq())
+		}
+		implicit def toSeq(positions: PositionSet): Seq[Position] = {
+			positions.value
 		}
 	}
 
-	private object Positions {
-		def empty(): Positions = {
-			Positions(Seq())
+
+	private case class PositionSets(value: Seq[PositionSet]) {
+		def ++(that: PositionSets): PositionSets = {
+			PositionSets(this.value ++ that.value)
 		}
-		implicit def toSeq(positions: Positions): Seq[Position] = {
-			positions.value
-		}
+	}
+	private object PositionSets {
+		def apply(positions: PositionSet): PositionSets = PositionSets(Seq(positions))
+		def empty(): PositionSets = PositionSets(Seq())
+		implicit def toSequence(positionsSet: PositionSets): Seq[PositionSet] = positionsSet.value
 	}
 }
