@@ -54,20 +54,20 @@ class EightQueen12 extends Matchers {
 
 	private case class BoardSize(private val size: Int) {
 		def includes(position: Position): Boolean = {
-			position.row.value < size
+			position.row < Row(size)
 		}
 		def isCompletedWith(positions: PositionSet): Boolean = {
-			positions.value.size == size
+			positions.size == size
 		}
 		def next(position: Position) = {
 			if (isLast(position.column)) Position(position.row.next, Column.zero)
 			else Position(position.row, position.column.next)
 		}
-		private def isLast(column: Column) = column.value == size - 1
+		private def isLast(column: Column) = column == Column(size - 1)
 	}
 
 
-	private case class Row(value: Int) extends Ordered[Row] {
+	private case class Row(private val value: Int) extends Ordered[Row] {
 		override def compare(that: Row): Int = this.value.compare(that.value)
 		def next = Row(value + 1)
 		def distanceTo(that: Row): Int = (this.value - that.value).abs
@@ -77,7 +77,7 @@ class EightQueen12 extends Matchers {
 	}
 
 
-	private case class Column(value: Int) extends Ordered[Column] {
+	private case class Column(private val value: Int) extends Ordered[Column] {
 		override def compare(that: Column): Int = this.value.compare(that.value)
 		def next = Column(value + 1)
 		def distanceTo(that: Column): Int = (this.value - that.value).abs
@@ -102,7 +102,7 @@ class EightQueen12 extends Matchers {
 	}
 
 
-	private case class PositionSet(value: Seq[Position]) {
+	private case class PositionSet(private val value: Seq[Position]) {
 		def add(position: Position): PositionSet = {
 			PositionSet(position +: value)
 		}
@@ -113,6 +113,7 @@ class EightQueen12 extends Matchers {
 				}
 			}
 		}
+		def size: Int = value.size
 	}
 	private object PositionSet {
 		def empty(): PositionSet = {
@@ -124,7 +125,7 @@ class EightQueen12 extends Matchers {
 	}
 
 
-	private case class PositionSets(value: Seq[PositionSet]) {
+	private case class PositionSets(private val value: Seq[PositionSet]) {
 		def ++(that: PositionSets): PositionSets = {
 			PositionSets(this.value ++ that.value)
 		}
