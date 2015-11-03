@@ -1,4 +1,4 @@
-module P90 (
+module P9x.P90.EightQueen (
     findQueenPositions,
     positionsToBoard,
     boardToPositions,

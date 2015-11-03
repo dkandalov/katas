@@ -1,6 +1,6 @@
 import Test.HUnit
 import P70_Test(expectEqual, testList)
-import P90
+import P9x.P90.EightQueen
 
 p90 = testList "P90" [
     expectEqual (Position 0 0) (next 3 (Position (-1) 2)),
@@ -22,7 +22,7 @@ p90 = testList "P90" [
     expectEqual ["-Q", "--"] (positionsToBoard 2 [Position 0 1]),
     expectEqual ["--", "Q-"] (positionsToBoard 2 [Position 1 0]),
     expectEqual ["--", "-Q"] (positionsToBoard 2 [Position 1 1]),
-    expectEqual ["Q-", "-Q"] (positi-onsToBoard 2 [Position 0 0, Position 1 1]),
+    expectEqual ["Q-", "-Q"] (positionsToBoard 2 [Position 0 0, Position 1 1]),
 
     expectEqual [] (boardToPositions []),
     expectEqual [Position 0 0] (boardToPositions ["Q"]),

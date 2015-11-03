@@ -1,4 +1,4 @@
-module P91(
+module P9x.P91.KnightsTour(
     findKnightTours
 ) where
 
