@@ -24,9 +24,11 @@ findQueenPositions' boardSize position positions =
           subResultWithoutPosition = findQueenPositions' boardSize (next boardSize position) positions
 
 isValid :: [Position] -> Bool
-isValid positions = all (\(Position row1 col1) -> all (\(Position row2 col2) ->
-    (row1 /= row2 && col1 /= col2) && (abs (row1 - row2) /= abs (col1 - col2))
- ) (filter (\it -> it /= (Position row1 col1)) positions)) positions
+isValid positions = all (\p1 -> all (\p2 ->
+    p1 == p2 || not (onTheSameRowOrDiagonal p1 p2)
+ ) positions) positions
+    where onTheSameRowOrDiagonal (Position row1 col1) (Position row2 col2) =
+            (row1 == row2 || col1 == col2) || (abs (row1 - row2) == abs (col1 - col2))
 
 next :: Int -> Position -> Position
 next boardSize (Position row col) =
