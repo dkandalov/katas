@@ -25,14 +25,14 @@ findQueenPositions' boardSize position positions =
 
 isValid :: [Position] -> Bool
 isValid positions = all (\p1 -> all (\p2 ->
-    p1 == p2 || not (onTheSameRowOrDiagonal p1 p2)
+    p1 == p2 || not (onTheSameRow p1 p2 || onTheSameDiagonal p1 p2)
  ) positions) positions
-    where onTheSameRowOrDiagonal (Position row1 col1) (Position row2 col2) =
-            (row1 == row2 || col1 == col2) || (abs (row1 - row2) == abs (col1 - col2))
 
 next :: Int -> Position -> Position
-next boardSize (Position row col) =
-    if (col == boardSize - 1) then (Position (row + 1) 0) else (Position row (col + 1))
+next boardSize p =
+    if (column p == boardSize - 1) then nextRow p else nextColumn p
+    where nextRow p = Position ((row p) + 1) 0
+          nextColumn p = Position (row p) ((column p) + 1)
 
 
 positionsToBoard :: Int -> [Position] -> [String]
@@ -57,3 +57,7 @@ boardToPositions' rowIndex board =
 
 
 data Position = Position { row :: Int, column :: Int } deriving (Eq, Show)
+onTheSameRow :: Position -> Position -> Bool
+onTheSameRow p1 p2 = (row p1 == row p2) || (column p1 == column p2)
+onTheSameDiagonal :: Position -> Position -> Bool
+onTheSameDiagonal p1 p2 = (abs $ (row p1) - (row p2)) == (abs $ (column p1) - (column p2))
