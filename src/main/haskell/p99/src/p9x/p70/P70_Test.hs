@@ -1,14 +1,6 @@
-module P70_Test(
-    expectEqual, testList
-) where
 import Test.HUnit
-import P70
-
-expectEqual :: (Eq a, Show a) => a -> a -> Test
-expectEqual expected actual = TestCase (assertEqual "" expected actual)
-
-testList :: String -> [Test] -> Test
-testList description tests = TestLabel description (TestList tests)
+import P9x.P70.P70
+import P9x.Util
 
 
 p70 = testList "P70" [

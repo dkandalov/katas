@@ -1,6 +1,6 @@
 import Test.HUnit
-import P70_Test(expectEqual, testList)
-import P80
+import P9x.Util(expectEqual, testList)
+import P9x.P80.P80
 import qualified Data.Map.Strict as Map
 
 p80 = testList "P80" [

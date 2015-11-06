@@ -1,5 +1,5 @@
 import Test.HUnit
-import P00
+import P9x.P00.P00
 import System.Random (mkStdGen)
 import qualified Data.Map.Strict as Map
 

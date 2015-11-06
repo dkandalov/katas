@@ -1,4 +1,4 @@
-module P70(
+module P9x.P70.P70(
     MTree(..),
     nodeCount,
     stringToMTree, toString, parseAsMTree,
@@ -8,7 +8,7 @@ module P70(
     getEither
 ) where
 
-import P50(GShow(..)) -- don't really need this, left it here to check importing class instances
+import P9x.P50.P50(GShow(..)) -- don't really need this, left it here to check importing class instances
 import Text.ParserCombinators.Parsec
 
 data MTree a = MNode a [MTree a] deriving (Show, Eq)

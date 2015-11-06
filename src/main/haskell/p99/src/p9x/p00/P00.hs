@@ -1,4 +1,4 @@
-module P00 (
+module P9x.P00.P00 (
     last',
     penultimate,
     kth,

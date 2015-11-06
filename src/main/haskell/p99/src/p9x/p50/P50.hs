@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
-module P50 (
+module P9x.P50.P50 (
     Tree(..), node, leafNode, t, t_, e,
     sizeOf, isBalanced,
     cBalanced,

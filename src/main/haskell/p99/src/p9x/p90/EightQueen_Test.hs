@@ -1,5 +1,5 @@
 import Test.HUnit
-import P70_Test(expectEqual, testList)
+import P9x.Util(expectEqual, testList)
 import P9x.P90.EightQueen
 
 p90 = testList "P90" [

@@ -4,7 +4,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
 
-module P80(
+module P9x.P80.P80(
     Graph(..), Digraph(..), Edge(..),
     graphFromString, graphFromStringLabel,
     digraphFromString, digraphFromStringLabel,
@@ -22,8 +22,8 @@ module P80(
 ) where
 
 import Text.ParserCombinators.Parsec
-import P70(getEither)
-import P50(GShow(..))
+import P9x.P70.P70(getEither)
+import P9x.P50.P50(GShow(..))
 import Data.List
 import qualified Data.Map.Strict as Map
 import qualified Data.Maybe as Maybe

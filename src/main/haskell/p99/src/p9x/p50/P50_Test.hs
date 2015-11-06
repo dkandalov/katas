@@ -1,5 +1,5 @@
 import Test.HUnit
-import P50
+import P9x.P50.P50
 
 expectEqual :: (Eq a, Show a) => a -> a -> Test
 expectEqual expected actual = TestCase (assertEqual "" expected actual)
