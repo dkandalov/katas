@@ -1,5 +1,5 @@
 import Test.HUnit
-import P00_
+import P9x.P00.P00_
 
 expectEqual :: (Eq a, Show a) => String -> a -> a -> IO Counts
 expectEqual desc expected actual = (runTestTT (TestCase (assertEqual desc expected actual)))

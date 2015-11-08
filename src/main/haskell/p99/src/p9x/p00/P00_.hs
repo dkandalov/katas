@@ -1,4 +1,4 @@
-module P00_ (
+module P9x.P00.P00_ (
     myLast', myLast'', myLast''', myLast'''', myLast''''',
     myButLast, myButLast', myButLast'', myButLast''', myButLast'''', lastbut1, lastbut1safe,
     elementAt, elementAt', elementAt'', elementAt''', elementAt_w'pf,
@@ -33,9 +33,12 @@ import GHC.Exts(build)
 -- solutions from https://wiki.haskell.org/99_questions
 
 -- P01
+myLast' :: [a] -> a
 myLast' = foldr1 (const id)
+myLast'' :: [a] -> a
 myLast'' = foldr1 (flip const)
 myLast''' = head . reverse
+myLast'''' :: [a] -> a
 myLast'''' = foldl1 (curry snd)
 myLast''''' [] = error "No end for empty lists!"
 myLast''''' x = x !! (length x - 1)
@@ -50,12 +53,12 @@ myButLast'' (_:xs) = myButLast'' xs
 myButLast''' (x:(_:[])) = x
 myButLast''' (_:xs) = myButLast''' xs
 myButLast'''' = head . tail . reverse
---lastbut1 :: Foldable f => f a -> a
+lastbut1 :: Foldable f => f a -> a
 lastbut1 = fst . foldl (\(_,b) x -> (b,x)) (err1,err2)
   where
     err1 = error "lastbut1: Empty list"
     err2 = error "lastbut1: Singleton"
---lastbut1safe :: Foldable f => f a -> Maybe a
+lastbut1safe :: Foldable f => f a -> Maybe a
 lastbut1safe = fst . foldl (\(_,b) x -> (b,Just x)) (Nothing,Nothing)
 
 
@@ -80,9 +83,9 @@ elementAt_w'pf = (last .) . take . (+ 1)
 -- P04
 myLength :: [a] -> Int
 myLength list = myLength_acc list 0
-	where
-		myLength_acc [] n = n
-		myLength_acc (_:xs) n = myLength_acc xs (n + 1)
+    where
+        myLength_acc [] n = n
+        myLength_acc (_:xs) n = myLength_acc xs (n + 1)
 
 myLength1' = foldl (\n _ -> n + 1) 0    :: [a] -> Int
 myLength2' = foldr (\_ n -> n + 1) 0    :: [a] -> Int
@@ -125,7 +128,7 @@ isPalindrome'1 xs  = (head xs) == (last xs) && (isPalindrome'1 $ init $ tail xs)
 
 isPalindrome'2 :: (Eq a) => [a] -> Bool -- this seems to be just more vebose version of isPalindrome
 isPalindrome'2 xs = foldl (\acc (a,b) -> if a == b then acc else False) True input
-	where input = zip xs (reverse xs)
+    where input = zip xs (reverse xs)
 
 isPalindrome'3 :: (Eq a) => [a] -> Bool
 isPalindrome'3 = Control.Monad.liftM2 (==) id reverse
@@ -247,11 +250,11 @@ pack'4 (x:xs) = if x `elem` (head (pack'4 xs))
 pack'5 :: (Eq a) => [a] -> [[a]]
 pack'5 [] = []
 pack'5 (y:ys) = reverse $ impl ys [[y]]
-	where
-		impl [] packed = packed
-		impl (x:xs) p@(z:zs)
-			| x == (head z) = impl xs ((x:z):zs)
-			| otherwise     = impl xs ([x]:p)
+    where
+        impl [] packed = packed
+        impl (x:xs) p@(z:zs)
+            | x == (head z) = impl xs ((x:z):zs)
+            | otherwise     = impl xs ([x]:p)
 
 -- P10
 encode :: Eq a => [a] -> [(Int, a)]
@@ -268,7 +271,7 @@ encode'3 = map ((,) <$> length <*> head) . pack
 
 encode'4 :: Eq a => [a] -> [(Int, a)]
 encode'4 xs = (enc . pack) xs
-	where enc = foldr (\x acc -> (length x, head x) : acc) []
+    where enc = foldr (\x acc -> (length x, head x) : acc) []
 
 encode'5 :: Eq a => [a] -> [(Int, a)]
 encode'5 [] = []
@@ -374,11 +377,17 @@ dupli (x:xs) = x:x:dupli xs
 dupli' list = concat [[x,x] | x <- list]
 dupli'2 xs = xs >>= (\x -> [x,x])
 dupli'3 = (<**> [id,id])
+dupli'4 :: [a] -> [a]
 dupli'4 = concatMap (\x -> [x,x])
+dupli'5 :: [a] -> [a]
 dupli'5 = concatMap (replicate 2)
+dupli'6 :: [a] -> [a]
 dupli'6 = foldl (\acc x -> acc ++ [x,x]) []
+dupli'7 :: [a] -> [a]
 dupli'7 = foldr (\ x xs -> x : x : xs) []
+dupli'8 :: [a] -> [a]
 dupli'8 = foldr (\x -> (x:) . (x:)) []
+dupli'9 :: [a] -> [a]
 dupli'9 = foldr ((.) <$> (:) <*> (:)) []
 
 -- P15
@@ -587,4 +596,4 @@ removeAt'3 n = (\(a, b) -> (head b, a ++ tail b)) . splitAt n
 removeAt'4 :: Int -> [a] -> (a, [a])
 removeAt'4 0 (x:xs) = (x, xs)
 removeAt'4 n (x:xs) = (l, x:r)
-	where (l, r) = removeAt (n - 1) xs
+    where (l, r) = removeAt (n - 1) xs
