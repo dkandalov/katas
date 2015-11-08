@@ -19,7 +19,8 @@ module P9x.P00.P00_ (
     split, split', split'2, split'3, split'4, split'5, split'6, split'7,
     slice, slice'2, slice'3, slice'4, slice'5, slice'6,
     rotate, rotate', rotate'2, rotate'3, rotate'4, rotate'5, rotate'6, rotate'7,
-    removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4
+    removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4,
+    insertAt, insertAt', insertAt'', insertAt'''
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -597,3 +598,19 @@ removeAt'4 :: Int -> [a] -> (a, [a])
 removeAt'4 0 (x:xs) = (x, xs)
 removeAt'4 n (x:xs) = (l, x:r)
     where (l, r) = removeAt (n - 1) xs
+
+-- P21
+insertAt :: a -> [a] -> Int -> [a]
+insertAt x ys     0 = x:ys
+insertAt x (y:ys) n = y:insertAt x ys (n-1)
+
+insertAt' x xs n = take n xs ++ [x] ++ drop n xs
+
+insertAt'' el lst n = fst $ foldl helper ([],0) lst
+    where helper (acc,i) x = if i == n then (acc++[el,x],i+1) else (acc++[x],i+1)
+
+insertAt''' :: a -> [a] -> Int -> [a]
+insertAt''' elt lst pos = foldr concat' [] $ zip [0..] lst
+    where concat' (i, x) xs
+            | i == pos  = elt:x:xs
+            | otherwise = x:xs

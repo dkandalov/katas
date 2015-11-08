@@ -84,5 +84,8 @@ main = do
         let removeAtFunctions = [removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4]
         (\f -> expectEqual "P20" ('b', "acd") (f 1 "abcd")) `mapM_` removeAtFunctions
 
+        let insertAtFunctions = [insertAt, insertAt', insertAt'', insertAt''']
+        (\f -> expectEqual "P21" ("a!bcd") (f '!' "abcd" 1)) `mapM_` insertAtFunctions
+
         return $ (Counts 0 0 0 0)
 
