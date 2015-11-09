@@ -20,7 +20,8 @@ module P9x.P00.P00_ (
     slice, slice'2, slice'3, slice'4, slice'5, slice'6,
     rotate, rotate', rotate'2, rotate'3, rotate'4, rotate'5, rotate'6, rotate'7,
     removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4,
-    insertAt, insertAt', insertAt'', insertAt'''
+    insertAt, insertAt', insertAt'', insertAt''',
+    range, range2, range3, range4, range5, range6
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -614,3 +615,24 @@ insertAt''' elt lst pos = foldr concat' [] $ zip [0..] lst
     where concat' (i, x) xs
             | i == pos  = elt:x:xs
             | otherwise = x:xs
+
+-- P22
+range :: Int -> Int -> [Int]
+range x y = [x..y]
+
+range2 :: Int -> Int -> [Int]
+range2 = enumFromTo
+
+range3 x y = take (y-x+1) $ iterate (+1) x
+
+range4 start stop
+    | start > stop  = []
+    | start == stop = [stop]
+    | start < stop  = start:range4 (start+1) stop
+
+-- modified original solution so that it doesn't do reverse ranges
+range5 :: (Ord a, Enum a) => a -> a -> [a]
+range5 a b | (a > b) = []
+range5 a b = a:range5 ((if a <= b then succ else const b) a) b
+
+range6 l r = if (l > r) then [] else scanl (+) l (replicate (r - l) 1)

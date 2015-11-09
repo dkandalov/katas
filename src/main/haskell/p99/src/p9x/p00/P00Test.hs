@@ -34,8 +34,9 @@ main =
         runTestTT $ TestCase $ assertEqual "P20" ("acd", 'b') (removeAt 1 "abcd")
 
         runTestTT $ TestCase $ assertEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd")
-        runTestTT $ TestCase $ assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)
         runTestTT $ TestCase $ assertEqual "P22" [] (range 9 4)
+        runTestTT $ TestCase $ assertEqual "P22" [4] (range 4 4)
+        runTestTT $ TestCase $ assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)
         runTestTT $ TestCase $ assertEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")
         runTestTT $ TestCase $ assertEqual "P24" [24,23,18,4,13,25] (lotto' (mkStdGen 123) 6 49)
         runTestTT $ TestCase $ assertEqual "P25" "acbdfe" (randomPermute' (mkStdGen 123) "abcdef")

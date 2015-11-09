@@ -87,5 +87,10 @@ main = do
         let insertAtFunctions = [insertAt, insertAt', insertAt'', insertAt''']
         (\f -> expectEqual "P21" ("a!bcd") (f '!' "abcd" 1)) `mapM_` insertAtFunctions
 
+        let rangeFunctions = [range, range2, range3, range4, range5, range6]
+        (\f -> expectEqual "P22" [] (f 4 3)) `mapM_` rangeFunctions
+        (\f -> expectEqual "P22" [4] (f 4 4)) `mapM_` rangeFunctions
+        (\f -> expectEqual "P22" [4, 5, 6, 7, 8, 9] (f 4 9)) `mapM_` rangeFunctions
+
         return $ (Counts 0 0 0 0)
 
