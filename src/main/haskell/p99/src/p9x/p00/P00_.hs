@@ -21,7 +21,8 @@ module P9x.P00.P00_ (
     rotate, rotate', rotate'2, rotate'3, rotate'4, rotate'5, rotate'6, rotate'7,
     removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4,
     insertAt, insertAt', insertAt'', insertAt''',
-    range, range2, range3, range4, range5, range6
+    range, range2, range3, range4, range5, range6,
+    rnd_select
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -30,7 +31,8 @@ import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
 import Data.List(group, findIndex)
 import GHC.Exts(build)
-
+import System.Random(RandomGen, getStdRandom, randomR, getStdGen)
+import Control.Monad(replicateM)
 
 -- solutions from https://wiki.haskell.org/99_questions
 
@@ -636,3 +638,21 @@ range5 a b | (a > b) = []
 range5 a b = a:range5 ((if a <= b then succ else const b) a) b
 
 range6 l r = if (l > r) then [] else scanl (+) l (replicate (r - l) 1)
+
+
+-- P23
+rnd_select :: [a] -> Int -> IO [a]
+rnd_select [] _ = return []
+rnd_select l n
+    | n < 0 = error "N must be greater than zero."
+    | otherwise = do pos <- replicateM n $
+                            getStdRandom $ randomR (0, (length l)-1)
+                     return [l!!p | p <- pos]
+
+rnd_select' :: (RandomGen g) => g -> [a] -> Int -> [a]
+rnd_select' _ [] _ = return []
+rnd_select' g l n
+    | n < 0 = error "N must be greater than zero."
+    | otherwise = [l!!p | p <- pos]
+        where (pos, newGen) = replicate n $ randomR (0, (length l)-1) g
+
