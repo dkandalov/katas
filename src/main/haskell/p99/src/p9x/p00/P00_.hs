@@ -22,7 +22,7 @@ module P9x.P00.P00_ (
     removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4,
     insertAt, insertAt', insertAt'', insertAt''',
     range, range2, range3, range4, range5, range6,
-    rnd_select
+    rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -31,7 +31,7 @@ import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
 import Data.List(group, findIndex)
 import GHC.Exts(build)
-import System.Random(RandomGen, getStdRandom, randomR, getStdGen)
+import System.Random(RandomGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -645,14 +645,37 @@ rnd_select :: [a] -> Int -> IO [a]
 rnd_select [] _ = return []
 rnd_select l n
     | n < 0 = error "N must be greater than zero."
-    | otherwise = do pos <- replicateM n $
-                            getStdRandom $ randomR (0, (length l)-1)
+    | otherwise = do pos <- replicateM n $ getStdRandom $ randomR (0, (length l)-1)
                      return [l!!p | p <- pos]
 
-rnd_select' :: (RandomGen g) => g -> [a] -> Int -> [a]
-rnd_select' _ [] _ = return []
-rnd_select' g l n
-    | n < 0 = error "N must be greater than zero."
-    | otherwise = [l!!p | p <- pos]
-        where (pos, newGen) = replicate n $ randomR (0, (length l)-1) g
+rnd_select2 :: [a] -> Int -> IO [a]
+rnd_select2 xs n = do
+    gen <- getStdGen
+    return $ take n [ xs !! x | x <- randomRs (0, (length xs) - 1) gen]
 
+rnd_select3 :: [a] -> Int -> IO [a]
+rnd_select3 xs n
+    | n < 0     = error "N must be greater than zero."
+    | otherwise = replicateM n rand
+        where rand = do r <- randomRIO (0, (length xs) - 1)
+                        return (xs!!r)
+
+-- An O(N) algorithm
+rnd_select4 :: [a] -> Int -> IO [a]
+rnd_select4 _ 0 = return []
+rnd_select4 (x:xs) n =
+    do r <- randomRIO (0, (length xs))
+       if r < n
+           then do
+               rest <- rnd_select4 xs (n-1)
+               return (x : rest)
+           else rnd_select4 xs n
+
+-- A solution returns random results even when the number of items we want is the same as the number of items in the list
+rnd_select5 :: [a] -> Int -> IO [a]
+rnd_select5 _  0 = return []
+rnd_select5 [] _ = return []
+rnd_select5 xs count =
+    do r <- randomRIO (0, (length xs)-1)
+       rest <- rnd_select5 (snd $ removeAt r xs) (count-1)
+       return ((xs!!r) : rest)
