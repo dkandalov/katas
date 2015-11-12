@@ -31,6 +31,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="psych (v2.0.0, ruby-2.0.0-p451) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="minitest (v4.3.2, ruby-2.0.0-p451) [gem]" level="application" />
   </component>
 </module>
