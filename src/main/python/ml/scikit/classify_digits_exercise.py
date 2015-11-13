@@ -24,9 +24,9 @@ c.fit(X_train, y_train)
 y_test_actual = c.predict(X_test)
 print(y_test_actual)
 
-c = linear_model.LinearRegression()
+c = linear_model.LogisticRegression()
 c.fit(X_train, y_train)
-y_test_actual = c.predict(X_test)
+y_test_actual = map(int, map(round, c.predict(X_test)))
 print(y_test_actual)
 
 
