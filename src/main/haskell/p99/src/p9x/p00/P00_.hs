@@ -22,16 +22,17 @@ module P9x.P00.P00_ (
     removeAt, removeAt', removeAt'2, removeAt'3, removeAt'4,
     insertAt, insertAt', insertAt'', insertAt''',
     range, range2, range3, range4, range5, range6,
-    rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5
+    rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5,
+    diff_select, diff_select2, diff_select3, diff_select4, diff_select5
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
-import Data.List(group, findIndex)
+import Data.List(group, findIndex, nub)
 import GHC.Exts(build)
-import System.Random(RandomGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
+import System.Random(RandomGen, StdGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
 
 -- solutions from https://wiki.haskell.org/99_questions
@@ -679,3 +680,29 @@ rnd_select5 xs count =
     do r <- randomRIO (0, (length xs)-1)
        rest <- rnd_select5 (snd $ removeAt r xs) (count-1)
        return ((xs!!r) : rest)
+
+
+-- P24
+diff_select :: Int -> Int -> IO [Int]
+diff_select n to = diff_select' n [1..to]
+
+diff_select' 0 _  = return []
+diff_select' _ [] = error "too few elements to choose from"
+diff_select' n xs = do r <- randomRIO (0, (length xs)-1)
+                       let remaining = take r xs ++ drop (r+1) xs
+                       rest <- diff_select' (n-1) remaining
+                       return ((xs!!r) : rest)
+
+diff_select2 :: Int -> Int -> IO [Int]
+diff_select2 n to = rnd_select [1..to] n
+
+diff_select3 :: Int -> Int -> IO [Int]
+diff_select3 n m = do
+  gen <- getStdGen
+  return . take n $ randomRs (1, m) gen
+
+diff_select4 :: Int -> Int -> StdGen -> [Int]
+diff_select4 n m = take n . nub . randomRs (1, m)
+
+diff_select5 :: Int -> Int -> IO [Int]
+diff_select5 n m = take n . nub . randomRs (1, m) <$> getStdGen

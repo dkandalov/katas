@@ -96,7 +96,15 @@ main = do
     (\f ->
         do result <- (fmap length (f [1,2,3,4,5] 3))
            expectEqual "P23 IO" 3 result
+           -- TODO test uniqueness and range
      ) `mapM_` randomSelectFunctionsIO
+
+    let diffSelectFunctionsIO = [diff_select, diff_select2, diff_select3, diff_select5]
+    (\f ->
+        do result <- (fmap length (f 3 10))
+           expectEqual "P24 IO" 3 result
+           -- TODO test uniqueness and range
+     ) `mapM_` diffSelectFunctionsIO
 
     return $ (Counts 0 0 0 0)
 
