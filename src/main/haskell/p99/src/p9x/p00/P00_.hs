@@ -23,14 +23,15 @@ module P9x.P00.P00_ (
     insertAt, insertAt', insertAt'', insertAt''',
     range, range2, range3, range4, range5, range6,
     rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5,
-    diff_select, diff_select2, diff_select3, diff_select4, diff_select5
+    diff_select, diff_select2, diff_select3, diff_select4, diff_select5,
+    rnd_perm, rnd_perm2, rnd_perm3, rnd_perm4
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
-import Data.List(group, findIndex, nub)
+import Data.List(group, findIndex, nub, permutations)
 import GHC.Exts(build)
 import System.Random(RandomGen, StdGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
@@ -706,3 +707,32 @@ diff_select4 n m = take n . nub . randomRs (1, m)
 
 diff_select5 :: Int -> Int -> IO [Int]
 diff_select5 n m = take n . nub . randomRs (1, m) <$> getStdGen
+
+
+-- P25
+rnd_perm :: [a] -> IO [a]
+rnd_perm xs = rnd_select xs (length xs)
+
+rnd_perm2 :: [a] -> IO [a]
+rnd_perm2 []     = return []
+rnd_perm2 (x:xs) = do
+    index <- randomRIO (0, (length xs))
+    rest <- rnd_perm2 xs
+    return $ let (ys,zs) = splitAt index rest
+             in ys ++ (x:zs)
+
+rnd_perm3 :: [a] -> IO [a]
+rnd_perm3 [] = return []
+rnd_perm3 xs = do
+    index <- randomRIO (0, (length xs)-1)
+    rest <- let (ys,(_:zs)) = splitAt index xs
+            in rnd_perm3 $ ys ++ zs
+    return $ (xs !! index):rest
+
+rnd_perm4 :: [a] -> IO [a]
+rnd_perm4 xs = rndElem . permutations $ xs
+    where rndElem :: [a] -> IO a
+          rndElem xs = do
+            index <- randomRIO (0, length xs - 1)
+            return $ xs !! index
+
