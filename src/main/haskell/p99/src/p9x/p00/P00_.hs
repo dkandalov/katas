@@ -24,14 +24,15 @@ module P9x.P00.P00_ (
     range, range2, range3, range4, range5, range6,
     rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5,
     diff_select, diff_select2, diff_select3, diff_select4, diff_select5,
-    rnd_perm, rnd_perm2, rnd_perm3, rnd_perm4
+    rnd_perm, rnd_perm2, rnd_perm3, rnd_perm4,
+    combinations, combinations2, combinations3,combinations4, combinations5, combinations6, combinations7
 ) where
 
 import Data.Foldable(Foldable, foldMap)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
-import Data.List(group, findIndex, nub, permutations)
+import Data.List(group, findIndex, nub, permutations, tails, subsequences, sort)
 import GHC.Exts(build)
 import System.Random(RandomGen, StdGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
@@ -736,3 +737,57 @@ rnd_perm4 xs = rndElem . permutations $ xs
             index <- randomRIO (0, length xs - 1)
             return $ xs !! index
 
+
+-- P26
+combinations :: Int -> [a] -> [[a]]
+combinations 0 _  = [ [] ]
+combinations n xs = [y:ys | y:xs' <- tails xs, ys <- combinations (n-1) xs']
+
+combinations2 :: Int -> [a] -> [[a]]
+combinations2 0 _  = return []
+combinations2 n xs = do y:xs' <- tails xs
+                        ys <- combinations2 (n-1) xs'
+                        return (y:ys)
+
+combinations3 :: Int -> [a] -> [[a]]
+combinations3 0 _ = [[]]
+combinations3 n xs = [ xs !! i : x | i <- [0..(length xs)-1]
+                                   , x <- combinations3 (n-1) (drop (i+1) xs) ]
+
+combinations4 :: Int -> [a] -> [[a]]
+combinations4 _ [] = [[]]
+combinations4 0 _  = [[]]
+combinations4 k (x:xs) = x_start ++ others
+    where x_start = [ x : rest | rest <- combinations4 (k-1) xs ]
+          others  = if k <= length xs then combinations4 k xs else []
+
+combinations5 :: Int -> [a] -> [[a]]
+combinations5 0 _ = [[]]
+combinations5 _ [] = []
+combinations5 n (x:xs) = (map (x:) (combinations5 (n-1) xs)) ++ (combinations5 n xs)
+
+combinations6 :: Int -> [a] -> [[a]]
+combinations6 k ns = filter ((k==).length) (subsequences ns)
+
+-- let's try it with combinations 2 [1,2,3]
+combinations7 :: (Ord a) => Int -> [a] -> [[a]]
+combinations7 n xs = compressed
+    where
+          -- create all combinations (multiple instances, permutations allowed)
+          -- answer : [[1,1],[1,2],[1,3],[2,1],[2,2],[2,3],[3,1],[3,2],[3,3]]
+          combinations' n _ | n <= 0 = [[]]
+          combinations' 1 xs = map (:[]) xs
+          combinations' n xs = (:) <$> xs <*> combinations (n-1) xs
+          -- sort every sublist and the list itself after that
+          -- [[1,1],[1,2],[1,2],[1,3],[1,3],[2,2],[2,3],[2,3],[3,3]]
+          sorted = sort . map sort $ combinations' n xs
+          -- for each sublist, eliminate duplicates (see Problem 8)
+          -- [[1],[1,2],[1,2],[1,3],[1,3],[2],[2,3],[2,3],[3]]
+          grouped = map (map head . group) sorted
+          -- filter all sublist with length < n,
+          -- this means that they had at least two times the same value in it
+          -- [[1,2],[1,2],[1,3],[1,3],[2,3],[2,3]]
+          filtered = filter (\xs -> length xs == n) grouped
+          -- eliminate duplicates a second time, this time in the list itself
+          -- [[1,2],[1,3],[2,3]]
+          compressed = map head . group $ filtered

@@ -123,5 +123,7 @@ main = do
            expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` rndPermFunctionsIO
 
+    -- TODO P26
+
     return $ (Counts 0 0 0 0)
 

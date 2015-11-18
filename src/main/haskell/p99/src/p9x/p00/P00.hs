@@ -238,9 +238,9 @@ randomPermute' randomGen list = randomSelect' randomGen (length list) list
 combinations :: Int -> [a] -> [[a]]
 combinations amount list
     | amount == 0 = [[]]
-    | amount > (length list) = []
+    | amount > length list = []
     | otherwise =
-        (\ subCombination -> head list : subCombination) `map` (combinations (amount - 1) (tail list)) ++
+        map (head list :) (combinations (amount - 1) (tail list)) ++
         (combinations amount $ tail list)
 
 -- P27
