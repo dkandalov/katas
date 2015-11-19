@@ -1,7 +1,7 @@
 import Test.HUnit
 import P9x.P00.P00_
 import Data.List(nub)
-
+import System.Random(setStdGen, mkStdGen)
 
 expectEqual :: (Eq a, Show a) => String -> a -> a -> IO Counts
 expectEqual desc expected actual = (runTestTT (TestCase (assertEqual desc expected actual)))
@@ -97,33 +97,44 @@ main = do
 
     let randomSelectFunctionsIO = [rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5]
     (\f ->
-        do result <- f [1,2,3,4,5] 3
+        do setStdGen $ mkStdGen 234
+           result <- f [1,2,3,4,5] 3
            let desc = "P23 IO" ++ (show result)
            expectEqual desc 3 (length result)
            expectEqual desc True (all (\it -> it>=1 && it<=5) result)
+           -- It's not clear from the problem description if selected elements have to be unique.
+           -- The above solutions return non-unique results.
+           -- expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` randomSelectFunctionsIO
 
     let diffSelectFunctionsIO = [diff_select, diff_select2, diff_select3, diff_select5]
     (\f ->
-        do result <- f 3 10
-            -- TODO can fail
+        do setStdGen $ mkStdGen 234
+           result <- f 3 10
            let desc = "P24 IO " ++ (show result)
            expectEqual desc 3 (length result)
            expectEqual desc True (all (\it -> it>=1 && it<=10) result)
            expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` diffSelectFunctionsIO
 
-    let rndPermFunctionsIO = [rnd_perm, rnd_perm2, rnd_perm3, rnd_perm4]
+    let rndPermFunctionsIO = [rnd_perm2, rnd_perm3, rnd_perm4]
     (\f ->
-        do result <- f [1,2,3,4]
-            -- TODO can fail
+        do setStdGen $ mkStdGen 123
+           result <- f [1,2,3,4]
            let desc = "P25 IO" ++ (show result)
            expectEqual desc 4 (length result)
            expectEqual desc True (all (\it -> it>=1 && it<=4) result)
            expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` rndPermFunctionsIO
 
-    -- TODO P26
+{-
+    let combinationFunctions = [combinations, combinations1]
+    (\f ->
+        do
+            expectEqual [] (f 0 [])
+     )
+-}
+
 
     return $ (Counts 0 0 0 0)
 

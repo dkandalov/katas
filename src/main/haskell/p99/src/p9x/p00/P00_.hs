@@ -24,8 +24,8 @@ module P9x.P00.P00_ (
     range, range2, range3, range4, range5, range6,
     rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5,
     diff_select, diff_select2, diff_select3, diff_select4, diff_select5,
-    rnd_perm, rnd_perm2, rnd_perm3, rnd_perm4,
-    combinations, combinations2, combinations3,combinations4, combinations5, combinations6, combinations7
+    rnd_perm2, rnd_perm3, rnd_perm4,
+    combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -711,8 +711,9 @@ diff_select5 n m = take n . nub . randomRs (1, m) <$> getStdGen
 
 
 -- P25
-rnd_perm :: [a] -> IO [a]
-rnd_perm xs = rnd_select xs (length xs)
+-- The solution below assumes that rnd_select returns unique elements which is not true
+--rnd_perm :: [a] -> IO [a]
+--rnd_perm xs = rnd_select xs (length xs)
 
 rnd_perm2 :: [a] -> IO [a]
 rnd_perm2 []     = return []
