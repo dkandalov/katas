@@ -107,7 +107,10 @@ main = do
            -- expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` randomSelectFunctionsIO
 
-    let diffSelectFunctionsIO = [diff_select, diff_select2, diff_select3, diff_select5]
+    -- skip diff_select2 because it uses rnd_select which doesn't return unique numbers
+    -- skip diff_select3 because it doesn't return unique numbers
+    -- skip diff_select4,5 because of different function type and non-unique result
+    let diffSelectFunctionsIO = [diff_select]
     (\f ->
         do setStdGen $ mkStdGen 234
            result <- f 3 10
@@ -127,13 +130,14 @@ main = do
            expectEqual desc True ((length $ nub result) == length result)
      ) `mapM_` rndPermFunctionsIO
 
-{-
-    let combinationFunctions = [combinations, combinations1]
+    let combinationFunctions = [combinations, combinations2, combinations3, combinations4,
+                                combinations5, combinations6, combinations7]
     (\f ->
-        do
-            expectEqual [] (f 0 [])
-     )
--}
+        do expectEqual "P26" [[]] (f 0 "")
+           expectEqual "P26" ["a", "b", "c"] (f 1 "abc")
+           expectEqual "P26" ["ab", "ac", "bc"] (f 2 "abc")
+           expectEqual "P26" ["abc"] (f 3 "abc")
+     ) `mapM_` combinationFunctions
 
 
     return $ (Counts 0 0 0 0)
