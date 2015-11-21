@@ -2,58 +2,67 @@ import Test.HUnit
 import P9x.P00.P00
 import System.Random (mkStdGen)
 import qualified Data.Map.Strict as Map
+import P9x.Util(testList, expectEqual)
+
+
+p0x = testList "P0x" [
+    expectEqual "P01" 8 (last' [1, 1, 2, 3, 5, 8]),
+    expectEqual "P02" 5 (penultimate [1, 1, 2, 3, 5, 8]),
+    expectEqual "P03" 2 (kth 2 [1, 1, 2, 3, 5, 8]),
+    expectEqual "P04" 6 (length' [1, 1, 2, 3, 5, 8]),
+    expectEqual "P05" [8, 5, 3, 2, 1, 1] (reverse' [1, 1, 2, 3, 5, 8]),
+    expectEqual "P06" False (isPalindrome [1, 2, 3, 4, 5]),
+    expectEqual "P06" True (isPalindrome [1, 2, 3, 2, 1]),
+    expectEqual "P07" [1, 1, 2] (flatten [aList([1, 1]), Value 2]),
+    expectEqual "P08" "abcade" (compress "aaaabccaadeeee"),
+    expectEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (pack "aaaabccaadeeee")
+ ]
+
+p1x = testList "P1x" [
+    expectEqual "P10" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encode "aaaabccaadeeee"),
+    expectEqual "P11" "" "", -- not implemented because it's cumbersome to do in type system
+    expectEqual "P12" "aaaabccaadeeee" (decode [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')]),
+    expectEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee"),
+    expectEqual "P14" "aabbccccdd" (duplicate "abccd"),
+    expectEqual "P15" "aaabbbccccccddd" (duplicateN 3 "abccd"),
+    expectEqual "P16" "abdeghjk" (dropEveryNth 3 "abcdefghijk"),
+    expectEqual "P17" ("abc", "defghijk") (split 3 "abcdefghijk"),
+    expectEqual "P18" "defg" (slice 3 7 "abcdefghijk"),
+    expectEqual "P19" "defghijkabc" (rotate 3 "abcdefghijk"),
+    expectEqual "P19" "defghijkabc" (rotate 14 "abcdefghijk"),
+    expectEqual "P19" "jkabcdefghi" (rotate (-2) "abcdefghijk")
+ ]
+
+p2x = testList "P2x" [
+    expectEqual "P20" ("acd", 'b') (removeAt 1 "abcd"),
+    expectEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd"),
+    expectEqual "P22" [] (range 9 4),
+    expectEqual "P22" [4] (range 4 4),
+    expectEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9),
+    expectEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk"),
+    expectEqual "P24" [24,23,18,4,13,25] (lotto' (mkStdGen 123) 6 49),
+    expectEqual "P25" "acbdfe" (randomPermute' (mkStdGen 123) "abcdef"),
+    expectEqual "P26" [""] (combinations 0 "a"),
+    expectEqual "P26" ["a"] (combinations 1 "a"),
+    expectEqual "P26" [] (combinations 2 "a"),
+    expectEqual "P26" ["ab", "ac", "bc"] (combinations 2 "abc"),
+    expectEqual "P26" ["abc"] (combinations 3 "abc"),
+    expectEqual "P26"
+            ["abc","abd","abe","abf","acd","ace","acf","ade","adf","aef","bcd","bce","bcf","bde","bdf","bef","cde","cdf","cef","def"]
+            (combinations 3 "abcdef"),
+    expectEqual "P26" 220 $ (length . combinations 3) "abcdef123456",
+    expectEqual "P27a" 1260 (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"]),
+    expectEqual "P27b" 1260 (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"]),
+    expectEqual "P28a" ["o", "de", "de", "mn", "abc", "fgh", "ijkl"] (lsort ["abc", "de", "fgh", "de", "ijkl", "mn", "o"]),
+    expectEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
+ ]
 
 main :: IO Counts
 main =
     do
+        runTestTT $ TestList [p0x, p1x, p2x]
+
         let runSlow = False
-
-        runTestTT $ TestCase $ assertEqual "P01" 8 (last' [1, 1, 2, 3, 5, 8])
-        runTestTT $ TestCase $ assertEqual "P02" 5 (penultimate [1, 1, 2, 3, 5, 8])
-        runTestTT $ TestCase $ assertEqual "P03" 2 (kth 2 [1, 1, 2, 3, 5, 8])
-        runTestTT $ TestCase $ assertEqual "P04" 6 (length' [1, 1, 2, 3, 5, 8])
-        runTestTT $ TestCase $ assertEqual "P05" [8, 5, 3, 2, 1, 1] (reverse' [1, 1, 2, 3, 5, 8])
-        runTestTT $ TestCase $ assertEqual "P06" False (isPalindrome [1, 2, 3, 4, 5])
-        runTestTT $ TestCase $ assertEqual "P06" True (isPalindrome [1, 2, 3, 2, 1])
-        runTestTT $ TestCase $ assertEqual "P07" [1, 1, 2] (flatten [aList([1, 1]), Value 2])
-        runTestTT $ TestCase $ assertEqual "P08" "abcade" (compress "aaaabccaadeeee")
-        runTestTT $ TestCase $ assertEqual "P09" ["aaaa", "b", "cc", "aa", "d", "eeee"] (pack "aaaabccaadeeee")
-
-        runTestTT $ TestCase $ assertEqual "P10" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encode "aaaabccaadeeee")
-        runTestTT $ TestCase $ assertEqual "P11" "" "" -- not implemented because it's cumbersome to do in type system
-        runTestTT $ TestCase $ assertEqual "P12" "aaaabccaadeeee" (decode [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')])
-        runTestTT $ TestCase $ assertEqual "P13" [(4, 'a'), (1, 'b'), (2, 'c'), (2, 'a'), (1, 'd'), (4, 'e')] (encodeDirect "aaaabccaadeeee")
-        runTestTT $ TestCase $ assertEqual "P14" "aabbccccdd" (duplicate "abccd")
-        runTestTT $ TestCase $ assertEqual "P15" "aaabbbccccccddd" (duplicateN 3 "abccd")
-        runTestTT $ TestCase $ assertEqual "P16" "abdeghjk" (dropEveryNth 3 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P17" ("abc", "defghijk") (split 3 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P18" "defg" (slice 3 7 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P19" "defghijkabc" (rotate 3 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P19" "defghijkabc" (rotate 14 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P19" "jkabcdefghi" (rotate (-2) "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P20" ("acd", 'b') (removeAt 1 "abcd")
-
-        runTestTT $ TestCase $ assertEqual "P21" ("a!bcd") (insertAt 1 '!' "abcd")
-        runTestTT $ TestCase $ assertEqual "P22" [] (range 9 4)
-        runTestTT $ TestCase $ assertEqual "P22" [4] (range 4 4)
-        runTestTT $ TestCase $ assertEqual "P22" [4, 5, 6, 7, 8, 9] (range 4 9)
-        runTestTT $ TestCase $ assertEqual "P23" "hgc" (randomSelect' (mkStdGen 123) 3 "abcdefghijk")
-        runTestTT $ TestCase $ assertEqual "P24" [24,23,18,4,13,25] (lotto' (mkStdGen 123) 6 49)
-        runTestTT $ TestCase $ assertEqual "P25" "acbdfe" (randomPermute' (mkStdGen 123) "abcdef")
-        runTestTT $ TestCase $ assertEqual "P26" [""] (combinations 0 "a")
-        runTestTT $ TestCase $ assertEqual "P26" ["a"] (combinations 1 "a")
-        runTestTT $ TestCase $ assertEqual "P26" [] (combinations 2 "a")
-        runTestTT $ TestCase $ assertEqual "P26" ["ab", "ac", "bc"] (combinations 2 "abc")
-        runTestTT $ TestCase $ assertEqual "P26" ["abc"] (combinations 3 "abc")
-        runTestTT $ TestCase $ assertEqual "P26"
-                ["abc","abd","abe","abf","acd","ace","acf","ade","adf","aef","bcd","bce","bcf","bde","bdf","bef","cde","cdf","cef","def"]
-                (combinations 3 "abcdef")
-        runTestTT (TestCase (assertEqual "P26" 220 $ (length . combinations 3) "abcdef123456"))
-        runTestTT $ TestCase $ assertEqual "P27a" 1260 (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
-        runTestTT $ TestCase $ assertEqual "P27b" 1260 (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"])
-        runTestTT $ TestCase $ assertEqual "P28a" ["o", "de", "de", "mn", "abc", "fgh", "ijkl"] (lsort ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
-        runTestTT $ TestCase $ assertEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
-
         runTestTT $ TestCase $ assertEqual "P31" False (isPrime 6)
         runTestTT $ TestCase $ assertEqual "P31" True (isPrime 7)
         runTestTT $ TestCase $ assertEqual "P32" 9 (gcd' 36 63)
@@ -78,6 +87,7 @@ main =
         else return ()
 
         runTestTT $ TestCase $ assertEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
+
         runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbachAll 28)
         runTestTT $ TestCase $ assertEqual "P40" (Just (5,23)) (goldbach 28)
         runTestTT $ TestCase $ assertEqual "P41"

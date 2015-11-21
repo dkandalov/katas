@@ -255,7 +255,6 @@ group3 list
         where
             exclude comb xs = filter (\it -> notElem it comb) xs
 
--- P28
 group :: (Eq a) => [Int] -> [a] -> [[[a]]]
 group sizes list
     | sizes == [] = [[]]
@@ -266,6 +265,7 @@ group sizes list
             exclude comb xs = filter (\it -> notElem it comb) xs
 
 
+-- P28
 lsort :: [[a]] -> [[a]]
 lsort listOfLists = sortBy (\a b -> compare (length a) (length b)) listOfLists
 
