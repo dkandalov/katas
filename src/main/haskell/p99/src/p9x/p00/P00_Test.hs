@@ -138,6 +138,14 @@ main = do
            doExpectEqual "P26" ["abc"] (f 3 "abc")
      ) `mapM_` combinationFunctions
 
+    let groupFunctions = [groupSubsets, groupSubsets2, groupSubsets3]
+    (\f ->
+        do doExpectEqual "P27" [[]] (f [] "")
+           doExpectEqual "P27" [] (f [1] "")
+           doExpectEqual "P27" [["a"]] (f [1] "a")
+           doExpectEqual "P27" [["a"], ["b"]] (f [1] "ab")
+           doExpectEqual "P27" [["a", "b"]] (f [1, 1] "ab") -- TODO
+     ) `mapM_` groupFunctions
 
     return $ (Counts 0 0 0 0)
 

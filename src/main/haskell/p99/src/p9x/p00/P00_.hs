@@ -25,7 +25,8 @@ module P9x.P00.P00_ (
     rnd_select, rnd_select2, rnd_select3, rnd_select4, rnd_select5,
     diff_select, diff_select2, diff_select3, diff_select4, diff_select5,
     rnd_perm2, rnd_perm3, rnd_perm4,
-    combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7
+    combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7,
+    groupSubsets, groupSubsets2, groupSubsets3
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -792,3 +793,30 @@ combinations7 n xs = compressed
           -- eliminate duplicates a second time, this time in the list itself
           -- [[1,2],[1,3],[2,3]]
           compressed = map head . group $ filtered
+
+
+-- P27
+groupSubsets :: [Int] -> [a] -> [[[a]]]
+groupSubsets [] _ = [[]]
+groupSubsets (n:ns) xs =
+    [ g:gs | (g,rs) <- combination_ n xs
+           ,  gs    <- groupSubsets ns rs ]
+
+groupSubsets2 :: [Int] -> [a] -> [[[a]]]
+groupSubsets2 [] = const [[]]
+groupSubsets2 (n:ns) = concatMap (uncurry $ (. groupSubsets2 ns) . map . (:)) . combination_ n
+
+
+groupSubsets3 :: [Int] -> [a] -> [[[a]]]
+groupSubsets3 [] xs = [[]]
+groupSubsets3 (g:gs) xs = concatMap helper $ combination_ g xs
+          where helper (as, bs) = map (as:) (groupSubsets3 gs bs)
+
+
+combination_ :: Int -> [a] -> [([a],[a])]
+combination_ 0 xs     = [([],xs)]
+combination_ n []     = []
+combination_ n (x:xs) = ts ++ ds
+  where
+    ts = [ (x:ys,zs) | (ys,zs) <- combination_ (n-1) xs ]
+    ds = [ (ys,x:zs) | (ys,zs) <- combination_  n    xs ]
