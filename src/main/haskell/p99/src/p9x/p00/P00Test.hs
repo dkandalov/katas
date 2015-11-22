@@ -57,26 +57,65 @@ p2x = testList "P2x" [
     expectEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
  ]
 
+runSlow = False
+
+p3x = testList "P3x" [
+    expectEqual "P31" False (isPrime 6),
+    expectEqual "P31" True (isPrime 7),
+    expectEqual "P32" 9 (gcd' 36 63),
+    expectEqual "P33" True (35 `isCoprimeTo` 64),
+    expectEqual "P33" False (36 `isCoprimeTo` 64),
+    expectEqual "P34" 4 (totient 10),
+    expectEqual "P35" [] (primeFactors 1),
+    expectEqual "P35" [2, 5] (primeFactors 10),
+    expectEqual "P35" [3, 3, 5, 7] (primeFactors 315),
+    expectEqual "P36" [(3, 2)] (primeFactorsMultiplicity 9),
+    expectEqual "P36" [(3, 2), (5, 1), (7, 1)] (primeFactorsMultiplicity 315),
+    expectEqual "P36" (Map.fromList [(3, 2)]) (primeFactorsMultiplicity' 9),
+    expectEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315),
+    expectEqual "P37" 4 (totient2 10),
+    expectEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
+ ]
+
+p4x = testList "P4x" [
+    expectEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbachAll 28),
+    expectEqual "P40" (Just (5,23)) (goldbach 28),
+    expectEqual "P41"
+        (Map.fromList [(9,(2,7)),(10,(3,7)),(12,(5,7)),(13,(2,11)),(14,(3,11)),(15,(2,13)),(16,(3,13)),(18,(5,13)),(19,(2,17)),(20,(3,17))])
+        (goldbachList [9..20]),
+    expectEqual "P46" [
+        (True, True, True),
+        (True, False, True),
+        (False, True, False),
+        (False, False, False)
+--            ] (table2 (\a b -> (and' a (or' a b))))
+        ] (table2 (\a -> and' a . or' a)),
+
+    expectEqual "P49" ["0", "1"] (gray 1),
+    expectEqual "P49" ["00", "01", "11", "10"] (gray 2),
+    expectEqual "P49" ["000", "001", "011", "010", "110", "111", "101", "100"] (gray 3)
+
+ ]
+
+p50 = testList "P50" [
+    expectEqual "P50" True (isEmpty emptyQueue),
+    expectEqual "P50" False (isEmpty (Queue [1, 2, 3])),
+    expectEqual "P50" 1 (peek (Queue [1, 2, 3])),
+    expectEqual "P50" (1, Queue [2,3]) (pop (Queue [1, 2, 3])),
+    expectEqual "P50" (Queue [1,2,3,4]) (push 4 (Queue [1, 2, 3])),
+
+    expectEqual "P50"
+        [('a', "1"), ('b', "0")]
+        (huffman $ reverse [('a', 45), ('b', 13)]),
+    expectEqual "P50"
+        [('a', "0"), ('b', "101"), ('c', "100"), ('d', "111"), ('e', "1101"), ('f', "1100")]
+        (huffman $ reverse [('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)])
+ ]
+
 main :: IO Counts
 main =
     do
-        runTestTT $ TestList [p0x, p1x, p2x]
-
-        let runSlow = False
-        runTestTT $ TestCase $ assertEqual "P31" False (isPrime 6)
-        runTestTT $ TestCase $ assertEqual "P31" True (isPrime 7)
-        runTestTT $ TestCase $ assertEqual "P32" 9 (gcd' 36 63)
-        runTestTT $ TestCase $ assertEqual "P33" True (35 `isCoprimeTo` 64)
-        runTestTT $ TestCase $ assertEqual "P33" False (36 `isCoprimeTo` 64)
-        runTestTT $ TestCase $ assertEqual "P34" 4 (totient 10)
-        runTestTT $ TestCase $ assertEqual "P35" [] (primeFactors 1)
-        runTestTT $ TestCase $ assertEqual "P35" [2, 5] (primeFactors 10)
-        runTestTT $ TestCase $ assertEqual "P35" [3, 3, 5, 7] (primeFactors 315)
-        runTestTT $ TestCase $ assertEqual "P36" [(3, 2)] (primeFactorsMultiplicity 9)
-        runTestTT $ TestCase $ assertEqual "P36" [(3, 2), (5, 1), (7, 1)] (primeFactorsMultiplicity 315)
-        runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2)]) (primeFactorsMultiplicity' 9)
-        runTestTT $ TestCase $ assertEqual "P36" (Map.fromList [(3, 2), (5, 1), (7, 1)]) (primeFactorsMultiplicity' 315)
-        runTestTT $ TestCase $ assertEqual "P37" 4 (totient2 10)
+        runTestTT $ TestList [p0x, p1x, p2x, p3x, p4x, p50]
 
         -- P38
         if runSlow then do
@@ -86,14 +125,6 @@ main =
             putStrLn $ "P38 duration: " ++ (show (snd a)) -- ~3100ms
         else return ()
 
-        runTestTT $ TestCase $ assertEqual "P39" [7, 11, 13, 17, 19, 23, 29, 31] (listPrimesInRange [7..31])
-
-        runTestTT $ TestCase $ assertEqual "P40" [(5,23),(11,17),(17,11),(23,5)] (goldbachAll 28)
-        runTestTT $ TestCase $ assertEqual "P40" (Just (5,23)) (goldbach 28)
-        runTestTT $ TestCase $ assertEqual "P41"
-            (Map.fromList [(9,(2,7)),(10,(3,7)),(12,(5,7)),(13,(2,11)),(14,(3,11)),(15,(2,13)),(16,(3,13)),(18,(5,13)),(19,(2,17)),(20,(3,17))])
-            (goldbachList [9..20])
-
         if runSlow then do
             p41 <- runAndMeasure $ goldbachListLimited [1..2000] 50
             putStrLn $ "P41 duration: " ++ (show (snd p41)) -- ~4.6 seconds
@@ -101,28 +132,3 @@ main =
                 (Map.fromList [(992,(73,919)),(1382,(61,1321)),(1856,(67,1789)),(1928,(61,1867))])
                 (fst p41)
         else return $ Counts 0 0 0 0
-
-        runTestTT $ TestCase $ assertEqual "P46" [
-            (True, True, True),
-            (True, False, True),
-            (False, True, False),
-            (False, False, False)
---            ] (table2 (\a b -> (and' a (or' a b))))
-            ] (table2 (\a -> and' a . or' a))
-
-        runTestTT $ TestCase $ assertEqual "P49" ["0", "1"] (gray 1)
-        runTestTT $ TestCase $ assertEqual "P49" ["00", "01", "11", "10"] (gray 2)
-        runTestTT $ TestCase $ assertEqual "P49" ["000", "001", "011", "010", "110", "111", "101", "100"] (gray 3)
-
-        runTestTT $ TestCase $ assertEqual "P50" True (isEmpty emptyQueue)
-        runTestTT $ TestCase $ assertEqual "P50" False (isEmpty (Queue [1, 2, 3]))
-        runTestTT $ TestCase $ assertEqual "P50" 1 (peek (Queue [1, 2, 3]))
-        runTestTT $ TestCase $ assertEqual "P50" (1, Queue [2,3]) (pop (Queue [1, 2, 3]))
-        runTestTT $ TestCase $ assertEqual "P50" (Queue [1,2,3,4]) (push 4 (Queue [1, 2, 3]))
-
-        runTestTT $ TestCase $ assertEqual "P50"
-            [('a', "1"), ('b', "0")]
-            (huffman $ reverse [('a', 45), ('b', 13)])
-        runTestTT $ TestCase $ assertEqual "P50"
-            [('a', "0"), ('b', "101"), ('c', "100"), ('d', "111"), ('e', "1101"), ('f', "1100")]
-            (huffman $ reverse [('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)])

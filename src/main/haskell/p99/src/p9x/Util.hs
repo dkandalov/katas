@@ -1,7 +1,10 @@
 module P9x.Util(
-    expectEqual, expectEqual_, testList
+    doExpectEqual, expectEqual, expectEqual_, testList
 ) where
 import Test.HUnit
+
+doExpectEqual :: (Eq a, Show a) => String -> a -> a -> IO Counts
+doExpectEqual desc expected actual = (runTestTT (expectEqual desc expected actual))
 
 expectEqual_ :: (Eq a, Show a) => a -> a -> Test
 expectEqual_ = expectEqual ""
