@@ -26,17 +26,23 @@ module P9x.P00.P00_ (
     diff_select, diff_select2, diff_select3, diff_select4, diff_select5,
     rnd_perm2, rnd_perm3, rnd_perm4,
     combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7,
-    groupSubsets, groupSubsets2, groupSubsets3
+    groupSubsets, groupSubsets2, groupSubsets3,
+    lsort, lsort2, lsort3, lsort4, lfsort, lfsort2, lfsort3, lfsort4, lfsort5
 ) where
 
 import Data.Foldable(Foldable, foldMap)
+import Data.Function(on)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
-import Data.List(group, findIndex, nub, permutations, tails, subsequences, sort)
+import Data.List(group, findIndex, nub, permutations, tails, subsequences, sort, sortBy, sortOn, groupBy)
+import Data.Ord (comparing)
 import GHC.Exts(build)
 import System.Random(RandomGen, StdGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
+
+import Control.Arrow ((>>>),(&&&),second)
+import GHC.Exts (sortWith)
 
 -- solutions from https://wiki.haskell.org/99_questions
 
@@ -820,3 +826,47 @@ combination_ n (x:xs) = ts ++ ds
   where
     ts = [ (x:ys,zs) | (ys,zs) <- combination_ (n-1) xs ]
     ds = [ (ys,x:zs) | (ys,zs) <- combination_  n    xs ]
+
+
+-- P28a
+lsort :: [[a]] -> [[a]]
+lsort = sortBy (comparing length)
+
+lsort2 :: [[a]] -> [[a]]
+lsort2 = sortBy (\xs ys -> compare (length xs) (length ys))
+
+lsort3 :: [[a]] -> [[a]]
+lsort3 = sortBy (compare `on` length)
+
+lsort4 :: [[a]] -> [[a]]
+lsort4 = sortOn length
+
+
+-- P28b
+lfsort :: [[a]] -> [[a]]
+lfsort lists = concat groups
+    where groups = lsort $ groupBy equalLength $ lsort lists
+          equalLength xs ys = length xs == length ys
+
+lfsort2 :: [[a]] -> [[a]]
+lfsort2 = concat . lsort . groupBy ((==) `on` length) . lsort
+
+
+lfsort3 :: [[a]] -> [[a]]
+lfsort3 l = sortBy (\xs ys -> compare (frequency (length xs) l) (frequency (length ys) l)) l
+    where frequency len l = length (filter (\x -> length x == len) l)
+
+lfsort4 :: [[a]] -> [[a]]
+lfsort4 = map snd . concat . sortOn length . groupBy ((==) `on` fst) . sortOn fst . map (\x -> (length x, x))
+
+
+lfsort5 :: [[a]] -> [[a]]
+lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
+           >>> cntDupLength undefined [] >>> sortWith (snd>>>fst)
+           >>> sortWith fst >>> map (\(_,(_,(_,a))) -> a)
+  where cntDupLength :: Int -> [(Int,(Int,a))] -> [(Int,(Int,a))] -> [(Int,(Int,(Int,a)))]
+        cntDupLength _ lls [] = map ((,) (length lls)) $ reverse lls
+        cntDupLength _ [] (x@(_,(l,_)):xs) = cntDupLength l [x] xs
+        cntDupLength l lls ys@(x@(_,(l1,_)):xs)
+           | l == l1   = cntDupLength l (x:lls) xs
+           | otherwise = (map ((,) (length lls)) $ reverse lls) ++ cntDupLength undefined [] ys

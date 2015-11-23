@@ -259,9 +259,9 @@ group :: (Eq a) => [Int] -> [a] -> [[[a]]]
 group sizes list
     | sizes == [] = [[]]
     | otherwise =
-        (combinations (head sizes) list) >>=
-            (\combination -> (\it -> combination : it) `map` (group (tail sizes) (exclude combination list)))
-        where
+        (combinations (head sizes) list) >>= (\combination ->
+            map (combination :) (group (tail sizes) (exclude combination list))
+        ) where
             exclude comb xs = filter (\it -> notElem it comb) xs
 
 

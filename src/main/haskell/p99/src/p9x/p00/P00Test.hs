@@ -51,8 +51,16 @@ p2x = testList "P2x" [
             ["abc","abd","abe","abf","acd","ace","acf","ade","adf","aef","bcd","bce","bcf","bde","bdf","bef","cde","cdf","cef","def"]
             (combinations 3 "abcdef"),
     expectEqual "P26" 220 $ (length . combinations 3) "abcdef123456",
+
     expectEqual "P27a" 1260 (length $ group3 ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"]),
+    expectEqual "P27b" [[]] (group [] ""),
+    expectEqual "P27b" [] (group [1] ""),
+    expectEqual "P27b" [["a"]] (group [1] "a"),
+    expectEqual "P27b" [["a"], ["b"]] (group [1] "ab"),
+    expectEqual "P27b" [["ab"]] (group [2] "ab"),
+    expectEqual "P27b" [["a", "b"], ["b", "a"]] (group [1, 1] "ab"),
     expectEqual "P27b" 1260 (length $ group [2, 3, 4] ["Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida"]),
+
     expectEqual "P28a" ["o", "de", "de", "mn", "abc", "fgh", "ijkl"] (lsort ["abc", "de", "fgh", "de", "ijkl", "mn", "o"]),
     expectEqual "P28b" ["ijkl", "o", "abc", "fgh", "de", "de", "mn"] (lsortFreq ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
  ]
