@@ -147,9 +147,19 @@ main = do
            doExpectEqual "P27" [["a", "b"], ["b", "a"]] (f [1, 1] "ab")
      ) `mapM_` groupFunctions
 
-    -- TODO P28
     let lengthSortFunctions = [lsort, lsort2, lsort3, lsort4]
+    (\f ->
+        do doExpectEqual "P28a"
+                ["o", "de", "de", "mn", "abc", "fgh", "ijkl"]
+                (f ["abc", "de", "fgh", "de", "ijkl", "mn", "o"])
+     ) `mapM_` lengthSortFunctions
+
     let lengthFrequencySortFunctions = [lfsort, lfsort2, lfsort3, lfsort4, lfsort5]
+    (\f ->
+        do doExpectEqual "P28b"
+                ["o", "abc", "fgh", "de", "de", "mn"]
+                (f ["abc", "de", "fgh", "de", "mn", "o"])
+     ) `mapM_` lengthFrequencySortFunctions
 
     return $ (Counts 0 0 0 0)
 

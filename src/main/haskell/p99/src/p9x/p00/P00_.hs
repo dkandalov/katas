@@ -851,14 +851,12 @@ lfsort lists = concat groups
 lfsort2 :: [[a]] -> [[a]]
 lfsort2 = concat . lsort . groupBy ((==) `on` length) . lsort
 
-
 lfsort3 :: [[a]] -> [[a]]
 lfsort3 l = sortBy (\xs ys -> compare (frequency (length xs) l) (frequency (length ys) l)) l
     where frequency len l = length (filter (\x -> length x == len) l)
 
 lfsort4 :: [[a]] -> [[a]]
 lfsort4 = map snd . concat . sortOn length . groupBy ((==) `on` fst) . sortOn fst . map (\x -> (length x, x))
-
 
 lfsort5 :: [[a]] -> [[a]]
 lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
@@ -870,3 +868,8 @@ lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
         cntDupLength l lls ys@(x@(_,(l1,_)):xs)
            | l == l1   = cntDupLength l (x:lls) xs
            | otherwise = (map ((,) (length lls)) $ reverse lls) ++ cntDupLength undefined [] ys
+
+
+-- P29
+
+
