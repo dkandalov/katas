@@ -27,7 +27,8 @@ module P9x.P00.P00_ (
     rnd_perm2, rnd_perm3, rnd_perm4,
     combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7,
     groupSubsets, groupSubsets2, groupSubsets3,
-    lsort, lsort2, lsort3, lsort4, lfsort, lfsort2, lfsort3, lfsort4, lfsort5
+    lsort, lsort2, lsort3, lsort4, lfsort, lfsort2, lfsort3, lfsort4, lfsort5,
+    isPrime, isPrime2
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -35,14 +36,15 @@ import Data.Function(on)
 import Control.Monad(liftM2)
 import Control.Applicative((<*>), (<$>), (<**>))
 import Control.Arrow((&&&))
-import Data.List(group, findIndex, nub, permutations, tails, subsequences, sort, sortBy, sortOn, groupBy)
+import Data.List(group, findIndex, nub, permutations, tails, subsequences, sort, sortBy, sortOn, groupBy, union)
 import Data.Ord (comparing)
 import GHC.Exts(build)
 import System.Random(RandomGen, StdGen, getStdRandom, randomR, randomRIO, randomRs, getStdGen)
 import Control.Monad(replicateM)
 
-import Control.Arrow ((>>>),(&&&),second)
+import Control.Arrow ((>>>), (&&&), second)
 import GHC.Exts (sortWith)
+
 
 -- solutions from https://wiki.haskell.org/99_questions
 
@@ -858,10 +860,11 @@ lfsort3 l = sortBy (\xs ys -> compare (frequency (length xs) l) (frequency (leng
 lfsort4 :: [[a]] -> [[a]]
 lfsort4 = map snd . concat . sortOn length . groupBy ((==) `on` fst) . sortOn fst . map (\x -> (length x, x))
 
+-- https://en.wikibooks.org/wiki/Haskell/Understanding_arrows
 lfsort5 :: [[a]] -> [[a]]
 lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
-           >>> cntDupLength undefined [] >>> sortWith (snd>>>fst)
-           >>> sortWith fst >>> map (\(_,(_,(_,a))) -> a)
+           >>> cntDupLength undefined [] >>> sortWith (snd>>>fst) >>> sortWith fst
+           >>> map (\(_,(_,(_,a))) -> a)
   where cntDupLength :: Int -> [(Int,(Int,a))] -> [(Int,(Int,a))] -> [(Int,(Int,(Int,a)))]
         cntDupLength _ lls [] = map ((,) (length lls)) $ reverse lls
         cntDupLength _ [] (x@(_,(l,_)):xs) = cntDupLength l [x] xs
@@ -870,6 +873,22 @@ lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
            | otherwise = (map ((,) (length lls)) $ reverse lls) ++ cntDupLength undefined [] ys
 
 
--- P29
+-- P31
+isPrime :: Integer -> Bool
+isPrime k = k > 1 &&
+   foldr (\p r -> p*p > k || k `rem` p /= 0 && r) True primesTME
 
+-- tree-merging Eratosthenes sieve
+--  producing infinite list of all prime numbers
+primesTME = 2 : gaps 3 (join [[p*p,p*p+2*p..] | p <- primes'])
+  where
+    primes' = 3 : gaps 5 (join [[p*p,p*p+2*p..] | p <- primes'])
+    join  ((x:xs):t)        = x : union xs (join (pairs t))
+    pairs ((x:xs):ys:t)     = (x : union xs ys) : pairs t
+    gaps k xs@(x:t) | k==x  = gaps (k+2) t
+                    | True  = k : gaps (k+2) xs
 
+isPrime2 :: (Integral a) => a -> Bool
+isPrime2 n | n < 4 = n > 1
+isPrime2 n = all ((/=0).mod n) $ 2:3:[x + i | x <- [6,12..s], i <- [-1,1]]
+            where s = floor $ sqrt $ fromIntegral n

@@ -161,5 +161,13 @@ main = do
                 (f ["abc", "de", "fgh", "de", "mn", "o"])
      ) `mapM_` lengthFrequencySortFunctions
 
+
+    let primeFunctions = [isPrime]
+    let primeTest f = doExpectEqual "P31" expected actual
+         where expected = [(1,False),(2,True),(3,True),(4,False),(5,True),
+                           (6,False),(7,True),(8,False),(9,False),(10,False)]
+               actual = map (\it -> (it, f it)) [1..10]
+    primeTest `mapM_` primeFunctions
+
     return $ (Counts 0 0 0 0)
 
