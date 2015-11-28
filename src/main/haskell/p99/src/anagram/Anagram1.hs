@@ -11,7 +11,7 @@ areAnagrams s1 s2 =
     any (== s1) (permutations s2)
 
 isSetOfAnagrams :: [String] -> Bool
-isSetOfAnagrams xs = all (\(s1, s2) -> areAnagrams s1 s2) (zip xs (tail xs))
+isSetOfAnagrams xs = all (uncurry areAnagrams) (zip xs (tail xs))
 
 
 tests :: [Test]
