@@ -876,10 +876,11 @@ lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
 -- P31
 isPrime :: Integer -> Bool
 isPrime k = k > 1 &&
-   foldr (\p r -> p*p > k || k `rem` p /= 0 && r) True primesTME
+   foldr (\p r -> p*p > k || (k `rem` p /= 0 && r)) True primesTME
 
 -- tree-merging Eratosthenes sieve
---  producing infinite list of all prime numbers
+-- producing infinite list of all prime numbers
+primesTME :: [Integer]
 primesTME = 2 : gaps 3 (join [[p*p,p*p+2*p..] | p <- primes'])
   where
     primes' = 3 : gaps 5 (join [[p*p,p*p+2*p..] | p <- primes'])
