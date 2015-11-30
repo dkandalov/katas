@@ -28,7 +28,8 @@ module P9x.P00.P00_ (
     combinations, combinations2, combinations3, combinations4, combinations5, combinations6, combinations7,
     groupSubsets, groupSubsets2, groupSubsets3,
     lsort, lsort2, lsort3, lsort4, lfsort, lfsort2, lfsort3, lfsort4, lfsort5,
-    isPrime, isPrime2
+    isPrime, isPrime2,
+    myGCD, myGCD2, coprime
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -874,6 +875,7 @@ lfsort5 = zip [1..] >>> map (second (length &&& id)) >>> sortWith (snd>>>fst)
 
 
 -- P31
+-- see http://stackoverflow.com/questions/3082324/foldl-versus-foldr-behavior-with-infinite-lists
 isPrime :: Integer -> Bool
 isPrime k = k > 1 &&
    foldr (\p r -> p*p > k || (k `rem` p /= 0 && r)) True primesTME
@@ -893,3 +895,23 @@ isPrime2 :: (Integral a) => a -> Bool
 isPrime2 n | n < 4 = n > 1
 isPrime2 n = all ((/=0).mod n) $ 2:3:[x + i | x <- [6,12..s], i <- [-1,1]]
             where s = floor $ sqrt $ fromIntegral n
+
+
+-- P32
+myGCD :: Integer -> Integer -> Integer
+myGCD x y | x < 0     = myGCD (-x) y
+          | y < 0     = myGCD x (-y)
+          | y < x     = gcd' y x
+          | otherwise = gcd' x y
+    where gcd' 0 y = y
+          gcd' x y = gcd' (y `mod` x) x
+
+myGCD2 :: Integer -> Integer -> Integer
+myGCD2 a b
+      | b == 0    = abs a
+      | otherwise = myGCD2 b (a `mod` b)
+
+-- P33
+coprime :: Integer -> Integer -> Bool
+coprime a b = myGCD a b == 1
+

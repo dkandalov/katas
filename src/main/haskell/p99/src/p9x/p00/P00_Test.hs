@@ -169,5 +169,13 @@ main = do
                actual = map (\it -> (it, f it)) [1..10]
     primeTest `mapM_` primeFunctions
 
+
+    let gcdFunctions = [myGCD, myGCD2]
+    let gcdResults = [ (1, 1, 1), (2, 4, 2), (4, 2, 2), (-10, 5, 5) ]
+    (\f ->
+        do doExpectEqual "P32" gcdResults
+            (map (\(n1, n2, _) -> (n1, n2, f n1 n2)) gcdResults)
+     ) `mapM_` gcdFunctions
+
     return $ (Counts 0 0 0 0)
 
