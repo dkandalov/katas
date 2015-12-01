@@ -29,7 +29,8 @@ module P9x.P00.P00_ (
     groupSubsets, groupSubsets2, groupSubsets3,
     lsort, lsort2, lsort3, lsort4, lfsort, lfsort2, lfsort3, lfsort4, lfsort5,
     isPrime, isPrime2,
-    myGCD, myGCD2, coprime
+    myGCD, myGCD2, coprime,
+    totient, totient2, totient3
 ) where
 
 import Data.Foldable(Foldable, foldMap)
@@ -46,6 +47,7 @@ import Control.Monad(replicateM)
 import Control.Arrow ((>>>), (&&&), second)
 import GHC.Exts (sortWith)
 
+import Data.Ratio
 
 -- solutions from https://wiki.haskell.org/99_questions
 
@@ -915,3 +917,31 @@ myGCD2 a b
 coprime :: Integer -> Integer -> Bool
 coprime a b = myGCD a b == 1
 
+
+-- P34
+totient :: Integer -> Integer
+totient 1 = 1
+totient a = toInteger $ length $ filter (coprime a) [1..a-1]
+
+totient2 :: Integer -> Integer
+totient2 n = toInteger $ length [x | x <- [1..n], coprime x n]
+
+-- https://en.wikipedia.org/wiki/Euler%27s_totient_function
+totient3 :: Integer -> Integer
+totient3 1 = 1
+totient3 n = numerator ratio `div` denominator ratio
+    where ratio = foldl (\acc x -> acc * (1 - (1 % x))) (n % 1) $ nub (primeFactors n)
+
+
+-- P35
+primeFactors :: Integer -> [Integer]
+primeFactors a = let (f, f1) = factorPairOf a
+                     f' = if prime f then [f] else primeFactors f
+                     f1' = if prime f1 then [f1] else primeFactors f1
+                 in f' ++ f1'
+    where
+    factorPairOf a = let f = head $ factors a
+               in (f, a `div` f)
+    factors a    = filter (isFactor a) [2..a-1]
+    isFactor a b = a `mod` b == 0
+    prime a      = null $ factors a

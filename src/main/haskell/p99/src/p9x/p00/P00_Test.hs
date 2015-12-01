@@ -177,5 +177,19 @@ main = do
             (map (\(n1, n2, _) -> (n1, n2, f n1 n2)) gcdResults)
      ) `mapM_` gcdFunctions
 
+    doExpectEqual "P33" True (coprime 1 1)
+    doExpectEqual "P33" True (coprime 1 2)
+    doExpectEqual "P33" True (coprime 4 9)
+    doExpectEqual "P33" False (coprime 4 6)
+
+    -- TODO P34
+    let totientFunctions = [totient, totient2{-, totient3-}]
+    let totientResults = [1,2,2,4,2,6,4,6,4,10,4,12,6,8,8,16,6,18,8]
+    (\f ->
+        do doExpectEqual "P34" totientResults (map f [2..20])
+     ) `mapM_` totientFunctions
+
+    -- TODO P35
+
     return $ (Counts 0 0 0 0)
 
