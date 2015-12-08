@@ -16,14 +16,14 @@ class Newton5 extends Matchers {
 		squareRootOf(10) should beCloseTo(3.16227)
 	}
 
-	def squareRootOf(n: Double, guess: Double = 1.0, threshold: Double = 0.0001): Double = {
+	private def squareRootOf(n: Double, guess: Double = 1.0, threshold: Double = 0.0001): Double = {
 		def goodEnough = {guess: Double => (n - guess * guess).abs < threshold}
 		def improve = {guess: Double => guess - ((guess * guess - n) / (2 * guess))}
 		if (goodEnough(guess)) guess
 		else squareRootOf(n, improve(guess))
 	}
 
-	def beCloseTo(expected: Double, threshold: Double = 0.0001) = {
+	private def beCloseTo(expected: Double, threshold: Double = 0.0001) = {
 		new Matcher[Double]() {
 			def apply(actual: Double) =
 				MatchResult(
