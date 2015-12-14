@@ -183,7 +183,7 @@ main = do
     doExpectEqual "P33" False (coprime 4 6)
 
     -- TODO P34
-    let totientFunctions = [totient, totient2{-, totient3-}]
+    let totientFunctions = [totient, totient2, totient3]
     let totientResults = [1,2,2,4,2,6,4,6,4,10,4,12,6,8,8,16,6,18,8]
     (\f ->
         do doExpectEqual "P34" totientResults (map f [2..20])

@@ -940,7 +940,18 @@ primeFactors a = let (f, f1) = factorPairOf a
                  in f' ++ f1'
     where
     factorPairOf a = let f = head $ factors a
-               in (f, a `div` f)
-    factors a    = filter (isFactor a) [2..a-1]
-    isFactor a b = a `mod` b == 0
-    prime a      = null $ factors a
+                     in (f, a `div` f)
+    factors a      = filter (isFactor a) [2..a-1]
+    isFactor a b   = a `mod` b == 0
+    prime a        = null $ factors a
+
+
+-- P36
+prime_factors_mult :: Integer -> [(Integer, Int)]
+prime_factors_mult n = map swap $ encode $ primeFactors n
+    where swap (x,y) = (y,x)
+
+prime_factors_mult2 :: Integer -> [(Integer, Int)]
+prime_factors_mult2 = map encode . group . primeFactors
+    where encode xs = (head xs, length xs)
+
