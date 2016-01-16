@@ -97,6 +97,44 @@ fn main() {
         f(3)
     }
     let greeting = "hello";
-    let mut farewell = "goodbye".to_owned();
-    // TODO
+    let mut farewell = "goodbye".to_owned(); // a non-copy type
+    let diary = || {
+        println!("{}", greeting); // greeting is by ference, requires Fn
+        farewell.push_str("!!!"); // requires FnMut
+        std::mem::drop(farewell); // requires FnOnce
+    };
+    let x2 = |x| 2 * x;
+    apply(diary);
+    apply_to_3(x2);
+
+
+    // 8.2.3
+    // skipped code
+
+
+    // 8.2.4
+    fn call_function<F: Fn()>(f: F) {
+        f()
+    }
+    fn print() {
+        println!("I'm a function");
+    }
+    let closure = || println!("I'm a closure");
+    call_function(print);
+    call_function(closure);
+
+
+    // 8.2.5
+    // skipped code
+
+
+    // 8.2.6.1, 8.2.6.2
+    let vec1 = vec![1, 2, 3];
+    let vec2 = vec![4, 5, 6];
+    let mut iter = vec1.iter();
+    let mut into_iter = vec2.into_iter();
+    println!("any in vec1: {}", iter.any(|&x| x == 2 ));
+    println!("find in vec1: {:?}", iter.find(|&&x| x == 2 ));
+    println!("any in vec2: {}", into_iter.any(|x| x == 2 ));
+    println!("find in vec2: {:?}", into_iter.find(|&x| x == 2 ));
 }
