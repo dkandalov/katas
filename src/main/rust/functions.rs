@@ -137,4 +137,17 @@ fn main() {
     println!("find in vec1: {:?}", iter.find(|&&x| x == 2 ));
     println!("any in vec2: {}", into_iter.any(|x| x == 2 ));
     println!("find in vec2: {:?}", into_iter.find(|&x| x == 2 ));
+
+
+    // 8.3
+    fn is_odd(n: u32) -> bool {
+        n % 2 == 0
+    }
+    let upper_limit = 1000;
+    let sum_of_squared_odd_numbers: u32 =
+        (0..).map(|n| n * n )
+             .take_while(|&n| n < upper_limit )
+             .filter(|n| is_odd(*n) )
+             .fold(0, |sum, n| sum + n );
+     println!("sum_of_squared_odd_numbers: {}", sum_of_squared_odd_numbers);
 }
