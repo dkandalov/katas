@@ -26,6 +26,25 @@ mod module {
     }
 }
 
+fn function() {
+    println!("function");
+}
+mod my {
+    fn function() {
+        println!("my::function")
+    }
+    mod cool {
+        pub fn function() {
+            println!("cool::function");
+        }
+    }
+    pub fn indirect_call() {
+        self::function();
+        self::cool::function();
+        super::function();
+    }
+}
+
 #[allow(unused_variables)]
 fn main() {
     // 10.1
@@ -42,4 +61,7 @@ fn main() {
         use module::nested::function as f;
         f("use")
     }
+
+    // 10.4
+    my::indirect_call();
 }
