@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -56,12 +56,10 @@ public class QSort3 {
         int pivotIndex = list.size() / 2;
         T pivot = list.get(pivotIndex);
 
-        List<T> list1 = list.stream().filter(it -> it.compareTo(pivot) < 0).collect(Collectors.toList());
-        List<T> list2 = list.stream().filter(it -> it.compareTo(pivot) > 0).collect(Collectors.toList());
-
-        List<T> result = new ArrayList<>(sort(list1));
-        result.add(pivot);
-        result.addAll(sort(list2));
+        List<T> result = new ArrayList<>(list.size());
+        result.addAll(sort(list.stream().filter(it -> it.compareTo(pivot) < 0).collect(toList())));
+        result.addAll(list.stream().filter(it -> it.compareTo(pivot) == 0).collect(toList()));
+        result.addAll(sort(list.stream().filter(it -> it.compareTo(pivot) > 0).collect(toList())));
         return result;
     }
 }
