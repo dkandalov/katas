@@ -6,11 +6,10 @@ import ru.sort.SeqSortTest
 import scala.reflect.ClassTag
 
 
-class QSort6 extends SeqSortTest with Matchers {
+class QuickSort7 extends SeqSortTest with Matchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
-		if (seq.isEmpty) return seq
-		val pivot = seq(seq.size / 2)
-
+		if (seq.size <= 1) return seq
+		val pivot = seq.head
 		sort(seq.filter(_ < pivot)) ++
 		seq.filter(_ == pivot) ++
 		sort(seq.filter(_ > pivot))
