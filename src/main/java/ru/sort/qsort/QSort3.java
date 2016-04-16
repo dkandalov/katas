@@ -31,7 +31,7 @@ public class QSort3 {
         )));
     }
 
-    private static <T> List<List<T>> permutations(List<T> list) {
+    public static <T> List<List<T>> permutations(List<T> list) {
         List<List<T>> result = new ArrayList<>();
         if (list.size() <= 1) {
             result.add(list);
