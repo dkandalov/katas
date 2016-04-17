@@ -13,10 +13,7 @@ class InsertSort14 extends SeqSortTest with Matchers {
 			if (sorted.head >= element) element +: sorted
 			else sorted.head +: insert(sorted.tail, element)
 		}
-		def insertSort(sorted: Seq[T], seq: Seq[T]): Seq[T] = {
-			if (seq.isEmpty) sorted
-			else insertSort(insert(sorted, seq.head), seq.tail)
-		}
-		insertSort(Seq(), seq)
+		if (seq.isEmpty) seq
+		else insert(sort(seq.tail), seq.head)
 	}
 }
