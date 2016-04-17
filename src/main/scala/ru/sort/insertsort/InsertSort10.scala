@@ -21,7 +21,7 @@ class InsertSort10 extends SeqSortTest with Matchers {
 				}
 			}
 		}
-		array.toSeq
+		array
 	}
 
 	private def swap[T](buffer: ArrayBuffer[T], i1: Int, i2: Int) {
