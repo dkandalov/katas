@@ -1,7 +1,7 @@
 package ru.sort.mergesort
 
-import org.scalatest.Matchers
 import org.junit.Test
+import org.scalatest.Matchers
 
 
 class MergeSort12 extends Matchers {
