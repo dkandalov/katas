@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Stream.concat;
 
 public class QSort8 implements SortAssertions {
-    @Test public void sortList() {
+    @Test public void sortList()     {
         assertListsCanBeSorted(it -> sort(it.stream()).collect(Collectors.toList()));
     }
 
