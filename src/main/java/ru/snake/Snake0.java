@@ -4,17 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 
 public class Snake0 {
+    private static GameState gameState;
+
     public static void main(String[] args) {
-        GameState gameState = new GameState(asList(
-                new Point(1, 1), new Point(2, 1), new Point(3, 1)
+        gameState = new GameState(Direction.right, asList(
+                new Point(3, 1), new Point(2, 1), new Point(1, 1)
         ), asList(
-                new Point(5,5)
+                new Point(5, 5)
         ));
+        GameTimer gameTimer = new GameTimer((i) ->
+            gameState = gameState.onTimer()
+        ).init();
         GameUI gameUI = new GameUI().init();
 
         new Thread(() -> {
@@ -29,13 +36,41 @@ public class Snake0 {
         }).start();
     }
 
+    private enum Direction {
+        up, right, down, left
+    }
+
     private static class GameState {
+        final Direction snakeDirection;
         final List<Point> snake;
         final List<Point> apples;
 
-        public GameState(List<Point> snake, List<Point> apples) {
+        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples) {
+            this.snakeDirection = snakeDirection;
             this.snake = snake;
             this.apples = apples;
+        }
+
+        public GameState onTimer() {
+            List<Point> newSnake = new ArrayList<>(snake);
+            newSnake.remove(newSnake.size() - 1);
+            Point head = newSnake.get(0);
+
+            Point newHead;
+            if (snakeDirection == Direction.up) {
+                newHead = new Point(head.x, head.y - 1);
+            } else if (snakeDirection == Direction.right) {
+                newHead = new Point(head.x + 1, head.y);
+            } else if (snakeDirection == Direction.down) {
+                newHead = new Point(head.x, head.y + 1);
+            } else if (snakeDirection == Direction.left) {
+                newHead = new Point(head.x - 1, head.y);
+            } else {
+                throw new IllegalStateException();
+            }
+            newSnake.add(0, newHead);
+
+            return new GameState(snakeDirection, newSnake, apples);
         }
     }
 
@@ -106,6 +141,21 @@ public class Snake0 {
                     cellHeight - yPad
                 );
             }
+        }
+    }
+
+    private static class GameTimer {
+        private final Consumer<Void> callback;
+        private final Timer timer;
+
+        public GameTimer(Consumer<Void> callback) {
+            this.callback = callback;
+            this.timer = new Timer(1000, e -> callback.accept(null));
+        }
+
+        public GameTimer init() {
+            timer.start();
+            return this;
         }
     }
 }
