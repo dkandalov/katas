@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,10 +20,12 @@ public class Snake0 {
         ), asList(
                 new Point(5, 5)
         ));
-        GameTimer gameTimer = new GameTimer((i) ->
+        GameTimer gameTimer = new GameTimer(i ->
             gameState = gameState.onTimer()
         ).init();
-        GameUI gameUI = new GameUI().init();
+        GameUI gameUI = new GameUI().init(direction ->
+            gameState = gameState.onDirection(direction)
+        );
 
         new Thread(() -> {
             while (true) {
@@ -72,19 +75,54 @@ public class Snake0 {
 
             return new GameState(snakeDirection, newSnake, apples);
         }
+
+        public GameState onDirection(Direction newDirection) {
+            List<Point> newSnake = new ArrayList<>(snake);
+            boolean isHorizontalReverse = isHorizontal(snake) &&
+                    ((snakeDirection == Direction.left && newDirection == Direction.right) ||
+                    (snakeDirection == Direction.right && newDirection == Direction.left));
+            boolean isVerticalReverse = isVertical(snake) &&
+                    ((snakeDirection == Direction.up && newDirection == Direction.down) ||
+                    (snakeDirection == Direction.down && newDirection == Direction.up));
+            if (isHorizontalReverse || isVerticalReverse)  {
+                Collections.reverse(newSnake);
+            }
+            return new GameState(newDirection, newSnake, apples);
+        }
+
+        private static boolean isVertical(List<Point> snake) {
+            return snake.stream().allMatch(it -> it.getX() == snake.get(0).getX());
+        }
+
+        private static boolean isHorizontal(List<Point> snake) {
+            return snake.stream().allMatch(it -> it.getY() == snake.get(0).getY());
+        }
     }
 
     private static class GameUI {
         private GamePanel gamePanel;
 
-        public GameUI init() {
+        public GameUI init(Consumer<Direction> directionConsumer) {
             gamePanel = new GamePanel();
 
             JFrame jFrame = new JFrame("Snake");
             jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             jFrame.addKeyListener(new KeyAdapter() {
-                @Override public void keyPressed(KeyEvent e) {
-                    gamePanel.repaint();
+                @Override public void keyPressed(KeyEvent event) {
+                    Direction direction = null;
+                    int keyCode = event.getKeyCode();
+                    if (keyCode == KeyEvent.VK_UP) {
+                        direction = Direction.up;
+                    } else if (keyCode == KeyEvent.VK_RIGHT) {
+                        direction = Direction.right;
+                    } else if (keyCode == KeyEvent.VK_DOWN) {
+                        direction = Direction.down;
+                    } else if (keyCode == KeyEvent.VK_LEFT) {
+                        direction = Direction.left;
+                    }
+                    if (direction != null) {
+                        directionConsumer.accept(direction);
+                    }
                 }
             });
             jFrame.add(gamePanel);
@@ -145,12 +183,10 @@ public class Snake0 {
     }
 
     private static class GameTimer {
-        private final Consumer<Void> callback;
         private final Timer timer;
 
         public GameTimer(Consumer<Void> callback) {
-            this.callback = callback;
-            this.timer = new Timer(1000, e -> callback.accept(null));
+            this.timer = new Timer(500, e -> callback.accept(null));
         }
 
         public GameTimer init() {
