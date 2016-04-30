@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public class Snake0 {
     private static GameState gameState;
@@ -56,7 +57,6 @@ public class Snake0 {
 
         public GameState onTimer() {
             List<Point> newSnake = new ArrayList<>(snake);
-            newSnake.remove(newSnake.size() - 1);
             Point head = newSnake.get(0);
 
             Point newHead;
@@ -73,17 +73,25 @@ public class Snake0 {
             }
             newSnake.add(0, newHead);
 
-            return new GameState(snakeDirection, newSnake, apples);
+            List<Point> newApples = apples.stream().filter(it -> !it.equals(newHead)).collect(toList());
+            if (newApples.size() == apples.size()) {
+                newSnake.remove(newSnake.size() - 1);
+            }
+
+            return new GameState(snakeDirection, newSnake, newApples);
         }
 
         public GameState onDirection(Direction newDirection) {
             List<Point> newSnake = new ArrayList<>(snake);
+            Point head = newSnake.get(0);
+            Point tailTip = newSnake.get(newSnake.size() - 1);
+
             boolean isHorizontalReverse = isHorizontal(snake) &&
-                    ((snakeDirection == Direction.left && newDirection == Direction.right) ||
-                    (snakeDirection == Direction.right && newDirection == Direction.left));
+                    ((newDirection == Direction.right && head.x < tailTip.x) ||
+                    (newDirection == Direction.left && head.x > tailTip.x));
             boolean isVerticalReverse = isVertical(snake) &&
-                    ((snakeDirection == Direction.up && newDirection == Direction.down) ||
-                    (snakeDirection == Direction.down && newDirection == Direction.up));
+                    ((newDirection == Direction.down && head.y < tailTip.y) ||
+                    (newDirection == Direction.up && head.y > tailTip.y));
             if (isHorizontalReverse || isVerticalReverse)  {
                 Collections.reverse(newSnake);
             }
@@ -91,11 +99,11 @@ public class Snake0 {
         }
 
         private static boolean isVertical(List<Point> snake) {
-            return snake.stream().allMatch(it -> it.getX() == snake.get(0).getX());
+            return snake.stream().allMatch(it -> it.x == snake.get(0).x);
         }
 
         private static boolean isHorizontal(List<Point> snake) {
-            return snake.stream().allMatch(it -> it.getY() == snake.get(0).getY());
+            return snake.stream().allMatch(it -> it.y == snake.get(0).y);
         }
     }
 
