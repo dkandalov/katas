@@ -35,7 +35,9 @@ class HammingDistance extends Matchers {
 
 
 		def search(options: List[Int], solution: List[Int]): List[List[Int]] = {
-			val newOptions = options.filter { option => solution.forall{ distance(_, option) >= 3 } }
+			val newOptions = options.filter { option =>
+				solution.forall{ distance(_, option) >= 3 }
+			}
 			if (newOptions.isEmpty) return List(solution)
 
 			newOptions.flatMap{ option =>
@@ -48,8 +50,19 @@ class HammingDistance extends Matchers {
 //			.foreach { solution =>
 //				println(solution.map(intToBinary(_, 6)))
 //			}
-		println(solutions.maxBy(_.size).map(intToBinary(_, 6)))
-		println(solutions.size)
+//		println(solutions.size)
+
+		val maxSolution = solutions.maxBy(_.size).map(intToBinary(_, 6))
+		maxSolution should equal(List(
+			"000000",
+			"000111",
+			"011001",
+			"011110",
+			"101010",
+			"101101",
+			"110011",
+			"110100"
+		))
 	}
 
 }
