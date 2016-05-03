@@ -39,7 +39,7 @@ class HammingDistance extends Matchers {
 			if (newOptions.isEmpty) return List(solution)
 
 			newOptions.flatMap{ option =>
-				search(options.filter(_ != option), solution :+ option)
+				search(newOptions.filter(_ != option), solution :+ option)
 			}
 		}
 
