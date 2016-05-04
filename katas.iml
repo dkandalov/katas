@@ -22,9 +22,11 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jquery-1.10.0" level="application" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-runtime:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.lmax:disruptor:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.spullara.mustache.java:compiler:0.8.17" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:16.0.1" level="project" />
     <orderEntry type="library" name="Maven: jivesoftware:smack:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.jmock:jmock-junit4:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.jmock:jmock:2.5.1" level="project" />
