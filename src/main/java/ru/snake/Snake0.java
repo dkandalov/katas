@@ -13,19 +13,24 @@ import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static ru.snake.Snake0.GameState.Status.gameOver;
+import static ru.snake.Snake0.GameState.Status.playing;
 
 public class Snake0 {
     private static GameState gameState;
 
     public static void main(String[] args) {
-        gameState = new GameState(Direction.right, asList(
-                new Point(3, 1), new Point(2, 1), new Point(1, 1)
-        ), asList(
+        List<Point> snake = asList(
+                new Point(4, 1), new Point(3, 1), new Point(2, 1), new Point(1, 1)
+        );
+        List<Point> apples = asList(
                 new Point(5, 5)
-        ));
+        );
+        gameState = new GameState(Direction.right, snake, apples, playing);
+
         GameUI gameUI = new GameUI();
         gameUI.init(direction -> {
-            gameState = gameState.onDirection(direction);
+            gameState = gameState.onDirectionChange(direction);
             gameUI.repaint(gameState);
         });
         new GameTimer(i -> {
@@ -39,21 +44,37 @@ public class Snake0 {
         up, right, down, left
     }
 
-    private static class GameState {
+    static class GameState {
         private final Direction snakeDirection;
         private final List<Point> snake;
         private final List<Point> apples;
+        private final Status status;
+        private final boolean skipNextTimerTick;
 
-        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples) {
+        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status) {
+            this(snakeDirection, snake, apples, status, false);
+        }
+
+        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status, boolean skipNextTimerTick) {
             this.snakeDirection = snakeDirection;
             this.snake = snake;
             this.apples = apples;
+            this.status = status;
+            this.skipNextTimerTick = skipNextTimerTick;
+        }
+
+        public GameState skipNextTimerTick(boolean value) {
+            return new GameState(snakeDirection, snake, apples, status, value);
         }
 
         public GameState onTimer() {
+            if (skipNextTimerTick) return skipNextTimerTick(false);
+            if (status != playing) return this;
+
             List<Point> newSnake = new ArrayList<>(snake);
             Point head = newSnake.get(0);
             Point newHead = snakeHeadAfterMove(head);
+
             newSnake.add(0, newHead);
 
             List<Point> newApples = apples.stream().filter(it -> !it.equals(newHead)).collect(toList());
@@ -61,7 +82,12 @@ public class Snake0 {
                 newSnake.remove(newSnake.size() - 1);
             }
 
-            return new GameState(snakeDirection, newSnake, newApples);
+            boolean hasBittenItself = newSnake.stream().filter(it -> it.equals(newHead)).count() > 1;
+            if (hasBittenItself) {
+                return new GameState(snakeDirection, newSnake, apples, gameOver);
+            }
+
+            return new GameState(snakeDirection, newSnake, newApples, status);
         }
 
         @NotNull private Point snakeHeadAfterMove(Point head) {
@@ -72,7 +98,9 @@ public class Snake0 {
             else throw new IllegalStateException();
         }
 
-        public GameState onDirection(Direction newDirection) {
+        public GameState onDirectionChange(Direction newDirection) {
+            if (status != playing) return this;
+
             List<Point> newSnake = new ArrayList<>(snake);
             Point head = newSnake.get(0);
             Point tailTip = newSnake.get(newSnake.size() - 1);
@@ -86,7 +114,7 @@ public class Snake0 {
             if (isHorizontalReverse || isVerticalReverse)  {
                 Collections.reverse(newSnake);
             }
-            return new GameState(newDirection, newSnake, apples);
+            return new GameState(newDirection, newSnake, apples, status).onTimer().skipNextTimerTick(true);
         }
 
         private static boolean isVertical(List<Point> snake) {
@@ -95,6 +123,10 @@ public class Snake0 {
 
         private static boolean isHorizontal(List<Point> snake) {
             return snake.stream().allMatch(it -> it.y == snake.get(0).y);
+        }
+
+        public enum Status {
+            playing, gameOver
         }
     }
 
@@ -177,6 +209,10 @@ public class Snake0 {
                     cellWidth - xPad,
                     cellHeight - yPad
                 );
+            }
+
+            if (gameState.status == gameOver) {
+                g.drawString("Game Over!", 100, 100);
             }
         }
     }
