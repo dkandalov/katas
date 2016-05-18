@@ -1,5 +1,7 @@
 package ru.snake;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -21,23 +23,16 @@ public class Snake0 {
         ), asList(
                 new Point(5, 5)
         ));
-        GameTimer gameTimer = new GameTimer(i ->
-            gameState = gameState.onTimer()
-        ).init();
-        GameUI gameUI = new GameUI().init(direction ->
-            gameState = gameState.onDirection(direction)
-        );
-
-        new Thread(() -> {
-            while (true) {
-                gameUI.onUpdate(gameState);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace(); // TODO
-                }
-            }
-        }).start();
+        GameUI gameUI = new GameUI();
+        gameUI.init(direction -> {
+            gameState = gameState.onDirection(direction);
+            gameUI.repaint(gameState);
+        });
+        new GameTimer(i -> {
+            gameState = gameState.onTimer();
+            gameUI.repaint(gameState);
+        }).init();
+        gameUI.repaint(gameState);
     }
 
     private enum Direction {
@@ -45,9 +40,9 @@ public class Snake0 {
     }
 
     private static class GameState {
-        final Direction snakeDirection;
-        final List<Point> snake;
-        final List<Point> apples;
+        private final Direction snakeDirection;
+        private final List<Point> snake;
+        private final List<Point> apples;
 
         public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples) {
             this.snakeDirection = snakeDirection;
@@ -58,19 +53,7 @@ public class Snake0 {
         public GameState onTimer() {
             List<Point> newSnake = new ArrayList<>(snake);
             Point head = newSnake.get(0);
-
-            Point newHead;
-            if (snakeDirection == Direction.up) {
-                newHead = new Point(head.x, head.y - 1);
-            } else if (snakeDirection == Direction.right) {
-                newHead = new Point(head.x + 1, head.y);
-            } else if (snakeDirection == Direction.down) {
-                newHead = new Point(head.x, head.y + 1);
-            } else if (snakeDirection == Direction.left) {
-                newHead = new Point(head.x - 1, head.y);
-            } else {
-                throw new IllegalStateException();
-            }
+            Point newHead = snakeHeadAfterMove(head);
             newSnake.add(0, newHead);
 
             List<Point> newApples = apples.stream().filter(it -> !it.equals(newHead)).collect(toList());
@@ -79,6 +62,14 @@ public class Snake0 {
             }
 
             return new GameState(snakeDirection, newSnake, newApples);
+        }
+
+        @NotNull private Point snakeHeadAfterMove(Point head) {
+            if (snakeDirection == Direction.up) return new Point(head.x, head.y - 1);
+            else if (snakeDirection == Direction.right) return new Point(head.x + 1, head.y);
+            else if (snakeDirection == Direction.down) return new Point(head.x, head.y + 1);
+            else if (snakeDirection == Direction.left) return new Point(head.x - 1, head.y);
+            else throw new IllegalStateException();
         }
 
         public GameState onDirection(Direction newDirection) {
@@ -141,7 +132,7 @@ public class Snake0 {
             return this;
         }
 
-        public void onUpdate(GameState gameState) {
+        public void repaint(GameState gameState) {
             SwingUtilities.invokeLater(() ->
                     gamePanel.repaintState(gameState)
             );
