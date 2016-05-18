@@ -22,14 +22,22 @@ class EightQueen10 {
         assertThat(findAllSolutions(boardSize = 8).size, equalTo(92))
     }
 
+    @Test fun `converts board to string`() {
+        assertThat(Board(Queen(0, 0), Queen(2, 1), Queen(1, 2)).toPrintableString(), equalTo(
+                "*--\n" +
+                "--*\n" +
+                "-*-"
+        ));
+    }
+
     private fun findAllSolutions(boardSize: Int): List<Board> {
         return findAllSolutions(Board(boardSize, listOf()))
     }
 
     private fun findAllSolutions(board: Board): List<Board> {
         if (board.isComplete()) return listOf(board)
-        return board.nextMoves().flatMap { nextSolution ->
-            findAllSolutions(nextSolution)
+        return board.nextMoves().flatMap { boardWithNewMove ->
+            findAllSolutions(boardWithNewMove)
         }
     }
 
@@ -40,7 +48,7 @@ class EightQueen10 {
 
         fun nextMoves(): List<Board> {
             val nextColumn = (queens.map{ it.column }.max() ?: -1) + 1
-            return (0..size-1)
+            return 0.until(size)
                 .map{ Queen(it, nextColumn) }
                 .filter{ isValidMove(it) }
                 .map{ Board(size, queens + it) }
@@ -56,6 +64,14 @@ class EightQueen10 {
                 abs(it.row - queen.row) == abs(it.column - queen.column)
             }
             return notOnTheSameLine && notOnTheSameDiagonal
+        }
+
+        fun toPrintableString(): String {
+            return 0.until(size).map { row ->
+                0.until(size).map { column ->
+                    if (queens.contains(Queen(row, column))) "*" else "-"
+                }.joinToString("")
+            }.joinToString("\n")
         }
 
         companion object {
