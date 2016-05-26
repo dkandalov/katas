@@ -6,7 +6,7 @@ import org.junit.Test
 import java.io.File
 import java.lang.Integer.parseInt
 
-class DataMunging {
+class DataMunging14 {
     private val weatherFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat"
     private val footballFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat"
 
