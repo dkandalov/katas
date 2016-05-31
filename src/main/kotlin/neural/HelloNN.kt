@@ -3,28 +3,32 @@ package neural
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
+import java.io.File
 import java.util.*
 
 class HelloNN {
     @Test fun `neural network to convert polar to cartesian coordinates`() {
         val random = Random(123)
 
-        var inputLayer = Array<Double>(3, { 0.0 }).apply{
-            this[0] = random.nextDouble() // bias
-        }
+        var inputLayer = Array(2, { 0.0 })
         val hiddenLayer = Layer(8, inputLayer).init(234)
         val outputLayer = Layer(2, hiddenLayer.outputs).init(345)
 
-        0.until(30000).forEach { attempt ->
+        val file = File("/tmp/nn.csv")
+        file.delete()
+        file.createNewFile()
+        file.appendText("i,i,err1,err2\n")
+
+        0.until(15000).forEach { attempt ->
             inputLayer = inputLayer.apply {
+                this[0] = random.nextDouble()
                 this[1] = random.nextDouble()
-                this[2] = random.nextDouble()
             }
             hiddenLayer.activate()
             outputLayer.activate()
 
-            val targetOutputs = Array<Double>(2, { 0.0 }).apply {
-                val target = Pair(inputLayer[1], inputLayer[2]).cartesianToPolar()
+            val targetOutputs = Array(2, { 0.0 }).apply {
+                val target = Pair(inputLayer[0], inputLayer[1]).cartesianToPolar()
                 this[0] = target.first
                 this[1] = target.second
             }
@@ -32,24 +36,29 @@ class HelloNN {
             val weightedDiffs = outputLayer.backPropagate(outputDiffs)
             hiddenLayer.backPropagate(weightedDiffs)
 
-            if (attempt % 100 == 0) {
-                println(outputDiffs.toList())
-            }
+            file.appendText(attempt.toString() + "," + attempt.toString() + "," + outputDiffs.toList().joinToString(",") + "\n")
         }
+        println(hiddenLayer)
+        println(outputLayer)
     }
 
-    private class Layer(val size: Int, val inputs: Array<Double>,
+    private class Layer(val size: Int,
+                        val inputs: Array<Double>,
                         val activation: (Double) -> Double = { sigmoid(it) },
                         val activationDerivative: (Double) -> Double = { sigmoidDerivative(it) }
     ) {
         private val rate = 0.01
-        private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
+        private val inputsWithBias = Array(inputs.size, {
+            if (it == 0) 1.0 // bias
+            else inputs[it - 1]
+        })
+        private val inputThetas = Array(size, { Array(inputsWithBias.size, { 0.0 }) })
         val outputs = Array(size, { 0.0 })
 
         fun init(seed: Long? = null): Layer {
             val random = if (seed == null) Random() else Random(seed)
             inputThetas.forEach { thetas ->
-                0.until(inputs.size).forEach { inputIndex ->
+                0.until(inputsWithBias.size).forEach { inputIndex ->
                     thetas[inputIndex] = random.nextDouble()
                 }
             }
@@ -59,8 +68,8 @@ class HelloNN {
         fun activate(): Layer {
             0.until(outputs.size).forEach { cellIndex ->
                 var sum = 0.0
-                0.until(inputs.size).forEach { inputIndex ->
-                    sum += inputs[inputIndex] * inputThetas[cellIndex][inputIndex]
+                0.until(inputsWithBias.size).forEach { inputIndex ->
+                    sum += inputsWithBias[inputIndex] * inputThetas[cellIndex][inputIndex]
                 }
                 outputs[cellIndex] = activation(sum)
             }
@@ -68,7 +77,7 @@ class HelloNN {
         }
 
         fun backPropagate(outputDiffs: Array<Double>): Array<Double> {
-            val weightedDiffs = Array(inputs.size, { inputIndex ->
+            val weightedDiffs = Array(inputsWithBias.size, { inputIndex ->
                 var sum = 0.0
                 outputDiffs.forEachIndexed { cellIndex, outputDiff ->
                     sum += outputDiff * inputThetas[cellIndex][inputIndex]
@@ -76,13 +85,10 @@ class HelloNN {
                 sum
             })
 
-            val outputDeltas = Array(size, { cellIndex ->
-                activationDerivative(outputs[cellIndex]) * outputDiffs[cellIndex]
-            })
             0.until(size).forEach { cellIndex ->
-                inputThetas[cellIndex] = Array(inputs.size, { inputIndex ->
-                    if (inputIndex == 0) inputThetas[cellIndex][inputIndex] // don't update bias theta
-                    else inputThetas[cellIndex][inputIndex] + rate * outputDeltas[cellIndex]
+                val delta = activationDerivative(outputs[cellIndex]) * outputDiffs[cellIndex]
+                inputThetas[cellIndex] = Array(inputsWithBias.size, { inputIndex ->
+                    inputThetas[cellIndex][inputIndex] + rate * delta
                 })
             }
             return weightedDiffs
