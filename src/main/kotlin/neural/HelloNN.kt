@@ -8,90 +8,103 @@ import java.util.*
 
 class HelloNN {
     @Test fun `neural network to convert polar to cartesian coordinates`() {
-        val random = Random(123)
+        val activation_function = { x: Double ->
+            (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x))
+        }
+        val derivative_of_activation_function = { x: Double ->
+            val d = activation_function(x)
+            1.0 - (d * d)
+        }
 
         var inputLayer = Array(2, { 0.0 })
-        val hiddenLayer = Layer(8, inputLayer).init(234)
-        val outputLayer = Layer(2, hiddenLayer.outputs).init(345)
+        val hiddenLayer = Layer(40, inputLayer, activation_function, derivative_of_activation_function).init(234)
+        val outputLayer = Layer(2, hiddenLayer.outputs, {it}, {1.0}).init(345)
 
         val file = File("/tmp/nn.csv")
         file.delete()
         file.createNewFile()
         file.appendText("i,i,err1,err2\n")
 
-        0.until(15000).forEach { attempt ->
+        val allErrors = mutableListOf<Double>()
+
+        val random = Random(123)
+        0.until(150000).forEach { attempt ->
             inputLayer = inputLayer.apply {
                 this[0] = random.nextDouble()
-                this[1] = random.nextDouble()
+                this[1] = random.nextDouble() * 2 * Math.PI
             }
+
             hiddenLayer.activate()
             outputLayer.activate()
 
             val targetOutputs = Array(2, { 0.0 }).apply {
-                val target = Pair(inputLayer[0], inputLayer[1]).cartesianToPolar()
+                val target = Pair(inputLayer[0], inputLayer[1]).polarToCartesian()
                 this[0] = target.first
                 this[1] = target.second
             }
-            val outputDiffs = targetOutputs.mapIndexed { i, d -> d - outputLayer.outputs[i] }.toTypedArray()
-            val weightedDiffs = outputLayer.backPropagate(outputDiffs)
-            hiddenLayer.backPropagate(weightedDiffs)
+            val outputErrors = targetOutputs.mapIndexed{ i, d -> d - outputLayer.outputs[i] }.toTypedArray()
+            val errors = outputLayer.backPropagate(outputErrors)
+            hiddenLayer.backPropagate(errors)
+//            file.appendText(attempt.toString() + "," + attempt.toString() + "," + outputErrors.toList().joinToString(",") + "\n")
 
-            file.appendText(attempt.toString() + "," + attempt.toString() + "," + outputDiffs.toList().joinToString(",") + "\n")
+            allErrors.add(Math.sqrt(outputErrors.map{it * it}.sum()))
+            if (attempt % 10000 == 0) {
+                println(allErrors.sum() / allErrors.size)
+            }
         }
-        println(hiddenLayer)
-        println(outputLayer)
     }
 
     private class Layer(val size: Int,
-                        val inputs: Array<Double>,
+                        val inputsWithoutBias: Array<Double>,
                         val activation: (Double) -> Double = { sigmoid(it) },
                         val activationDerivative: (Double) -> Double = { sigmoidDerivative(it) }
     ) {
-        private val rate = 0.01
-        private val inputsWithBias = Array(inputs.size, {
+        private val learningRate = 0.01
+        private val inputs = Array(inputsWithoutBias.size, {
             if (it == 0) 1.0 // bias
-            else inputs[it - 1]
+            else inputsWithoutBias[it - 1]
         })
-        private val inputThetas = Array(size, { Array(inputsWithBias.size, { 0.0 }) })
+        private val inputsSum = Array(size, {0.0})
+        private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
         val outputs = Array(size, { 0.0 })
 
         fun init(seed: Long? = null): Layer {
             val random = if (seed == null) Random() else Random(seed)
             inputThetas.forEach { thetas ->
-                0.until(inputsWithBias.size).forEach { inputIndex ->
+                0.until(inputs.size).forEach { inputIndex ->
                     thetas[inputIndex] = random.nextDouble()
                 }
             }
             return this
         }
 
-        fun activate(): Layer {
+        fun activate() {
             0.until(outputs.size).forEach { cellIndex ->
                 var sum = 0.0
-                0.until(inputsWithBias.size).forEach { inputIndex ->
-                    sum += inputsWithBias[inputIndex] * inputThetas[cellIndex][inputIndex]
+                0.until(inputs.size).forEach { inputIndex ->
+                    sum += inputs[inputIndex] * inputThetas[cellIndex][inputIndex]
                 }
+                inputsSum[cellIndex] = sum
                 outputs[cellIndex] = activation(sum)
             }
-            return this
         }
 
-        fun backPropagate(outputDiffs: Array<Double>): Array<Double> {
-            val weightedDiffs = Array(inputsWithBias.size, { inputIndex ->
+        fun backPropagate(errors: Array<Double>): Array<Double> {
+            0.until(size).forEach { cellIndex ->
+                inputThetas[cellIndex] = Array(inputs.size, { inputIndex ->
+                    val delta = learningRate * activationDerivative(inputsSum[cellIndex]) * errors[cellIndex] * inputs[inputIndex]
+                    inputThetas[cellIndex][inputIndex] + delta
+                })
+            }
+
+            val errorsForInputLayer = Array(inputs.size, { inputIndex ->
                 var sum = 0.0
-                outputDiffs.forEachIndexed { cellIndex, outputDiff ->
-                    sum += outputDiff * inputThetas[cellIndex][inputIndex]
+                errors.forEachIndexed { cellIndex, error ->
+                    sum += error * inputThetas[cellIndex][inputIndex]
                 }
                 sum
             })
-
-            0.until(size).forEach { cellIndex ->
-                val delta = activationDerivative(outputs[cellIndex]) * outputDiffs[cellIndex]
-                inputThetas[cellIndex] = Array(inputsWithBias.size, { inputIndex ->
-                    inputThetas[cellIndex][inputIndex] + rate * delta
-                })
-            }
-            return weightedDiffs
+            return errorsForInputLayer
         }
 
         override fun toString(): String {
@@ -115,7 +128,8 @@ private fun sigmoid(x: Double): Double {
 }
 
 private fun sigmoidDerivative(x: Double): Double {
-    return sigmoid(x) * (1.0 - sigmoid(x))
+    val d = sigmoid(x)
+    return d * (1.0 - d)
 }
 
 private fun Pair<Double, Double>.polarToCartesian(): Pair<Double, Double> {
@@ -132,5 +146,5 @@ private fun Pair<Double, Double>.cartesianToPolar(): Pair<Double, Double> {
     return Pair(x, y)
 }
 
-private fun Double.toDegree(): Double = this * (180.0 / Math.PI)
-private fun Double.toRadian(): Double = this * (Math.PI / 180.0)
+private fun Double.toDegree() = this * (180.0 / Math.PI)
+private fun Double.toRadian() = this * (Math.PI / 180.0)
