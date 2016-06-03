@@ -3,76 +3,96 @@ package neural
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
-import java.io.File
 import java.util.*
 
 class HelloNN {
+    @Test fun `neural network to learn logical AND function`() {
+        val random = Random(123)
+
+        val inputLayer = Array(2, { 0.0 })
+        val outputLayer = Layer(1, inputLayer, ::sigmoid, ::sigmoidDerivative).init(random)
+
+        val trainingExamples = listOf(
+                Example(listOf(0.5, 0.5), listOf(0.5)),
+                Example(listOf(0.5, 1.0), listOf(0.5)),
+                Example(listOf(1.0, 0.5), listOf(0.5)),
+                Example(listOf(1.0, 1.0), listOf(1.0))
+        ).repeat(times = 1000000).shuffle(random)
+
+        val allErrors = mutableListOf<Double>()
+        trainingExamples.forEachIndexed { exampleIndex, example ->
+            example.inputs.forEachIndexed { i, d ->
+                outputLayer.inputs[i + 1] = d
+            }
+
+            outputLayer.activate()
+
+            val errors = example.expectedOutputs.zip(outputLayer.outputs)
+                    .map { it.first - it.second }
+                    .toTypedArray()
+            outputLayer.backPropagate(errors)
+
+            allErrors.addAll(errors.map(Math::abs))
+            if (exampleIndex % 100000 == 0) {
+                println("average error: " + (allErrors.sum() / allErrors.size))
+            }
+        }
+        println(allErrors.sum() / allErrors.size)
+        println(outputLayer)
+    }
+
     @Test fun `neural network to convert polar to cartesian coordinates`() {
-        val activation_function = { x: Double ->
-            (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x))
-        }
-        val derivative_of_activation_function = { x: Double ->
-            val d = activation_function(x)
-            1.0 - (d * d)
-        }
+        val random = Random(123)
 
-        var inputLayer = Array(2, { 0.0 })
-        val hiddenLayer = Layer(40, inputLayer, activation_function, derivative_of_activation_function).init(234)
-        val outputLayer = Layer(2, hiddenLayer.outputs, {it}, {1.0}).init(345)
-
-        val file = File("/tmp/nn.csv")
-        file.delete()
-        file.createNewFile()
-        file.appendText("i,i,err1,err2\n")
+        val inputLayer = Array(2, { 0.0 })
+        val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).init(random)
+        val outputLayer = Layer(2, hiddenLayer.outputs, {it}, {1.0}).init(random)
 
         val allErrors = mutableListOf<Double>()
 
-        val random = Random(123)
-        0.until(150000).forEach { attempt ->
-            inputLayer = inputLayer.apply {
-                this[0] = random.nextDouble()
-                this[1] = random.nextDouble() * 2 * Math.PI
-            }
+        0.until(15000).forEach { attempt ->
+            hiddenLayer.inputs[1] = random.nextDouble()
+            hiddenLayer.inputs[2] = random.nextDouble()
 
             hiddenLayer.activate()
             outputLayer.activate()
 
             val targetOutputs = Array(2, { 0.0 }).apply {
-                val target = Pair(inputLayer[0], inputLayer[1]).polarToCartesian()
+                val target = Pair(hiddenLayer.inputs[1], hiddenLayer.inputs[2]).polarToCartesian()
                 this[0] = target.first
                 this[1] = target.second
             }
-            val outputErrors = targetOutputs.mapIndexed{ i, d -> d - outputLayer.outputs[i] }.toTypedArray()
-            val errors = outputLayer.backPropagate(outputErrors)
-            hiddenLayer.backPropagate(errors)
-//            file.appendText(attempt.toString() + "," + attempt.toString() + "," + outputErrors.toList().joinToString(",") + "\n")
+            val errors = targetOutputs.zip(outputLayer.outputs)
+                    .map { it.first - it.second }
+                    .toTypedArray()
+            val layerErrors = outputLayer.backPropagate(errors)
+            hiddenLayer.backPropagate(layerErrors)
 
-            allErrors.add(Math.sqrt(outputErrors.map{it * it}.sum()))
+            allErrors.addAll(errors)
             if (attempt % 10000 == 0) {
                 println(allErrors.sum() / allErrors.size)
             }
         }
+        println(allErrors.sum() / allErrors.size)
     }
+
+    private data class Example(val inputs: List<Double>, val expectedOutputs: List<Double>)
 
     private class Layer(val size: Int,
                         val inputsWithoutBias: Array<Double>,
-                        val activation: (Double) -> Double = { sigmoid(it) },
-                        val activationDerivative: (Double) -> Double = { sigmoidDerivative(it) }
+                        val activation: (Double) -> Double = ::sigmoid,
+                        val activationDerivative: (Double) -> Double = ::sigmoidDerivative
     ) {
         private val learningRate = 0.01
-        private val inputs = Array(inputsWithoutBias.size, {
-            if (it == 0) 1.0 // bias
-            else inputsWithoutBias[it - 1]
-        })
+        val inputs = arrayOf(1.0) + inputsWithoutBias // prepend bias input
         private val inputsSum = Array(size, {0.0})
         private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
         val outputs = Array(size, { 0.0 })
 
-        fun init(seed: Long? = null): Layer {
-            val random = if (seed == null) Random() else Random(seed)
-            inputThetas.forEach { thetas ->
+        fun init(random: Random = Random()): Layer {
+            0.until(size).forEach { cellIndex ->
                 0.until(inputs.size).forEach { inputIndex ->
-                    thetas[inputIndex] = random.nextDouble()
+                    inputThetas[cellIndex][inputIndex] = random.nextDouble()
                 }
             }
             return this
@@ -91,16 +111,16 @@ class HelloNN {
 
         fun backPropagate(errors: Array<Double>): Array<Double> {
             0.until(size).forEach { cellIndex ->
-                inputThetas[cellIndex] = Array(inputs.size, { inputIndex ->
+                0.until(inputs.size).forEach { inputIndex ->
                     val delta = learningRate * activationDerivative(inputsSum[cellIndex]) * errors[cellIndex] * inputs[inputIndex]
-                    inputThetas[cellIndex][inputIndex] + delta
-                })
+                    inputThetas[cellIndex][inputIndex] += delta
+                }
             }
 
-            val errorsForInputLayer = Array(inputs.size, { inputIndex ->
+            val errorsForInputLayer = Array(inputsWithoutBias.size, { inputIndex ->
                 var sum = 0.0
                 errors.forEachIndexed { cellIndex, error ->
-                    sum += error * inputThetas[cellIndex][inputIndex]
+                    sum += error * inputThetas[cellIndex][inputIndex + 1]
                 }
                 sum
             })
@@ -132,6 +152,15 @@ private fun sigmoidDerivative(x: Double): Double {
     return d * (1.0 - d)
 }
 
+private fun tanh(x: Double): Double {
+    return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x))
+}
+
+private fun tanhDerivative(x: Double): Double {
+    val d = tanh(x)
+    return 1.0 - (d * d)
+}
+
 private fun Pair<Double, Double>.polarToCartesian(): Pair<Double, Double> {
     val (x, y) = this
     val distance = Math.sqrt((x * x) + (y * y))
@@ -148,3 +177,15 @@ private fun Pair<Double, Double>.cartesianToPolar(): Pair<Double, Double> {
 
 private fun Double.toDegree() = this * (180.0 / Math.PI)
 private fun Double.toRadian() = this * (Math.PI / 180.0)
+
+private fun <T> List<T>.repeat(times: Int): List<T> {
+    val result = mutableListOf<T>()
+    0.until(times).forEach { result.addAll(this) }
+    return result
+}
+private fun <T> List<T>.shuffle(random: Random): List<T> {
+    val result = mutableListOf<T>()
+    result.addAll(this)
+    Collections.shuffle(result, random)
+    return result
+}
