@@ -4,6 +4,8 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
 import java.util.*
+import java.util.function.Supplier
+import java.util.stream.Stream
 
 class HelloNN {
     @Test fun `neural network to learn logical AND function`() {
@@ -17,28 +19,37 @@ class HelloNN {
                 Example(listOf(0.5, 1.0), listOf(0.5)),
                 Example(listOf(1.0, 0.5), listOf(0.5)),
                 Example(listOf(1.0, 1.0), listOf(1.0))
-        ).repeat(times = 1000000).shuffle(random)
+        ).repeat(times = 200000).shuffle(random)
 
         val allErrors = mutableListOf<Double>()
+        val layers = listOf(outputLayer)
+
         trainingExamples.forEachIndexed { exampleIndex, example ->
             example.inputs.forEachIndexed { i, d ->
-                outputLayer.inputs[i + 1] = d
+                layers.first().inputs[i + 1] = d
             }
 
-            outputLayer.activate()
+            layers.forEach {
+                it.activate()
+            }
 
-            val errors = example.expectedOutputs.zip(outputLayer.outputs)
+            val errors = example.expectedOutputs.zip(layers.last().outputs)
                     .map { it.first - it.second }
                     .toTypedArray()
-            outputLayer.backPropagate(errors)
+            layers.foldRight(errors) { layer, errors ->
+                layer.backPropagate(errors)
+            }
 
             allErrors.addAll(errors.map(Math::abs))
-            if (exampleIndex % 100000 == 0) {
+            if (exampleIndex % 200000 == 0) {
                 println("average error: " + (allErrors.sum() / allErrors.size))
             }
         }
-        println(allErrors.sum() / allErrors.size)
+        val totalError = allErrors.sum() / allErrors.size
+        println(totalError)
         println(outputLayer)
+
+        assertThat(totalError, equalTo(0.13697064837127648))
     }
 
     @Test fun `neural network to convert polar to cartesian coordinates`() {
@@ -50,30 +61,43 @@ class HelloNN {
 
         val allErrors = mutableListOf<Double>()
 
-        0.until(15000).forEach { attempt ->
-            hiddenLayer.inputs[1] = random.nextDouble()
-            hiddenLayer.inputs[2] = random.nextDouble()
+        val trainingExamples = Supplier<Example> {
+            val d1 = random.nextDouble()
+            val d2 = random.nextDouble()
+            val inputs = listOf(d1, d2)
+            val expectedOutputs = Pair(d1, d2).polarToCartesian().toList()
+            Example(inputs, expectedOutputs)
+        }
 
-            hiddenLayer.activate()
-            outputLayer.activate()
+        var attempt = 0
+        val layers = listOf(hiddenLayer, outputLayer)
 
-            val targetOutputs = Array(2, { 0.0 }).apply {
-                val target = Pair(hiddenLayer.inputs[1], hiddenLayer.inputs[2]).polarToCartesian()
-                this[0] = target.first
-                this[1] = target.second
+        Stream.generate(trainingExamples).limit(15000).forEach { example ->
+            example.inputs.forEachIndexed { i, d ->
+                layers.first().inputs[i + 1] = d
             }
-            val errors = targetOutputs.zip(outputLayer.outputs)
+
+            layers.forEach {
+                it.activate()
+            }
+
+            val errors = example.expectedOutputs.zip(outputLayer.outputs)
                     .map { it.first - it.second }
                     .toTypedArray()
-            val layerErrors = outputLayer.backPropagate(errors)
-            hiddenLayer.backPropagate(layerErrors)
+            layers.foldRight(errors) { layer, errors ->
+                layer.backPropagate(errors)
+            }
 
             allErrors.addAll(errors)
             if (attempt % 10000 == 0) {
                 println(allErrors.sum() / allErrors.size)
             }
+            attempt++
         }
-        println(allErrors.sum() / allErrors.size)
+        val totalError = allErrors.sum() / allErrors.size
+        println(totalError)
+
+        assertThat(totalError, equalTo(0.15619307115270933))
     }
 
     private data class Example(val inputs: List<Double>, val expectedOutputs: List<Double>)
