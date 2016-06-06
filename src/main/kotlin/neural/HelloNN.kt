@@ -5,7 +5,6 @@ import org.junit.Assert.assertThat
 import org.junit.Test
 import java.util.*
 import java.util.function.Supplier
-import java.util.stream.Stream
 
 class HelloNN {
     @Test fun `neural network to learn logical AND function`() {
@@ -21,35 +20,13 @@ class HelloNN {
                 Example(listOf(1.0, 1.0), listOf(1.0))
         ).repeat(times = 200000).shuffle(random)
 
-        val allErrors = mutableListOf<Double>()
         val layers = listOf(outputLayer)
+        val trainer = Trainer(layers).trainWith(trainingExamples)
 
-        trainingExamples.forEachIndexed { exampleIndex, example ->
-            example.inputs.forEachIndexed { i, d ->
-                layers.first().inputs[i + 1] = d
-            }
+        println(trainer.totalError)
+        println(outputLayer.toString())
 
-            layers.forEach {
-                it.activate()
-            }
-
-            val errors = example.expectedOutputs.zip(layers.last().outputs)
-                    .map { it.first - it.second }
-                    .toTypedArray()
-            layers.foldRight(errors) { layer, errors ->
-                layer.backPropagate(errors)
-            }
-
-            allErrors.addAll(errors.map(Math::abs))
-            if (exampleIndex % 200000 == 0) {
-                println("average error: " + (allErrors.sum() / allErrors.size))
-            }
-        }
-        val totalError = allErrors.sum() / allErrors.size
-        println(totalError)
-        println(outputLayer)
-
-        assertThat(totalError, equalTo(0.13697064837127648))
+        assertThat(trainer.totalError, equalTo(0.013919690744522845))
     }
 
     @Test fun `neural network to convert polar to cartesian coordinates`() {
@@ -59,9 +36,7 @@ class HelloNN {
         val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).init(random)
         val outputLayer = Layer(2, hiddenLayer.outputs, {it}, {1.0}).init(random)
 
-        val allErrors = mutableListOf<Double>()
-
-        val trainingExamples = Supplier<Example> {
+        val trainingExamples = Supplier<Example?> {
             val d1 = random.nextDouble()
             val d2 = random.nextDouble()
             val inputs = listOf(d1, d2)
@@ -69,38 +44,60 @@ class HelloNN {
             Example(inputs, expectedOutputs)
         }
 
-        var attempt = 0
         val layers = listOf(hiddenLayer, outputLayer)
+        val trainer = Trainer(layers).trainWith(trainingExamples, limit = 15000)
+        println(trainer.totalError)
 
-        Stream.generate(trainingExamples).limit(15000).forEach { example ->
-            example.inputs.forEachIndexed { i, d ->
-                layers.first().inputs[i + 1] = d
-            }
-
-            layers.forEach {
-                it.activate()
-            }
-
-            val errors = example.expectedOutputs.zip(outputLayer.outputs)
-                    .map { it.first - it.second }
-                    .toTypedArray()
-            layers.foldRight(errors) { layer, errors ->
-                layer.backPropagate(errors)
-            }
-
-            allErrors.addAll(errors)
-            if (attempt % 10000 == 0) {
-                println(allErrors.sum() / allErrors.size)
-            }
-            attempt++
-        }
-        val totalError = allErrors.sum() / allErrors.size
-        println(totalError)
-
-        assertThat(totalError, equalTo(0.15619307115270933))
+        assertThat(trainer.totalError, equalTo(0.15619307115270933))
     }
 
+
     private data class Example(val inputs: List<Double>, val expectedOutputs: List<Double>)
+
+
+    private class Trainer(val layers: List<Layer>) {
+        var totalError: Double = 0.0
+
+        fun trainWith(examples: Collection<Example>): Trainer {
+            val iterator = examples.iterator()
+            return trainWith(Supplier {
+                if (iterator.hasNext()) iterator.next() else null
+            })
+        }
+
+        fun trainWith(examplesSupplier: Supplier<Example?>, limit: Long? = null): Trainer {
+            var attempt = 0
+            val allErrors = mutableListOf<Double>()
+
+            var example = examplesSupplier.get()
+            while (example != null && (limit == null || attempt < limit)) {
+                example.inputs.forEachIndexed { i, d ->
+                    layers.first().inputs[i + 1] = d
+                }
+
+                layers.forEach {
+                    it.activate()
+                }
+
+                val errors = example.expectedOutputs.zip(layers.last().outputs)
+                        .map { it.first - it.second }
+                        .toTypedArray()
+                layers.foldRight(errors) { layer, errors ->
+                    layer.backPropagate(errors)
+                }
+
+                allErrors.addAll(errors)
+                if (attempt % 10000 == 0) {
+                    println(allErrors.sum() / allErrors.size)
+                }
+                attempt++
+                example = examplesSupplier.get()
+            }
+            totalError = allErrors.sum() / allErrors.size
+            return this
+        }
+    }
+
 
     private class Layer(val size: Int,
                         val inputsWithoutBias: Array<Double>,
