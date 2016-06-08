@@ -7,25 +7,16 @@ import java.util.*
 import java.util.function.Supplier
 
 class HelloNN {
+
     @Test fun `pre-configured neural network for logical AND function`() {
         val inputLayer = Layer(2)
         val outputLayer = Layer(1, inputLayer).withThetas(arrayOf(arrayOf(-3.0, 2.0, 2.0)))
+        val network = NeuralNetwork(listOf(inputLayer, outputLayer))
 
-        inputLayer.withOutputs(arrayOf(0.0, 0.0))
-        outputLayer.activate()
-        println(outputLayer.outputs[0].round())
-
-        inputLayer.withOutputs(arrayOf(0.0, 1.0))
-        outputLayer.activate()
-        println(outputLayer.outputs[0].round())
-
-        inputLayer.withOutputs(arrayOf(1.0, 0.0))
-        outputLayer.activate()
-        println(outputLayer.outputs[0].round())
-
-        inputLayer.withOutputs(arrayOf(1.0, 1.0))
-        outputLayer.activate()
-        println(outputLayer.outputs[0].round())
+        assertThat(network.process(0.0, 0.0)[0].round(), equalTo(0L))
+        assertThat(network.process(0.0, 1.0)[0].round(), equalTo(0L))
+        assertThat(network.process(1.0, 0.0)[0].round(), equalTo(0L))
+        assertThat(network.process(1.0, 1.0)[0].round(), equalTo(1L))
     }
 
     @Test fun `neural network to learn logical AND function`() {
@@ -33,6 +24,7 @@ class HelloNN {
 
         val inputLayer = Layer(2)
         val outputLayer = Layer(1, inputLayer).initThetas(random)
+        val network = NeuralNetwork(listOf(inputLayer, outputLayer))
 
         val trainingExamples = listOf(
                 Example(listOf(0.0, 0.0), listOf(0.0)),
@@ -41,8 +33,7 @@ class HelloNN {
                 Example(listOf(1.0, 1.0), listOf(1.0))
         ).repeat(times = 200000).shuffle(random)
 
-        val layers = listOf(inputLayer, outputLayer)
-        val trainer = Trainer(layers).trainWith(trainingExamples)
+        val trainer = Trainer().train(trainingExamples, network)
 
         println(trainer.totalError)
         println(outputLayer.toString())
@@ -56,17 +47,18 @@ class HelloNN {
         val inputLayer = Layer(2)
         val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).initThetas(random)
         val outputLayer = Layer(2, hiddenLayer, {it}, {1.0}).initThetas(random)
+        val network = NeuralNetwork(listOf(inputLayer, hiddenLayer, outputLayer))
 
         val trainingExamples = Supplier<Example?> {
             val d1 = random.nextDouble()
             val d2 = random.nextDouble()
-            val inputs = listOf(d1, d2)
-            val expectedOutputs = Pair(d1, d2).polarToCartesian().toList()
-            Example(inputs, expectedOutputs)
+            Example(
+                inputs = listOf(d1, d2),
+                expectedOutputs = Pair(d1, d2).polarToCartesian().toList()
+            )
         }
 
-        val layers = listOf(inputLayer, hiddenLayer, outputLayer)
-        val trainer = Trainer(layers).trainWith(trainingExamples, limit = 15000)
+        val trainer = Trainer().train(network, trainingExamples, maxExamples = 15000)
         println(trainer.totalError)
 
         assertThat(trainer.totalError, equalTo(0.0011129625611150781))
@@ -76,49 +68,70 @@ class HelloNN {
     private data class Example(val inputs: List<Double>, val expectedOutputs: List<Double>)
 
 
-    private class Trainer(val layers: List<Layer>) {
+    private class Trainer() {
         var totalError: Double = 0.0
 
-        fun trainWith(examples: Collection<Example>): Trainer {
+        fun train(examples: Collection<Example>, network: NeuralNetwork): Trainer {
             val iterator = examples.iterator()
-            return trainWith(Supplier {
+            val supplier = Supplier {
                 if (iterator.hasNext()) iterator.next() else null
-            })
+            }
+            return train(network, supplier)
         }
 
-        fun trainWith(examplesSupplier: Supplier<Example?>, limit: Long? = null): Trainer {
-            var attempt = 0
+        fun train(network: NeuralNetwork, examplesSupplier: Supplier<Example?>, maxExamples: Long? = null): Trainer {
             val allErrors = mutableListOf<Double>()
 
-            val inputLayer = layers.first()
-            val hiddenLayers = layers.drop(1)
-            val outputLayer = layers.last()
-
+            var i = 0
             var example = examplesSupplier.get()
-            while (example != null && (limit == null || attempt < limit)) {
-                inputLayer.withOutputs(example.inputs.toTypedArray())
+            while (example != null && (maxExamples == null || i < maxExamples)) {
 
-                hiddenLayers.forEach {
-                    it.activate()
-                }
-
-                val errors = example.expectedOutputs
-                        .zip(outputLayer.outputs)
-                        .map { it.first - it.second }
-                        .toTypedArray()
-                hiddenLayers.foldRight(errors) { layer, errors ->
-                    layer.backPropagate(errors)
-                }
+                val errors = network.learnFrom(example)
 
                 allErrors.addAll(errors)
-                if (attempt % 10000 == 0) {
+                if (i % 10000 == 0) {
                     println(allErrors.sum() / allErrors.size)
                 }
-                attempt++
+                i++
                 example = examplesSupplier.get()
             }
             totalError = allErrors.sum() / allErrors.size
             return this
+        }
+    }
+
+
+    private class NeuralNetwork(val layers: List<Layer>) {
+        private val inputLayer = layers.first()
+        private val hiddenLayers = layers.drop(1)
+        private val outputLayer = layers.last()
+
+        fun process(vararg inputs: Double): Array<Double> {
+            return process(inputs.toTypedArray())
+        }
+
+        fun process(inputs: Array<Double>): Array<Double> {
+            inputLayer.withOutputs(inputs)
+
+            hiddenLayers.forEach {
+                it.activate()
+            }
+            return outputLayer.outputs
+        }
+
+        fun learnFrom(example: Example): Array<Double> {
+            val actualOutputs = process(example.inputs.toTypedArray())
+
+            val errors = example.expectedOutputs
+                    .zip(actualOutputs)
+                    .map { it.first - it.second }
+                    .toTypedArray()
+
+            hiddenLayers.foldRight(errors) { layer, errors ->
+                layer.backPropagate(errors)
+            }
+
+            return errors
         }
     }
 
