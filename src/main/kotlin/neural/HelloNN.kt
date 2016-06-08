@@ -7,11 +7,15 @@ import java.util.*
 import java.util.function.Supplier
 
 class HelloNN {
+    @Test fun `pre-configured neural network for logical AND function`() {
+        // TODO Layer(2, arrayOf(0))
+    }
+
     @Test fun `neural network to learn logical AND function`() {
         val random = Random(123)
 
-        val inputLayer = Array(2, { 0.0 })
-        val outputLayer = Layer(1, inputLayer, ::sigmoid, ::sigmoidDerivative).init(random)
+        val inputLayer = Layer(2).withOutputs(Array(2, { 0.0 }))
+        val outputLayer = Layer(1, inputLayer).initThetas(random)
 
         val trainingExamples = listOf(
                 Example(listOf(0.5, 0.5), listOf(0.5)),
@@ -26,15 +30,15 @@ class HelloNN {
         println(trainer.totalError)
         println(outputLayer.toString())
 
-        assertThat(trainer.totalError, equalTo(0.013919690744522845))
+        assertThat(trainer.totalError, equalTo(-1.2420335815074634E-4))
     }
 
     @Test fun `neural network to convert polar to cartesian coordinates`() {
         val random = Random(123)
 
-        val inputLayer = Array(2, { 0.0 })
-        val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).init(random)
-        val outputLayer = Layer(2, hiddenLayer.outputs, {it}, {1.0}).init(random)
+        val inputLayer = Layer(2).withOutputs(Array(2, { 0.0 }))
+        val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).initThetas(random)
+        val outputLayer = Layer(2, hiddenLayer, {it}, {1.0}).initThetas(random)
 
         val trainingExamples = Supplier<Example?> {
             val d1 = random.nextDouble()
@@ -48,7 +52,7 @@ class HelloNN {
         val trainer = Trainer(layers).trainWith(trainingExamples, limit = 15000)
         println(trainer.totalError)
 
-        assertThat(trainer.totalError, equalTo(0.15619307115270933))
+        assertThat(trainer.totalError, equalTo(0.003511654261859513))
     }
 
 
@@ -100,17 +104,17 @@ class HelloNN {
 
 
     private class Layer(val size: Int,
-                        val inputsWithoutBias: Array<Double>,
+                        val inputLayer: Layer? = null,
                         val activation: (Double) -> Double = ::sigmoid,
-                        val activationDerivative: (Double) -> Double = ::sigmoidDerivative
+                        val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
+                        val learningRate: Double = 0.01
     ) {
-        private val learningRate = 0.01
-        val inputs = arrayOf(1.0) + inputsWithoutBias // prepend bias input
-        private val inputsSum = Array(size, {0.0})
-        private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
+        val inputs = arrayOf(1.0) + Array(inputLayer?.size ?: 0, {0.0}) // prepend bias input
         val outputs = Array(size, { 0.0 })
+        private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
+        private val inputsSum = Array(size, {0.0})
 
-        fun init(random: Random = Random()): Layer {
+        fun initThetas(random: Random = Random()): Layer {
             0.until(size).forEach { cellIndex ->
                 0.until(inputs.size).forEach { inputIndex ->
                     inputThetas[cellIndex][inputIndex] = random.nextDouble()
@@ -120,6 +124,10 @@ class HelloNN {
         }
 
         fun activate() {
+            inputLayer?.outputs?.forEachIndexed { i, d ->
+                inputs[i + 1] = d
+            }
+
             0.until(outputs.size).forEach { cellIndex ->
                 var sum = 0.0
                 0.until(inputs.size).forEach { inputIndex ->
@@ -131,6 +139,8 @@ class HelloNN {
         }
 
         fun backPropagate(errors: Array<Double>): Array<Double> {
+            if (inputLayer == null) return emptyArray()
+
             0.until(size).forEach { cellIndex ->
                 0.until(inputs.size).forEach { inputIndex ->
                     val delta = learningRate * activationDerivative(inputsSum[cellIndex]) * errors[cellIndex] * inputs[inputIndex]
@@ -138,7 +148,7 @@ class HelloNN {
                 }
             }
 
-            val errorsForInputLayer = Array(inputsWithoutBias.size, { inputIndex ->
+            val errorsForInputLayer = Array(inputLayer.outputs.size, { inputIndex ->
                 var sum = 0.0
                 errors.forEachIndexed { cellIndex, error ->
                     sum += error * inputThetas[cellIndex][inputIndex + 1]
@@ -146,6 +156,12 @@ class HelloNN {
                 sum
             })
             return errorsForInputLayer
+        }
+
+        fun withOutputs(newOutputs: Array<Double>): Layer {
+            if (newOutputs.size != size) throw IllegalArgumentException()
+            newOutputs.forEachIndexed { i, d -> outputs[i] = d }
+            return this
         }
 
         override fun toString(): String {
