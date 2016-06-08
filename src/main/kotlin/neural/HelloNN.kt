@@ -8,35 +8,52 @@ import java.util.function.Supplier
 
 class HelloNN {
     @Test fun `pre-configured neural network for logical AND function`() {
-        // TODO Layer(2, arrayOf(0))
+        val inputLayer = Layer(2)
+        val outputLayer = Layer(1, inputLayer).withThetas(arrayOf(arrayOf(-3.0, 2.0, 2.0)))
+
+        inputLayer.withOutputs(arrayOf(0.0, 0.0))
+        outputLayer.activate()
+        println(outputLayer.outputs[0].round())
+
+        inputLayer.withOutputs(arrayOf(0.0, 1.0))
+        outputLayer.activate()
+        println(outputLayer.outputs[0].round())
+
+        inputLayer.withOutputs(arrayOf(1.0, 0.0))
+        outputLayer.activate()
+        println(outputLayer.outputs[0].round())
+
+        inputLayer.withOutputs(arrayOf(1.0, 1.0))
+        outputLayer.activate()
+        println(outputLayer.outputs[0].round())
     }
 
     @Test fun `neural network to learn logical AND function`() {
         val random = Random(123)
 
-        val inputLayer = Layer(2).withOutputs(Array(2, { 0.0 }))
+        val inputLayer = Layer(2)
         val outputLayer = Layer(1, inputLayer).initThetas(random)
 
         val trainingExamples = listOf(
-                Example(listOf(0.5, 0.5), listOf(0.5)),
-                Example(listOf(0.5, 1.0), listOf(0.5)),
-                Example(listOf(1.0, 0.5), listOf(0.5)),
+                Example(listOf(0.0, 0.0), listOf(0.0)),
+                Example(listOf(0.0, 1.0), listOf(0.0)),
+                Example(listOf(1.0, 0.0), listOf(0.0)),
                 Example(listOf(1.0, 1.0), listOf(1.0))
         ).repeat(times = 200000).shuffle(random)
 
-        val layers = listOf(outputLayer)
+        val layers = listOf(inputLayer, outputLayer)
         val trainer = Trainer(layers).trainWith(trainingExamples)
 
         println(trainer.totalError)
         println(outputLayer.toString())
 
-        assertThat(trainer.totalError, equalTo(-1.2420335815074634E-4))
+        assertThat(trainer.totalError, equalTo(-0.016766691280681305))
     }
 
     @Test fun `neural network to convert polar to cartesian coordinates`() {
         val random = Random(123)
 
-        val inputLayer = Layer(2).withOutputs(Array(2, { 0.0 }))
+        val inputLayer = Layer(2)
         val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).initThetas(random)
         val outputLayer = Layer(2, hiddenLayer, {it}, {1.0}).initThetas(random)
 
@@ -48,11 +65,11 @@ class HelloNN {
             Example(inputs, expectedOutputs)
         }
 
-        val layers = listOf(hiddenLayer, outputLayer)
+        val layers = listOf(inputLayer, hiddenLayer, outputLayer)
         val trainer = Trainer(layers).trainWith(trainingExamples, limit = 15000)
         println(trainer.totalError)
 
-        assertThat(trainer.totalError, equalTo(0.003511654261859513))
+        assertThat(trainer.totalError, equalTo(0.0011129625611150781))
     }
 
 
@@ -73,20 +90,23 @@ class HelloNN {
             var attempt = 0
             val allErrors = mutableListOf<Double>()
 
+            val inputLayer = layers.first()
+            val hiddenLayers = layers.drop(1)
+            val outputLayer = layers.last()
+
             var example = examplesSupplier.get()
             while (example != null && (limit == null || attempt < limit)) {
-                example.inputs.forEachIndexed { i, d ->
-                    layers.first().inputs[i + 1] = d
-                }
+                inputLayer.withOutputs(example.inputs.toTypedArray())
 
-                layers.forEach {
+                hiddenLayers.forEach {
                     it.activate()
                 }
 
-                val errors = example.expectedOutputs.zip(layers.last().outputs)
+                val errors = example.expectedOutputs
+                        .zip(outputLayer.outputs)
                         .map { it.first - it.second }
                         .toTypedArray()
-                layers.foldRight(errors) { layer, errors ->
+                hiddenLayers.foldRight(errors) { layer, errors ->
                     layer.backPropagate(errors)
                 }
 
@@ -164,6 +184,15 @@ class HelloNN {
             return this
         }
 
+        fun withThetas(newThetas: Array<Array<Double>>): Layer {
+            newThetas.forEachIndexed { cellIndex, values ->
+                values.forEachIndexed { inputIndex, d ->
+                    inputThetas[cellIndex][inputIndex] = d
+                }
+            }
+            return this
+        }
+
         override fun toString(): String {
             val thetasAsString = inputThetas.joinToString("\n") { it.joinToString() }
             val outputsAsString = outputs.joinToString("\n")
@@ -214,6 +243,7 @@ private fun Pair<Double, Double>.cartesianToPolar(): Pair<Double, Double> {
 
 private fun Double.toDegree() = this * (180.0 / Math.PI)
 private fun Double.toRadian() = this * (Math.PI / 180.0)
+private fun Double.round() = Math.round(this)
 
 private fun <T> List<T>.repeat(times: Int): List<T> {
     val result = mutableListOf<T>()
