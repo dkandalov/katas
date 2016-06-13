@@ -10,12 +10,23 @@ class HelloNN {
 
     @Test fun `pre-configured neural network for logical AND function`() {
         val inputLayer = Layer(2)
-        val outputLayer = Layer(1, inputLayer).withThetas(arrayOf(arrayOf(-3.0, 2.0, 2.0)))
+        val outputLayer = Layer(1, inputLayer).setThetas(arrayOf(arrayOf(-3.0, 2.0, 2.0)))
         val network = NeuralNetwork(listOf(inputLayer, outputLayer))
 
         assertThat(network.process(0.0, 0.0)[0].round(), equalTo(0L))
         assertThat(network.process(0.0, 1.0)[0].round(), equalTo(0L))
         assertThat(network.process(1.0, 0.0)[0].round(), equalTo(0L))
+        assertThat(network.process(1.0, 1.0)[0].round(), equalTo(1L))
+    }
+
+    @Test fun `pre-configured neural network for logical OR function`() {
+        val inputLayer = Layer(2)
+        val outputLayer = Layer(1, inputLayer).setThetas(arrayOf(arrayOf(-1.0, 2.0, 2.0)))
+        val network = NeuralNetwork(listOf(inputLayer, outputLayer))
+
+        assertThat(network.process(0.0, 0.0)[0].round(), equalTo(0L))
+        assertThat(network.process(0.0, 1.0)[0].round(), equalTo(1L))
+        assertThat(network.process(1.0, 0.0)[0].round(), equalTo(1L))
         assertThat(network.process(1.0, 1.0)[0].round(), equalTo(1L))
     }
 
@@ -111,11 +122,8 @@ class HelloNN {
         }
 
         fun process(inputs: Array<Double>): Array<Double> {
-            inputLayer.withOutputs(inputs)
-
-            hiddenLayers.forEach {
-                it.activate()
-            }
+            inputLayer.setOutputs(inputs)
+            hiddenLayers.forEach { it.activate() }
             return outputLayer.outputs
         }
 
@@ -130,7 +138,6 @@ class HelloNN {
             hiddenLayers.foldRight(errors) { layer, errors ->
                 layer.backPropagate(errors)
             }
-
             return errors
         }
     }
@@ -142,8 +149,8 @@ class HelloNN {
                         val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
                         val learningRate: Double = 0.01
     ) {
-        val inputs = arrayOf(1.0) + Array(inputLayer?.size ?: 0, {0.0}) // prepend bias input
         val outputs = Array(size, { 0.0 })
+        private val inputs = arrayOf(1.0) + Array(inputLayer?.size ?: 0, { 0.0 }) // prepend bias input
         private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
         private val inputsSum = Array(size, {0.0})
 
@@ -191,13 +198,13 @@ class HelloNN {
             return errorsForInputLayer
         }
 
-        fun withOutputs(newOutputs: Array<Double>): Layer {
+        fun setOutputs(newOutputs: Array<Double>): Layer {
             if (newOutputs.size != size) throw IllegalArgumentException()
             newOutputs.forEachIndexed { i, d -> outputs[i] = d }
             return this
         }
 
-        fun withThetas(newThetas: Array<Array<Double>>): Layer {
+        fun setThetas(newThetas: Array<Array<Double>>): Layer {
             newThetas.forEachIndexed { cellIndex, values ->
                 values.forEachIndexed { inputIndex, d ->
                     inputThetas[cellIndex][inputIndex] = d
