@@ -34,7 +34,7 @@ class HelloNN {
         val random = Random(123)
 
         val inputLayer = Layer(2)
-        val outputLayer = Layer(1, inputLayer).initThetas(random)
+        val outputLayer = Layer(1, inputLayer)
         val network = NeuralNetwork(listOf(inputLayer, outputLayer))
 
         val trainingExamples = listOf(
@@ -44,20 +44,20 @@ class HelloNN {
                 Example(listOf(1.0, 1.0), listOf(1.0))
         ).repeat(times = 200000).shuffle(random)
 
-        val trainer = Trainer().train(trainingExamples, network)
+        val trainer = Trainer(random).train(trainingExamples, network)
 
         println(trainer.totalError)
         println(outputLayer.toString())
 
-        assertThat(trainer.totalError, equalTo(-0.016766691280681305))
+        assertThat(trainer.totalError, equalTo(-0.016354681006931715))
     }
 
     @Test fun `neural network to convert polar to cartesian coordinates`() {
         val random = Random(123)
 
         val inputLayer = Layer(2)
-        val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative).initThetas(random)
-        val outputLayer = Layer(2, hiddenLayer, {it}, {1.0}).initThetas(random)
+        val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative)
+        val outputLayer = Layer(2, hiddenLayer, {it}, {1.0})
         val network = NeuralNetwork(listOf(inputLayer, hiddenLayer, outputLayer))
 
         val trainingExamples = Supplier<Example?> {
@@ -69,7 +69,7 @@ class HelloNN {
             )
         }
 
-        val trainer = Trainer().train(network, trainingExamples, maxExamples = 15000)
+        val trainer = Trainer(random).train(network, trainingExamples, maxExamples = 15000)
         println(trainer.totalError)
 
         assertThat(trainer.totalError, equalTo(0.0011129625611150781))
@@ -79,7 +79,7 @@ class HelloNN {
     private data class Example(val inputs: List<Double>, val expectedOutputs: List<Double>)
 
 
-    private class Trainer() {
+    private class Trainer(val random: Random = Random()) {
         var totalError: Double = 0.0
 
         fun train(examples: Collection<Example>, network: NeuralNetwork): Trainer {
@@ -92,6 +92,8 @@ class HelloNN {
 
         fun train(network: NeuralNetwork, examplesSupplier: Supplier<Example?>, maxExamples: Long? = null): Trainer {
             val allErrors = mutableListOf<Double>()
+
+            network.prepareForLearning(random)
 
             var i = 0
             var example = examplesSupplier.get()
@@ -114,7 +116,7 @@ class HelloNN {
 
     private class NeuralNetwork(val layers: List<Layer>) {
         private val inputLayer = layers.first()
-        private val hiddenLayers = layers.drop(1)
+        private val hiddenLayers = layers.tail()
         private val outputLayer = layers.last()
 
         fun process(vararg inputs: Double): Array<Double> {
@@ -140,6 +142,10 @@ class HelloNN {
             }
             return errors
         }
+
+        fun prepareForLearning(random: Random = Random()) {
+            hiddenLayers.forEach{ it.prepareForLearning(random) }
+        }
     }
 
 
@@ -147,25 +153,19 @@ class HelloNN {
                         val inputLayer: Layer? = null,
                         val activation: (Double) -> Double = ::sigmoid,
                         val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
-                        val learningRate: Double = 0.01
+                        val learningRate: Double = 0.01,
+                        val biasValue: Double = 1.0
     ) {
         val outputs = Array(size, { 0.0 })
-        private val inputs = arrayOf(1.0) + Array(inputLayer?.size ?: 0, { 0.0 }) // prepend bias input
+        private val inputs = arrayOf(biasValue) + Array(inputLayer?.size ?: 0, { 0.0 })
         private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
         private val inputsSum = Array(size, {0.0})
 
-        fun initThetas(random: Random = Random()): Layer {
-            0.until(size).forEach { cellIndex ->
-                0.until(inputs.size).forEach { inputIndex ->
-                    inputThetas[cellIndex][inputIndex] = random.nextDouble()
-                }
-            }
-            return this
-        }
-
         fun activate() {
-            inputLayer?.outputs?.forEachIndexed { i, d ->
-                inputs[i + 1] = d
+            if (inputLayer == null) return
+
+            inputLayer.outputs.forEachIndexed { i, d ->
+                inputs[i + 1] = d // + 1 for bias
             }
 
             0.until(outputs.size).forEach { cellIndex ->
@@ -191,25 +191,36 @@ class HelloNN {
             val errorsForInputLayer = Array(inputLayer.outputs.size, { inputIndex ->
                 var sum = 0.0
                 errors.forEachIndexed { cellIndex, error ->
-                    sum += error * inputThetas[cellIndex][inputIndex + 1]
+                    sum += error * inputThetas[cellIndex][inputIndex + 1] // + 1 for bias
                 }
                 sum
             })
             return errorsForInputLayer
         }
 
-        fun setOutputs(newOutputs: Array<Double>): Layer {
-            if (newOutputs.size != size) throw IllegalArgumentException()
-            newOutputs.forEachIndexed { i, d -> outputs[i] = d }
+        fun prepareForLearning(random: Random = Random()): Layer {
+            0.until(size).forEach { cellIndex ->
+                0.until(inputs.size).forEach { inputIndex ->
+                    inputThetas[cellIndex][inputIndex] = random.nextDouble()
+                }
+            }
             return this
         }
 
         fun setThetas(newThetas: Array<Array<Double>>): Layer {
+            if (newThetas.size != inputThetas.size) throw IllegalArgumentException()
+
             newThetas.forEachIndexed { cellIndex, values ->
                 values.forEachIndexed { inputIndex, d ->
                     inputThetas[cellIndex][inputIndex] = d
                 }
             }
+            return this
+        }
+
+        fun setOutputs(newOutputs: Array<Double>): Layer {
+            if (newOutputs.size != size) throw IllegalArgumentException()
+            newOutputs.forEachIndexed { i, d -> outputs[i] = d }
             return this
         }
 
@@ -265,6 +276,7 @@ private fun Double.toDegree() = this * (180.0 / Math.PI)
 private fun Double.toRadian() = this * (Math.PI / 180.0)
 private fun Double.round() = Math.round(this)
 
+private fun <T> List<T>.tail() = drop(1)
 private fun <T> List<T>.repeat(times: Int): List<T> {
     val result = mutableListOf<T>()
     0.until(times).forEach { result.addAll(this) }
