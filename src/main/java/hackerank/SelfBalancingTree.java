@@ -54,15 +54,15 @@ public class SelfBalancingTree {
 
     @Test public void rotateRight() {
         Node tree =
-                node(5,
-                        node(4,
-                                node(3), null),
-                        null);
+            node(5,
+                node(4,
+                    node(3), null),
+            null);
 
         assertThat(rotateRight(tree.left, tree), equalTo(
-                node(4,
-                        node(3),
-                        node(5))
+            node(4,
+                node(3),
+                node(5))
         ));
     }
 
@@ -89,7 +89,11 @@ public class SelfBalancingTree {
         node = insert(node, 4); System.out.println(balanceFactorOf(node));
         node = insert(node, 5); System.out.println(balanceFactorOf(node));
         node = insert(node, 6); System.out.println(balanceFactorOf(node));
+
         System.out.println(node);
+        printInOrderBalanceFactors(node);
+        System.out.println();
+        printPreOrderBalanceFactors(node);
 
         assertThat(balanceFactorOf(node), lessThan(2));
     }
@@ -99,32 +103,35 @@ public class SelfBalancingTree {
     }
 
     private static Node insertAndBalance(Node node, Node newNode) {
-        return balance(insert(node, newNode));
+        return insert(node, newNode, true);
     }
 
     private static Node insert(Node node, Node newNode) {
+        return insert(node, newNode, false);
+    }
+
+    private static Node insert(Node node, Node newNode, boolean rebalance) {
         if (node == null) return newNode;
         if (newNode.val <= node.val) {
-            node.left = insert(node.left, newNode);
+            node.left = insert(node.left, newNode, rebalance);
         } else {
-            node.right = insert(node.right, newNode);
+            node.right = insert(node.right, newNode, rebalance);
         }
 
         updateHeight(node);
 
-        return node;
+        return rebalance ? balance(node) : node;
     }
 
     private static Node balance(Node node) {
         int leftHeight = heightOf(node.left);
+        int rightHeight = heightOf(node.right);
+        if (Math.abs(leftHeight - rightHeight) <= 1) return node;
+
         int leftLeftHeight = leftHeight == 0 ? 0 : heightOf(node.left.left);
         int leftRightHeight = leftHeight == 0 ? 0 : heightOf(node.left.right);
-
-        int rightHeight = heightOf(node.right);
         int rightLeftHeight = rightHeight == 0 ? 0 : heightOf(node.right.left);
         int rightRightHeight = rightHeight == 0 ? 0 : heightOf(node.right.right);
-
-        if (Math.abs(leftHeight - rightHeight) <= 1) return node;
 
         if (leftHeight > rightHeight) {
             if (leftRightHeight > leftLeftHeight) {
@@ -163,10 +170,6 @@ public class SelfBalancingTree {
         return node;
     }
 
-    private static int balanceFactorOf(Node node) {
-        return heightOf(node.left) - heightOf(node.right);
-    }
-
     private static int heightOf(Node node) {
         return node == null ? 0 : node.ht;
     }
@@ -184,6 +187,24 @@ public class SelfBalancingTree {
         return node;
     }
 
+    private static int balanceFactorOf(Node node) {
+        return heightOf(node.left) - heightOf(node.right);
+    }
+
+    private static void printInOrderBalanceFactors(Node node) {
+        if (node == null) return;
+        printInOrderBalanceFactors(node.left);
+        System.out.print(node.val + ":" + balanceFactorOf(node) + " ");
+        printInOrderBalanceFactors(node.right);
+    }
+
+    private static void printPreOrderBalanceFactors(Node node) {
+        if (node == null) return;
+        System.out.print(node.val + ":" + balanceFactorOf(node) + " ");
+        printPreOrderBalanceFactors(node.left);
+        printPreOrderBalanceFactors(node.right);
+    }
+
     private static int height(Node node) {
         if (node == null) {
             return 0;
@@ -192,21 +213,125 @@ public class SelfBalancingTree {
         }
     }
 
-    private static class Node {
-        public int val;
-        public Node left;
-        public Node right;
-        public int ht;
+    private static String asString(Node node) {
+        String s = "{val:" + node.val;
+        if (node.left != null || node.right != null) {
+            s += ",left:" + asString(node.left);
+            s += ",right:" + asString(node.right);
+        }
+        return s + '}';
+    }
 
-        @Override public String toString() {
-            String s = "{val:" + val;
-            if (left != null || right != null) {
-                s += ",left:" + left;
-                s += ",right:" + right;
-            }
-            return s + '}';
+
+    static class Node {
+        int val;
+        int ht;
+        Node left;
+        Node right;
+
+        Node() {
         }
 
+        static Node newNode(int value) {
+            Node node = new Node();
+            node.val = value;
+            node.left = null;
+            node.right = null;
+            return node;
+        }
+
+        static Node hiddenInsert(Node node, int value) {
+            if (node == null) {
+                node = newNode(value);
+            } else if (value > node.val) {
+                node.right = hiddenInsert(node.right, value);
+                if (BF_hidden(node) == -2) {
+                    if (value > node.right.val) {
+                        node = RR_hidden(node);
+                    } else {
+                        node = RL_hidden(node);
+                    }
+                }
+            } else if (value < node.val) {
+                node.left = hiddenInsert(node.left, value);
+                if (BF_hidden(node) == 2) {
+                    if (value < node.left.val) {
+                        node = LL_hidden(node);
+                    } else {
+                        node = LR_hidden(node);
+                    }
+                }
+            }
+
+            node.ht = ht_hidden(node);
+            return node;
+        }
+
+        static int ht_hidden(Node node) {
+            if (node == null) {
+                return 0;
+            } else {
+                int var1 = node.left == null ? 0 : 1 + node.left.ht;
+                int var2 = node.right == null ? 0 : 1 + node.right.ht;
+                return var1 > var2 ? var1 : var2;
+            }
+        }
+
+        static Node rotate_right_hidden(Node node) {
+            Node nodeLeft = node.left;
+            node.left = nodeLeft.right;
+            nodeLeft.right = node;
+            node.ht = ht_hidden(node);
+            nodeLeft.ht = ht_hidden(nodeLeft);
+            return nodeLeft;
+        }
+
+        static Node rotate_left_hidden(Node node) {
+            Node nodeRight = node.right;
+            node.right = nodeRight.left;
+            nodeRight.left = node;
+            node.ht = ht_hidden(node);
+            nodeRight.ht = ht_hidden(nodeRight);
+            return nodeRight;
+        }
+
+        static Node RR_hidden(Node node) {
+            node = rotate_left_hidden(node);
+            return node;
+        }
+
+        static Node LL_hidden(Node node) {
+            node = rotate_right_hidden(node);
+            return node;
+        }
+
+        static Node LR_hidden(Node node) {
+            node.left = rotate_left_hidden(node.left);
+            node = rotate_right_hidden(node);
+            return node;
+        }
+
+        static Node RL_hidden(Node node) {
+            node.right = rotate_right_hidden(node.right);
+            node = rotate_left_hidden(node);
+            return node;
+        }
+
+        static int BF_hidden(Node node) {
+            if (node == null) {
+                return 0;
+            } else {
+                int leftHt = node.left == null ? 0 : 1 + node.left.ht;
+                int rightHt = node.right == null ? 0 : 1 + node.right.ht;
+                return leftHt - rightHt;
+            }
+        }
+
+        @Override public String toString() {
+            return asString(this);
+        }
+
+        @SuppressWarnings("SimplifiableIfStatement")
         @Override public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -214,12 +339,14 @@ public class SelfBalancingTree {
             Node node = (Node) o;
 
             if (val != node.val) return false;
+            if (ht != node.ht) return false;
             if (left != null ? !left.equals(node.left) : node.left != null) return false;
             return right != null ? right.equals(node.right) : node.right == null;
         }
 
         @Override public int hashCode() {
             int result = val;
+            result = 31 * result + ht;
             result = 31 * result + (left != null ? left.hashCode() : 0);
             result = 31 * result + (right != null ? right.hashCode() : 0);
             return result;
