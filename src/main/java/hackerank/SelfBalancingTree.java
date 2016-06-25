@@ -2,6 +2,8 @@ package hackerank;
 
 import org.junit.Test;
 
+import static hackerank.SelfBalancingTree.Node.hiddenInsert;
+import static java.lang.Math.max;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
@@ -15,9 +17,9 @@ public class SelfBalancingTree {
                     node('d'),
                     node('e')));
 
-        assertThat(height(tree), equalTo(3));
-        assertThat(height(tree.left), equalTo(1));
-        assertThat(height(tree.right), equalTo(2));
+        assertThat(height(tree), equalTo(2));
+        assertThat(height(tree.left), equalTo(0));
+        assertThat(height(tree.right), equalTo(1));
     }
 
     @Test public void insertingValue() {
@@ -36,20 +38,20 @@ public class SelfBalancingTree {
     }
 
     @Test public void heightAfterInsertion() {
-        Node tree = node(5);
-        assertThat(tree.ht, equalTo(1));
+        Node node = node(5);
+        assertThat(node.ht, equalTo(0));
 
-        insert(tree, node(4));
-        assertThat(tree.ht, equalTo(2));
+        node = insert(node, node(4));
+        assertThat(node.ht, equalTo(1));
 
-        insert(tree, node(6));
-        assertThat(tree.ht, equalTo(2));
+        node = insert(node, node(6));
+        assertThat(node.ht, equalTo(1));
 
-        insert(tree, node(7));
-        assertThat(tree.ht, equalTo(3));
+        node = insert(node, node(7));
+        assertThat(node.ht, equalTo(2));
 
-        insert(tree, node(8));
-        assertThat(tree.ht, equalTo(4));
+        node = insert(node, node(8));
+        assertThat(node.ht, equalTo(3));
     }
 
     @Test public void rotateRight() {
@@ -68,32 +70,33 @@ public class SelfBalancingTree {
 
     @Test public void heightAfterBalancedInsertion() {
         Node tree = node(5);
-        assertThat(tree.ht, equalTo(1));
+        assertThat(tree.ht, equalTo(0));
 
         tree = insertAndBalance(tree, node(6));
-        assertThat(tree.ht, equalTo(2));
+        assertThat(tree.ht, equalTo(1));
 
         tree = insertAndBalance(tree, node(7));
-        assertThat(tree.ht, equalTo(2));
+        assertThat(tree.ht, equalTo(1));
 
         tree = insertAndBalance(tree, node(8));
-        assertThat(tree.ht, equalTo(3));
+        assertThat(tree.ht, equalTo(2));
 
         tree = insertAndBalance(tree, node(9));
-        assertThat(tree.ht, equalTo(3));
+        assertThat(tree.ht, equalTo(2));
     }
 
     @Test public void exampleOfBalancingFactor() {
         Node node = node(3);
-        node = insert(node, 2); System.out.println(balanceFactorOf(node));
-        node = insert(node, 4); System.out.println(balanceFactorOf(node));
-        node = insert(node, 5); System.out.println(balanceFactorOf(node));
-        node = insert(node, 6); System.out.println(balanceFactorOf(node));
+        node = hiddenInsert(node, 2);
+        node = hiddenInsert(node, 4);
+        node = hiddenInsert(node, 5);
 
         System.out.println(node);
-        printInOrderBalanceFactors(node);
-        System.out.println();
-        printPreOrderBalanceFactors(node);
+        System.out.println(insert(node, 6));
+//        System.out.println(hiddenInsert(node, 6));
+//        printInOrderBalanceFactors(node);
+//        System.out.println();
+//        printPreOrderBalanceFactors(node);
 
         assertThat(balanceFactorOf(node), lessThan(2));
     }
@@ -117,7 +120,6 @@ public class SelfBalancingTree {
         } else {
             node.right = insert(node.right, newNode, rebalance);
         }
-
         updateHeight(node);
 
         return rebalance ? balance(node) : node;
@@ -128,10 +130,10 @@ public class SelfBalancingTree {
         int rightHeight = heightOf(node.right);
         if (Math.abs(leftHeight - rightHeight) <= 1) return node;
 
-        int leftLeftHeight = leftHeight == 0 ? 0 : heightOf(node.left.left);
-        int leftRightHeight = leftHeight == 0 ? 0 : heightOf(node.left.right);
-        int rightLeftHeight = rightHeight == 0 ? 0 : heightOf(node.right.left);
-        int rightRightHeight = rightHeight == 0 ? 0 : heightOf(node.right.right);
+        int leftLeftHeight = leftHeight == -1 ? -1 : heightOf(node.left.left);
+        int leftRightHeight = leftHeight == -1 ? -1 : heightOf(node.left.right);
+        int rightLeftHeight = rightHeight == -1 ? -1 : heightOf(node.right.left);
+        int rightRightHeight = rightHeight == -1 ? -1 : heightOf(node.right.right);
 
         if (leftHeight > rightHeight) {
             if (leftRightHeight > leftLeftHeight) {
@@ -146,8 +148,9 @@ public class SelfBalancingTree {
         }
     }
 
-    private static void updateHeight(Node node) {
-        node.ht = 1 + Math.max(heightOf(node.left), heightOf(node.right));
+    private static Node updateHeight(Node node) {
+        node.ht = 1 + max(heightOf(node.left), heightOf(node.right));
+        return node;
     }
 
     private static Node rotateRight(Node node, Node parentNode) {
@@ -171,7 +174,7 @@ public class SelfBalancingTree {
     }
 
     private static int heightOf(Node node) {
-        return node == null ? 0 : node.ht;
+        return node == null ? -1 : node.ht;
     }
 
     private static Node node(int value) {
@@ -183,7 +186,7 @@ public class SelfBalancingTree {
         node.val = value;
         node.left = left;
         node.right = right;
-        node.ht = 1;
+        node.ht = 0;
         return node;
     }
 
@@ -207,14 +210,15 @@ public class SelfBalancingTree {
 
     private static int height(Node node) {
         if (node == null) {
-            return 0;
+            return -1;
         } else {
-            return 1 + Math.max(height(node.left), height(node.right));
+            return 1 + max(height(node.left), height(node.right));
         }
     }
 
     private static String asString(Node node) {
-        String s = "{val:" + node.val;
+        if (node == null) return "{}";
+        String s = "{val:" + node.val + "/" + node.ht;
         if (node.left != null || node.right != null) {
             s += ",left:" + asString(node.left);
             s += ",right:" + asString(node.right);
@@ -339,14 +343,12 @@ public class SelfBalancingTree {
             Node node = (Node) o;
 
             if (val != node.val) return false;
-            if (ht != node.ht) return false;
             if (left != null ? !left.equals(node.left) : node.left != null) return false;
             return right != null ? right.equals(node.right) : node.right == null;
         }
 
         @Override public int hashCode() {
             int result = val;
-            result = 31 * result + ht;
             result = 31 * result + (left != null ? left.hashCode() : 0);
             result = 31 * result + (right != null ? right.hashCode() : 0);
             return result;
