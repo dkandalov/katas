@@ -2,8 +2,13 @@ package hackerank;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static hackerank.SelfBalancingTree.Node.hiddenInsert;
 import static java.lang.Math.max;
+import static java.util.Collections.shuffle;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
@@ -90,15 +95,24 @@ public class SelfBalancingTree {
         node = hiddenInsert(node, 2);
         node = hiddenInsert(node, 4);
         node = hiddenInsert(node, 5);
-
-        System.out.println(node);
-        System.out.println(insert(node, 6));
-//        System.out.println(hiddenInsert(node, 6));
-//        printInOrderBalanceFactors(node);
-//        System.out.println();
-//        printPreOrderBalanceFactors(node);
+        node = insert(node, 6);
 
         assertThat(balanceFactorOf(node), lessThan(2));
+    }
+
+    @Test public void shuffledInput() {
+        List<Integer> integers = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            integers.add(i);
+        }
+        shuffle(integers, new Random(123));
+
+        Node node = node(-1);
+        for (Integer i : integers) {
+            node = insert(node, i);
+        }
+        System.out.println(node);
+        assertThat(node.ht, equalTo(3));
     }
 
     private static Node insert(Node node, int value) {
@@ -137,12 +151,12 @@ public class SelfBalancingTree {
 
         if (leftHeight > rightHeight) {
             if (leftRightHeight > leftLeftHeight) {
-                rotateLeft(node.left.right, node);
+                node.left = rotateLeft(node.left.right, node.left);
             }
             return rotateRight(node.left, node);
         } else {
             if (rightLeftHeight > rightRightHeight) {
-                rotateRight(node.right.left, node);
+                node.right = rotateRight(node.right.left, node.right);
             }
             return rotateLeft(node.right, node);
         }
