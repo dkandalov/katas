@@ -22,10 +22,10 @@ public class BalancedBrackets {
     }
 
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        int inputLinesCount = in.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        int inputLinesCount = scanner.nextInt();
         for(int i = 0; i < inputLinesCount; i++){
-            String line = in.next();
+            String line = scanner.next();
             System.out.println(hasMatchingBrackets(line) ? "YES" : "NO");
         }
     }
