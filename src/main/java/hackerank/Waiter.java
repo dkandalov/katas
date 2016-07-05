@@ -2,11 +2,11 @@ package hackerank;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -26,7 +26,21 @@ public class Waiter {
         stack.push(2); assertThat(stack.peek(), equalTo(2));
         stack.push(3); assertThat(stack.peek(), equalTo(3));
 
-        assertThat(newArrayList(stack.iterator()), equalTo(asList(1, 2, 3)));
+        assertThat(stack.toList(), equalTo(asList(3, 2, 1)));
+
+        assertThat(stack.pop(), equalTo(3));
+        assertThat(stack.pop(), equalTo(2));
+        stack.push(4); assertThat(stack.peek(), equalTo(4));
+
+        assertThat(stack.pop(), equalTo(4));
+        assertThat(stack.pop(), equalTo(1));
+    }
+
+    @Test public void reStacking() {
+        Stack<Stack<Integer>> stacks = stackByPrimes(2, 1, new Stack<>(3, 4, 7, 6, 5)).reverse();
+
+        assertThat(stacks.pop().toList(), equalTo(asList(4, 6)));
+        assertThat(stacks.pop().toList(), equalTo(asList(3, 7, 5)));
     }
 
     public static void main(String[] args) {
@@ -38,7 +52,7 @@ public class Waiter {
             stack.push(scanner.nextInt());
         }
 
-        Stack<Stack<Integer>> stacks = stackByPrimes(2, q, stack);
+        Stack<Stack<Integer>> stacks = stackByPrimes(2, q, stack).reverse();
 
         for (Stack<Integer> intStack : stacks) {
             for (Integer integer : intStack) {
@@ -52,14 +66,17 @@ public class Waiter {
         result.push(stack);
 
         for (int i = 0; i < q; i++) {
-            Stack<Integer> newStack = new Stack<>();
-            Stack<Integer> lastStack = result.peek();
-            for (Integer integer : lastStack) {
+            Stack<Integer> nonPrimeStack = new Stack<>();
+            Stack<Integer> maybePrimeStack = new Stack<>();
+            for (Integer integer : result.pop()) {
                 if (integer % prime == 0) {
-                    newStack.push(integer);
+                    nonPrimeStack.push(integer);
+                } else {
+                    maybePrimeStack.push(integer);
                 }
             }
-            result.push(newStack);
+            result.push(nonPrimeStack);
+            result.push(maybePrimeStack);
             prime = nextPrime(prime);
         }
 
@@ -86,11 +103,23 @@ public class Waiter {
         private T[] data = (T[]) new Object[2];
         private int size = 0;
 
+        @SafeVarargs
+        public Stack(T... values) {
+            for (T value : values) {
+                push(value);
+            }
+        }
+
         public void push(T value) {
             if (size == data.length) {
                 data = Arrays.copyOf(data, data.length * 2);
             }
             data[size++] = value;
+        }
+
+        public T pop() {
+            if (size == 0) throw new IllegalStateException();
+            return data[--size];
         }
 
         public T peek() {
@@ -99,16 +128,32 @@ public class Waiter {
 
         @Override public Iterator<T> iterator() {
             return new Iterator<T>() {
-                int i = 0;
+                int i = size - 1;
 
                 @Override public boolean hasNext() {
-                    return i < size;
+                    return i >= 0;
                 }
 
                 @Override public T next() {
-                    return data[i++];
+                    return data[i--];
                 }
             };
+        }
+
+        public Stack<T> reverse() {
+            Stack<T> stack = new Stack<>();
+            for (T value : this) {
+                stack.push(value);
+            }
+            return stack;
+        }
+
+        public ArrayList<T> toList() {
+            ArrayList<T> result = new ArrayList<T>();
+            for (T value : this) {
+                result.add(value);
+            }
+            return result;
         }
     }
 }
