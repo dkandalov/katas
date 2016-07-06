@@ -149,7 +149,7 @@ public class Waiter {
         }
 
         public ArrayList<T> toList() {
-            ArrayList<T> result = new ArrayList<T>();
+            ArrayList<T> result = new ArrayList<>();
             for (T value : this) {
                 result.add(value);
             }

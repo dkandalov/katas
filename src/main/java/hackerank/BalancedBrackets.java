@@ -2,15 +2,16 @@ package hackerank;
 
 import org.junit.Test;
 
-import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Scanner;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class BalancedBrackets {
-    @Test
-    public void matchingBracketsExamples() {
+    @Test public void matchingBracketsExamples() {
         assertTrue(hasMatchingBrackets(""));
         assertTrue(hasMatchingBrackets("{}"));
         assertFalse(hasMatchingBrackets("{"));
@@ -19,6 +20,20 @@ public class BalancedBrackets {
         assertTrue(hasMatchingBrackets("{[()]}"));
         assertFalse(hasMatchingBrackets("{[(])}"));
         assertTrue(hasMatchingBrackets("{{[[(())]]}}"));
+    }
+
+    @Test public void stackOperations() {
+        CharStack stack = new CharStack();
+        assertTrue(stack.isEmpty());
+
+        stack.push('a'); assertFalse(stack.isEmpty());
+        stack.push('b'); assertFalse(stack.isEmpty());
+        stack.push('c'); assertFalse(stack.isEmpty());
+
+        assertThat(stack.pop(), equalTo('c'));
+        assertThat(stack.pop(), equalTo('b'));
+        assertThat(stack.pop(), equalTo('a'));
+        assertTrue(stack.isEmpty());
     }
 
     public static void main(String[] args) {
@@ -31,7 +46,7 @@ public class BalancedBrackets {
     }
 
     private static boolean hasMatchingBrackets(String line) {
-        ArrayDeque<Character> stack = new ArrayDeque<>();
+        CharStack stack = new CharStack();
 
         for (char c : line.toCharArray()) {
             if (isOpenBracket(c)) {
@@ -57,5 +72,27 @@ public class BalancedBrackets {
         return (c1 == '{' && c2 == '}') ||
                 (c1 == '[' && c2 == ']') ||
                 (c1 == '(' && c2 == ')');
+    }
+
+    private static class CharStack {
+        private char[] data = new char[2];
+        private int size;
+
+
+        public void push(char c) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, data.length * 2);
+            }
+            data[size++] = c;
+        }
+
+        public char pop() {
+            if (size == 0) throw new IllegalStateException();
+            return data[--size];
+        }
+
+        public boolean isEmpty() {
+            return size == 0;
+        }
     }
 }
