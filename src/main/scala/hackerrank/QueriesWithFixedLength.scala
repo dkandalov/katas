@@ -1,27 +1,46 @@
 package hackerrank
 
-import java.util.Collections.reverseOrder
 import java.util.{Comparator, Scanner}
 
 import org.junit.Test
 import org.scalatest.Matchers
 
 import scala.annotation.tailrec
+import scala.util.Random
 
 
 class QueriesWithFixedLength extends Matchers {
 	@Test def `example`(): Unit = {
-		val result = processQueries(Seq(1, 2, 3, 4, 5), Seq(1, 2, 3, 4, 5))
-		result should equal(Seq(1, 2, 3, 4, 5))
+		val seq = Seq(1, 2, 3, 4, 5)
+		val queries = Seq(1, 2, 3, 4, 5)
+		queries.map(minMax(seq, _)) should equal(Seq(1, 2, 3, 4, 5))
+	}
+
+	@Test def `queries produce the same result as sliding min/max`(): Unit = {
+		def simpleMinMax(seq: Seq[Int], d: Int): Int = {
+			seq.sliding(d).map{ _.max }.min
+		}
+
+		0.until(1000).foreach { it =>
+			val seed = new Random().nextInt()
+			val random = new Random(seed)
+			val n = random.nextInt(10) + 1
+			val seq = random.shuffle(0.until(n).toList)
+			println(s"seed: $seed")
+			println(s"seq: $seq")
+
+			val queries = 1.to(n)
+			queries.map(minMax(seq, _)) should equal(queries.map(simpleMinMax(seq, _)))
+		}
 	}
 
 	@Test def `adding elements to queue`(): Unit = {
-		val q = new MinMaxQueue(3)
-		q.add(1).toSeq should equal(Seq(1));       (q.min, q.max) should equal(1, 1)
-		q.add(2).toSeq should equal(Seq(1, 2));    (q.min, q.max) should equal(1, 2)
-		q.add(3).toSeq should equal(Seq(1, 2, 3)); (q.min, q.max) should equal(1, 3)
-		q.add(4).toSeq should equal(Seq(2, 3, 4)); (q.min, q.max) should equal(2, 4)
-		q.add(5).toSeq should equal(Seq(3, 4, 5)); (q.min, q.max) should equal(3, 5)
+		val q = new Queue(3)
+		q.add(1).toSeq should equal(Seq(1));       q.max should equal(1)
+		q.add(2).toSeq should equal(Seq(1, 2));    q.max should equal(2)
+		q.add(3).toSeq should equal(Seq(1, 2, 3)); q.max should equal(3)
+		q.add(4).toSeq should equal(Seq(2, 3, 4)); q.max should equal(4)
+		q.add(5).toSeq should equal(Seq(3, 4, 5)); q.max should equal(5)
 	}
 
 	@Test def `add elements to heap`(): Unit = {
@@ -29,40 +48,48 @@ class QueriesWithFixedLength extends Matchers {
 		heap.size should equal(0)
 		heap.data should equal(Seq(0, 0, 0, 0, 0, 0, 0, 0))
 
-		heap.add(1)
+		heap.add(0)
 		heap.size should equal(1)
+		heap.data should equal(Seq(0, 0, 0, 0, 0, 0, 0, 0))
+
+		heap.add(1)
+		heap.size should equal(2)
 		heap.data should equal(Seq(1, 0, 0, 0, 0, 0, 0, 0))
 
 		heap.add(2)
-		heap.size should equal(2)
-		heap.data should equal(Seq(2, 1, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(3)
+		heap.data should equal(Seq(2, 0, 1, 0, 0, 0, 0, 0))
 
 		heap.add(3)
-		heap.size should equal(3)
-		heap.data should equal(Seq(3, 1, 2, 0, 0, 0, 0, 0))
+		heap.size should equal(4)
+		heap.data should equal(Seq(3, 2, 1, 0, 0, 0, 0, 0))
 
 		heap.add(4)
-		heap.size should equal(4)
-		heap.data should equal(Seq(4, 3, 2, 1, 0, 0, 0, 0))
+		heap.size should equal(5)
+		heap.data should equal(Seq(4, 3, 1, 0, 2, 0, 0, 0))
 
 		heap.add(5)
-		heap.size should equal(5)
-		heap.data should equal(Seq(5, 4, 2, 1, 3, 0, 0, 0))
+		heap.size should equal(6)
+		heap.data should equal(Seq(5, 3, 4, 0, 2, 1, 0, 0))
 	}
 
 	@Test def `remove elements from heap`(): Unit = {
 		val heap = new Heap(8, Ordering.Int)
-		List(1, 2, 3, 4, 5).foreach(heap.add)
+		List(0, 1, 2, 3, 4, 5).foreach(heap.add)
+		heap.size should equal(6)
+		heap.data should equal(Seq(5, 3, 4, 0, 2, 1, 0, 0))
+
+		heap.remove(0)
 		heap.size should equal(5)
-		heap.data should equal(Seq(5, 4, 2, 1, 3, 0, 0, 0))
+		heap.data should equal(Seq(5, 3, 4, 1, 2, 0, 0, 0))
 
 		heap.remove(1)
 		heap.size should equal(4)
-		heap.data should equal(Seq(5, 4, 2, 3, 0, 0, 0, 0))
+		heap.data should equal(Seq(5, 3, 4, 2, 0, 0, 0, 0))
 
 		heap.remove(2)
 		heap.size should equal(3)
-		heap.data should equal(Seq(5, 4, 3, 0, 0, 0, 0, 0))
+		heap.data should equal(Seq(5, 3, 4, 0, 0, 0, 0, 0))
 
 		heap.remove(3)
 		heap.size should equal(2)
@@ -88,60 +115,53 @@ class QueriesWithFixedLength extends Matchers {
 	}
 
 	private def processQueries(seq: Seq[Int], queries: Seq[Int]): Seq[Int] = {
-		queries.map{ d =>
-			var from = 0
-			var to = d
-			var min = Int.MaxValue
-			while (to <= seq.size) {
-				var i = from
-				var max = Int.MinValue
-				while (i < to) {
-					if (seq(i) > max) max = seq(i)
-					i += 1
-				}
+		queries.map(minMax(seq, _))
+	}
 
-				if (max < min) min = max
-
-				from += 1
-				to += 1
+	private def minMax(seq: Seq[Int], d: Int): Int = {
+		var min = Int.MaxValue
+		val queue = new Queue(d)
+		seq.foreach { it =>
+			queue.add(it)
+			if (queue.size == d && queue.max < min) {
+				min = queue.max
 			}
-			min
 		}
+		min
 	}
 
 	/**
 		* See also http://www.cs.otago.ac.nz/staffpriv/mike/Papers/MinMaxHeaps/MinMaxHeaps.pdf
 		*/
-	private class MinMaxQueue(maxSize: Int) {
+	private class Queue(maxSize: Int) {
 		private val data: Array[Int] = Array.fill(maxSize)(Int.MinValue)
-		private val minHeap: Heap = new Heap(maxSize, reverseOrder(Ordering.Int))
 		private val maxHeap: Heap = new Heap(maxSize, Ordering.Int)
 		private var index: Int = 0
-		private var size: Int = 0
+		private var _size: Int = 0
 
-		def add(value: Int): MinMaxQueue = {
-			if (size == maxSize) {
+		def add(value: Int): Queue = {
+			if (_size == maxSize) {
 				val oldValue = data(index)
-				minHeap.remove(oldValue)
 				maxHeap.remove(oldValue)
+			} else {
+				_size += 1
 			}
+
 			data(index) = value
 			index = (index + 1) % maxSize
-			size = Math.min(size + 1, maxSize)
 
-			minHeap.add(value)
 			maxHeap.add(value)
 			this
 		}
 
-		def min: Int = minHeap.top
-
 		def max: Int = maxHeap.top
+
+		def size: Int = _size
 
 		def toSeq: Seq[Int] = {
 			var result = Seq[Int]()
 			var i = 0
-			while (i < size) {
+			while (i < _size) {
 				result = data((index - 1 + maxSize - i) % maxSize) +: result
 				i += 1
 			}
@@ -150,7 +170,7 @@ class QueriesWithFixedLength extends Matchers {
 	}
 
 
-	private class Heap(maxSize: Int, comparator: Comparator[Int]) {
+	private class Heap(maxSize: Int, comparator: Comparator[Int] = Ordering.Int) {
 		private val _data: Array[Int] = new Array(maxSize)
 		private var _size: Int = 0
 
@@ -186,12 +206,14 @@ class QueriesWithFixedLength extends Matchers {
 
 		@tailrec private def sink(i: Int): Unit = {
 			if (i >= _size) return
-			var maxChild = if (comparator.compare(childOf(i), childOf(i) + 1) > 0) childOf(i) else childOf(i) + 1
-			if (maxChild >= _size) maxChild = childOf(i)
+			val maxChild = if (childOf(i) + 1 >= _size) childOf(i)
+				else if (comparator.compare(_data(childOf(i)), _data(childOf(i) + 1)) > 0) childOf(i) else childOf(i) + 1
 			if (maxChild >= _size) return
 
-			swap(_data, i, maxChild)
-			sink(maxChild)
+			if (comparator.compare(_data(i), _data(maxChild)) < 0) {
+				swap(_data, i, maxChild)
+				sink(maxChild)
+			}
 		}
 
 		@tailrec private def bubbleUp(i: Int): Unit = {
