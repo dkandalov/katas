@@ -3,6 +3,8 @@ package stringsearch
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
+import java.lang.Math.max
+import java.util.*
 
 class BoyerMoore0 {
     @Test fun `naive search`() {
@@ -27,7 +29,7 @@ class BoyerMoore0 {
         assertThat(s.naiveIndexOf("pickle"), equalTo(23))
     }
 
-    @Test fun `Boyer Moore search`() {
+    @Test fun `Boyer-Moore search`() {
         assertThat("".findIndexOf(""), equalTo(0))
         assertThat("abc".findIndexOf(""), equalTo(0))
 
@@ -44,11 +46,50 @@ class BoyerMoore0 {
         assertThat("abc".findIndexOf("abc"), equalTo(0))
         assertThat("abc".findIndexOf("abcd"), equalTo(-1))
 
+        assertThat("abcdabcd".findIndexOf("abCd"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("abcD"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("aBcd"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("Abcd"), equalTo(-1))
+
         val s = "peter piper picked a peck of pickled peppers".replace(" ", "")
         assertThat(s.findIndexOf("picnic"), equalTo(-1))
         assertThat(s.findIndexOf("pickle"), equalTo(23))
+
+        val alphabet = 'a'.rangeTo('z').toList()
+        val random = Random(123)
+        val text = 0.until(100).map{ alphabet[random.nextInt(alphabet.size)] }.joinToString("")
+        println("text = $text")
+
+        1.until(text.length).map { patternSize ->
+            val patterns = text.sliding(patternSize)
+            patterns.forEach { pattern ->
+                println("pattern = $pattern")
+                assertThat(text.findIndexOf(pattern), equalTo(text.indexOf(pattern)))
+            }
+            val notMatchingPatterns = patterns.map { it + "_" } + patterns.map { "_" + it }
+            notMatchingPatterns.forEach { pattern ->
+                println("pattern = $pattern")
+                assertThat(text.findIndexOf(pattern), equalTo(-1))
+            }
+        }
     }
 
+    @Test fun `sliding list`() {
+        assertThat(listOf(1).sliding(1), equalTo(listOf(listOf(1))))
+
+        assertThat(listOf(1, 2, 3).sliding(1), equalTo(listOf(
+                listOf(1), listOf(2), listOf(3)
+        )))
+        assertThat(listOf(1, 2, 3).sliding(2), equalTo(listOf(
+                listOf(1, 2), listOf(2, 3)
+        )))
+        assertThat(listOf(1, 2, 3).sliding(1), equalTo(listOf(
+                listOf(1), listOf(2), listOf(3)
+        )))
+        assertThat(listOf(1, 2, 3).sliding(3), equalTo(listOf(
+                listOf(1, 2, 3)
+        )))
+    }
 
     private fun String.findIndexOf(needle: String): Int {
         if (needle.length == 0) {
@@ -56,9 +97,9 @@ class BoyerMoore0 {
         }
         val charTable = makeCharTable(needle)
         val offsetTable = makeOffsetTable(needle)
-        var i = needle.length - 1
+        var i = needle.lastIndex
         while (i < this.length) {
-            var j = needle.length - 1
+            var j = needle.lastIndex
             while (needle[j] == this[i]) {
                 if (j == 0) {
                     return i
@@ -66,8 +107,8 @@ class BoyerMoore0 {
                 --i
                 --j
             }
-            // i += needle.length - j; // For naive method
-            i += Math.max(offsetTable[needle.length - 1 - j], charTable[this[i].toInt()])
+//            i += 1 // For naive method (when i is not decremented)
+            i += max(offsetTable[needle.lastIndex - j], charTable[this[i].toInt()])
         }
         return -1
     }
@@ -136,6 +177,26 @@ class BoyerMoore0 {
             i++
         }
         return -1
+    }
+
+    private fun String.sliding(n: Int): List<String> {
+        return this.asSequence().toList().sliding(n).map{ it.joinToString("") }
+    }
+
+    private fun <T> List<T>.sliding(n: Int): List<List<T>> {
+        if (n > size) throw IllegalArgumentException()
+        var i = 0
+        return object : Iterator<List<T>> {
+            override fun hasNext(): Boolean {
+                return i + n <= size
+            }
+
+            override fun next(): List<T> {
+                val result = subList(i, i + n)
+                i++
+                return result
+            }
+        }.asSequence().toList()
     }
 }
 
