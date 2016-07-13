@@ -3,7 +3,6 @@ package stringsearch
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
-import java.lang.Math.max
 import java.util.*
 
 class BoyerMoore0 {
@@ -50,6 +49,7 @@ class BoyerMoore0 {
         assertThat("abcdabcd".findIndexOf("abcD"), equalTo(-1))
         assertThat("abcdabcd".findIndexOf("aBcd"), equalTo(-1))
         assertThat("abcdabcd".findIndexOf("Abcd"), equalTo(-1))
+        assertThat("There would have been a time for such a word".findIndexOf("word"), equalTo(-1))
 
         val s = "peter piper picked a peck of pickled peppers".replace(" ", "")
         assertThat(s.findIndexOf("picnic"), equalTo(-1))
@@ -108,21 +108,18 @@ class BoyerMoore0 {
                 --j
             }
 //            i += 1 // For naive method (when i is not decremented)
-            i += max(offsetTable[needle.lastIndex - j], charTable[this[i].toInt()])
+            i += charTable(this[i]) // TODO make this work
+//            i += Math.max(offsetTable[needle.lastIndex - j], charTable(this[i]))
         }
         return -1
     }
 
-    private fun makeCharTable(needle: String): IntArray {
-        val ALPHABET_SIZE = 256
-        val table = IntArray(ALPHABET_SIZE)
-        for (i in table.indices) {
-            table[i] = needle.length
+    private fun makeCharTable(needle: String): (Char) -> (Int) {
+        val table = HashMap<Char, Int>()
+        for (i in 0..needle.lastIndex - 1) {
+            table[needle[i]] = needle.lastIndex - i
         }
-        for (i in 0..needle.length - 2) {
-            table[needle[i].toInt()] = needle.length - 1 - i
-        }
-        return table
+        return { char -> table.getOrDefault(char, needle.length) }
     }
 
     private fun makeOffsetTable(needle: String): IntArray {
@@ -132,11 +129,11 @@ class BoyerMoore0 {
             if (isPrefix(needle, i + 1)) {
                 lastPrefixPosition = i + 1
             }
-            table[needle.length - 1 - i] = lastPrefixPosition - i + needle.length - 1
+            table[needle.lastIndex - i] = lastPrefixPosition - i + needle.lastIndex
         }
-        for (i in 0..needle.length - 2) {
+        for (i in 0..needle.lastIndex - 1) {
             val slen = suffixLength(needle, i)
-            table[slen] = needle.length - 1 - i + slen
+            table[slen] = needle.lastIndex - i + slen
         }
         return table
     }
@@ -155,7 +152,7 @@ class BoyerMoore0 {
     private fun suffixLength(needle: String, p: Int): Int {
         var len = 0
         var i = p
-        var j = needle.length - 1
+        var j = needle.lastIndex
         while (i >= 0 && needle[i] == needle[j]) {
             len += 1
             --i
