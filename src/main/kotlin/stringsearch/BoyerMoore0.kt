@@ -30,7 +30,7 @@ class BoyerMoore0 {
 
     @Test fun `Boyer-Moore search`() {
         assertThat("".findIndexOf(""), equalTo(0))
-        assertThat("abc".findIndexOf(""), equalTo(0))
+        assertThat("a".findIndexOf(""), equalTo(0))
 
         assertThat("abc".findIndexOf("-"), equalTo(-1))
         assertThat("abc".findIndexOf("a"), equalTo(0))
@@ -45,11 +45,15 @@ class BoyerMoore0 {
         assertThat("abc".findIndexOf("abc"), equalTo(0))
         assertThat("abc".findIndexOf("abcd"), equalTo(-1))
 
-        assertThat("abcdabcd".findIndexOf("abCd"), equalTo(-1))
-        assertThat("abcdabcd".findIndexOf("abcD"), equalTo(-1))
-        assertThat("abcdabcd".findIndexOf("aBcd"), equalTo(-1))
-        assertThat("abcdabcd".findIndexOf("Abcd"), equalTo(-1))
-        assertThat("There would have been a time for such a word".findIndexOf("word"), equalTo(-1))
+        assertThat("aabb".findIndexOf("aab"), equalTo(0))
+        assertThat("aabb".findIndexOf("abb"), equalTo(1))
+
+        assertThat("abcdabcd".findIndexOf("ab_d"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("abc_"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("a_cd"), equalTo(-1))
+        assertThat("abcdabcd".findIndexOf("_bcd"), equalTo(-1))
+
+        assertThat("oom".findIndexOf("_om"), equalTo(-1)) // case when it's possible to get into infinite loop
 
         val s = "peter piper picked a peck of pickled peppers".replace(" ", "")
         assertThat(s.findIndexOf("picnic"), equalTo(-1))
@@ -100,26 +104,27 @@ class BoyerMoore0 {
         var i = needle.lastIndex
         while (i < this.length) {
             var j = needle.lastIndex
-            while (needle[j] == this[i]) {
+            var k = i
+            while (needle[j] == this[k]) {
                 if (j == 0) {
-                    return i
+                    return k
                 }
-                --i
+                --k
                 --j
             }
 //            i += 1 // For naive method (when i is not decremented)
-            i += charTable(this[i]) // TODO make this work
+            i += Math.max(1, charTable.getOrElse(this[k], { 0 }) + j + 1)
 //            i += Math.max(offsetTable[needle.lastIndex - j], charTable(this[i]))
         }
         return -1
     }
 
-    private fun makeCharTable(needle: String): (Char) -> (Int) {
+    private fun makeCharTable(needle: String): Map<Char, Int> {
         val table = HashMap<Char, Int>()
-        for (i in 0..needle.lastIndex - 1) {
-            table[needle[i]] = needle.lastIndex - i
+        for (i in 0..needle.lastIndex) {
+            table[needle[i]] = - (i + 1)
         }
-        return { char -> table.getOrDefault(char, needle.length) }
+        return table
     }
 
     private fun makeOffsetTable(needle: String): IntArray {
