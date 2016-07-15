@@ -104,17 +104,17 @@ class BoyerMoore0 {
         var i = needle.lastIndex
         while (i < this.length) {
             var j = needle.lastIndex
-            var k = i
-            while (needle[j] == this[k]) {
+            var mi = i
+            while (needle[j] == this[mi]) {
                 if (j == 0) {
-                    return k
+                    return mi
                 }
-                --k
+                --mi
                 --j
             }
-//            i += 1 // For naive method (when i is not decremented)
-            i += Math.max(1, charTable.getOrElse(this[k], { 0 }) + j + 1)
-//            i += Math.max(offsetTable[needle.lastIndex - j], charTable(this[i]))
+//            i += 1 // naive method
+            i += Math.max(1, j - charTable.getOrElse(this[mi], { -1 }))
+//            i += Math.max(0, Math.max(j - offsetTable[needle.lastIndex - j], j - charTable.getOrElse(this[mi], { 0 })))
         }
         return -1
     }
@@ -122,7 +122,7 @@ class BoyerMoore0 {
     private fun makeCharTable(needle: String): Map<Char, Int> {
         val table = HashMap<Char, Int>()
         for (i in 0..needle.lastIndex) {
-            table[needle[i]] = - (i + 1)
+            table[needle[i]] = i
         }
         return table
     }
@@ -134,17 +134,18 @@ class BoyerMoore0 {
             if (isPrefix(needle, i + 1)) {
                 lastPrefixPosition = i + 1
             }
-            table[needle.lastIndex - i] = lastPrefixPosition - i + needle.lastIndex
+            table[needle.lastIndex - i] = lastPrefixPosition + needle.lastIndex - i
         }
         for (i in 0..needle.lastIndex - 1) {
-            val slen = suffixLength(needle, i)
-            table[slen] = needle.lastIndex - i + slen
+            val suffixLength = suffixLength(needle, i)
+            // TODO this needs "if" as in C implementation
+            table[suffixLength] = needle.lastIndex - i + suffixLength
         }
         return table
     }
 
-    private fun isPrefix(needle: String, p: Int): Boolean {
-        var i = p
+    private fun isPrefix(needle: String, prefixIndex: Int): Boolean {
+        var i = prefixIndex
         var j = 0
         while (i < needle.length) {
             if (needle[i] != needle[j]) return false
@@ -154,9 +155,9 @@ class BoyerMoore0 {
         return true
     }
 
-    private fun suffixLength(needle: String, p: Int): Int {
+    private fun suffixLength(needle: String, index: Int): Int {
         var len = 0
-        var i = p
+        var i = index
         var j = needle.lastIndex
         while (i >= 0 && needle[i] == needle[j]) {
             len += 1
