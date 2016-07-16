@@ -3,6 +3,7 @@ package stringsearch
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
+import java.lang.Math.max
 import java.util.*
 
 class BoyerMoore0 {
@@ -113,8 +114,13 @@ class BoyerMoore0 {
                 --j
             }
 //            i += 1 // naive method
-            i += Math.max(1, j - charTable.getOrElse(this[mi], { -1 }))
-//            i += Math.max(0, Math.max(j - offsetTable[needle.lastIndex - j], j - charTable.getOrElse(this[mi], { 0 })))
+//            i += Math.max(1, j - charTable.getOrElse(this[mi], { -1 }))
+            val i1 = j - offsetTable[needle.lastIndex - j]
+            val i2 = j - charTable.getOrElse(this[mi], { -1 })
+            if (i1 > 0 && i1 > i2) {
+                println()
+            }
+            i += max(1, max(i1, i2))
         }
         return -1
     }
@@ -134,13 +140,13 @@ class BoyerMoore0 {
             if (isPrefix(needle, i + 1)) {
                 lastPrefixPosition = i + 1
             }
-            table[needle.lastIndex - i] = lastPrefixPosition + needle.lastIndex - i
+            table[needle.lastIndex - i] = lastPrefixPosition
         }
-        for (i in 0..needle.lastIndex - 1) {
-            val suffixLength = suffixLength(needle, i)
-            // TODO this needs "if" as in C implementation
-            table[suffixLength] = needle.lastIndex - i + suffixLength
-        }
+//        for (i in 0..needle.lastIndex - 1) {
+//            val suffixLength = suffixLength(needle, i)
+//            // TODO this needs "if" as in C implementation
+//            table[suffixLength] = needle.lastIndex - i + suffixLength
+//        }
         return table
     }
 
