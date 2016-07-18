@@ -79,22 +79,38 @@ class BoyerMoore0 {
         }
     }
 
-    @Test fun `aaa`() {
+    @Test fun `bad character rule`() {
         assertShift(
             //   ↓
             "GCTTCTGCTACCTTTTGCGCGCGCGCGGAA",
             "CCTTTTGC",
-            " CCTTTTGC"
+            "---CCTTTTGC"
+        )
+        assertShift(
+            //   ↓
+            "ANPANMANAM",
+            "-NNAAMAN",
+            "---NNAAMAN"
         )
     }
 
+    @Test fun `good suffix rule (case 1)`() {
+        assertShift(
+            //    ↓
+            "CGTGCCTACTTACTTACTTACTTACGCGAA",
+            "CTTACTTAC",
+            "----CTTACTTAC"
+        )
+
+    }
+
     private fun assertShift(s: String, needleBefore: String, needleAfter: String) {
-        val needle = needleBefore.trim()
+        val needle = needleBefore.replace("-", "")
         val move = nextMove(s, needle, needleBefore.length - 1, makeCharLookup(needle, s), makeOffsetLookup(needle))
         if (move !is Shift) {
             failTest("Expected move to be a shift but it was $move")
         }
-        val prefix = 0.until(move.shiftForward).map{ " " }.joinToString("")
+        val prefix = 0.until(move.shiftForward).map{ "-" }.joinToString("")
         assertThat(prefix + needleBefore, equalTo(needleAfter))
     }
 
@@ -121,7 +137,7 @@ class BoyerMoore0 {
     }
 
     private fun nextMove(s: String, needle: String, i: Int,
-                         charLookup: (Int) -> (Int), offsetLookup: (Int) -> (Int)): Move {
+                         charLookup: (Int, Int) -> (Int), offsetLookup: (Int) -> (Int)): Move {
         var j = needle.lastIndex
         var mi = i
         while (needle[j] == s[mi]) {
@@ -132,26 +148,30 @@ class BoyerMoore0 {
             --j
         }
 //        return Shift(1) // naive method
-        return Shift(Math.max(1, j - charLookup(i - (needle.lastIndex - j))))
-//            val i1 = j - offsetLookup(needle.lastIndex - j)
-//            val i2 = j - charLookup(i - (needle.lastIndex - j))
-//            if (i1 > 0 && i1 > i2) {
-//                println()
-//            }
-//            val shift = Math.max(1, Math.max(i1, i2))
+//        return Shift(Math.max(1, j - charLookup(i - (needle.lastIndex - j), j)))
+        val i1 = j - offsetLookup(needle.lastIndex - j)
+        val i2 = j - charLookup(i - (needle.lastIndex - j), j)
+        if (i1 > 0 && i1 > i2) {
+            println()
+        }
+        return Shift(Math.max(1, Math.max(i1, i2)))
     }
 
     private interface Move
     private data class Result(val i: Int) : Move
     private data class Shift(val shiftForward: Int) : Move
 
-    private fun makeCharLookup(needle: String, s: String): (Int) -> (Int) {
+    private fun makeCharLookup(needle: String, s: String): (Int, Int) -> (Int) {
         val table = HashMap<Pair<Char, Int>, Int>()
-        for (i in 0..needle.lastIndex) {
-            table[Pair(needle[i], i)] = i
+        val lastCharIndex = HashMap<Char, Int>()
+        needle.forEachIndexed { i, char ->
+            lastCharIndex[char] = i
+            lastCharIndex.entries.forEach {
+                table[Pair(it.key, i)] = it.value
+            }
         }
-        return { mismatchIndex ->
-            table.getOrDefault(Pair(s[mismatchIndex], mismatchIndex), -1)
+        return { mismatchIndex, needleIndex ->
+            table.getOrDefault(Pair(s[mismatchIndex], needleIndex), -1)
         }
     }
 
