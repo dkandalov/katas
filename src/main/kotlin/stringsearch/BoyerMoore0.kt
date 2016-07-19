@@ -104,6 +104,16 @@ class BoyerMoore0 {
 
     }
 
+    @Test fun `good suffix rule (case 2)`() {
+        assertShift(
+            //    ↓
+            "CGTGCCTACTTACTTACTTACTTACGCGAA",
+            "----CTTACTTAC",
+            "--------CTTACTTAC"
+        )
+
+    }
+
     private fun assertShift(s: String, needleBefore: String, needleAfter: String) {
         val needle = needleBefore.replace("-", "")
         val move = nextMove(s, needle, needleBefore.length - 1, makeCharLookup(needle, s), makeOffsetLookup(needle))
@@ -149,7 +159,7 @@ class BoyerMoore0 {
         }
 //        return Shift(1) // naive method
 //        return Shift(Math.max(1, j - charLookup(i - (needle.lastIndex - j), j)))
-        val i1 = j - offsetLookup(needle.lastIndex - j)
+        val i1 = j - offsetLookup(j)
         val i2 = j - charLookup(i - (needle.lastIndex - j), j)
         if (i1 > 0 && i1 > i2) {
             println()
@@ -177,23 +187,26 @@ class BoyerMoore0 {
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
         val table = IntArray(needle.length)
-        var lastPrefixPosition = needle.length
-        for (i in needle.indices.reversed()) {
+        var postfixPosition = needle.length
+        for (i in needle.lastIndex.downTo(0)) {
             if (isPrefix(needle, i + 1)) {
-                lastPrefixPosition = i + 1
+                postfixPosition = i + 1
             }
-            table[needle.lastIndex - i] = lastPrefixPosition
+            table[needle.lastIndex - i] = postfixPosition
         }
 //        for (i in 0..needle.lastIndex - 1) {
 //            val suffixLength = suffixLength(needle, i)
 //            // TODO this needs "if" as in C implementation
 //            table[suffixLength] = needle.lastIndex - i + suffixLength
 //        }
-        return { i -> table[i] }
+        return { mismatchIndex ->
+            val distanceFromEnd = needle.lastIndex - mismatchIndex
+            table[distanceFromEnd]
+        }
     }
 
-    private fun isPrefix(needle: String, prefixIndex: Int): Boolean {
-        var i = prefixIndex
+    private fun isPrefix(needle: String, suffixStartIndex: Int): Boolean {
+        var i = suffixStartIndex
         var j = 0
         while (i < needle.length) {
             if (needle[i] != needle[j]) return false
