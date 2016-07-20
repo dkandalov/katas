@@ -81,6 +81,38 @@ class BoyerMoore0 {
 
     @Test fun `bad character rule`() {
         assertShift(
+            //  ↓
+            "abcdefgh",
+            "xxxx",
+            "----xxxx"
+        )
+        assertShift(
+            //       ↓
+            "abcdefgh",
+            "----xxxx",
+            "--------xxxx"
+        )
+
+        assertShift(
+            //  ↓
+            "abcdefgh",
+            "xxdx",
+            "-xxdx"
+        )
+        assertShift(
+            //  ↓
+            "abcdefgh",
+            "xdxx",
+            "--xdxx"
+        )
+        assertShift(
+            //  ↓
+            "abcdefgh",
+            "dxxx",
+            "---dxxx"
+        )
+
+        assertShift(
             //   ↓
             "GCTTCTGCTACCTTTTGCGCGCGCGCGGAA",
             "CCTTTTGC",
@@ -96,9 +128,10 @@ class BoyerMoore0 {
 
     @Test fun `good suffix rule (case 1)`() {
         assertShift(
-            //    ↓
+            //    ↓~~~
             "CGTGCCTACTTACTTACTTACTTACGCGAA",
             "CTTACTTAC",
+            // ~~~
             "----CTTACTTAC"
         )
 
@@ -106,34 +139,20 @@ class BoyerMoore0 {
 
     @Test fun `good suffix rule (case 2)`() {
         assertShift(
-            //    ↓
+            //    ↓  ~~~~~
             "CGTGCCTACTTACTTACTTACTTACGCGAA",
             "----CTTACTTAC",
+            //   ~~~~~
             "--------CTTACTTAC"
         )
 
-    }
-
-    private fun assertShift(s: String, needleBefore: String, needleAfter: String) {
-        val needle = needleBefore.replace("-", "")
-        val move = nextMove(s, needle, needleBefore.length - 1, makeCharLookup(needle, s), makeOffsetLookup(needle))
-        if (move !is Shift) {
-            failTest("Expected move to be a shift but it was $move")
-        }
-        val prefix = 0.until(move.shiftForward).map{ "-" }.joinToString("")
-        assertThat(prefix + needleBefore, equalTo(needleAfter))
-    }
-
-    private fun failTest(reason: String): Nothing {
-        fail(reason)
-        throw IllegalStateException()
     }
 
     private fun String.findIndexOf(needle: String): Int {
         if (needle.length == 0) {
             return 0
         }
-        val charLookup = makeCharLookup(needle, this)
+        val charLookup = makeCharLookup(needle)
         val offsetLookup = makeOffsetLookup(needle)
         var i = needle.lastIndex
         while (i < this.length) {
@@ -147,7 +166,7 @@ class BoyerMoore0 {
     }
 
     private fun nextMove(s: String, needle: String, i: Int,
-                         charLookup: (Int, Int) -> (Int), offsetLookup: (Int) -> (Int)): Move {
+                         charLookup: (Char, Int) -> (Int), offsetLookup: (Int) -> (Int)): Move {
         var j = needle.lastIndex
         var mi = i
         while (needle[j] == s[mi]) {
@@ -158,9 +177,9 @@ class BoyerMoore0 {
             --j
         }
 //        return Shift(1) // naive method
-//        return Shift(Math.max(1, j - charLookup(i - (needle.lastIndex - j), j)))
+//        return Shift(Math.max(1, j - charLookup(s[i - (needle.lastIndex - j)], j)))
         val i1 = j - offsetLookup(j)
-        val i2 = j - charLookup(i - (needle.lastIndex - j), j)
+        val i2 = j - charLookup(s[i - (needle.lastIndex - j)], j)
         if (i1 > 0 && i1 > i2) {
             println()
         }
@@ -171,7 +190,7 @@ class BoyerMoore0 {
     private data class Result(val i: Int) : Move
     private data class Shift(val shiftForward: Int) : Move
 
-    private fun makeCharLookup(needle: String, s: String): (Int, Int) -> (Int) {
+    private fun makeCharLookup(needle: String): (Char, Int) -> (Int) {
         val table = HashMap<Pair<Char, Int>, Int>()
         val lastCharIndex = HashMap<Char, Int>()
         needle.forEachIndexed { i, char ->
@@ -180,25 +199,24 @@ class BoyerMoore0 {
                 table[Pair(it.key, i)] = it.value
             }
         }
-        return { mismatchIndex, needleIndex ->
-            table.getOrDefault(Pair(s[mismatchIndex], needleIndex), -1)
+        return { mismatchChar, mismatchIndex ->
+            table.getOrDefault(Pair(mismatchChar, mismatchIndex), -1)
         }
     }
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
         val table = IntArray(needle.length)
-        var postfixPosition = needle.length
-        for (i in needle.lastIndex.downTo(0)) {
-            if (isPrefix(needle, i + 1)) {
-                postfixPosition = i + 1
-            }
-            table[needle.lastIndex - i] = postfixPosition
-        }
-//        for (i in 0..needle.lastIndex - 1) {
-//            val suffixLength = suffixLength(needle, i)
-//            // TODO this needs "if" as in C implementation
-//            table[suffixLength] = needle.lastIndex - i + suffixLength
+//        var postfixPosition = needle.length
+//        for (i in needle.lastIndex.downTo(0)) {
+//            if (isPrefix(needle, i + 1)) {
+//                postfixPosition = i + 1
+//            }
+//            table[needle.lastIndex - i] = postfixPosition
 //        }
+        for (i in 1..needle.lastIndex) {
+            val suffixLength = suffixLength(needle, i)
+            table[suffixLength] = needle.lastIndex - suffixLength
+        }
         return { mismatchIndex ->
             val distanceFromEnd = needle.lastIndex - mismatchIndex
             table[distanceFromEnd]
@@ -217,15 +235,15 @@ class BoyerMoore0 {
     }
 
     private fun suffixLength(needle: String, index: Int): Int {
-        var len = 0
+        var length = 0
         var i = index
         var j = needle.lastIndex
         while (i >= 0 && needle[i] == needle[j]) {
-            len += 1
+            length += 1
             --i
             --j
         }
-        return len
+        return length
     }
 
     private fun String.naiveIndexOf(s: String): Int {
@@ -241,6 +259,21 @@ class BoyerMoore0 {
             i++
         }
         return -1
+    }
+
+    private fun assertShift(s: String, needleBefore: String, needleAfter: String) {
+        val needle = needleBefore.replace("-", "")
+        val move = nextMove(s, needle, needleBefore.length - 1, makeCharLookup(needle), makeOffsetLookup(needle))
+        if (move !is Shift) {
+            failTest("Expected move to be a shift but it was $move")
+        }
+        val prefix = 0.until(move.shiftForward).map{ "-" }.joinToString("")
+        assertThat(prefix + needleBefore, equalTo(needleAfter))
+    }
+
+    private fun failTest(reason: String): Nothing {
+        fail(reason)
+        throw IllegalStateException()
     }
 
     @Test fun `sliding list`() {
