@@ -113,13 +113,13 @@ class BoyerMoore0 {
         )
 
         assertShift(
-            //   ↓
+            // ~~↓
             "GCTTCTGCTACCTTTTGCGCGCGCGCGGAA",
             "CCTTTTGC",
             "---CCTTTTGC"
         )
         assertShift(
-            //   ↓
+            // ~~↓
             "ANPANMANAM",
             "-NNAAMAN",
             "---NNAAMAN"
@@ -213,9 +213,9 @@ class BoyerMoore0 {
 //            }
 //            table[needle.lastIndex - i] = postfixPosition
 //        }
-        for (i in 1..needle.lastIndex) {
+        for (i in 0..needle.lastIndex) {
             val suffixLength = suffixLength(needle, i)
-            table[suffixLength] = needle.lastIndex - suffixLength
+            table[suffixLength] = suffixLength
         }
         return { mismatchIndex ->
             val distanceFromEnd = needle.lastIndex - mismatchIndex
