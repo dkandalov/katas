@@ -132,7 +132,7 @@ class BoyerMoore0 {
             "CGTGCCTACTTACTTACTTACTTACGCGAA",
             "CTTACTTAC",
             // ~~~
-            "----CTTACTTAC"
+            "-----CTTACTTAC"
         )
 
     }
@@ -205,18 +205,20 @@ class BoyerMoore0 {
     }
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
-        val table = IntArray(needle.length)
-//        var postfixPosition = needle.length
-//        for (i in needle.lastIndex.downTo(0)) {
-//            if (isPrefix(needle, i + 1)) {
-//                postfixPosition = i + 1
-//            }
-//            table[needle.lastIndex - i] = postfixPosition
-//        }
-        for (i in 0..needle.lastIndex) {
-            val suffixLength = suffixLength(needle, i)
-            table[suffixLength] = suffixLength
+        val table = IntArray(needle.length, {needle.length})
+        var prefixPosition = needle.length
+
+        for (i in needle.lastIndex.downTo(0)) {
+            if (isPrefix(needle, i)) {
+                prefixPosition = i
+            }
+            table[needle.lastIndex - i] = prefixPosition - i + needle.lastIndex
         }
+
+        for (i in 0..needle.lastIndex) {
+            table[i] = Math.min(table[i], suffixLength(needle, i))
+        }
+
         return { mismatchIndex ->
             val distanceFromEnd = needle.lastIndex - mismatchIndex
             table[distanceFromEnd]
