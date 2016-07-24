@@ -80,45 +80,51 @@ class BoyerMoore0 {
     }
 
     @Test fun `bad character rule`() {
-        assertShift(
+        assertCharLookupShift(
             //  ↓
             "abcdefgh",
             "xxxx",
             "----xxxx"
         )
-        assertShift(
-            //       ↓
+        assertCharLookupShift(
+            //      ↓
             "abcdefgh",
             "----xxxx",
             "--------xxxx"
         )
+        assertCharLookupShift(
+            //  ↓
+            "abcdfg",
+            "xxxx",
+            "----xxxx"
+        )
 
-        assertShift(
+        assertCharLookupShift(
             //  ↓
             "abcdefgh",
             "xxdx",
             "-xxdx"
         )
-        assertShift(
+        assertCharLookupShift(
             //  ↓
             "abcdefgh",
             "xdxx",
             "--xdxx"
         )
-        assertShift(
+        assertCharLookupShift(
             //  ↓
             "abcdefgh",
             "dxxx",
             "---dxxx"
         )
 
-        assertShift(
+        assertCharLookupShift(
             // ~~↓
             "GCTTCTGCTACCTTTTGCGCGCGCGCGGAA",
             "CCTTTTGC",
             "---CCTTTTGC"
         )
-        assertShift(
+        assertCharLookupShift(
             // ~~↓
             "ANPANMANAM",
             "-NNAAMAN",
@@ -127,25 +133,75 @@ class BoyerMoore0 {
     }
 
     @Test fun `good suffix rule (case 1)`() {
-        assertShift(
+        assertOffsetLookupShift(
+            // ↓~~
+            "abxabcab",
+            "cccab",
+            "-----cccab"
+        )
+        assertOffsetLookupShift(
+            //  ↓~~
+            "xabxabcab",
+            "-abcab",
+            //~~
+            "----abcab"
+        )
+        assertOffsetLookupShift(
             //    ↓~~~
             "CGTGCCTACTTACTTACTTACTTACGCGAA",
             "CTTACTTAC",
             // ~~~
-            "-----CTTACTTAC"
+            "----CTTACTTAC"
         )
-
     }
 
     @Test fun `good suffix rule (case 2)`() {
-        assertShift(
+        assertOffsetLookupShift(
             //    ↓  ~~~~~
             "CGTGCCTACTTACTTACTTACTTACGCGAA",
             "----CTTACTTAC",
             //   ~~~~~
             "--------CTTACTTAC"
         )
+    }
 
+    @Test fun `char lookup`() {
+        val needle = "abcab"
+        val charLookup = makeCharLookup(needle)
+        fun lookupAllIndices(char: Char) = needle.indices.map { charLookup(char, it) }
+
+        assertThat(lookupAllIndices('a'), equalTo(
+                listOf(0, 1, 2, 0, 1)
+        ))
+        assertThat(lookupAllIndices('b'), equalTo(
+                listOf(1, 0, 1, 2, 0)
+        ))
+        assertThat(lookupAllIndices('c'), equalTo(
+                listOf(1, 2, 0, 1, 2)
+        ))
+        assertThat(lookupAllIndices('x'), equalTo(
+                listOf(1, 2, 3, 4, 5)
+        ))
+    }
+
+    @Test fun `prefix and postfix lookup`() {
+        val needle = "abcab"
+        val offsetLookup = makeOffsetLookup(needle)
+        fun lookupAllIndices() = needle.indices.map { offsetLookup(it) }
+
+        assertThat(lookupAllIndices(), equalTo(
+                listOf(5, 5, 3, 5, 5)
+        ))
+    }
+
+    @Test fun `prefix and postfix lookup 2`() {
+        val needle = "CTTACTTAC"
+        val offsetLookup = makeOffsetLookup(needle)
+        fun lookupAllIndices() = needle.indices.map { offsetLookup(it) }
+
+        assertThat(lookupAllIndices(), equalTo(
+                listOf(9, 1, 9, 9, 9, 9, 9, 9, 9)
+        ))
     }
 
     private fun String.findIndexOf(needle: String): Int {
@@ -166,7 +222,7 @@ class BoyerMoore0 {
     }
 
     private fun nextMove(s: String, needle: String, i: Int,
-                         charLookup: (Char, Int) -> (Int), offsetLookup: (Int) -> (Int)): Move {
+                         charLookup: (Char, Int) -> (Int), offsetLookup: (Int) -> (Int)): AMove {
         var j = needle.lastIndex
         var mi = i
         while (needle[j] == s[mi]) {
@@ -178,17 +234,18 @@ class BoyerMoore0 {
         }
 //        return Shift(1) // naive method
 //        return Shift(Math.max(1, j - charLookup(s[i - (needle.lastIndex - j)], j)))
-        val i1 = j - offsetLookup(j)
-        val i2 = j - charLookup(s[i - (needle.lastIndex - j)], j)
-        if (i1 > 0 && i1 > i2) {
-            println()
-        }
-        return Shift(Math.max(1, Math.max(i1, i2)))
+        val i1 = offsetLookup(j)
+        val i2 = charLookup(s[i - (needle.lastIndex - j)], j)
+        println("i1 = ${i1}")
+        println("i2 = ${i2}")
+        val move = Shift(Math.max(1, Math.max(i1, i2)))
+        println("move = $move")
+        return move
     }
 
-    private interface Move
-    private data class Result(val i: Int) : Move
-    private data class Shift(val shiftForward: Int) : Move
+    private interface AMove
+    private data class Result(val i: Int) : AMove
+    private data class Shift(val shiftForward: Int) : AMove
 
     private fun makeCharLookup(needle: String): (Char, Int) -> (Int) {
         val table = HashMap<Pair<Char, Int>, Int>()
@@ -200,28 +257,39 @@ class BoyerMoore0 {
             }
         }
         return { mismatchChar, mismatchIndex ->
-            table.getOrDefault(Pair(mismatchChar, mismatchIndex), -1)
+            println("mismatchChar = ${mismatchChar}")
+            println("mismatchIndex = ${mismatchIndex}")
+            val i = mismatchIndex - table.getOrDefault(Pair(mismatchChar, mismatchIndex), -1)
+            println("i = ${i}")
+            i
         }
     }
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
-        val table = IntArray(needle.length, {needle.length})
+        val table = HashMap<Int, Int>()
         var prefixPosition = needle.length
 
-        for (i in needle.lastIndex.downTo(0)) {
-            if (isPrefix(needle, i)) {
-                prefixPosition = i
-            }
-            table[needle.lastIndex - i] = prefixPosition - i + needle.lastIndex
-        }
+//        for (i in needle.lastIndex.downTo(0)) {
+//            if (isPrefix(needle, i)) {
+//                prefixPosition = i
+//            }
+//            table[needle.lastIndex - i] = needle.length - prefixPosition
+//        }
 
-        for (i in 0..needle.lastIndex) {
-            table[i] = Math.min(table[i], suffixLength(needle, i))
+        for (i in 0..(needle.lastIndex - 1)) {
+            val suffixLength = suffixLength(needle, i)
+            if (suffixLength > 0 && suffixLength < needle.length) {
+                table[needle.lastIndex - suffixLength] = -i
+            }
         }
 
         return { mismatchIndex ->
             val distanceFromEnd = needle.lastIndex - mismatchIndex
-            table[distanceFromEnd]
+            if (table.containsKey(distanceFromEnd)) {
+                mismatchIndex - table[distanceFromEnd]!!
+            } else {
+                needle.length
+            }
         }
     }
 
@@ -263,9 +331,20 @@ class BoyerMoore0 {
         return -1
     }
 
-    private fun assertShift(s: String, needleBefore: String, needleAfter: String) {
+    private fun assertCharLookupShift(s: String, needleBefore: String, needleAfter: String) {
+        assertShift(s, needleBefore, needleAfter, true, false)
+    }
+
+    private fun assertOffsetLookupShift(s: String, needleBefore: String, needleAfter: String) {
+        assertShift(s, needleBefore, needleAfter, false, true)
+    }
+
+    private fun assertShift(s: String, needleBefore: String, needleAfter: String,
+                            useCharLookup: Boolean, useOffsetLookup: Boolean) {
         val needle = needleBefore.replace("-", "")
-        val move = nextMove(s, needle, needleBefore.length - 1, makeCharLookup(needle), makeOffsetLookup(needle))
+        val charLookup = if (useCharLookup) makeCharLookup(needle) else {c, i -> 1}
+        val offsetLookup = if (useOffsetLookup) makeOffsetLookup(needle) else {i -> 1}
+        val move = nextMove(s, needle, needleBefore.length - 1, charLookup, offsetLookup)
         if (move !is Shift) {
             failTest("Expected move to be a shift but it was $move")
         }
