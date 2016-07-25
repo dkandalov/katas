@@ -200,7 +200,7 @@ class BoyerMoore0 {
         fun lookupAllIndices() = needle.indices.map { offsetLookup(it) }
 
         assertThat(lookupAllIndices(), equalTo(
-                listOf(9, 1, 9, 9, 9, 9, 9, 9, 9)
+                listOf(9, 1, 9, 9, 9, 4, 9, 9, 9)
         ))
     }
 
@@ -279,14 +279,13 @@ class BoyerMoore0 {
         for (i in 0..(needle.lastIndex - 1)) {
             val suffixLength = suffixLength(needle, i)
             if (suffixLength > 0 && suffixLength < needle.length) {
-                table[needle.lastIndex - suffixLength] = -i
+                table[i + 1] = needle.length - suffixLength
             }
         }
 
         return { mismatchIndex ->
-            val distanceFromEnd = needle.lastIndex - mismatchIndex
-            if (table.containsKey(distanceFromEnd)) {
-                mismatchIndex - table[distanceFromEnd]!!
+            if (table.containsKey(mismatchIndex)) {
+                table[mismatchIndex]!!
             } else {
                 needle.length
             }
