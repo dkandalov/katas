@@ -166,43 +166,65 @@ class BoyerMoore0 {
     }
 
     @Test fun `char lookup`() {
-        val needle = "abcab"
-        val charLookup = makeCharLookup(needle)
-        fun lookupAllIndices(char: Char) = needle.indices.map { charLookup(char, it) }
+        fun lookupAllIndices(mismatchChar: Char, needle: String): List<Int> {
+            val charLookup = makeCharLookup(needle)
+            return needle.indices.map { charLookup(mismatchChar, it) }
+        }
 
-        assertThat(lookupAllIndices('a'), equalTo(
+        assertThat(lookupAllIndices('a', "abcab"), equalTo(
                 listOf(0, 1, 2, 0, 1)
         ))
-        assertThat(lookupAllIndices('b'), equalTo(
+        assertThat(lookupAllIndices('b', "abcab"), equalTo(
                 listOf(1, 0, 1, 2, 0)
         ))
-        assertThat(lookupAllIndices('c'), equalTo(
+        assertThat(lookupAllIndices('c', "abcab"), equalTo(
                 listOf(1, 2, 0, 1, 2)
         ))
-        assertThat(lookupAllIndices('x'), equalTo(
+        assertThat(lookupAllIndices('x', "abcab"), equalTo(
                 listOf(1, 2, 3, 4, 5)
         ))
     }
 
-    @Test fun `prefix and postfix lookup`() {
-        val needle = "abcab"
-        val offsetLookup = makeOffsetLookup(needle)
-        fun lookupAllIndices() = needle.indices.map { offsetLookup(it) }
+    @Test fun `prefix lookup`() {
+        fun lookupAllIndices(needle: String): List<Int> {
+            val offsetLookup = makePrefixOffsetLookup(needle)
+            return needle.indices.map { offsetLookup(it) }
+        }
 
-        assertThat(lookupAllIndices(), equalTo(
+        assertThat(lookupAllIndices("abcde"), equalTo(
+                listOf(5, 4, 3, 2, 1)
+        ))
+        assertThat(lookupAllIndices("abcab"), equalTo(
+                listOf(5, 3, 3, 2, 1)
+        ))
+        assertThat(lookupAllIndices("abcxxab"), equalTo(
+                listOf(5, 5, 3, 5, 5, 2, 1)
+        ))
+        assertThat(lookupAllIndices("CTTACTTAC"), equalTo(
+                listOf(9, 8, 9, 9, 9, 4, 9, 9, 9)
+        ))
+    }
+
+    @Test fun `postfix lookup`() {
+        fun lookupAllIndices(needle: String): List<Int> {
+            val offsetLookup = makePostfixOffsetLookup(needle)
+            return needle.indices.map { offsetLookup(it) }
+        }
+
+        assertThat(lookupAllIndices("abcde"), equalTo(
+                listOf(5, 5, 5, 5, 5)
+        ))
+        assertThat(lookupAllIndices("abcab"), equalTo(
                 listOf(5, 5, 3, 5, 5)
         ))
-    }
-
-    @Test fun `prefix and postfix lookup 2`() {
-        val needle = "CTTACTTAC"
-        val offsetLookup = makeOffsetLookup(needle)
-        fun lookupAllIndices() = needle.indices.map { offsetLookup(it) }
-
-        assertThat(lookupAllIndices(), equalTo(
-                listOf(9, 1, 9, 9, 9, 4, 9, 9, 9)
+        assertThat(lookupAllIndices("CTTACTTAC"), equalTo(
+                listOf(9, 8, 9, 9, 9, 4, 9, 9, 9)
+        ))
+        assertThat(lookupAllIndices("abbabab"), equalTo(
+                listOf(7, 7, 5, 6, 7, 4, 7)
         ))
     }
+
 
     private fun String.findIndexOf(needle: String): Int {
         if (needle.length == 0) {
@@ -236,11 +258,7 @@ class BoyerMoore0 {
 //        return Shift(Math.max(1, j - charLookup(s[i - (needle.lastIndex - j)], j)))
         val i1 = offsetLookup(j)
         val i2 = charLookup(s[i - (needle.lastIndex - j)], j)
-        println("i1 = ${i1}")
-        println("i2 = ${i2}")
-        val move = Shift(Math.max(1, Math.max(i1, i2)))
-        println("move = $move")
-        return move
+        return Shift(Math.max(1, Math.max(i1, i2)))
     }
 
     private interface AMove
@@ -257,38 +275,45 @@ class BoyerMoore0 {
             }
         }
         return { mismatchChar, mismatchIndex ->
-            println("mismatchChar = ${mismatchChar}")
-            println("mismatchIndex = ${mismatchIndex}")
-            val i = mismatchIndex - table.getOrDefault(Pair(mismatchChar, mismatchIndex), -1)
-            println("i = ${i}")
-            i
+            mismatchIndex - table.getOrDefault(Pair(mismatchChar, mismatchIndex), -1)
         }
     }
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
+        val lookup1 = makePrefixOffsetLookup(needle)
+        val lookup2 = makePostfixOffsetLookup(needle)
+        return { mismatchIndex ->
+            val result = lookup1(mismatchIndex)
+            if (result == needle.length) lookup2(mismatchIndex) else result
+        }
+    }
+
+    private fun makePrefixOffsetLookup(needle: String): (Int) -> (Int) {
         val table = HashMap<Int, Int>()
-        var prefixPosition = needle.length
+        var prefixIndex = needle.length
 
-//        for (i in needle.lastIndex.downTo(0)) {
-//            if (isPrefix(needle, i)) {
-//                prefixPosition = i
-//            }
-//            table[needle.lastIndex - i] = needle.length - prefixPosition
-//        }
-
-        for (i in 0..(needle.lastIndex - 1)) {
-            val suffixLength = suffixLength(needle, i)
-            if (suffixLength > 0 && suffixLength < needle.length) {
-                table[i + 1] = needle.length - suffixLength
+        for (i in needle.lastIndex.downTo(0)) {
+            if (isPrefix(needle, i + 1)) {
+                prefixIndex = i + 1
             }
+            table[i] = prefixIndex - i
         }
 
         return { mismatchIndex ->
-            if (table.containsKey(mismatchIndex)) {
-                table[mismatchIndex]!!
-            } else {
-                needle.length
+            table.getOrDefault(mismatchIndex, needle.length)
+        }
+    }
+
+    private fun makePostfixOffsetLookup(needle:String): (Int) -> (Int) {
+        val table = HashMap<Int, Int>()
+        for (i in 0..(needle.lastIndex - 1)) {
+            val suffixLength = suffixLength(needle, i)
+            if (suffixLength > 0) {
+                table[i + 1] = needle.length - suffixLength
             }
+        }
+        return { mismatchIndex ->
+            table.getOrDefault(mismatchIndex, needle.length)
         }
     }
 
