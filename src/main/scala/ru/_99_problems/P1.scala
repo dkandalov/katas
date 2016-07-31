@@ -2,10 +2,12 @@ package ru._99_problems
 
 import org.scalatest.matchers._
 import org.junit.Test
+
 import scala.util.Random
 import ru._99_problems.CustomMatchers._
 import org.scalatest.words.ResultOfOneOfApplication
 import org.scalatest.Matchers
+import org.scalautils.Equality
 
 
 class P1 extends Matchers {
@@ -171,7 +173,9 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P20 (*) Remove the Kth element from a list.`() {
-		evaluating{ removeAt(0, Seq()) } should produce [IndexOutOfBoundsException]
+		an [IndexOutOfBoundsException] should be thrownBy {
+			removeAt(0, Seq())
+		}
 		removeAt(0, Seq('a)) should equal((Seq(), 'a))
 		removeAt(0, Seq('a, 'b)) should equal((Seq('b), 'a))
 		removeAt(1, Seq('a, 'b)) should equal((Seq('a), 'b))
@@ -190,7 +194,9 @@ class P1 extends Matchers {
 		insertAt('a, 0, Seq()) should equal(Seq('a))
 		insertAt('a, 0, Seq('b)) should equal(Seq('a, 'b))
 		insertAt('a, 1, Seq('b)) should equal(Seq('b, 'a))
-		evaluating{ insertAt('a, 1, Seq()) } should produce[IndexOutOfBoundsException]
+		an [IndexOutOfBoundsException] should be thrownBy {
+			insertAt('a, 1, Seq())
+		}
 
 		insertAt('new, 1, List('a, 'b, 'c, 'd)) should equal(List('a, 'new, 'b, 'c, 'd))
 	}
@@ -222,17 +228,17 @@ class P1 extends Matchers {
 	@Test def `P23 (**) Extract a given number of randomly selected elements from a list.`() {
 		randomSelect(0, Seq()) should equal(Seq())
 		randomSelect(1, Seq('a)) should equal(Seq('a))
-		randomSelect(1, Seq('a, 'b)) should be(oneOf(Seq('a), Seq('b)))
-		randomSelect(2, Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
+		randomSelect(1, Seq('a, 'b)) should (equal(Seq('a)) or equal(Seq('b)))
+		randomSelect(2, Seq('a, 'b)) should (equal(Seq('a, 'b)) or equal(Seq('b, 'a)))
 	}
 
 	@Test def `P24 (*) Lotto: Draw N different random numbers from the set 1..M.`() {
 		def lotto(amount: Int, upTo: Int): Seq[Int] = {
-			randomSelect(amount, Range(1, upTo).toSeq)
+			randomSelect(amount, Range(1, upTo))
 		}
 
 		lotto(0, 5) should equal(Seq())
-		lotto(1, 5) should be(oneOf(Seq(1), Seq(2), Seq(3), Seq(4), Seq(5)))
+		lotto(1, 5) should equalOneOf(Seq(1), Seq(2), Seq(3), Seq(4), Seq(5))
 
 		for (i <- 0 to 100) {
 			lotto(6, 49) should have(noDuplicates)
@@ -246,8 +252,18 @@ class P1 extends Matchers {
 		}
 		randomPermute(Seq()) should equal(Seq())
 		randomPermute(Seq('a)) should equal(Seq('a))
-		randomPermute(Seq('a, 'b)) should be(oneOf(Seq('a, 'b), Seq('b, 'a)))
-		randomPermute(Seq('a, 'b, 'c)) should be(new ResultOfOneOfApplication(Seq('a, 'b, 'c).permutations.toSeq))
+		randomPermute(Seq('a, 'b)) should equalOneOf(Seq('a, 'b), Seq('b, 'a))
+		randomPermute(Seq('a, 'b, 'c)) should equalOneOf(Seq('a, 'b, 'c).permutations.toSeq)
+	}
+
+	private def equalOneOf[T](first: T, second: T, values: T*): MatcherFactory1[Any, Equality] = {
+		equalOneOf(first +: second +: values.toSeq)
+	}
+
+	private def equalOneOf[T](seq: Seq[T]): MatcherFactory1[Any, Equality] = {
+		seq.tail.foldLeft(equal(seq.head)){
+			(z, xs) => z.or(equal(xs))
+		}
 	}
 
 	def combinations[T](k: Int, seq: Seq[T], subSet: Seq[T] = Seq()): Seq[Seq[T]] = {
@@ -447,7 +463,9 @@ class P1 extends Matchers {
 	private implicit def intToIntWithGoldbach(n: Int): IntWithGoldbach = new IntWithGoldbach(n)
 
 	@Test def `P40 (**) Goldbach's conjecture.`() {
-		evaluating{ 2.goldbach } should produce[IllegalArgumentException]
+		an [IllegalArgumentException] should be thrownBy {
+			2.goldbach
+		}
 		4.goldbach should be((2, 2))
 		6.goldbach should be((3, 3))
 		8.goldbach should be((3, 5))
@@ -721,10 +739,9 @@ class P1 extends Matchers {
 
 		def minHeightBalancedTreeHeight(amountOfNodes: Int): Int = if (amountOfNodes == 0) 0 else minHeightBalancedTreeHeight(amountOfNodes / 2) + 1
 		def maxHeightBalancedTreeHeight(amountOfNodes: Int): Int = Stream.from(1).takeWhile(height => minHbalNodes(height) <= amountOfNodes).last
-		def allHeightBalancedTrees[T <% Ordered[T]](amountOfNodes: Int, value: T): Seq[Tree[T]] = {
+		def allHeightBalancedTrees[T](amountOfNodes: Int, value: T)(implicit ordered: T => Ordered[T]): Seq[Tree[T]] =
 			(minHeightBalancedTreeHeight(amountOfNodes) to maxHeightBalancedTreeHeight(amountOfNodes))
-				.flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes).toSeq
-		}
+				.flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes)
 
 		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
 		allHeightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
@@ -960,7 +977,7 @@ class P1 extends Matchers {
 			consumeOneNodeFrom(string)._1
 		}
 
-		def preInTree[T <% Ordered[T]](preordered: Seq[T], inordered: Seq[T]): Tree[T] = {
+		def preInTree[T](preordered: Seq[T], inordered: Seq[T])(implicit ordered: T => Ordered[T]): Tree[T] = {
 
 			def consume(fromSeq: Seq[T], referenceSet: Set[T]): Seq[T] = {
 				if (fromSeq.isEmpty || referenceSet.isEmpty) Seq()
@@ -1002,13 +1019,13 @@ class P1 extends Matchers {
 			}
 		}
 
-		def from[T <% Ordered[T]](seq: Seq[T], result: Tree[T] = End): Tree[T] = {
+		def from[T](seq: Seq[T], result: Tree[T] = End)(implicit o: T => Ordered[T]): Tree[T] = {
 			if (seq.isEmpty) result
 			else from(seq.tail, result.addValue(seq.head))
 		}
 
-		def allTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
-			def addOneNode[U <% Ordered[U]](tree: Tree[U], value: U): Seq[Tree[U]] = tree match {
+		def allTrees[T](size: Int, value: T)(implicit o: T => Ordered[T]): Seq[Tree[T]] = {
+			def addOneNode[U](tree: Tree[U], value: U)(implicit o: U => Ordered[U]): Seq[Tree[U]] = tree match {
 				case End => Seq(Node(value))
 				case Node(nodeValue, left, right) =>
 					addOneNode(left, value).map{ it => Node(nodeValue, it, right) } ++
@@ -1019,13 +1036,13 @@ class P1 extends Matchers {
 			else allTrees(size - 1, value).flatMap{ it => addOneNode(it, value) }.distinct
 		}
 
-		def symmetricBalancedTrees[T <% Ordered[T]](size: Int, value: T): Seq[Tree[T]] = {
+		def symmetricBalancedTrees[T](size: Int, value: T)(implicit o: T => Ordered[T]): Seq[Tree[T]] = {
 			allTrees(size, value).filter{ tree => tree.isSymmetric }
 		}
 
 		def maxAmountOfNodes(height: Int): Int = math.pow(2, height).toInt - 1
 
-		def completeBinaryTree[T <% Ordered[T]](size: Int, value: T): Tree[T] = {
+		def completeBinaryTree[T](size: Int, value: T)(implicit o: T => Ordered[T]): Tree[T] = {
 			def generate(count: Int): Tree[T] = {
 				if (count > size) End
 				else Node(value, generate(count * 2), generate(count * 2 + 1))
@@ -1033,7 +1050,7 @@ class P1 extends Matchers {
 			generate(1)
 		}
 
-		def heightBalancedTrees[T <% Ordered[T]](height: Int, value: T): Seq[Tree[T]] = {
+		def heightBalancedTrees[T](height: Int, value: T)(implicit o: T => Ordered[T]): Seq[Tree[T]] = {
 			if (height < 1) Seq(End)
 			else if (height == 1) Seq(Node(value))
 			else {
@@ -1071,8 +1088,7 @@ class P1 extends Matchers {
 		def inorder: Seq[T]
 	}
 
-	case class PositionedNode[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End, x: Int, y: Int)
-							extends ANode[T](value, left, right) {
+	case class PositionedNode[+T](value: T, left: Tree[T] = End, right: Tree[T] = End, x: Int, y: Int)(implicit o: T => Ordered[T]) extends ANode[T](value, left, right) {
 		override def toString =
 			if (isLeaf) "T[" + x.toString + "," + y.toString + "](" + value.toString + ")"
 			else "T[" + x.toString + "," + y.toString + "](" + value.toString + " " + left.toString + " " + right.toString + ")"
@@ -1080,12 +1096,12 @@ class P1 extends Matchers {
 		override protected def isLeaf: Boolean = left == End && right == End
 	}
 
-	case class Node[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End)
+	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End)(implicit o: T => Ordered[T])
 		extends ANode[T](value, left, right)
 
-	abstract class ANode[+T <% Ordered[T]](value: T, left: Tree[T] = End, right: Tree[T] = End) extends Tree[T] {
+	abstract class ANode[+T](value: T, left: Tree[T] = End, right: Tree[T] = End)(implicit o: T => Ordered[T]) extends Tree[T] {
 		def toDotString =
-			if (value.isInstanceOf[Char] || value.toString.size == 1) value.toString + left.toDotString + right.toDotString
+			if (value.isInstanceOf[Char] || value.toString.length == 1) value.toString + left.toDotString + right.toDotString
 			else throw new IllegalStateException
 
 		override def toString = {
@@ -1106,7 +1122,7 @@ class P1 extends Matchers {
 
 		def isSymmetric = left.hasSameStructureAs(right.mirror)
 
-		def addValue[T2 >: T <% Ordered[T2]](newValue: T2) =
+		def addValue[T2 >: T](newValue: T2)(implicit o: T2 => Ordered[T2]) =
 			if (value > newValue) Node(value, left.addValue(newValue), right)
 			else Node(value, left, right.addValue(newValue))
 
