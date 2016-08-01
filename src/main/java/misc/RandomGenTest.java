@@ -11,12 +11,10 @@ import static org.junit.Assert.assertThat;
 
 
 public class RandomGenTest {
-    private final int someSeed = 1;
-
     @Test public void generatesSingleNumber() {
         List<Integer> numbers = asList(123);
         List<Float> probabilities = asList(1.0f);
-        RandomGen randomGen = new RandomGen(numbers, probabilities, new Random(someSeed));
+        RandomGen randomGen = new RandomGen(numbers, probabilities);
 
         assertThat(randomGen.nextNum(), equalTo(123));
         assertThat(randomGen.nextNum(), equalTo(123));
@@ -25,34 +23,29 @@ public class RandomGenTest {
     @Test public void givenEnoughAttempts_GeneratesAllNumbers() {
         List<Integer> numbers = asList(1, 2, 3, 4);
         List<Float> probabilities = asList(0.25f, 0.25f, 0.25f, 0.25f);
-        RandomGen randomGen = new RandomGen(numbers, probabilities, new Random(someSeed));
+        RandomGen randomGen = new RandomGen(numbers, probabilities);
 
         Set<Integer> result = new HashSet<>();
         for (int i = 0; i < 1000; i++) {
             result.add(randomGen.nextNum());
         }
-        // TODO
         assertThat(result, equalTo(new HashSet<>(numbers)));
     }
 
     @Test public void givenEnoughAttempts_GeneratesNumbersWithCountCloseToProbability() {
         List<Integer> numbers = asList(1, 2, 3, 4);
         List<Float> probabilities = asList(0.1f, 0.2f, 0.3f, 0.4f);
-        RandomGen randomGen = new RandomGen(numbers, probabilities, new Random(someSeed));
+        RandomGen randomGen = new RandomGen(numbers, probabilities);
 
-        Map<Integer, Integer> histogram = new HashMap<>();
-        for (int i = 0; i < 1_000_000; i++) {
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        for (int i = 0; i < 100_000; i++) {
             Integer number = randomGen.nextNum();
-            histogram.put(number, histogram.getOrDefault(number, 0) + 1);
+            frequencies.put(number, frequencies.getOrDefault(number, 0) + 1);
         }
-        assertThat(histogram.get(1) / 1_000_000.0, closeTo(0.1, 0.001));
-        assertThat(histogram.get(2) / 1_000_000.0, closeTo(0.2, 0.001));
-        assertThat(histogram.get(3) / 1_000_000.0, closeTo(0.3, 0.001));
-        assertThat(histogram.get(4) / 1_000_000.0, closeTo(0.4, 0.001));
-    }
-
-    @Test
-    public void probabilitiesNotAddingUpToOne() {
-        // TODO
+        // ranges are chosen to have very small p-value so that test is unlikely to fail because of randomness
+        assertThat((double) frequencies.get(1), closeTo(10_000, 400));
+        assertThat((double) frequencies.get(2), closeTo(20_000, 500));
+        assertThat((double) frequencies.get(3), closeTo(30_000, 700));
+        assertThat((double) frequencies.get(4), closeTo(40_000, 700));
     }
 }
