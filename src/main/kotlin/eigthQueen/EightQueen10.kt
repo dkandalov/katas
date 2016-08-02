@@ -27,7 +27,7 @@ class EightQueen10 {
                 "*--\n" +
                 "--*\n" +
                 "-*-"
-        ));
+        ))
     }
 
     private fun findAllSolutions(boardSize: Int): List<Board> {
