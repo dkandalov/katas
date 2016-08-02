@@ -55,21 +55,24 @@ public class SqlQueries {
         execute("INSERT INTO product VALUES (104, 'sports almanac (1999-2049)', '3.38', " + yearsAgo(2) + ")");
         execute("INSERT INTO product VALUES (105, 'finance for dummies', '84.99', " + yearsAgo(1) + ")");
 
-        execute("INSERT INTO orders VALUES (1000, 101, 1, 90.0, " + monthsAgo(2) + ")");
-        execute("INSERT INTO orders VALUES (1001, 103, 1, 1.15, " + daysAgo(40) + ")");
-        execute("INSERT INTO orders VALUES (1002, 101, 10, 90.0, " + monthsAgo(11) + ")");
+        execute("INSERT INTO orders VALUES (1000, 103, 1, 1.15, " + daysAgo(40) + ")");
+        execute("INSERT INTO orders VALUES (1001, 103, 2, 1.15, " + daysAgo(41) + ")");
+        execute("INSERT INTO orders VALUES (1002, 101, 1, 90.0, " + monthsAgo(2) + ")");
         execute("INSERT INTO orders VALUES (1003, 104, 11, 3.38, " + monthsAgo(6) + ")");
-        execute("INSERT INTO orders VALUES (1004, 105, 11, 501.33, " + yearsAgo(2) + ")");
+        execute("INSERT INTO orders VALUES (1004, 102, 1, 21.95, " + monthsAgo(7) + ")");
+        execute("INSERT INTO orders VALUES (1005, 101, 10, 90.0, " + monthsAgo(11) + ")");
+        execute("INSERT INTO orders VALUES (1006, 105, 1, 501.33, " + yearsAgo(2) + ")");
 
         // when / then
 
         expectQuery("SELECT COUNT(*) FROM product", equalTo(asList("5")));
-        expectQuery("SELECT COUNT(*) FROM orders", equalTo(asList("5")));
+        expectQuery("SELECT COUNT(*) FROM orders", equalTo(asList("7")));
 
         expectQuery("SELECT product_id, sum(quantity), count(order_id) FROM orders " +
-                    "WHERE dispatch_date >= " + yearsAgo(1) + " GROUP BY product_id", equalTo(asList(
+                    "WHERE dispatch_date >= " + yearsAgo(1) + " GROUP BY product_id ORDER BY product_id", equalTo(asList(
                 "101, 11, 2",
-                "103, 1, 1",
+                "102, 1, 1",
+                "103, 3, 2",
                 "104, 11, 1"
         )));
         expectQuery("SELECT product_id FROM product WHERE available_from < " + monthsAgo(1), equalTo(asList(
@@ -79,10 +82,10 @@ public class SqlQueries {
         )));
         expectQuery("SELECT o.product_id, sum(o.quantity), count(o.order_id) FROM orders o " +
                 "LEFT JOIN product p ON o.product_id = p.product_id " +
-                "WHERE o.dispatch_date >= " + yearsAgo(1) + " and p.available_from < " + monthsAgo(1) + " " +
+                "WHERE o.dispatch_date >= " + yearsAgo(1) + " AND p.available_from < " + monthsAgo(1) + " " +
                 "GROUP BY p.product_id " +
                 "HAVING sum(o.quantity) < 10", equalTo(asList(
-                "103, 1, 1"
+                "103, 3, 2"
         )));
     }
 
@@ -107,6 +110,7 @@ public class SqlQueries {
     }
 
     private void expectQuery(String sqlQuery, Matcher<List<String>> matcher) throws SQLException {
+        System.out.println(sqlQuery);
         try (ResultSet resultSet = connection.prepareStatement(sqlQuery).executeQuery()) {
             List<String> rows = new ArrayList<>();
             int columnCount = resultSet.getMetaData().getColumnCount();
