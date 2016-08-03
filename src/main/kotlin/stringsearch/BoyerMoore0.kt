@@ -137,7 +137,7 @@ class BoyerMoore0 {
             // ↓~~
             "abxabcab",
             "cccab",
-            "-----cccab"
+            "-cccab"
         )
         assertOffsetLookupShift(
             //  ↓~~
@@ -165,7 +165,7 @@ class BoyerMoore0 {
         )
     }
 
-    @Test fun `shifts on char mismatch`() {
+    @Test fun `shift on char mismatch`() {
         fun assertShifts(needle: String, vararg mismatchAndExpectedShift: Pair<String, Int>) {
             val lookupShift = makeCharShiftLookup(needle)
             val actualShifts = mismatchAndExpectedShift
@@ -202,76 +202,107 @@ class BoyerMoore0 {
         )
         assertShifts("abcab",
                 Pair("    x", 5),
-                Pair("   x ", 4),
+                Pair("   x ", 4), // TODO shift 5
                 Pair("  x  ", 3),
                 Pair(" x   ", 2),
                 Pair("x    ", 1)
         )
     }
 
-    @Test fun `shifts on prefix lookup`() {
+    @Test fun `shift on prefix lookup`() {
         fun shiftsOnMismatch(needle: String): List<Int> {
             val lookupShift = makePrefixShiftLookup(needle)
             return needle.indices.map { lookupShift(it) }
         }
         fun assertShift(mismatch: String, needle: String, expectedShiftedNeedle: String) {
-            val mismatchIndex = mismatch.takeWhile{ it == ' ' }.count()
             val lookupShift = makePrefixShiftLookup(needle)
+
+            val mismatchIndex = mismatch.takeWhile{ it == ' ' }.count()
             val shift = lookupShift(mismatchIndex)
-            println("shift = ${shift}")
             val actualShiftedNeedle = needle.padStart(needle.length + shift, ' ')
+
             assertThat(actualShiftedNeedle, equalTo(expectedShiftedNeedle))
         }
 
         assertShift(
                 "    ↓",
-                "abcde",
-                "abcde")
+                "abcab",
+                "abcab")
         assertShift(
                 "   ↓ ",
-                "abcde",
-                "     abcde")
+                "abcab",
+                "abcab")
         assertShift(
                 "  ↓  ",
-                "abcde",
-                "     abcde")
+                "abcab",
+                "   abcab")
         assertShift(
                 " ↓   ",
-                "abcde",
-                "     abcde")
+                "abcab",
+                "   abcab")
         assertShift(
                 "↓    ",
-                "abcde",
-                "abcde")
-
+                "abcab",
+                "abcab")
         assertThat(shiftsOnMismatch("abcab"), equalTo(
-                listOf(0, 3, 3, 2, 0)
+                listOf(0, 3, 3, 0, 0)
+        ))
+
+        assertThat(shiftsOnMismatch("abcde"), equalTo(
+                listOf(0, 0, 0, 0, 0)
         ))
         assertThat(shiftsOnMismatch("abcxxab"), equalTo(
-                listOf(5, 5, 3, 5, 5, 2, 1)
+                listOf(0, 5, 5, 5, 5, 0, 0)
         ))
         assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
-                listOf(9, 8, 9, 9, 9, 4, 9, 9, 9)
+                listOf(0, 4, 4, 4, 8, 8, 8, 8, 0)
         ))
     }
 
-    @Test fun `shifts on postfix lookup`() {
+    @Test fun `shift on suffix lookup`() {
         fun shiftsOnMismatch(needle: String): List<Int> {
-            val lookupShift = makePostfixShiftLookup(needle)
+            val lookupShift = makeSuffixShiftLookup(needle)
             return needle.indices.map { lookupShift(it) }
         }
+        fun assertShift(mismatch: String, needle: String, expectedShiftedNeedle: String) {
+            val lookupShift = makeSuffixShiftLookup(needle)
+
+            val mismatchIndex = mismatch.takeWhile{ it == ' ' }.count()
+            val shift = lookupShift(mismatchIndex)
+            val actualShiftedNeedle = needle.padStart(needle.length + shift, ' ')
+
+            assertThat(actualShiftedNeedle, equalTo(expectedShiftedNeedle))
+        }
+
+        assertShift(
+                "    ↓",
+                "abcab",
+                "abcab")
+        assertShift(
+                "   ↓ ",
+                "abcab",
+                "abcab")
+        assertShift(
+                "  ↓  ",
+                "abcab",
+                "   abcab")
+        assertShift(
+                " ↓   ",
+                "abcab",
+                "abcab")
+        assertShift(
+                "↓    ",
+                "abcab",
+                "abcab")
 
         assertThat(shiftsOnMismatch("abcde"), equalTo(
-                listOf(0, 5, 5, 5, 0)
-        ))
-        assertThat(shiftsOnMismatch("abcab"), equalTo(
-                listOf(0, 5, 3, 5, 0)
-        ))
-        assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
-                listOf(0, 8, 9, 9, 9, 4, 9, 9, 0)
+                listOf(0, 0, 0, 0, 0)
         ))
         assertThat(shiftsOnMismatch("abbabab"), equalTo(
-                listOf(0, 7, 5, 6, 7, 4, 0)
+                listOf(0, 0, 3, 2, 0, 3, 0)
+        ))
+        assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
+                listOf(0, 2, 0, 0, 0, 4, 0, 0, 0)
         ))
     }
 
@@ -330,7 +361,7 @@ class BoyerMoore0 {
 
     private fun makeOffsetLookup(needle: String): (Int) -> (Int) {
         val lookup1 = makePrefixShiftLookup(needle)
-        val lookup2 = makePostfixShiftLookup(needle)
+        val lookup2 = makeSuffixShiftLookup(needle)
         return { mismatchIndex ->
             val result = lookup1(mismatchIndex)
             if (result == needle.length) lookup2(mismatchIndex) else result
@@ -339,32 +370,30 @@ class BoyerMoore0 {
 
     private fun makePrefixShiftLookup(needle: String): (Int) -> (Int) {
         val table = HashMap<Int, Int>()
-        var prefixIndex = needle.length
+        var prefixIndex = 0
 
-        for (i in needle.lastIndex.downTo(0)) {
-            if (isPrefix(needle, i + 1)) {
-                prefixIndex = i + 1
+        for (mismatchIndex in (needle.lastIndex - 1).downTo(1)) {
+            if (isPrefix(needle, mismatchIndex + 1)) {
+                prefixIndex = mismatchIndex + 1
             }
-            table[i] = prefixIndex - i
+            table[mismatchIndex] = prefixIndex
         }
 
         return { mismatchIndex ->
-            table.getOrDefault(mismatchIndex, needle.length)
+            table.getOrDefault(mismatchIndex, 0)
         }
     }
 
-    private fun makePostfixShiftLookup(needle: String): (Int) -> (Int) {
+    private fun makeSuffixShiftLookup(needle: String): (Int) -> (Int) {
         val table = HashMap<Int, Int>()
-        table[needle.lastIndex] = 0
-        table[0] = 0
-        for (i in 0..(needle.lastIndex - 1)) {
-            val suffixLength = suffixLength(needle, i)
+        for (mismatchIndex in 1..(needle.lastIndex - 1)) {
+            val suffixLength = suffixLength(needle, mismatchIndex - 1)
             if (suffixLength > 0) {
-                table[i + 1] = needle.length - suffixLength
+                table[mismatchIndex] = suffixLength + 1 // +1 to include mismatched character
             }
         }
         return { mismatchIndex ->
-            table.getOrDefault(mismatchIndex, needle.length)
+            table.getOrDefault(mismatchIndex, 0)
         }
     }
 
@@ -383,7 +412,7 @@ class BoyerMoore0 {
         var length = 0
         var i = index
         var j = needle.lastIndex
-        while (i >= 0 && needle[i] == needle[j]) {
+        while (i >= 0 && j > index && needle[i] == needle[j]) {
             length += 1
             --i
             --j
