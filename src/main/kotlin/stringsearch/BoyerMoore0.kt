@@ -255,7 +255,7 @@ class BoyerMoore0 {
                 listOf(0, 5, 5, 5, 5, 0, 0)
         ))
         assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
-                listOf(0, 4, 4, 4, 8, 8, 8, 8, 0)
+                listOf(0, 4, 4, 4, 8, 8, 8, 8, 0) // TODO
         ))
     }
 
@@ -299,7 +299,7 @@ class BoyerMoore0 {
                 listOf(0, 0, 0, 0, 0)
         ))
         assertThat(shiftsOnMismatch("abbabab"), equalTo(
-                listOf(0, 0, 3, 2, 0, 3, 0)
+                listOf(0, 0, 3, 2, 0, 2, 0)
         ))
         assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
                 listOf(0, 2, 0, 0, 0, 4, 0, 0, 0)
@@ -363,8 +363,15 @@ class BoyerMoore0 {
         val lookup1 = makePrefixShiftLookup(needle)
         val lookup2 = makeSuffixShiftLookup(needle)
         return { mismatchIndex ->
-            val result = lookup1(mismatchIndex)
-            if (result == needle.length) lookup2(mismatchIndex) else result
+            val result1 = lookup1(mismatchIndex)
+            val result2 = lookup2(mismatchIndex)
+            if (result1 == 0) {
+                result2
+            } else if (result2 == 0) {
+                result1
+            } else {
+                Math.min(result1, result2)
+            }
         }
     }
 
@@ -373,7 +380,7 @@ class BoyerMoore0 {
         var prefixIndex = 0
 
         for (mismatchIndex in (needle.lastIndex - 1).downTo(1)) {
-            if (isPrefix(needle, mismatchIndex + 1)) {
+            if (isPrefix(needle, mismatchIndex)) {
                 prefixIndex = mismatchIndex + 1
             }
             table[mismatchIndex] = prefixIndex
@@ -387,7 +394,7 @@ class BoyerMoore0 {
     private fun makeSuffixShiftLookup(needle: String): (Int) -> (Int) {
         val table = HashMap<Int, Int>()
         for (mismatchIndex in 1..(needle.lastIndex - 1)) {
-            val suffixLength = suffixLength(needle, mismatchIndex - 1)
+            val suffixLength = suffixLength(needle, mismatchIndex)
             if (suffixLength > 0) {
                 table[mismatchIndex] = suffixLength + 1 // +1 to include mismatched character
             }
@@ -397,8 +404,8 @@ class BoyerMoore0 {
         }
     }
 
-    private fun isPrefix(needle: String, suffixStartIndex: Int): Boolean {
-        var i = suffixStartIndex
+    private fun isPrefix(needle: String, mismatchIndex: Int): Boolean {
+        var i = mismatchIndex + 1
         var j = 0
         while (i < needle.length) {
             if (needle[i] != needle[j]) return false
@@ -408,11 +415,11 @@ class BoyerMoore0 {
         return true
     }
 
-    private fun suffixLength(needle: String, index: Int): Int {
+    private fun suffixLength(needle: String, mismatchIndex: Int): Int {
         var length = 0
-        var i = index
+        var i = mismatchIndex - 1
         var j = needle.lastIndex
-        while (i >= 0 && j > index && needle[i] == needle[j]) {
+        while (i >= 0 && j > mismatchIndex && needle[i] == needle[j]) {
             length += 1
             --i
             --j
