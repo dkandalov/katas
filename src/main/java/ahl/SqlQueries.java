@@ -29,31 +29,14 @@ public class SqlQueries {
     @Test public void queryProductAndOrderTables() throws Exception {
         // given
 
-        // Note that "product" is singular but "orders" is plural (might be worth renaming)
-        execute("CREATE TABLE product\n" +
-                "(\n" +
-                "  product_id INTEGER PRIMARY KEY,\n" +
-                "  name VARCHAR(128) NOT NULL,\n" +
-                "  rrp NUMERIC NOT NULL,\n" +
-                "  available_from DATE NOT NULL\n" +
-                ");"
-        );
-        execute("CREATE TABLE orders\n" +
-                "(\n" +
-                "  order_id INTEGER PRIMARY KEY,\n" +
-                "  product_id INTEGER NOT NULL,\n" +
-                "  quantity INTEGER NOT NULL,\n" +
-                "  order_price NUMERIC NOT NULL,\n" +
-                "  dispatch_date DATE NOT NULL,\n" +
-                "  FOREIGN KEY (product_id) REFERENCES product (product_id)\n" +
-                ");"
-        );
+        createProductTable();
+        createOrdersTable();
 
-        execute("INSERT INTO product VALUES (101, 'Bayesian Methods for Nonlinear Classification and Regression', '94.95', " + lastThursday + ")");
-        execute("INSERT INTO product VALUES (102, '(next year) in Review (preorder)', '21.95', " + nextYear + ")");
-        execute("INSERT INTO product VALUES (103, 'Learn Python in Ten Minutes', '2.15', " + monthsAgo(3) + ")");
-        execute("INSERT INTO product VALUES (104, 'sports almanac (1999-2049)', '3.38', " + yearsAgo(2) + ")");
-        execute("INSERT INTO product VALUES (105, 'finance for dummies', '84.99', " + yearsAgo(1) + ")");
+        execute("INSERT INTO products VALUES (101, 'Bayesian Methods for Nonlinear Classification and Regression', '94.95', " + lastThursday + ")");
+        execute("INSERT INTO products VALUES (102, '(next year) in Review (preorder)', '21.95', " + nextYear + ")");
+        execute("INSERT INTO products VALUES (103, 'Learn Python in Ten Minutes', '2.15', " + monthsAgo(3) + ")");
+        execute("INSERT INTO products VALUES (104, 'sports almanac (1999-2049)', '3.38', " + yearsAgo(2) + ")");
+        execute("INSERT INTO products VALUES (105, 'finance for dummies', '84.99', " + yearsAgo(1) + ")");
 
         execute("INSERT INTO orders VALUES (1000, 103, 1, 1.15, " + daysAgo(40) + ")");
         execute("INSERT INTO orders VALUES (1001, 103, 2, 1.15, " + daysAgo(41) + ")");
@@ -65,7 +48,7 @@ public class SqlQueries {
 
         // when / then
 
-        expectQuery("SELECT COUNT(*) FROM product", equalTo(asList("5")));
+        expectQuery("SELECT COUNT(*) FROM products", equalTo(asList("5")));
         expectQuery("SELECT COUNT(*) FROM orders", equalTo(asList("7")));
 
         expectQuery("SELECT product_id, sum(quantity), count(order_id) FROM orders " +
@@ -75,18 +58,42 @@ public class SqlQueries {
                 "103, 3, 2",
                 "104, 11, 1"
         )));
-        expectQuery("SELECT product_id FROM product WHERE available_from < " + monthsAgo(1), equalTo(asList(
+        expectQuery("SELECT product_id FROM products WHERE available_from < " + monthsAgo(1), equalTo(asList(
                 "103",
                 "104",
                 "105"
         )));
         expectQuery("SELECT o.product_id, sum(o.quantity), count(o.order_id) FROM orders o " +
-                "LEFT JOIN product p ON o.product_id = p.product_id " +
+                "LEFT JOIN products p ON o.product_id = p.product_id " +
                 "WHERE o.dispatch_date >= " + yearsAgo(1) + " AND p.available_from < " + monthsAgo(1) + " " +
                 "GROUP BY p.product_id " +
                 "HAVING sum(o.quantity) < 10", equalTo(asList(
                 "103, 3, 2"
         )));
+    }
+
+    private void createOrdersTable() throws SQLException {
+        execute("CREATE TABLE orders\n" +
+                "(\n" +
+                "  order_id INTEGER PRIMARY KEY,\n" +
+                "  product_id INTEGER NOT NULL,\n" +
+                "  quantity INTEGER NOT NULL,\n" +
+                "  order_price NUMERIC NOT NULL,\n" +
+                "  dispatch_date DATE NOT NULL,\n" +
+                "  FOREIGN KEY (product_id) REFERENCES products (product_id)\n" +
+                ");"
+        );
+    }
+
+    private void createProductTable() throws SQLException {
+        execute("CREATE TABLE products\n" +
+                "(\n" +
+                "  product_id INTEGER PRIMARY KEY,\n" +
+                "  name VARCHAR(128) NOT NULL,\n" +
+                "  rrp NUMERIC NOT NULL,\n" +
+                "  available_from DATE NOT NULL\n" +
+                ");"
+        );
     }
 
     private String daysAgo(int days) {
