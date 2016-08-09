@@ -295,6 +295,28 @@ class BoyerMoore0 {
                 "abcab",
                 "abcab")
 
+
+        assertShift(
+                " ↓     ",
+                "abbabab",
+                "abbabab")
+        assertShift(
+                "  ↓    ",
+                "abbabab",
+                "   abbabab")
+        assertShift(
+                "   ↓   ",
+                "abbabab",
+                "  abbabab")
+        assertShift(
+                "    ↓  ",
+                "abbabab",
+                "abbabab")
+        assertShift(
+                "     ↓ ",
+                "abbabab",
+                "  abbabab")
+
         assertThat(shiftsOnMismatch("abcde"), equalTo(
                 listOf(0, 0, 0, 0, 0)
         ))
@@ -302,7 +324,7 @@ class BoyerMoore0 {
                 listOf(0, 0, 3, 2, 0, 2, 0)
         ))
         assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
-                listOf(0, 2, 0, 0, 0, 4, 0, 0, 0)
+                listOf(0, 2, 0, 0, 0, 4, 0, 0, 0) // TODO 2?
         ))
     }
 
