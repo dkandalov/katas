@@ -303,11 +303,11 @@ class BoyerMoore0 {
         assertShift(
                 "  ↓    ",
                 "abbabab",
-                "   abbabab")
+                "abbabab")
         assertShift(
                 "   ↓   ",
                 "abbabab",
-                "  abbabab")
+                "abbabab")
         assertShift(
                 "    ↓  ",
                 "abbabab",
@@ -316,15 +316,15 @@ class BoyerMoore0 {
                 "     ↓ ",
                 "abbabab",
                 "  abbabab")
+        assertThat(shiftsOnMismatch("abbabab"), equalTo(
+                listOf(0, 0, 0, 0, 0, 2, 0)
+        ))
 
         assertThat(shiftsOnMismatch("abcde"), equalTo(
                 listOf(0, 0, 0, 0, 0)
         ))
-        assertThat(shiftsOnMismatch("abbabab"), equalTo(
-                listOf(0, 0, 3, 2, 0, 2, 0)
-        ))
         assertThat(shiftsOnMismatch("CTTACTTAC"), equalTo(
-                listOf(0, 2, 0, 0, 0, 4, 0, 0, 0) // TODO 2?
+                listOf(0, 0, 0, 0, 0, 4, 0, 0, 0)
         ))
     }
 
@@ -405,7 +405,9 @@ class BoyerMoore0 {
             if (isPrefix(needle, mismatchIndex)) {
                 prefixIndex = mismatchIndex + 1
             }
-            table[mismatchIndex] = prefixIndex
+            if (needle.lastIndex - prefixIndex > mismatchIndex) {
+                table[mismatchIndex] = prefixIndex
+            }
         }
 
         return { mismatchIndex ->
@@ -417,7 +419,7 @@ class BoyerMoore0 {
         val table = HashMap<Int, Int>()
         for (mismatchIndex in 1..(needle.lastIndex - 1)) {
             val suffixLength = suffixLength(needle, mismatchIndex)
-            if (suffixLength > 0) {
+            if (suffixLength >= needle.lastIndex - mismatchIndex) {
                 table[mismatchIndex] = suffixLength + 1 // +1 to include mismatched character
             }
         }
