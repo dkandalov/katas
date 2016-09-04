@@ -86,30 +86,41 @@ Example:
 [[a, a, a, a], [b], [c, c], [a, a], [d], [e, e, e, e]]
 ```
 
-P10 (*) Run-length encoding of a list.
-Use the result of problem P09 to implement the so-called run-length encoding data compression method. Consecutive duplicates of elements are encoded as tuples (N, E) where N is the number of duplicates of the element E.
+#### P10 (*) Run-length encoding of a list.
+Use the result of problem P09 to implement the so-called run-length encoding data compression method. 
+Consecutive duplicates of elements are encoded as tuples (N, E) where N is the number of duplicates of the element E.
 Example:
+```
+> encode("aaaabccaadeeee".toList())
+[(4, a), (1, b), (2, c), (2, a), (1, d), (4, e)]
+```
 
-scala> encode(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-res0: List[(Int, Symbol)] = List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
-P11 (*) Modified run-length encoding.
-Modify the result of problem P10 in such a way that if an element has no duplicates it is simply copied into the result list. Only elements with duplicates are transferred as (N, E) terms.
+#### P11 (*) Modified run-length encoding.
+Modify the result of problem P10 in such a way that if an element has no duplicates it is simply copied into the result list. 
+Only elements with duplicates are transferred as (N, E) terms.
 Example:
+```
+> encodeModified("aaaabccaadeeee".toList())
+[(4, a), b, (2, c), (2, a), d, (4, e)]
+```
 
-scala> encodeModified(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-res0: List[Any] = List((4,'a), 'b, (2,'c), (2,'a), 'd, (4,'e))
-P12 (**) Decode a run-length encoded list.
+#### P12 (**) Decode a run-length encoded list.
 Given a run-length code list generated as specified in problem P10, construct its uncompressed version.
 Example:
+```
+> decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e)))
+[a, a, a, a, b, c, c, a, a, d, e, e, e, e]
+```
 
-scala> decode(List((4, 'a), (1, 'b), (2, 'c), (2, 'a), (1, 'd), (4, 'e)))
-res0: List[Symbol] = List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e)
-P13 (**) Run-length encoding of a list (direct solution).
-Implement the so-called run-length encoding data compression method directly. I.e. don't use other methods you've written (like P09's pack); do all the work directly.
+#### P13 (**) Run-length encoding of a list (direct solution).
+Implement the so-called run-length encoding data compression method directly. 
+I.e. don't use other methods you've written (like P09's pack); do all the work directly.
 Example:
-
+```
 scala> encodeDirect(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
 res0: List[(Int, Symbol)] = List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
+```
+
 P14 (*) Duplicate the elements of a list.
 Example:
 scala> duplicate(List('a, 'b, 'c, 'c, 'd))
