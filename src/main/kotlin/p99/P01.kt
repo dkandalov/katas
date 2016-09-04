@@ -7,7 +7,7 @@ import org.junit.Test
 fun <T> last(list: List<T>): T = list[list.lastIndex]
 
 class P01Test {
-    @Test fun `get last element`() {
+    @Test fun `find the last element of a list`() {
         assertThat(last(listOf(1, 1, 2, 3, 5, 8)), equalTo(8))
     }
 

@@ -11,7 +11,7 @@ fun <T> nth(n: Int, list: List<T>): T {
 }
 
 class P03Test {
-    @Test fun `Nth element in a list`() {
+    @Test fun `find the Nth element of a list`() {
         assertThat(nth(2, listOf(1, 1, 2, 3, 5, 8)), equalTo(2))
     }
 

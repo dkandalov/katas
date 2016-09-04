@@ -7,7 +7,7 @@ import org.junit.Test
 fun <T> penultimate(list: List<T>) = list[list.lastIndex - 1]
 
 class P02Test {
-    @Test fun `get penultimate element`() {
+    @Test fun `find the last but one element of a list`() {
         assertThat(penultimate(listOf(1, 1, 2, 3, 5, 8)), equalTo(5))
     }
 

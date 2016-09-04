@@ -69,18 +69,23 @@ Example:
 [1, 1, 2, 3, 5, 8]
 ```
 
-P08 (**) Eliminate consecutive duplicates of list elements.
-If a list contains repeated elements they should be replaced with a single copy of the element. The order of the elements should not be changed.
+#### P08 (**) Eliminate consecutive duplicates of list elements.
+If a list contains repeated elements, they should be replaced with a single copy of the element. 
+The order of the elements should not be changed.
 Example:
+```
+> compress("aaaabccaadeeee".toList())
+[a, b, c, a, d, e]
+```
 
-scala> compress(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-res0: List[Symbol] = List('a, 'b, 'c, 'a, 'd, 'e)
-P09 (**) Pack consecutive duplicates of list elements into sublists.
-If a list contains repeated elements they should be placed in separate sublists.
+#### P09 (**) Pack consecutive duplicates of list elements into sublists.
+If a list contains repeated elements, they should be placed in separate sublists.
 Example:
+```
+> pack("aaaabccaadeeee".toList())
+[[a, a, a, a], [b], [c, c], [a, a], [d], [e, e, e, e]]
+```
 
-scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
 P10 (*) Run-length encoding of a list.
 Use the result of problem P09 to implement the so-called run-length encoding data compression method. Consecutive duplicates of elements are encoded as tuples (N, E) where N is the number of duplicates of the element E.
 Example:

@@ -10,7 +10,7 @@ fun <T> isPalindrome(list: List<T>): Boolean =
     else isPalindrome(list.drop(1).dropLast(1))
 
 class P06Test {
-    @Test fun `check if list is a palindrome`() {
+    @Test fun `find out whether a list is a palindrome`() {
         assertThat(isPalindrome(listOf<Int>()), equalTo(true))
         assertThat(isPalindrome(listOf(1)), equalTo(true))
         assertThat(isPalindrome(listOf(1, 2)), equalTo(false))
