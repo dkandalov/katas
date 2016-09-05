@@ -1,23 +1,39 @@
 ### S-99: Ninety-Nine Scala Problems
 
 This an adaptation of [Ninety-Nine Scala Problems](http://aperiodic.net/phil/scala/s-99/) by Phil Gold 
-which itself is an adaptation of the [Ninety-Nine Prolog Problems](https://sites.google.com/site/prologsite/prolog-problems) written by Werner Hett at the Berne University of Applied Sciences in Berne, Switzerland. I (Dmitry Kandalov) have altered them to be more amenable to programming in Kotlin. Feedback is appreciated, particularly on anything marked TODO.
+which itself is an adaptation of the [Ninety-Nine Prolog Problems](https://sites.google.com/site/prologsite/prolog-problems) 
+written by Werner Hett at the Berne University of Applied Sciences in Berne, Switzerland. 
+I (Dmitry Kandalov) have altered them to be more amenable to programming in Kotlin. 
+Feedback is appreciated, particularly on anything marked TODO.
 
-The problems have different levels of difficulty. Those marked with a single asterisk (*) are easy. If you have successfully solved the preceeding problems you should be able to solve them within a few (say 15) minutes. Problems marked with two asterisks (**) are of intermediate difficulty. If you are a skilled Kotlin programmer it shouldn't take you more than 30-90 minutes to solve them. Problems marked with three asterisks (***) are more difficult. You may need more time (i.e. a few hours or more) to find a good solution. The difficulties were all assigned for the Prolog problems, but the Kotlin versions seem to be of roughly similar difficulty.
+The problems have different levels of difficulty. Those marked with a single asterisk (\*) are easy. 
+If you have successfully solved the preceeding problems you should be able to solve them within a few (say 15) minutes. 
+Problems marked with two asterisks (\*\*) are of intermediate difficulty. 
+If you are a skilled Kotlin programmer it shouldn't take you more than 30-90 minutes to solve them. 
+Problems marked with three asterisks (\*\*\*) are more difficult. 
+You may need more time (i.e. a few hours or more) to find a good solution.
 
-Your goal should be to find the most elegant solution of the given problems. Efficiency is important, but clarity is even more crucial. Some of the (easy) problems can be trivially solved using built-in functions. However, in these cases, you learn more if you try to find your own solution.
+The difficulties were updated for Kotlin.
+
+Your goal should be to find the most elegant solution of the given problems. 
+Efficiency is important, but clarity is even more crucial. 
+Some of the (easy) problems can be trivially solved using built-in functions. 
+However, in these cases, you learn more if you try to find your own solution.
 
 Solutions are available by clicking on the link at the beginning of the problem description.
 
 [I don't have example solutions to all of the problems yet. I'm working on getting them all done, but in the meantime, contributed solutions, particularly from seasoned Scala programmers would be appreciated. If you feel a particular problem can be solved in a better manner than I did, please let me know that, too. <PMG>]
 
-Working with lists
 
-In Scala, lists are objects of type List[A], where A can be any type. Lists are effective for many recursive algorithms, because it's easy to add elements to the head of a list, and to get the tail of the list, which is everything but the first element.
+### Working with lists
 
-The solutions to the problems in this section will be in objects named after the problems (P01, P02, etc.). You can compile the source files with scalac and thereafter use import to bring the functions into scope. Some of the problems can be solved easily by using imported solutions to previous problems.
+The solutions to the problems in this section will be in files named after the problems (``P01.kt``, ``P02.kt``, etc.). 
+You can compile the source files with scalac and thereafter use import to bring the functions into scope. 
+Some of the problems can be solved easily by using imported solutions to previous problems.
 
-In many cases, there's more than one reasonable approach. The files linked here may include multiple solutions, with all but one commented out. They'll also indicate whether there's a builtin method in Scala that accomplishes the task.
+In many cases, there's more than one reasonable approach. The files linked here may include multiple solutions, with all but one commented out. 
+They'll also indicate whether there's a builtin method in Scala that accomplishes the task.
+
 
 #### P01 (*) Find the last element of a list.
 Example:
@@ -62,14 +78,14 @@ Example:
 true
 ```
 
-#### P07 (**) Flatten a nested list structure.
+#### P07 (*) Flatten a nested list structure.
 Example:
 ```
 > flatten(listOf(listOf(1, 1), 2, listOf(3, listOf(5, 8))))
 [1, 1, 2, 3, 5, 8]
 ```
 
-#### P08 (**) Eliminate consecutive duplicates of list elements.
+#### P08 (*) Eliminate consecutive duplicates of list elements.
 If a list contains repeated elements, they should be replaced with a single copy of the element. 
 The order of the elements should not be changed.
 Example:
@@ -78,7 +94,7 @@ Example:
 [a, b, c, a, d, e]
 ```
 
-#### P09 (**) Pack consecutive duplicates of list elements into sublists.
+#### P09 (*) Pack consecutive duplicates of list elements into sublists.
 If a list contains repeated elements, they should be placed in separate sublists.
 Example:
 ```
@@ -104,7 +120,7 @@ Example:
 [(4, a), b, (2, c), (2, a), d, (4, e)]
 ```
 
-#### P12 (**) Decode a run-length encoded list.
+#### P12 (*) Decode a run-length encoded list.
 Given a run-length code list generated as specified in problem P10, construct its uncompressed version.
 Example:
 ```
@@ -112,33 +128,44 @@ Example:
 [a, a, a, a, b, c, c, a, a, d, e, e, e, e]
 ```
 
-#### P13 (**) Run-length encoding of a list (direct solution).
+#### P13 (*) Run-length encoding of a list (direct solution).
 Implement the so-called run-length encoding data compression method directly. 
 I.e. don't use other methods you've written (like P09's pack); do all the work directly.
 Example:
 ```
-scala> encodeDirect(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-res0: List[(Int, Symbol)] = List((4,'a), (1,'b), (2,'c), (2,'a), (1,'d), (4,'e))
+> encodeDirect("aaaabccaadeeee".toList())
+[(4, a), (1, b), (2, c), (2, a), (1, d), (4, e)]
 ```
 
-P14 (*) Duplicate the elements of a list.
+#### P14 (*) Duplicate the elements of a list.
 Example:
-scala> duplicate(List('a, 'b, 'c, 'c, 'd))
-res0: List[Symbol] = List('a, 'a, 'b, 'b, 'c, 'c, 'c, 'c, 'd, 'd)
-P15 (**) Duplicate the elements of a list a given number of times.
+```
+> duplicate("abccd".toList())
+[a, a, b, b, c, c, c, c, d, d]
+```
+
+#### P15 (*) Duplicate the elements of a list a given number of times.
 Example:
-scala> duplicateN(3, List('a, 'b, 'c, 'c, 'd))
-res0: List[Symbol] = List('a, 'a, 'a, 'b, 'b, 'b, 'c, 'c, 'c, 'c, 'c, 'c, 'd, 'd, 'd)
-P16 (**) Drop every Nth element from a list.
+```
+> duplicateN(3, "abccd".toList())
+[a, a, a, b, b, b, c, c, c, c, c, c, d, d, d]
+```
+
+#### P16 (*) Drop every Nth element from a list.
 Example:
-scala> drop(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
-res0: List[Symbol] = List('a, 'b, 'd, 'e, 'g, 'h, 'j, 'k)
-P17 (*) Split a list into two parts.
+```
+> drop(3, "abcdefghijk".toList())
+[a, b, d, e, g, h, j, k]
+```
+
+#### P17 (*) Split a list into two parts.
 The length of the first part is given. Use a Tuple for your result.
 Example:
-
+```
 scala> split(3, List('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
 res0: (List[Symbol], List[Symbol]) = (List('a, 'b, 'c),List('d, 'e, 'f, 'g, 'h, 'i, 'j, 'k))
+```
+
 P18 (**) Extract a slice from a list.
 Given two indices, I and K, the slice is the list containing the elements from and including the Ith element up to but not including the Kth element of the original list. Start counting the elements with 0.
 Example:
