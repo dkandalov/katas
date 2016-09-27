@@ -1,13 +1,12 @@
 package ru._99_problems
 
-import org.scalatest.matchers._
 import org.junit.Test
+import org.scalatest.Matchers
+import org.scalatest.matchers._
+import org.scalautils.Equality
+import ru._99_problems.CustomMatchers._
 
 import scala.util.Random
-import ru._99_problems.CustomMatchers._
-import org.scalatest.words.ResultOfOneOfApplication
-import org.scalatest.Matchers
-import org.scalautils.Equality
 
 
 class P1 extends Matchers {
@@ -558,7 +557,7 @@ class P1 extends Matchers {
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
 		object Tree {
-			def constructBalanced[T <% Ordered[T]](amountOfNodes: Int, value: T): List[Tree[T]] = {
+			def constructBalanced[T](amountOfNodes: Int, value: T)(implicit order: T => Ordered[T]): List[Tree[T]] = {
 				if (amountOfNodes == 0) List(End)
 				else if (amountOfNodes == 1) List(Node(value))
 				else {
@@ -730,6 +729,7 @@ class P1 extends Matchers {
 		minHbalNodes(2) should equal(2)
 		minHbalNodes(3) should equal(4)
 		minHbalNodes(4) should equal(7)
+		minHbalNodes(5) should equal(12)
 
 		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
 		maxBalancedHeight(1) should equal(1)
@@ -1071,7 +1071,7 @@ class P1 extends Matchers {
 		def mirror: Tree[T]
 		def isSymmetric: Boolean
 		def hasSameStructureAs(tree: Tree[Any]): Boolean
-		def addValue[T2 >: T <% Ordered[T2]](value: T2): Tree[T2]
+		def addValue[T2 >: T](value: T2)(implicit order: T2 => Ordered[T2]): Tree[T2]
 		def isHeightBalanced: Boolean
 		def height: Int
 		def nodeCount: Int
@@ -1122,7 +1122,7 @@ class P1 extends Matchers {
 
 		def isSymmetric = left.hasSameStructureAs(right.mirror)
 
-		def addValue[T2 >: T](newValue: T2)(implicit o: T2 => Ordered[T2]) =
+		def addValue[T2 >: T](newValue: T2)(implicit or: T2 => Ordered[T2]) =
 			if (value > newValue) Node(value, left.addValue(newValue), right)
 			else Node(value, left, right.addValue(newValue))
 
@@ -1262,44 +1262,5 @@ class P1 extends Matchers {
 
 }
 
-object CustomMatchers extends CustomMatchers
-trait CustomMatchers {
-	val noDuplicates = new NoDuplicates()
-
-	class NoDuplicates extends HavePropertyMatcher[Seq[Any], Any] {
-		def apply(seq: Seq[Any]) = {
-			val hasDuplicates = seq.toSet.size == seq.size
-			HavePropertyMatchResult(
-				hasDuplicates,
-				"has no duplicates",
-			  "true",
-				hasDuplicates
-			)
-		} 
-		
-	}
-
-	def subSetOf[T](seq: Seq[T]): SubSetOf[T] = new SubSetOf(seq)
-
-	class SubSetOf[T](seq: Seq[T]) extends BeMatcher[Seq[T]] {
-		def apply(left: Seq[T]) =
-			MatchResult(
-				left.forall{seq.contains(_)},
-				left.toString + " was not subset of expected values",
-				left.toString + " was subset of expected values"
-			)
-	}
 
 
-	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = new OneOfMatcher(acceptedValues.toSeq)
-	def oneOf[T](i: Iterator[T]): OneOfMatcher[T] = new OneOfMatcher(i.toSeq)
-
-	class OneOfMatcher[T](values: Seq[T]) extends BeMatcher[T] {
-		def apply(left: T) =
-			MatchResult(
-				values.contains(left),
-				left.toString + " was not one of expected values",
-				left.toString + " was one of expected values"
-			)
-	}
-}
