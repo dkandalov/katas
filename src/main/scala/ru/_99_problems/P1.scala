@@ -9,7 +9,7 @@ import ru._99_problems.CustomMatchers._
 import scala.util.Random
 
 
-class P1 extends Matchers {
+class P1 extends Matchers {           v
 	def encode[T](seq: Seq[T]): Seq[(Int, T)] = {
 		new P0().pack(seq).map{ it => (it.size, it.head) }
 	}
@@ -1156,14 +1156,12 @@ class P1 extends Matchers {
 			val positionedLeft = left.layoutBinaryTree2(parentX, y + 1, totalHeight)
 
 			val newX = positionedLeft match {
-				case PositionedNode(_, _, _, leftX, _) => {
+				case PositionedNode(_, _, _, leftX, _) =>
 					val shiftFromChildren = math.pow(2, totalHeight - y - 1).toInt
 					leftX + shiftFromChildren
-				}
-				case _ => {
+				case _ =>
 					val shiftFromParent = math.pow(2, totalHeight - y).toInt
 					if (parentX == 0) 1 else parentX + shiftFromParent
-				}
 			}
 
 			val positionedRight = right.layoutBinaryTree2(newX, y + 1, totalHeight)
