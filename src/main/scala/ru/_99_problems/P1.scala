@@ -9,7 +9,7 @@ import ru._99_problems.CustomMatchers._
 import scala.util.Random
 
 
-class P1 extends Matchers {           v
+class P1 extends Matchers {
 	def encode[T](seq: Seq[T]): Seq[(Int, T)] = {
 		new P0().pack(seq).map{ it => (it.size, it.head) }
 	}
@@ -948,12 +948,21 @@ class P1 extends Matchers {           v
 		)
 	}
 
-	@Test def `P68 (**) Preorder and inorder sequences of binary trees.`() {
+	@Test def `P68 (**) Pre-order and in-order sequences of binary trees.`() {
 		Tree.fromString("a(b(d,e),c(,f(g,)))").preorder should equal(Seq("a", "b", "d", "e", "c", "f", "g"))
 		Tree.fromString("a(b(d,e),c(,f(g,)))").inorder should equal(Seq("d", "b", "e", "a", "c", "g", "f"))
 
+		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equal(
+			Tree.fromString("a(b(d,e),c(,f(g,)))")
+		)
+
+		Tree.fromString("a(b,a)").preorder should equal(Seq("a", "b", "a"))
+		Tree.fromString("a(b,a)").inorder should equal(Seq("b", "a", "a"))
 		Tree.preInTree(List("a", "b", "a"), List("b", "a", "a")) should equal(Tree.fromString("a(b,a)"))
-		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equal(Tree.fromString("a(b(d,e),c(,f(g,)))"))
+
+		Tree.fromString("a(a(a,a),)").preorder should equal(Seq("a", "a", "a", "a"))
+		Tree.fromString("a(a(a,a),)").inorder should equal(Seq("a", "a", "a", "a"))
+		Tree.preInTree(List("a", "a", "a", "a"), List("a", "a", "a", "a")) should equal(Tree.fromString("a(,a(,a(,a))))"))
 	}
 
 	@Test def `P69 (**) Dotstring representation of binary trees.`() {
@@ -977,26 +986,17 @@ class P1 extends Matchers {           v
 			consumeOneNodeFrom(string)._1
 		}
 
-		def preInTree[T](preordered: Seq[T], inordered: Seq[T])(implicit ordered: T => Ordered[T]): Tree[T] = {
-
-			def consume(fromSeq: Seq[T], referenceSet: Set[T]): Seq[T] = {
-				if (fromSeq.isEmpty || referenceSet.isEmpty) Seq()
-				else fromSeq.head +: consume(fromSeq.tail, referenceSet - fromSeq.head)
-			}
-
-			if (preordered.isEmpty) End
-			else {
-				val value = preordered.head
-				val inorderedForLeft = inordered.takeWhile(_ != value)
-				val inorderedForRight = inordered.drop(inorderedForLeft.size + 1)
-				val preorderedForLeft = consume(preordered.tail, inorderedForLeft.toSet)
-				val preorderedForRight = consume(preordered.tail.drop(preorderedForLeft.size), inorderedForRight.toSet)
-				Node(value,
-					Tree.preInTree(preorderedForLeft, inorderedForLeft),
-					Tree.preInTree(preorderedForRight, inorderedForRight)
+		def preInTree[T](preorder: Seq[T], inorder: Seq[T])(implicit ordered: T => Ordered[T]): Tree[T] = preorder match {
+			case Nil => End
+			case preorderHead :: preorderTail =>
+				val (leftInorder, rightInorder) = inorder.span(_ != preorderHead)
+				Node(
+					preorderHead,
+					preInTree(preorderTail.take(leftInorder.length), leftInorder),
+					preInTree(preorderTail.drop(leftInorder.length), rightInorder.tail)
 				)
-			}
 		}
+
 
 		def fromString(s: String): Tree[String] = {
 			def consume(string: String, f: Char => Boolean): (String, String) = {
@@ -1066,7 +1066,7 @@ class P1 extends Matchers {           v
 		}
 	}
 
-	sealed abstract class Tree[+T <% Ordered[T]] {
+	sealed abstract class Tree[+T](implicit o: T => Ordered[T]) {
 		def toDotString: String
 		def mirror: Tree[T]
 		def isSymmetric: Boolean
@@ -1096,8 +1096,7 @@ class P1 extends Matchers {           v
 		override protected def isLeaf: Boolean = left == End && right == End
 	}
 
-	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End)(implicit o: T => Ordered[T])
-		extends ANode[T](value, left, right)
+	case class Node[+T](value: T, left: Tree[T] = End, right: Tree[T] = End)(implicit o: T => Ordered[T]) extends ANode[T](value, left, right)
 
 	abstract class ANode[+T](value: T, left: Tree[T] = End, right: Tree[T] = End)(implicit o: T => Ordered[T]) extends Tree[T] {
 		def toDotString =
@@ -1229,7 +1228,7 @@ class P1 extends Matchers {           v
 			case _ => false
 		}
 
-		def addValue[T2 >: Nothing <% Ordered[T2]](value: T2) = Node(value)
+		def addValue[T2 >: Nothing](value: T2)(implicit o: T2 => Ordered[T2]) = Node(value)
 
 		def isHeightBalanced = true
 
