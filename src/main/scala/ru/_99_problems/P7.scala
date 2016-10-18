@@ -341,6 +341,7 @@ object P7 {
 				else result :+ graph
 			}
 		}
+
 		def isTree: Boolean = spanningTrees().length == 1
 
 		def isConnected: Boolean = spanningTrees().nonEmpty

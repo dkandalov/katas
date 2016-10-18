@@ -25,6 +25,7 @@ class P7Test extends Matchers {
 	@Test def `P71 (*) Determine the internal path length of a tree.`() {
 		"a^".internalPathLength should equal(0)
 		"ab^^".internalPathLength should equal(1)
+		"ab^c^^".internalPathLength should equal(2)
 		"abc^^^".internalPathLength should equal(3)
 		"afg^^c^bd^e^^^".internalPathLength should equal(9)
 	}
@@ -148,7 +149,7 @@ class P7Test extends Matchers {
 //				('c', 'e'), ('d', 'e'), ('d', 'f'), ('d', 'g'),
 //				('e', 'h'), ('f', 'g'), ('g', 'h')
 //			)
-//		).spanningTrees().size should equal(100)
+//		).spanningTrees().size should equal(112)
 	}
 
 	@Test def `P84 (**) Construct the minimal spanning tree.`() {
@@ -165,7 +166,6 @@ class P7Test extends Matchers {
 				('e', 'h', 5), ('f', 'g', 4), ('g', 'h', 1)
 			)
 		).minimalSpanningTree should equal(
-//			fromLabelString("[e-b/4, f-d/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]") // old expectation before scala upgrade, also seems correct
 			fromLabelString("[e-b/4, f-g/4, a-b/5, a-d/3, b-c/2, g-h/1, g-d/3]")
 		)
 	}
