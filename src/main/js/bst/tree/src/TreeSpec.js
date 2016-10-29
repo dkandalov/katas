@@ -19,6 +19,12 @@ describe("Binary Search Tree", function() {
     });
   });
 
+  it("convert to string", function() {
+    expect(toString(null)).toEqual("()");
+    expect(toString({value: 123})).toEqual("(123)");
+    expect(toString(bst())).toEqual("(2 (1 (0.5) (1.5)) (3 (2.5) (3.5)))");
+  });
+
   it("check that tree is valid", function() {
     expect(isBST(null)).toEqual(false);
     expect(isBST({value: 123})).toEqual(true);

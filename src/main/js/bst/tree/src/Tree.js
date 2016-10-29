@@ -31,6 +31,15 @@ function traversePostOrder(tree) {
              .concat([tree.value]);
 }
 
+function toString(tree) {
+    if (!tree) return "()";
+    var childrenAsString = "";
+    if (tree.left || tree.right) {
+        childrenAsString = " " + toString(tree.left) + " " + toString(tree.right)
+    }
+    return "(" + tree.value + childrenAsString + ")";
+}
+
 var bst = {
     value: 2,
     left: {
