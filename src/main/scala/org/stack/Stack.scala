@@ -1,21 +1,11 @@
-package org
-
-import org.junit.Test
-import org.scalatest.Matchers
+package org.stack
 
 
-class Stack[T] {
-	def push(value: T): Stack[T] = {
-		???
-	}
+class Stack[+T](private val list: List[T] = List()) {
 
-	def pop: (T, Stack[T]) = {
-		???
-	}
-}
+	def push[U >: T](value: U): Stack[U] = new Stack[U](value :: list)
 
-class StackTest extends Matchers {
-	@Test def ``(): Unit = {
-		1 should equal(2)
-	}
+	def pop: (T, Stack[T]) = (list.head, new Stack(list.tail))
+
+	def size: Int = list.size
 }
