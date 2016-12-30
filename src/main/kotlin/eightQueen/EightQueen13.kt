@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import java.lang.Math.abs
 
-class EightQueen {
+class EightQueen13 {
     @Test fun `find all possible positions of queens on chessboard so that they don't attack each other`() {
         assertThat(findAllPositions(0).size, equalTo(1))
         assertThat(findAllPositions(1).size, equalTo(1))
