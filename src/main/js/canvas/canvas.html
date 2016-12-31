@@ -1,0 +1,62 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/3.8.1/math.min.js"></script>
+</head>
+<body>
+<canvas id="myCanvas" width="400" height="400"></canvas>
+</body>
+<script>
+    var shift = 100;
+    var scale = 100;
+
+    var c = document.getElementById("myCanvas").getContext("2d");
+
+    var points = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    var topLayer = points.map(function(p) {
+        var point3d = p.slice();
+        point3d.push(0);
+        return point3d;
+    });
+    var bottomLayer = points.map(function(p) {
+        var point3d = p.slice();
+        point3d.push(1);
+        return point3d;
+    });
+    drawWithLines(topLayer.map(toIsometric2d), c);
+    c.strokeStyle = "red";
+    drawWithLines(bottomLayer.map(toIsometric2d), c);
+
+    function drawWithLines(points2d, c) {
+        if (points2d.size <= 1) throw "points2d must have > 1 elements";
+        var points = points2d.slice();
+        points.push(points2d[0]); // append head so that it's drawn as a closed shape.
+
+        c.beginPath();
+        var last;
+        points.forEach(function (p) {
+            var y = p._data[0] * scale + shift;
+            var x = p._data[1] * scale + shift;
+            if (last !== undefined) {
+                c.moveTo(last.x, last.y);
+                c.lineTo(x, y);
+                c.stroke();
+            }
+            last = {x: x, y: y};
+        });
+    }
+
+    function toIsometric2d(point) {
+        var m = math.multiply(
+            math.matrix(
+                [[Math.sqrt(3), 0, -Math.sqrt(3)],
+                 [1, 2, 1],
+                 [Math.sqrt(2), -Math.sqrt(2), Math.sqrt(2)]]
+            ),
+            math.matrix(point.map(function (it) {
+                return [it];
+            }))
+        );
+        return math.multiply(m, 1 / Math.sqrt(6));
+    }
+</script>
+</html>
