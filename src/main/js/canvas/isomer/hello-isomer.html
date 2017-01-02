@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script type="text/javascript" src="isomer.js"></script>
+    <script type="text/javascript" src="http://underscorejs.org/underscore.js"></script>
+    <style>
+        #isoArt {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="isoArt" width="2000" height="1200"></canvas>
+</body> 
+<script>
+    var s = [
+        "* * *** *   *    **  ",
+        "*** **  *   *   *  * ",
+        "* * *** *** ***  **  ",
+        "",
+        "*   **  **  * * *** ***",
+        "*   *  *  * *** **  ** ",
+        "*  **   **  * * *** * *"
+    ];
+
+    var xShift = -2;
+    var yShift = 12;
+    var scale = 0.9;
+
+    var iso = new Isomer(document.getElementById("isoArt"), {
+        scale: 40
+    });
+    var Shape = Isomer.Shape;
+    var Point = Isomer.Point;
+    for (var row = 0; row < s.length; row++) {
+        for (var column = s[row].length - 1; column >= 0; column--) {
+            if (s[row][column] === "*") {
+                iso.add(Shape.Prism(new Point(column + xShift, -row + yShift, 0), scale, scale, scale));
+            }
+        }
+    }
+</script>
+</html>
