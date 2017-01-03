@@ -1,16 +1,24 @@
 package eightQueen
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Test
+import java.util.*
 
 class EightQueen15 {
     @Test fun `find queen positions on board`() {
         (0..8).forEach { boardSize ->
             val solutions = queenPositions(boardSize).toList()
+            val iterativeSolutions = queenPositionsIterative(boardSize).toList()
+
             println(solutions)
+            println(iterativeSolutions)
             println(solutions.size)
-            solutions.forEach {
-                println(it.toPrettyString())
+
+            solutions.zip(iterativeSolutions.toList()).forEach {
+                println(it.first.toPrettyString())
                 println("=================")
+                assertThat(it.first, equalTo(it.second))
             }
         }
     }
@@ -46,11 +54,27 @@ class EightQueen15 {
     }
 
     private fun queenPositions(boardSize: Int): Sequence<Solution> {
+        fun queenPositions(solution: Solution): Sequence<Solution> {
+            if (solution.complete) return sequenceOf(solution)
+            else return solution.nextSteps().flatMap(::queenPositions)
+        }
         return queenPositions(Solution(boardSize))
     }
 
-    private fun queenPositions(solution: Solution): Sequence<Solution> {
-        if (solution.complete) return sequenceOf(solution)
-        return solution.nextSteps().flatMap{ queenPositions(it) }
+    private fun queenPositionsIterative(boardSize: Int): Sequence<Solution> {
+        val queue = LinkedList<Solution>()
+        queue.add(Solution(boardSize))
+
+        val iterator = object : Iterator<Solution> {
+            override fun hasNext(): Boolean {
+                while (queue.isNotEmpty() && !queue.first.complete) {
+                    queue.addAll(0, queue.remove().nextSteps().toList())
+                }
+                return queue.isNotEmpty()
+            }
+            override fun next() = queue.remove()
+        }
+
+        return object : Sequence<Solution> { override fun iterator() = iterator }
     }
 }
