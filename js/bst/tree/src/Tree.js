@@ -40,6 +40,10 @@ function toString(tree) {
     return "(" + tree.value + childrenAsString + ")";
 }
 
+function parseTree(s) {
+
+}
+
 var bst = {
     value: 2,
     left: {
