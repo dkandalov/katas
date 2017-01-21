@@ -55,13 +55,6 @@
             <name>ObjectWeb repository</name>
             <url>http://maven.ow2.org/maven2</url>
         </repository>
-<!--
-        <repository>
-            <id>typesafe</id>
-            <name>Typesafe Repository</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
-        </repository>
--->
     </repositories>
 
     <dependencies>
@@ -210,32 +203,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-swing</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.10</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalacheck</groupId>
-            <artifactId>scalacheck_2.10</artifactId>
-            <version>1.11.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.10</artifactId>
             <version>2.3.0</version>
@@ -249,11 +216,6 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-kernel_2.10</artifactId>
             <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-scala</artifactId>
-            <version>0.17.2</version>
         </dependency>
 
         <dependency>
@@ -291,9 +253,9 @@
             <version>0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.intellij.libs</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>14.0</version>
+            <version>15.0</version>
         </dependency>
     </dependencies>
 
@@ -308,39 +270,6 @@
                     <providerSelection>1.7</providerSelection>
                     <source/>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmArgs>
-                                <arg>-Xmx1024m</arg>
-                            </jvmArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmArgs>
-                                <arg>-Xmx1024m</arg>
-                            </jvmArgs>
-                        </configuration>
-                        </execution>
-                </executions>
             </plugin>
 
             <plugin>
