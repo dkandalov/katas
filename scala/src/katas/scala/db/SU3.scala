@@ -1,19 +1,19 @@
-package ru.db
+package katas.scala.db
+
+import java.lang.{Character => JCharacter, Integer => JInteger}
+import java.util.HashMap
 
 import org.junit.Test
-import java.util.HashMap
-import org.scalatest.matchers.{Matcher, ShouldMatchers}
-import java.lang.{Character => JCharacter, Integer => JInteger}
-import scala.collection.JavaConversions.iterableAsScalaIterable
-import ru.util.Pomodoro
 import org.scalatest.Matchers
+import org.scalatest.matchers.Matcher
+
+import scala.collection.JavaConversions.iterableAsScalaIterable
 
 /**
  * User: dima
  * Date: 09/04/2012
  */
 
-@Pomodoro("2")
 class SU3 extends StringUtil {
   override def sort(input: String) = input.sorted
 

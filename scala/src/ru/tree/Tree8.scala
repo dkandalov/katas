@@ -1,14 +1,12 @@
 package ru.tree
 
-import org.scalatest.Matchers
 import org.junit.Test
-import ru.util.Pomodoro
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 21/02/2012
  */
-@Pomodoro("1")
 class Tree8 extends Matchers {
   @Test def inOrderTraversal() {
     traverseInOrder(Node(1)) should equal(Seq(1))

@@ -1,14 +1,12 @@
 package katas.scala.coins
 
-import org.scalatest.Matchers
 import org.junit.Test
-import ru.util.Pomodoro
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 03/04/2012
  */
-@Pomodoro("1")
 class CountChange3 extends Matchers {
   import EnhancedInt._
 

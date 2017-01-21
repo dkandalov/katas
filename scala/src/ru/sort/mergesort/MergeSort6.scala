@@ -2,9 +2,10 @@ package ru.sort.mergesort
 
 import org.junit.Test
 import org.scalatest.Matchers
-import collection.Seq
-import collection.mutable.ListBuffer
-import ru.permutation.{Perm1_, Perm1}
+import ru.permutation.Perm1_
+
+import scala.collection.Seq
+import scala.collection.mutable.ListBuffer
 
 /**
  * @author DKandalov

@@ -1,6 +1,6 @@
-package ru.orderbook.v4.app
+package katas.scala.orderbook.v4.app
 
-import ru.orderbook.v4.iface.{Order, Action, LogLevel}
+import katas.scala.orderbook.v4.iface.{Action, LogLevel, Order}
 
 
 /**

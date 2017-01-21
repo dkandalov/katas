@@ -333,7 +333,7 @@
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <fork>true</fork>
-                    <executable>/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home/bin/javac</executable>
+                    <executable>/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/bin/javac</executable>
                 </configuration>
             </plugin>
         </plugins>

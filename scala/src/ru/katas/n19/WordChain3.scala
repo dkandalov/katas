@@ -2,7 +2,6 @@ package ru.katas.n19
 
 import org.junit.Test
 import org.scalatest.Matchers
-import ru.util.{Mess, Pomodoro}
 
 import scala.annotation.tailrec
 import scala.io.Source
@@ -12,8 +11,6 @@ import scala.io.Source
  * Date: 04/05/2012
  */
 
-@Pomodoro("1")
-@Mess
 class WordChain3 extends Matchers {
 	val dict = Source.fromFile("/usr/share/dict/words").getLines().toList
 	var words = List[String]()

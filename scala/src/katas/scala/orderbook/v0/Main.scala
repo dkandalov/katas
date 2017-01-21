@@ -1,24 +1,21 @@
-package ru.orderbook.v0
+package katas.scala.orderbook.v0
 
 import scala.xml.{Node, XML}
-import java.lang.IllegalStateException
-import ru.util.Mess
 
 /**
  * User: dima
  * Date: 08/11/2011
  */
-@Mess
 object Direction extends Enumeration {
   type Direction = Value
   val Buy, Sell = Value
 }
-import Direction._
+import katas.scala.orderbook.v0.Direction._
 
 
 object Main {
   def main(args: Array[String]) {
-    val xml = XML.loadFile("src/main/scala/ru/orderbook/orders1.xml")
+    val xml = XML.loadFile("scala/src/katas/scala/orderbook/orders1.xml")
     val commands = xml.child.filterNot(_.label == "#PCDATA").map(createCommand)
 //    commands.foreach(println)
     val orderBook = commands.foldLeft(OrderBook()) { (book, command) => command.applyTo(book)}

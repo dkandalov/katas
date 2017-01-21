@@ -1,7 +1,8 @@
-package ru.orderbook.v4.consumer
+package katas.scala.orderbook.v4.consumer
 
-import ru.orderbook.v4.iface.Order
-import collection.immutable.{TreeMap}
+import katas.scala.orderbook.v4.iface.Order
+
+import scala.collection.immutable.TreeMap
 
 case class OrderBook(bidSide: BookSide = BookSide.newBid, askSide: BookSide = BookSide.newAsk,
                       orders: Map[Long, Order] = Map()) {

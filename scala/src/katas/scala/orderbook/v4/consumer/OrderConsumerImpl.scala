@@ -1,7 +1,8 @@
-package ru.orderbook.v4.consumer
+package katas.scala.orderbook.v4.consumer
 
-import ru.orderbook.v4.iface._
-import collection.immutable.{TreeMap, HashMap}
+import katas.scala.orderbook.v4.iface._
+
+import scala.collection.immutable.{HashMap, TreeMap}
 
 
 /**

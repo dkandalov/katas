@@ -1,4 +1,4 @@
-package ru.orderbook.v5
+package katas.scala.orderbook.v5
 
 import scala.xml.XML
 import java.io.File
@@ -8,7 +8,7 @@ import akka.actor.{ActorRef, Actor, Props, ActorSystem}
 
 import scala.collection._
 import immutable.TreeMap
-import ru.orderbook.v5.XmlCommandReader.ReadFrom
+import katas.scala.orderbook.v5.XmlCommandReader.ReadFrom
 import java.util.concurrent.{SynchronousQueue, TimeUnit}
 
 /**
@@ -60,7 +60,7 @@ class ReportBuilder(reportOutput: SynchronousQueue[CharSequence]) extends Actor 
   private var expectedReportsSize: Int = 0
   private var reports: TreeMap[String, OrderBookReport] = TreeMap()
   
-  protected def receive = {
+  def receive = {
     case ExpectedReportSize(size) => expectedReportsSize = size
     case report@OrderBookReport(symbol, _, _) =>
       reports = reports.updated(symbol, report)
@@ -89,7 +89,7 @@ class OrderBook(symbol: String) extends Actor {
   private var bidSide: immutable.Map[Int, PriceLevel] = new TreeMap()(Ordering.Int.reverse).withDefault{ PriceLevel(_, 0, 0) }
   private var askSide: immutable.Map[Int, PriceLevel] = new TreeMap()(Ordering.Int).withDefault{ PriceLevel(_, 0, 0) }
 
-  protected def receive = {
+  def receive = {
     case AddOrder(order) => add(order)
     case RemoveOrder(order) => remove(order)
     case UpdateOrder(oldOrder, newOrder) =>
@@ -124,7 +124,7 @@ class OrderBook(symbol: String) extends Actor {
 class OrderRouter(reportBuilder: ActorRef) extends Actor {
   private val orderBooks: mutable.Map[String, ActorRef] = mutable.Map()
 
-  protected def receive = {
+  def receive = {
     case msg@AddOrder(order) => orderBookFor(order) ! msg
     case msg@UpdateOrder(oldOrder, _) => orderBookFor(oldOrder) ! msg
     case msg@RemoveOrder(order) => orderBookFor(order) ! msg
@@ -146,7 +146,7 @@ class OrderRouter(reportBuilder: ActorRef) extends Actor {
 class OrderRegistry(orderRouter: ActorRef) extends Actor {
   private var orders: mutable.Map[Int, Order] = mutable.Map()
 
-  protected def receive = {
+  def receive = {
     case Add(id, symbol, isBuy, price, size) =>
       val order = Order(id, symbol, isBuy, price, size)
       orders = orders.updated(id, order)
@@ -168,7 +168,7 @@ object XmlCommandReader {
 }
 
 class XmlCommandReader(orderRegistry: ActorRef) extends Actor {
-  protected def receive = {
+  def receive = {
     case ReadFrom(filename) =>
       // use separate thread so that not to use actors thread-pool
       new Thread(new Runnable() {
