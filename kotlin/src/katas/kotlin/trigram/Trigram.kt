@@ -1,3 +1,5 @@
+
+import katas.kotlin.sliding
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -39,8 +41,4 @@ class TrigramTest {
                 "The productions of the battalion of the velocity of Light as the sequel will shew."
         ))
     }
-}
-
-private fun <E> List<E>.sliding(windowSize: Int): List<List<E>> {
-    return (0..(size - windowSize)).map { subList(it, it + windowSize) }
 }
