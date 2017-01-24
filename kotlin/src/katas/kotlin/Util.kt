@@ -18,6 +18,7 @@ class SlidingWindowTest : StringSpec() {
             listOf(1, 2).sliding(2) shouldEqual listOf(listOf(1, 2))
             listOf(1, 2, 3).sliding(2) shouldEqual listOf(listOf(1, 2), listOf(2, 3))
             listOf(1, 2, 3, 4).sliding(2) shouldEqual listOf(listOf(1, 2), listOf(2, 3), listOf(3, 4))
+            listOf(1, 2, 3, 4).sliding(3) shouldEqual listOf(listOf(1, 2, 3), listOf(2, 3, 4))
         }
     }
 }
