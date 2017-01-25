@@ -1,6 +1,7 @@
 package katas.kotlin.trigram
 
-import katas.kotlin.println
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.startsWith
 import katas.kotlin.sliding
 import org.junit.Test
 import java.io.File
@@ -28,7 +29,14 @@ class Trigram2Test {
             }
         }
 
-        text.take(100).joinToString(" ").println()
+        assertThat(text.take(100).joinToString(" "), startsWith(
+            "but only of a given event. But how is such that should it not only what is lost in elegance is an instance " +
+            "(which we have a double relation. In denotation the genus includes the genus. To take Mill's example, " +
+            "if _Socrates is a question of general production; or because, if there were men to observe them, " +
+            "and they remain in their opposite relations to one pound-degree Fahrenheit for every argument shall refer, " +
+            "then, any propositions whose predicates do not at all these philosophers are not really exist on their account. " +
+            "On the other premise, we get-- Some things friendly"
+        ))
     }
 
     private fun String.splitIntoWords() = this.trim().split(" ")

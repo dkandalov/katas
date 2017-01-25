@@ -2,7 +2,7 @@ package katas.kotlin
 
 import io.kotlintest.specs.StringSpec
 
-fun Any.println() {
+fun Any?.println() {
     println(this)
 }
 
