@@ -2,6 +2,7 @@ package katas.kotlin.trigram
 
 import io.kotlintest.specs.StringSpec
 import katas.kotlin.println
+import katas.kotlin.skip
 import katas.kotlin.sliding
 import java.io.File
 import java.util.Random
@@ -16,11 +17,10 @@ class Trigram3Test : StringSpec() {
                     }
 
             val random = Random(123)
-            val initialKey = trigrams.keys.drop(random.nextInt(trigrams.size)).first()
+            val initialKey = trigrams.keys[random]
             val textGenerator = generateSequence(initialKey) { key ->
-                val nextWords = trigrams[key]
-                val nextWord = nextWords!!.drop(random.nextInt(nextWords.size)).first()
-                Pair(key.second, nextWord)
+                val nexWords = trigrams[key] ?: trigrams.entries[random].value
+                Pair(key.second, nexWords[random])
             }.map{ it.first }
 
             val text = textGenerator.take(100).joinToString(" ")
@@ -33,9 +33,14 @@ class Trigram3Test : StringSpec() {
         }
     }
 
+    private operator fun <E> Collection<E>.get(random: Random): E {
+        return skip(random.nextInt(size)).first()
+    }
+
     private fun File.words(): List<String> {
+        val nbsp = "feff".toInt(16).toChar()
         return readLines()
-            .flatMap { it.trim().trim("feff".toInt(16).toChar()).split(Regex("\\s+")) }
+            .flatMap { it.trim().trim(nbsp).split(Regex("\\s+")) }
             .filterNot { it.isNullOrEmpty() }
     }
 }
