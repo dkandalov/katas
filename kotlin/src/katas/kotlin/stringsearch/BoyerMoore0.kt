@@ -330,7 +330,7 @@ class BoyerMoore0 {
 
 
     private fun String.findIndexOf(needle: String): Int {
-        if (needle.length == 0) return 0
+        if (needle.isEmpty()) return 0
 
         val charLookup = makeCharShiftLookup(needle)
         val offsetLookup = makeOffsetLookup(needle)
@@ -477,8 +477,8 @@ class BoyerMoore0 {
     private fun assertShift(s: String, needleBefore: String, needleAfter: String,
                             useCharLookup: Boolean, useOffsetLookup: Boolean) {
         val needle = needleBefore.replace("-", "")
-        val charLookup = if (useCharLookup) makeCharShiftLookup(needle) else { c, i -> 1}
-        val offsetLookup = if (useOffsetLookup) makeOffsetLookup(needle) else {i -> 1}
+        val charLookup = if (useCharLookup) makeCharShiftLookup(needle) else { _, _ -> 1}
+        val offsetLookup = if (useOffsetLookup) makeOffsetLookup(needle) else { _ -> 1 }
         val move = nextMove(s, needle, needleBefore.length - 1, charLookup, offsetLookup)
         if (move !is Shift) {
             failTest("Expected move to be a shift but it was $move")

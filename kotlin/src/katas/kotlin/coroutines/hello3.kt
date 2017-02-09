@@ -1,7 +1,7 @@
 package katas.kotlin.coroutines
 
 import java.lang.Thread.currentThread
-import kotlin.coroutines.*
+import kotlin.coroutines.experimental.*
 
 object Hello3 {
     class MyContinuation<in T>(override val context: MyContext): Continuation<T> {
