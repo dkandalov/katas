@@ -1,4 +1,4 @@
-package katas.kotlin.quick
+package katas.kotlin.quicksort
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
