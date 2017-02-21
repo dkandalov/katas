@@ -24,18 +24,18 @@ fun Term.eval(): Term =
         this is `if` -> when {
             predicate == `true` -> then                                      // E-IfTrue
             predicate == `false` -> `else`                                   // E-IfFalse
-            predicate.canEval() -> copy(predicate = predicate.eval()).eval() // E-If
+            predicate.canEval() -> copy(predicate = predicate.eval())        // E-If
             else -> this
         }
-        this is succ && t.canEval() -> copy(t.eval()).eval()                 // E-Succ
+        this is succ && t.canEval() -> copy(t.eval())                        // E-Succ
 
         this == pred(zero) -> zero                                           // E-PredZero
         this is pred && t is succ && t.t.isNumericValue() -> t.t             // E-PredSucc
-        this is pred && t.canEval() -> copy(t.eval()).eval()                 // E-Pred
+        this is pred && t.canEval() -> copy(t.eval())                        // E-Pred
 
         this == iszero(zero) -> `true`                                       // E-IszeroZero
         this is iszero && t is succ && t.t.isNumericValue() -> `false`       // E-IszeroSucc
-        this is iszero && t.canEval() -> copy(t.eval()).eval()               // E-IsZero
+        this is iszero && t.canEval() -> copy(t.eval())                      // E-IsZero
 
         else -> this
     }
@@ -50,8 +50,8 @@ fun Term.isNumericValue(): Boolean =
 
 
 class EvaluationTest {
-    private val t2 = namedValue("t2")
-    private val t3 = namedValue("t3")
+    private val t2 = namedTerm("t2")
+    private val t3 = namedTerm("t3")
     private val normalFormTerm = `if`(zero, `true`, `false`)
 
     init {
@@ -70,7 +70,7 @@ class EvaluationTest {
     }
 
     @Test fun `E-If`() {
-        `if`(termWhichEvalsTo(`true`), then = t2, `else` = t3) evaluatesTo t2
+        `if`(termWhichEvalsTo(`true`), then = t2, `else` = t3) evaluatesTo `if`(`true`, then = t2, `else` = t3)
         `if`(normalFormTerm, then = t2, `else` = t3).assertIsNormalForm()
     }
 
@@ -91,7 +91,7 @@ class EvaluationTest {
     }
 
     @Test fun `E-Pred`() {
-        pred(termWhichEvalsTo(succ(zero))) evaluatesTo zero
+        pred(termWhichEvalsTo(succ(zero))) evaluatesTo pred(succ(zero))
         pred(normalFormTerm).assertIsNormalForm()
     }
 
@@ -105,8 +105,9 @@ class EvaluationTest {
     }
 
     @Test fun `E-IsZero`() {
-        iszero(termWhichEvalsTo(zero)) evaluatesTo `true`
-        iszero(termWhichEvalsTo(succ(zero))) evaluatesTo `false`
+        iszero(zero) evaluatesTo `true`
+        iszero(termWhichEvalsTo(zero)) evaluatesTo iszero(zero)
+        iszero(termWhichEvalsTo(succ(zero))) evaluatesTo iszero(succ(zero))
         iszero(normalFormTerm).assertIsNormalForm()
     }
 
@@ -116,7 +117,7 @@ class EvaluationTest {
 
     private fun Term.assertIsNormalForm() = assertThat(this.eval(), equalTo(this))
 
-    private fun namedValue(name: String) = object : Term {
+    private fun namedTerm(name: String) = object : Term {
         override fun toString() = name
     }
 }
