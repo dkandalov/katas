@@ -7,8 +7,8 @@ import java.io.File
 import java.lang.Integer.parseInt
 
 class DataMunging14 {
-    private val weatherFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat"
-    private val footballFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat"
+    private val weatherFile = "src/katas/kotlin/datamunging/weather.dat"
+    private val footballFile = "src/katas/kotlin/datamunging/football.dat"
 
     @Test fun `find day with minimum temperature spread`() {
         assertThat(parseAndFindMinValue(weatherFile, 0, 1, 2), equalTo(Data("14", 61, 59)))
