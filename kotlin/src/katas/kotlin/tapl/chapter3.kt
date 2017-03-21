@@ -1,3 +1,6 @@
+@file:Suppress("PackageDirectoryMismatch")
+package tapl.chapter3
+
 /*
 This file contains implementation of language described in Chapter 3
 of the Types and Programming Languages book (https://www.cis.upenn.edu/~bcpierce/tapl/)
@@ -19,28 +22,27 @@ data class pred(val t: Term): Term
 data class iszero(val t: Term): Term
 
 
-fun Term.eval(): Term =
-    when {
-        this is `if` -> when {
-            predicate == `true` -> then                                      // E-IfTrue
-            predicate == `false` -> `else`                                   // E-IfFalse
-            predicate.canEval() -> copy(predicate = predicate.eval())        // E-If
-            else -> this
-        }
-        this is succ && t.canEval() -> copy(t.eval())                        // E-Succ
-
-        this == pred(zero) -> zero                                           // E-PredZero
-        this is pred && t is succ && t.t.isNumericValue() -> t.t             // E-PredSucc
-        this is pred && t.canEval() -> copy(t.eval())                        // E-Pred
-
-        this == iszero(zero) -> `true`                                       // E-IszeroZero
-        this is iszero && t is succ && t.t.isNumericValue() -> `false`       // E-IszeroSucc
-        this is iszero && t.canEval() -> copy(t.eval())                      // E-IsZero
-
+fun Term.eval(): Term = when {
+    this is `if` -> when {
+        predicate == `true` -> then                                      // E-IfTrue
+        predicate == `false` -> `else`                                   // E-IfFalse
+        predicate.reducible() -> copy(predicate = predicate.eval())      // E-If
         else -> this
     }
+    this is succ && t.reducible() -> copy(t.eval())                      // E-Succ
 
-fun Term.canEval() = !isValue() && this != this.eval()
+    this == pred(zero) -> zero                                           // E-PredZero
+    this is pred && t is succ && t.t.isNumericValue() -> t.t             // E-PredSucc
+    this is pred && t.reducible() -> copy(t.eval())                      // E-Pred
+
+    this == iszero(zero) -> `true`                                       // E-IszeroZero
+    this is iszero && t is succ && t.t.isNumericValue() -> `false`       // E-IszeroSucc
+    this is iszero && t.reducible() -> copy(t.eval())                    // E-IsZero
+
+    else -> this
+}
+
+fun Term.reducible() = !isValue() && this != this.eval()
 
 fun Term.isValue() =
         this == `true` || this == `false` || isNumericValue()
