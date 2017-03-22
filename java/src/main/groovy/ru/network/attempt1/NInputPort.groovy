@@ -1,4 +1,4 @@
-package network.attempt1
+package ru.network.attempt1
 
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque

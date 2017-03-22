@@ -19,7 +19,7 @@ class CubeAssembler {
       newMap
     }
     def haveOneX = { Object... points ->
-      points.count { it == x } == 1
+      points.count { it == Surface.x } == 1
     }
 
     if (cube.top == null) {

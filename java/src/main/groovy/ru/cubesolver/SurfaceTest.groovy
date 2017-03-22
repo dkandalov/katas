@@ -7,28 +7,28 @@ class SurfaceTest {
 
   @Test void "surface has sides"() {
     def surface = surface(
-            [x, x, _],
-            [_, x, x],
-            [_, x, x]
+            [Surface.x, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface.x],
+            [Surface._, Surface.x, Surface.x]
     )
-    assert surface.topSide() == [x, x, _]
-    assert surface.rightSide() == [_, x, x]
-    assert surface.bottomSide() == [_, x, x]
-    assert surface.leftSide() == [x, _, _]
+    assert surface.topSide() == [Surface.x, Surface.x, Surface._]
+    assert surface.rightSide() == [Surface._, Surface.x, Surface.x]
+    assert surface.bottomSide() == [Surface._, Surface.x, Surface.x]
+    assert surface.leftSide() == [Surface.x, Surface._, Surface._]
   }
 
   @Test void "surface sides can be connected"() {
-    assert !areConnectible([_, _, x], [x, x, x])
-    assert !areConnectible([_, _, x], [x, _, _])
-    assert areConnectible([_, x, x], [_, _, _])
-    assert areConnectible([_, _, x], [x, x, _])
+    assert !areConnectible([Surface._, Surface._, Surface.x], [Surface.x, Surface.x, Surface.x])
+    assert !areConnectible([Surface._, Surface._, Surface.x], [Surface.x, Surface._, Surface._])
+    assert areConnectible([Surface._, Surface.x, Surface.x], [Surface._, Surface._, Surface._])
+    assert areConnectible([Surface._, Surface._, Surface.x], [Surface.x, Surface.x, Surface._])
   }
 
   @Test void "surface can be converted to string"() {
     def surface = surface(
-            [x, x, _],
-            [_, x, x],
-            [_, x, _]
+            [Surface.x, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface.x],
+            [Surface._, Surface.x, Surface._]
     )
     assert surface.toString() == """
       |xx-
@@ -67,54 +67,54 @@ class SurfaceTest {
 
   @Test void "surface can be rotated"() {
     assert surface(
-            [x, x, _],
-            [_, x, _],
-            [_, x, _],
+            [Surface.x, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
     ).rotateRight() == surface(
-            [_, _, x],
-            [x, x, x],
-            [_, _, _],
+            [Surface._, Surface._, Surface.x],
+            [Surface.x, Surface.x, Surface.x],
+            [Surface._, Surface._, Surface._],
     )
     assert surface(
-            [_, _, x],
-            [x, x, x],
-            [_, _, _],
+            [Surface._, Surface._, Surface.x],
+            [Surface.x, Surface.x, Surface.x],
+            [Surface._, Surface._, Surface._],
     ).rotateRight() == surface(
-            [_, x, _],
-            [_, x, _],
-            [_, x, x],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface.x],
     )
   }
 
   @Test void "surface can be horizontally flipped"() {
     assert surface(
-            [x, x, _],
-            [_, x, _],
-            [_, x, _],
+            [Surface.x, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
     ).horizontalFlip() == surface(
-            [_, x, x],
-            [_, x, _],
-            [_, x, _],
+            [Surface._, Surface.x, Surface.x],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
     )
   }
 
   @Test void "all possible rotations of a surface"() {
     def rotations = surface(
-            [x, x, _],
-            [_, x, _],
-            [_, x, _],
+            [Surface.x, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
     ).rotations()
 
     assert rotations.size() == 8
     assert rotations[4] == surface(
-            [_, x, x],
-            [_, x, _],
-            [_, x, _],
+            [Surface._, Surface.x, Surface.x],
+            [Surface._, Surface.x, Surface._],
+            [Surface._, Surface.x, Surface._],
     )
     assert rotations[7] == surface(
-            [x, _, _],
-            [x, x, x],
-            [_, _, _],
+            [Surface.x, Surface._, Surface._],
+            [Surface.x, Surface.x, Surface.x],
+            [Surface._, Surface._, Surface._],
     )
   }
 

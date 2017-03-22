@@ -1,4 +1,4 @@
-package network.attempt2
+package ru.network.attempt2
 
 import groovyx.gpars.actor.Actor
 import groovyx.gpars.actor.Actors
