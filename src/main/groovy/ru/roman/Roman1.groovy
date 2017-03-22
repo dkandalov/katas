@@ -1,7 +1,7 @@
 package ru.roman
 
 import org.junit.Test
-import ru.util.Fail
+import katas.java.util.Fail
 
 /**
  * Done at coding dojo.

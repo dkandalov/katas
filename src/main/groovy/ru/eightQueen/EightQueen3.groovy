@@ -1,7 +1,7 @@
 package ru.eightQueen
 
 import org.junit.Test
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 import static org.hamcrest.Matchers.equalTo
 import static org.junit.Assert.assertThat
 

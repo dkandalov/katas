@@ -1,7 +1,7 @@
 package ru.knapsack
 
 import org.junit.Test
-import ru.util.Incorrect
+import katas.java.util.Incorrect
 
 /**
  * User: dima

@@ -1,8 +1,8 @@
 package ru.katas.n19
 
 import org.junit.Test
-import ru.util.Mess
-import ru.util.Pomodoro
+import katas.java.util.Mess
+import katas.java.util.Pomodoro
 
 /**
  * User: dima

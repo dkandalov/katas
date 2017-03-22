@@ -2,7 +2,7 @@ package ru.solitaire_cipher
 
 import org.junit.Test
 import ru.util.GroovyUtil
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 
 /**
  * User: dima

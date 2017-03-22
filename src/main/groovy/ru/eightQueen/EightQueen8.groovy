@@ -1,7 +1,7 @@
 package ru.eightQueen
 
 import org.junit.Test
-import ru.util.Fail
+import katas.java.util.Fail
 
 /**
  * User: dima

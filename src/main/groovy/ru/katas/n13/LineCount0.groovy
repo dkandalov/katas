@@ -1,7 +1,7 @@
 package ru.katas.n13
 
 import org.junit.Test
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 
 /**
  * User: dima

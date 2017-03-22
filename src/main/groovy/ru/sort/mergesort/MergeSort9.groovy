@@ -1,7 +1,7 @@
 package ru.sort.mergesort
 
 import org.junit.Test
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 
 /**
  * User: dima

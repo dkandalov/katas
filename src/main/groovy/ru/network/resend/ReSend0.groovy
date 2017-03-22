@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 import org.junit.Test
 import ru.network.actors.Bus
 import ru.network.actors.PrintingBusListener
-import ru.util.Fail
+import katas.java.util.Fail
 import static groovyx.gpars.actor.Actor.TIMEOUT
 import static groovyx.gpars.actor.Actors.actor
 import static java.util.concurrent.TimeUnit.SECONDS

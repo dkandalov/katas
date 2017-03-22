@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 import org.junit.Test
 import ru.network.actors.Bus
 import ru.network.actors.PrintingBusListener
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 import static groovyx.gpars.actor.Actors.actor
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 import static java.util.concurrent.TimeUnit.SECONDS

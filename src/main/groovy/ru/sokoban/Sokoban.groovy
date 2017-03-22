@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
-import ru.util.Mess
+import katas.java.util.Mess
 import static java.awt.event.KeyEvent.*
 
 /**

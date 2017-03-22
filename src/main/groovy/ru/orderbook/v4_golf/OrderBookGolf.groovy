@@ -1,6 +1,6 @@
 package ru.orderbook.v4_golf
 
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 import static java.lang.Integer.parseInt
 
 /**

@@ -5,7 +5,7 @@ import groovyx.gpars.activeobject.ActiveObject
 import groovyx.gpars.actor.Actor
 import org.junit.Test
 import ru.network.actors.Bus
-import ru.util.Pomodoro
+import katas.java.util.Pomodoro
 import static java.util.concurrent.TimeUnit.SECONDS
 import static ru.network.actors.util.Util.executeEvery
 import static groovyx.gpars.actor.Actors.actor

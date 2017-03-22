@@ -1,7 +1,7 @@
 package ru.sudoku
 
 import org.junit.Test
-import ru.util.Mess
+import katas.java.util.Mess
 
 /**
  * User: dima

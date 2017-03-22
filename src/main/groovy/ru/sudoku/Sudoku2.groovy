@@ -2,7 +2,7 @@ package ru.sudoku
 
 import org.junit.Test
 import ru.util.GroovyUtil
-import ru.util.Incorrect
+import katas.java.util.Incorrect
 
 /**
  * User: dima
