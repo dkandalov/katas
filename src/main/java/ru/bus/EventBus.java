@@ -1,6 +1,6 @@
 package ru.bus;
 
-import ru.Pair;
+import katas.java.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
