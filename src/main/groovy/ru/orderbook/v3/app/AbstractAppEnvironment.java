@@ -1,7 +1,7 @@
-package katas.scala.orderbook.v4.app;
+package ru.orderbook.v3.app;
 
 
-import katas.scala.orderbook.v4.iface.*;
+import ru.orderbook.v3.iface.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -41,7 +41,6 @@ public abstract class AbstractAppEnvironment implements AppEnvironment {
         try {
             feedOrders();
         } catch (Exception e) {
-            e.printStackTrace();
             log.log(LogLevel.ERROR, e.getMessage());
         } finally {
             notifyFinish();

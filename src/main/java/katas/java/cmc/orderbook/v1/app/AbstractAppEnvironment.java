@@ -1,7 +1,7 @@
-package katas.scala.orderbook.v4.app;
+package katas.java.cmc.orderbook.v1.app;
 
 
-import katas.scala.orderbook.v4.iface.*;
+import katas.java.cmc.orderbook.v1.iface.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,7 +11,7 @@ public abstract class AbstractAppEnvironment implements AppEnvironment {
     private final Set<OrderConsumer> consumers = new LinkedHashSet<OrderConsumer>();
     private final LogLevel logLevel;
     /**
-     * Implementation of {@link katas.java.cmc.orderbook.v1.iface.Log} which uses the standard out.
+     * Implementation of {@link Log} which uses the standard out.
      */
     protected final Log log = new Log() {
         @Override
@@ -49,7 +49,7 @@ public abstract class AbstractAppEnvironment implements AppEnvironment {
     }
 
     /**
-     * Sends a stream of orders to {@link katas.java.cmc.orderbook.v1.iface.OrderConsumer}s.
+     * Sends a stream of orders to {@link OrderConsumer}s.
      *
      * @throws Exception if there is an error.
      * @see #notifyOrder(Action, Order)
@@ -57,7 +57,7 @@ public abstract class AbstractAppEnvironment implements AppEnvironment {
     protected abstract void feedOrders() throws Exception;
 
     /**
-     * Invokes {@link katas.java.cmc.orderbook.v1.iface.OrderConsumer#handleEvent(katas.java.cmc.orderbook.v1.iface.Action, katas.java.cmc.orderbook.v1.iface.Order)} for every registered consumer with
+     * Invokes {@link OrderConsumer#handleEvent(Action, Order)} for every registered consumer with
      * specified <code>action</code> and <code>order</code>.
      */
     protected void notifyOrder(Action action, Order order) {
