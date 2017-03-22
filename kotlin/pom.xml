@@ -11,8 +11,7 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <!--<kotlin.version>1.0.6</kotlin.version>-->
-        <kotlin.version>1.1.0-rc-91</kotlin.version>
+        <kotlin.version>1.1.1</kotlin.version>
     </properties>
 
     <repositories>
@@ -96,6 +95,9 @@
                 </executions>
 
                 <configuration>
+                    <args>
+                        <arg>-Xcoroutines=enable</arg>
+                    </args>
                     <compilerPlugins>
                         <plugin>all-open</plugin>
                     </compilerPlugins>
