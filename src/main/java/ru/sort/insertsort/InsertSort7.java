@@ -1,7 +1,7 @@
 package ru.sort.insertsort;
 
 import org.junit.Test;
-import ru.permutation.Perm0;
+import katas.java.permutation.Perm0;
 
 import static org.junit.Assert.*;
 

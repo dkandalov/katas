@@ -1,5 +1,7 @@
 package ru.db
 
+import katas.java.db.StringUtil
+
 /**
  * User: dima
  * Date: 05/01/2012

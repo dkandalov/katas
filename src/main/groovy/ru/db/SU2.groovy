@@ -1,5 +1,7 @@
 package ru.db
 
+import katas.java.db.StringUtil
+
 import static java.lang.Math.min
 
 /**

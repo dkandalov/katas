@@ -8,7 +8,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static ru.permutation.Perm0.perm;
+import static katas.java.permutation.Perm0.perm;
 
 /**
  * @author DKandalov

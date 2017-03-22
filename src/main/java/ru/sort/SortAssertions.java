@@ -1,6 +1,6 @@
 package ru.sort;
 
-import ru.permutation.Perm9;
+import katas.java.permutation.Perm9;
 
 import java.util.List;
 import java.util.function.Function;

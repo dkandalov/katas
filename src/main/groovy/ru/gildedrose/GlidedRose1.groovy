@@ -1,5 +1,7 @@
 package ru.gildedrose
 
+import ru.knapsack.Item
+
 import static java.lang.Integer.MIN_VALUE
 
 class GlidedRose1 {
