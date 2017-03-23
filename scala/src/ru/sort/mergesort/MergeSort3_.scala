@@ -1,8 +1,8 @@
 package ru.sort.mergesort
 
+import katas.scala.permutation.Perm1_
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import ru.permutation.Perm1_
 
 import scala.collection.mutable.ListBuffer
 

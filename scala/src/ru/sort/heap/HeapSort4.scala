@@ -1,8 +1,8 @@
 package ru.sort.heap
 
+import katas.scala.permutation.Perm3_
 import org.junit.Test
 import org.scalatest.Matchers
-import ru.permutation.Perm3_
 
 /**
  * User: dima
