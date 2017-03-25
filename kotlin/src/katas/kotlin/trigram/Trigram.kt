@@ -23,7 +23,7 @@ class TrigramTest {
             map[key]!!.add(trigram[2])
             map
         }
-        //data.values.take(100).forEach { println(it) }
+        //data.values.take(100).forEach { printed(it) }
 
         val random = Random(123)
         val entryPoint = data.keys.drop(random.nextInt(data.size)).first()

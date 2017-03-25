@@ -2,9 +2,12 @@ package katas.kotlin
 
 import io.kotlintest.specs.StringSpec
 
-fun Any?.println() {
+fun <T> T.printed(): T {
     println(this)
+    return this
 }
+
+fun Collection<*>.join(): String = joinToString("")
 
 fun <E> Iterable<E>.skip(n: Int): Iterable<E> {
     val iterator = iterator()

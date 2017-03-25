@@ -1,7 +1,7 @@
 package katas.kotlin.trigram
 
 import io.kotlintest.specs.StringSpec
-import katas.kotlin.println
+import katas.kotlin.printed
 import katas.kotlin.skip
 import katas.kotlin.sliding
 import java.io.File
@@ -24,7 +24,7 @@ class Trigram3Test : StringSpec() {
             }.map { it.first }
 
             val text = textGenerator.take(100).joinToString(" ")
-            text.println()
+            text.printed()
             text should startWith(
                 "_one_ of its denotation. If 'man,' for example, it is in the course of nature or in the mythopœic age. " +
                 "We must not be put in vague language. (6) It was shown in this, that they were, in a hole; " +
