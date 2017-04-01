@@ -2,12 +2,15 @@ package katas.kotlin
 
 import io.kotlintest.specs.StringSpec
 
-fun <T> T.printed(): T {
-    println(this)
+fun <T> T.printed(f: (T) -> String = { it.toString() }): T {
+    println(f(this))
     return this
 }
 
-fun Collection<*>.join(): String = joinToString("")
+fun <T> Iterable<T>.join(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "",
+                         limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
+    return this.joinToString(separator, prefix, postfix, limit, truncated, transform)
+}
 
 fun <E> Iterable<E>.skip(n: Int): Iterable<E> {
     val iterator = iterator()
