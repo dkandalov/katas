@@ -1,7 +1,6 @@
 package katas.kotlin.shuntingYard
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
+import katas.kotlin.shouldEqual
 import org.junit.Test
 import java.util.LinkedList
 
@@ -38,13 +37,9 @@ class ShuntingYard2 {
     private fun String.isOperator() = operators.contains(this)
 
     private fun String.precedence() = operators[this]!!
-}
 
-private fun <E> MutableList<E>.consume(list: MutableList<E>) = apply {
-    addAll(list)
-    list.clear()
-}
-
-private infix fun <T> T.shouldEqual(that: T) {
-    assertThat(this, equalTo(that))
+    private fun <E> MutableList<E>.consume(list: MutableList<E>) = apply {
+        addAll(list)
+        list.clear()
+    }
 }

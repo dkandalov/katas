@@ -1,6 +1,12 @@
 package katas.kotlin
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import io.kotlintest.specs.StringSpec
+
+infix fun <T> T.shouldEqual(that: T) {
+    assertThat(this, equalTo(that))
+}
 
 fun <T> T.printed(f: (T) -> String = { it.toString() }): T {
     println(f(this))
