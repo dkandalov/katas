@@ -1,4 +1,4 @@
-package ru.katas.n13
+package katas.scala.classic_katas.javalinecout
 
 import org.scalatest.Matchers
 import scala.io.Source

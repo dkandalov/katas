@@ -1,4 +1,4 @@
-package ru.katas.n4
+package katas.scala.classic_katas.datamunging
 
 import org.junit.Test
 import scala.io.Source

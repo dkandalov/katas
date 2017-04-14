@@ -1,4 +1,4 @@
-package ru.network
+package katas.scala.network
 
 
 /**
