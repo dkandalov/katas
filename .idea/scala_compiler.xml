@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="implicitConversions" value="true" />
-    <profile name="Maven 1" modules="katas" />
+    <profile name="Maven 1" modules="katas">
+      <option name="implicitConversions" value="true" />
+    </profile>
+    <profile name="Maven 2" modules="scala-katas" />
   </component>
 </project>

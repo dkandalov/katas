@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
-    <file url="file://$PROJECT_DIR$/src/main/c/hello.c" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/contextfree/from-gallery/color-spiral-2c.png" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/ru/db/StringUtilImpl2Test.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/ru/enigma/Paper Enigma.pdf" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/scala/ru/akka_tutorial/remote/CreationApp.scala" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/c/hello.c" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/contextfree/from-gallery/color-spiral-2c.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/java/src/main/java/katas/java/db/StringUtilImpl2Test.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/java/src/main/java/katas/java/enigma/Paper Enigma.pdf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/scala/src/katas/scala/akka_tutorial/remote/CreationApp.scala" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

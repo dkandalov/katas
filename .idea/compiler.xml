@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/src/main/groovy/ru/orderbook" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/src/main/java/ru/orderbook" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/src/main/scala/ru/orderbook" includeSubdirectories="true" />
-    </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -24,20 +18,26 @@
       <entry name="?*.ftl" />
     </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
+        <module name="java-katas" />
         <module name="katas" />
+        <module name="kotlin" />
+        <module name="kotlin-katas-and-stuff" />
         <module name="morestuff" />
+        <module name="scala" />
+        <module name="scala-katas" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="java-katas" target="1.8" />
       <module name="katas" target="1.8" />
+      <module name="kotlin" target="1.8" />
+      <module name="kotlin-katas-and-stuff" target="1.8" />
+      <module name="scala" target="1.8" />
+      <module name="scala-katas" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
