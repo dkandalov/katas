@@ -51,11 +51,11 @@ public class Snake0 {
         private final Status status;
         private final boolean skipNextTimerTick;
 
-        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status) {
+        GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status) {
             this(snakeDirection, snake, apples, status, false);
         }
 
-        public GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status, boolean skipNextTimerTick) {
+        GameState(Direction snakeDirection, List<Point> snake, List<Point> apples, Status status, boolean skipNextTimerTick) {
             this.snakeDirection = snakeDirection;
             this.snake = snake;
             this.apples = apples;
@@ -63,11 +63,11 @@ public class Snake0 {
             this.skipNextTimerTick = skipNextTimerTick;
         }
 
-        public GameState skipNextTimerTick(boolean value) {
+        GameState skipNextTimerTick(boolean value) {
             return new GameState(snakeDirection, snake, apples, status, value);
         }
 
-        public GameState onTimer() {
+        GameState onTimer() {
             if (skipNextTimerTick) return skipNextTimerTick(false);
             if (status != playing) return this;
 
@@ -98,7 +98,7 @@ public class Snake0 {
             else throw new IllegalStateException();
         }
 
-        public GameState onDirectionChange(Direction newDirection) {
+        GameState onDirectionChange(Direction newDirection) {
             if (status != playing) return this;
 
             List<Point> newSnake = new ArrayList<>(snake);
@@ -133,7 +133,7 @@ public class Snake0 {
     private static class GameUI {
         private GamePanel gamePanel;
 
-        public GameUI init(Consumer<Direction> directionConsumer) {
+        void init(Consumer<Direction> directionConsumer) {
             gamePanel = new GamePanel();
 
             JFrame jFrame = new JFrame("Snake");
@@ -161,10 +161,9 @@ public class Snake0 {
             jFrame.setLocationRelativeTo(null);
             jFrame.setVisible(true);
 
-            return this;
         }
 
-        public void repaint(GameState gameState) {
+        void repaint(GameState gameState) {
             SwingUtilities.invokeLater(() ->
                     gamePanel.repaintState(gameState)
             );
@@ -178,7 +177,7 @@ public class Snake0 {
             return new Dimension(800, 800);
         }
 
-        public void repaintState(GameState gameState) {
+        void repaintState(GameState gameState) {
             this.gameState = gameState;
             repaint();
         }
@@ -220,7 +219,7 @@ public class Snake0 {
     private static class GameTimer {
         private final Timer timer;
 
-        public GameTimer(Consumer<Void> callback) {
+        GameTimer(Consumer<Void> callback) {
             this.timer = new Timer(500, e -> callback.accept(null));
         }
 
