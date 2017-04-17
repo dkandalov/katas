@@ -2,14 +2,14 @@ package katas.java.tree.common;
 
 public class Node<T> {
     public final T data;
-    public final Node left;
-    public final Node right;
+    public final Node<T> left;
+    public final Node<T> right;
 
     public static <T> Node<T> node(T data) {
         return new Node<>(data);
     }
 
-    public static <T> Node<T> node(T data, Node left, Node right) {
+    public static <T> Node<T> node(T data, Node<T> left, Node<T> right) {
         return new Node<>(data, left, right);
     }
 
@@ -17,7 +17,7 @@ public class Node<T> {
         this(data, null, null);
     }
 
-    public Node(T data, Node left, Node right) {
+    public Node(T data, Node<T> left, Node<T> right) {
         this.data = data;
         this.left = left;
         this.right = right;
