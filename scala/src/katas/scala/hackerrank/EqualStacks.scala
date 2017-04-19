@@ -9,14 +9,14 @@ import org.scalatest.Matchers
 class EqualStacks extends Matchers {
 
 	def main(args: Array[String]) {
-		val sc = new java.util.Scanner(System.in)
-		val n1 = sc.nextInt()
-		val n2 = sc.nextInt()
-		val n3 = sc.nextInt()
+		val scanner = new java.util.Scanner(System.in)
+		val n1 = scanner.nextInt()
+		val n2 = scanner.nextInt()
+		val n3 = scanner.nextInt()
 
-		val s1 = (for (_ <- 0 until n1) yield sc.nextInt()).toArray
-		val s2 = (for (_ <- 0 until n2) yield sc.nextInt()).toArray
-		val s3 = (for (_ <- 0 until n3) yield sc.nextInt()).toArray
+		val s1 = (for (_ <- 0 until n1) yield scanner.nextInt()).toArray
+		val s2 = (for (_ <- 0 until n2) yield scanner.nextInt()).toArray
+		val s3 = (for (_ <- 0 until n3) yield scanner.nextInt()).toArray
 		
 		println(findMinStack(s1, s2, s3))
 	}
