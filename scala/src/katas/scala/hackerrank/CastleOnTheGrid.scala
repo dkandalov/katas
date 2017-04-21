@@ -4,12 +4,12 @@ import org.junit.Test
 import org.scalatest.Matchers
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
 	* https://www.hackerrank.com/challenges/castle-on-the-grid
 	*/
 class CastleOnTheGrid extends Matchers {
-
 	@Test def `linear downward path`(): Unit = {
 		val grid =
 			"""
@@ -29,7 +29,7 @@ class CastleOnTheGrid extends Matchers {
 				|...
 			""".trim.stripMargin.parse()
 
-		findPath(grid, Point(0, 0), Point(0, 2)) shouldEqual List(Point(0, 0), Point(2, 0), Point(2, 2), Point(0, 2))
+		findPath(grid, Point(0, 0), Point(0, 2)) shouldEqual List(Point(0, 0), Point(1, 0), Point(1, 2), Point(0, 2))
 	}
 
 	@Test def `downward path with obstacle 2`(): Unit = {
@@ -76,69 +76,90 @@ class CastleOnTheGrid extends Matchers {
 		findPath(grid, Point(0, 0), Point(2, 0)) shouldEqual List(Point(0, 0), Point(0, 2), Point(2, 2), Point(2, 0))
 	}
 
+	@Test def `large grid`(): Unit = {
+		val grid = Grid(Array.fill(100){ Array.fill[Char](100){ '.' } })
+		findPath(grid, Point(0, 0), Point(99, 99)) shouldEqual List(
+			Point(0, 0), Point(0, 99), Point(99, 99)
+		)
+	}
+	
 	def main(args: Array[String]): Unit = {
 		val scanner = new java.util.Scanner(System.in)
 
-		val n = scanner.nextInt()
-		val grid = 0.until(n).map { _ => scanner.nextLine().toCharArray }.toArray
+		val n = scanner.nextLine().toInt
+		val grid = Grid(0.until(n).map { _ => scanner.nextLine().toCharArray }.toArray)
 
-		val fromY = scanner.nextInt
-		val fromX = scanner.nextInt
-		val toY = scanner.nextInt
-		val toX = scanner.nextInt
+		val a = scanner.nextLine().split(" ").map(_.toInt)
+		val from = Point(a(1), a(0))
+		val to = Point(a(3), a(2))
 
-		val path = findPath(grid, Point(fromX, fromY), Point(toX, toY))
+		val path = findPath(grid, from, to)
 
-		println(path.size)
+		println(path.size - 1)
 	}
 
-	private def findPath(grid: Array[Array[Char]], from: Point, to: Point): List[Point] = {
-		val queue = mutable.Queue(List(from))
+	import Grid._
+
+	private def findPath(grid: Grid, from: Point, to: Point): List[Point] = {
+		val queue = mutable.Queue(ListBuffer(from))
 		while (queue.nonEmpty && queue.head.last != to) {
 			val path = queue.dequeue()
 			val moves = validMoves(grid, path.last)
 			moves.foreach{ move =>
-				if (!path.contains(move)) {
+				if (grid(move) == emptyCell) {
 					queue.enqueue(path :+ move)
+					grid(move) = visitedCell
 				}
 			}
 		}
-		queue.headOption.orNull
+		queue.headOption.map(_.toList).orNull
 	}
 
-	private def validMoves(grid: Array[Array[Char]], p: Point): List[Point] = {
-		val width = grid.length
+	private def validMoves(grid: Grid, p: Point): List[Point] = {
+		val width = grid.size
 		val height = width
 
-		val result = new mutable.ListBuffer[Point]()
-		var dy = 1
-		while (p.y + dy < height && grid(p.y + dy)(p.x) != 'X') {
-			result += Point(p.x, p.y + dy)
-			dy += 1
+		val result = new ListBuffer[Point]()
+		var dp = p.copy(y = p.y + 1)
+		while (dp.y < height && grid(dp) != cellWithWall) {
+			result += dp
+			dp = dp.copy(y = dp.y + 1)
 		}
-		dy = -1
-		while (p.y + dy >= 0 && grid(p.y + dy)(p.x) != 'X') {
-			result += Point(p.x, p.y + dy)
-			dy -= 1
+		dp = p.copy(y = p.y - 1)
+		while (dp.y >= 0 && grid(dp) != cellWithWall) {
+			result += dp
+			dp = dp.copy(y = dp.y - 1)
 		}
-		var dx = 1
-		while (p.x + dx < width && grid(p.y)(p.x + dx) != 'X') {
-			result += Point(p.x + dx, p.y)
-			dx += 1
+		dp = p.copy(x = p.x + 1)
+		while (dp.x < width && grid(dp) != cellWithWall) {
+			result += dp
+			dp = dp.copy(x = dp.x + 1)
 		}
-		dx = -1
-		while (p.x + dx >= 0 && grid(p.y)(p.x + dx) != 'X') {
-			result += Point(p.x + dx, p.y)
-			dx -= 1
+		dp = p.copy(x = p.x - 1)
+		while (dp.x >= 0 && grid(dp) != cellWithWall) {
+			result += dp
+			dp = dp.copy(x = dp.x - 1)
 		}
-		result.toList.reverse
+		result.toList
 	}
 
 	private case class Point(x: Int, y: Int) {
 		override def toString: String = s"[$x,$y]"
 	}
 
+	private case class Grid(private val data: Array[Array[Char]]) {
+		val size: Int = data.length
+		def apply(p: Point): Char = data(p.y)(p.x)
+		def update(p: Point, c: Char): Unit = data(p.y)(p.x) = c
+	}
+
+	private object Grid {
+		val emptyCell: Char = '.'
+		val cellWithWall: Char = 'X'
+		val visitedCell: Char = '*'
+	}
+
 	private implicit class StringToGrid(s: String) {
-		def parse(): Array[Array[Char]] = s.split("\n").map(_.toCharArray)
+		def parse(): Grid = Grid(s.split("\n").map(_.toCharArray))
 	}
 }
