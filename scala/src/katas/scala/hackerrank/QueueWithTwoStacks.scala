@@ -3,8 +3,6 @@ package katas.scala.hackerrank
 import org.junit.Test
 import org.scalatest.Matchers
 
-import scala.collection.mutable
-
 /**
 	* https://www.hackerrank.com/challenges/queue-using-two-stacks
 	*/

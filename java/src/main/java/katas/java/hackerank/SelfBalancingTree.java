@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static katas.java.hackerank.SelfBalancingTree.Node.hiddenInsert;
 import static java.lang.Math.max;
 import static java.util.Collections.shuffle;
+import static katas.java.hackerank.SelfBalancingTree.Node.hiddenInsert;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
+/**
+ * https://www.hackerrank.com/challenges/self-balancing-tree
+ */
 public class SelfBalancingTree {
     @Test public void treeHeight() {
         Node tree =
