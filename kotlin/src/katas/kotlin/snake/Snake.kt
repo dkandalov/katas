@@ -1,6 +1,8 @@
 package katas.kotlin.snake
 
 import katas.kotlin.shouldEqual
+import katas.kotlin.snake.SnakeTest.Direction
+import katas.kotlin.snake.SnakeTest.Direction.*
 import org.junit.Test
 
 class SnakeTest {
@@ -8,36 +10,37 @@ class SnakeTest {
         // xxx
         Snake(Point(2, 2), Point(3, 2), Point(4, 2)).apply {
             //xxx
-            move(Direction.Left).body shouldEqual listOf(Point(1, 2), Point(2, 2), Point(3, 2))
+            move(Left).body shouldEqual listOf(Point(1, 2), Point(2, 2), Point(3, 2))
 
             //  xxx
-            move(Direction.Right).body shouldEqual listOf(Point(5, 2), Point(4, 2), Point(3, 2))
+            move(Right).body shouldEqual listOf(Point(5, 2), Point(4, 2), Point(3, 2))
 
             // xx
             // x
-            move(Direction.Down).body shouldEqual listOf(Point(2, 3), Point(2, 2), Point(3, 2))
+            move(Down).body shouldEqual listOf(Point(2, 3), Point(2, 2), Point(3, 2))
         }
     }
 
     @Test fun `vertical snake moves`() {
         Snake(Point(2, 2), Point(2, 3), Point(2, 4)).apply {
-            move(Direction.Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(2, 3))
-            move(Direction.Down) shouldEqual Snake(Point(2, 3), Point(2, 4), Point(2, 5))
+            move(Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(2, 3))
+            move(Down) shouldEqual Snake(Point(2, 3), Point(2, 4), Point(2, 5))
         }
     }
 
-    private data class Snake(val body: List<Point>) {
+    private data class Snake(val body: List<Point>, val direction: Direction = Left) {
         constructor(vararg body: Point) : this(body.toList())
 
-        fun move(direction: Direction): Snake {
-            return Snake(body.map{ it.moveIn(direction) })
+        fun move(newDirection: Direction): Snake {
+            val newBody = if (newDirection.oppositeTo(direction)) body.reversed() else body
+            return Snake(listOf(newBody.first().moveIn(newDirection)) + newBody.dropLast(1))
         }
 
         private fun Point.moveIn(direction: Direction) = when (direction) {
-            Direction.Left -> Point(x - 1, y)
-            Direction.Up -> Point(x, y - 1)
-            Direction.Right -> Point(x + 1, y)
-            Direction.Down -> Point(x, y + 1)
+            Left -> Point(x - 1, y)
+            Up -> Point(x, y - 1)
+            Right -> Point(x + 1, y)
+            Down -> Point(x, y + 1)
         }
     }
 
@@ -45,7 +48,14 @@ class SnakeTest {
         override fun toString() = "($x,$y)"
     }
 
-    private enum class Direction {
+    enum class Direction {
         Left, Up, Right, Down
     }
+}
+
+private fun Direction.oppositeTo(direction: Direction): Boolean = when (this) {
+    Left -> direction == Right
+    Up -> direction == Down
+    Right -> direction == Left
+    Down -> direction == Up
 }
