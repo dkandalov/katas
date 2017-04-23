@@ -6,6 +6,7 @@ import katas.kotlin.snake.Game.State.*
 import org.junit.Test
 import java.awt.Color
 import java.awt.Dimension
+import java.awt.Font
 import java.awt.Graphics
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -80,8 +81,8 @@ class SnakeTests {
 }
 
 class GameTests {
-    @Test fun `game ends when snake hits wall`() {
-        var game = Game(width = 5, height = 5, state = NotStarted, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
+    @Test fun `game tracks when snake hits wall`() {
+        var game = Game(width = 5, height = 5, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
 
         game = game.updateOnTimer()
         game.apply {
@@ -91,13 +92,13 @@ class GameTests {
 
         game = game.updateOnTimer()
         game.apply {
-            state shouldEqual GameOver
+            state shouldEqual SnakeHitWall
             snake shouldEqual Snake(Point(0, 2), Point(1, 2), Point(2, 2))
         }
     }
 
-    @Test fun `game ends when snake bites itself`() {
-        val game = Game(width = 5, height = 5, state = NotStarted,
+    @Test fun `game tracks when snake bites itself`() {
+        val game = Game(width = 5, height = 5,
             // xxx
             // xX
             // xx
@@ -105,12 +106,12 @@ class GameTests {
         )
 
         game.updateOnTimer().apply {
-            state shouldEqual GameOver
+            state shouldEqual SnakeBitItself
         }
     }
 
     @Test fun `snake grows after eating an apple`() {
-        val game = Game(width = 5, height = 5, state = NotStarted,
+        val game = Game(width = 5, height = 5,
             snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)),
             apples = listOf(Point(0, 2))
         )
@@ -122,7 +123,7 @@ class GameTests {
     }
 
     @Test fun `new apples appear on timer update`() {
-        var game = Game(width = 5, height = 5, state = NotStarted,
+        var game = Game(width = 5, height = 5,
             snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)),
             apples = emptyList(),
             appleFactory = AppleFactory(Random(123))
@@ -135,7 +136,7 @@ class GameTests {
     }
 
     @Test fun `snake moves on user input`() {
-        val game = Game(width = 5, height = 5, state = NotStarted, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
+        val game = Game(width = 5, height = 5, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
         game.updateOnUserInput(Down).apply {
             snake shouldEqual Snake(Point(1, 3), Point(1, 2), Point(2, 2))
         }
@@ -143,35 +144,43 @@ class GameTests {
 }
 
 fun main(args: Array<String>) {
-    var game = Game(width = 50, height = 50, state = NotStarted, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
     val gameUI = GameSwingUI()
     gameUI.init(object : GameUI.Listener {
+        lateinit var game: Game
+
+        override fun onGameStart() {
+            game = Game.create(50, 50)
+            gameUI.paint(game)
+        }
+
         override fun onTimer() {
-            if (game.state == GameOver) return
+            if (game.state != Playing) return
             game = game.updateOnTimer()
-            gameUI.repaint(game)
+            gameUI.paint(game)
         }
 
         override fun onUserDirection(direction: Direction) {
-            if (game.state == GameOver) return
+            if (game.state != Playing) return
             game = game.updateOnUserInput(direction)
-            gameUI.repaint(game)
+            gameUI.paint(game)
         }
     })
 }
 
 interface GameUI {
     fun init(listener: Listener)
-    fun repaint(game: Game)
+    fun paint(game: Game)
 
     interface Listener {
         fun onTimer()
         fun onUserDirection(direction: Direction)
+        fun onGameStart()
     }
 }
 
 class GameSwingUI : GameUI {
     private lateinit var gamePanel: GamePanel
+    private lateinit var jFrame: JFrame
     private lateinit var timer: GameTimer
 
     override fun init(listener: GameUI.Listener) {
@@ -182,7 +191,7 @@ class GameSwingUI : GameUI {
             }
         }.init()
 
-        val jFrame = JFrame("Snake")
+        jFrame = JFrame("Snake")
         jFrame.apply {
             defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
             addKeyListener(object : KeyAdapter() {
@@ -200,6 +209,9 @@ class GameSwingUI : GameUI {
                     if (event.keyCode == KeyEvent.VK_Q) {
                         dispatchEvent(WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING))
                     }
+                    if (event.keyCode == KeyEvent.VK_S) {
+                        listener.onGameStart()
+                    }
                 }
             })
             add(gamePanel)
@@ -207,9 +219,13 @@ class GameSwingUI : GameUI {
             setLocationRelativeTo(null)
             isVisible = true
         }
+
+        SwingUtilities.invokeLater {
+            listener.onGameStart()
+        }
     }
 
-    override fun repaint(game: Game) {
+    override fun paint(game: Game) {
         gamePanel.repaintState(game)
     }
 }
@@ -224,6 +240,7 @@ private class GameTimer(delay: Int = 500, callback: () -> Unit) {
 
 private class GamePanel : JPanel() {
     private var game: Game? = null
+    private val messageFont = Font("DejaVu Sans", Font.BOLD, 35)
 
     fun repaintState(game: Game) {
         this.game = game
@@ -232,39 +249,44 @@ private class GamePanel : JPanel() {
 
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
-        if (game == null) return
+        game?.let { game ->
+            val cellWidth = width / game.width
+            val cellHeight = height / game.height
+            val xPad = cellWidth / 10
+            val yPad = cellHeight / 10
 
-        val cellWidth = 50
-        val cellHeight = 50
-        val xPad = 5
-        val yPad = 5
+            g.color = Color.blue
+            for ((x, y) in game.snake.body) {
+                g.fillRect(
+                    x * cellWidth,
+                    y * cellHeight,
+                    cellWidth - xPad,
+                    cellHeight - yPad
+                )
+            }
+            g.color = Color.red
+            for ((x, y) in game.apples) {
+                g.fillRect(
+                    x * cellWidth,
+                    y * cellHeight,
+                    cellWidth - xPad,
+                    cellHeight - yPad
+                )
+            }
 
-        g.color = Color.blue
-        for ((x, y) in game!!.snake.body) {
-            g.fillRect(
-                x * cellWidth,
-                y * cellHeight,
-                cellWidth - xPad,
-                cellHeight - yPad
-            )
-        }
-        g.color = Color.red
-        for ((x, y) in game!!.apples) {
-            g.fillRect(
-                x * cellWidth,
-                y * cellHeight,
-                cellWidth - xPad,
-                cellHeight - yPad
-            )
-        }
-
-        if (game!!.state == GameOver) {
-            g.drawString("Game Over!", 100, 100)
+            if (game.state != Playing) {
+                val message = "Game Over!"
+                g.font = messageFont
+                val textWidth = g.fontMetrics.stringWidth(message)
+                val textHeight = g.fontMetrics.height
+                g.drawString(message, width / 2 - textWidth / 2, height / 2 - textHeight / 2)
+            }
         }
     }
 
     override fun getPreferredSize() = Dimension(800, 800)
 }
+
 
 interface AppleFactory {
     fun produceApples(game: Game): List<Point>
@@ -286,31 +308,38 @@ interface AppleFactory {
 }
 
 
-data class Game(val width: Int, val height: Int, val state: State, val snake: Snake,
+data class Game(val width: Int, val height: Int, val state: State = Playing, val snake: Snake,
                 val apples: List<Point> = emptyList(), val appleFactory: AppleFactory = AppleFactory.noop) {
 
-    fun updateOnTimer() = update(snake.direction)
+    fun updateOnTimer() = update(snake.direction, appleFactory)
 
-    fun updateOnUserInput(direction: Direction) = update(direction)
+    fun updateOnUserInput(direction: Direction) = update(direction, AppleFactory.noop)
 
-    private fun update(direction: Direction): Game {
+    private fun update(direction: Direction, appleFactory: AppleFactory): Game {
         var newApples = appleFactory.produceApples(this)
         var newSnake = snake.move(direction)
         if (newSnake.body.first() in apples) {
             newSnake = newSnake.copy(body = newSnake.body + snake.body.last())
             newApples = newApples.filter { it != newSnake.body.first() }
         }
-        return if (newSnake.outsideOf(width, height) || newSnake.bitesItself) {
-            copy(state = GameOver)
-        } else {
-            copy(state = Playing, snake = newSnake, apples = newApples)
-        }
+        return if (newSnake.outsideOf(width, height)) copy(state = SnakeHitWall)
+        else if (newSnake.bitItself) copy(state = SnakeBitItself)
+        else copy(state = Playing, snake = newSnake, apples = newApples)
     }
 
     private fun Snake.outsideOf(width: Int, height: Int) = body.any{ it.x < 0 || it.x >= width || it.y < 0 || it.y >= height }
 
     enum class State {
-        NotStarted, Playing, GameOver
+        Playing, SnakeHitWall, SnakeBitItself
+    }
+
+    companion object {
+        fun create(width: Int, height: Int, snakeLength: Int = 4): Game {
+            val x = (width / 2) - snakeLength
+            val y = height / 2
+            val snake = Snake(0.until(snakeLength).map{ Point(x + it, y) })
+            return Game(width, height, Playing, snake, emptyList(), AppleFactory(Random()))
+        }
     }
 }
 
@@ -318,7 +347,7 @@ data class Game(val width: Int, val height: Int, val state: State, val snake: Sn
 data class Snake(val body: List<Point>) {
     constructor(vararg body: Point) : this(body.toList())
 
-    val bitesItself = body.distinct().size != body.size
+    val bitItself = body.distinct().size != body.size
     val direction = body.direction
 
     fun move(direction: Direction): Snake {
