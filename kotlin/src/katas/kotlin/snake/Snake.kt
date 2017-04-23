@@ -4,7 +4,15 @@ import katas.kotlin.shouldEqual
 import katas.kotlin.snake.Direction.*
 import katas.kotlin.snake.Game.State.*
 import org.junit.Test
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Graphics
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.WindowEvent
 import java.util.*
+import javax.swing.*
+import javax.swing.Timer
 
 class SnakeTests {
     @Test fun `horizontal snake moves`() {
@@ -132,6 +140,130 @@ class GameTests {
             snake shouldEqual Snake(Point(1, 3), Point(1, 2), Point(2, 2))
         }
     }
+}
+
+fun main(args: Array<String>) {
+    var game = Game(width = 50, height = 50, state = NotStarted, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
+    val gameUI = GameSwingUI()
+    gameUI.init(object : GameUI.Listener {
+        override fun onTimer() {
+            if (game.state == GameOver) return
+            game = game.updateOnTimer()
+            gameUI.repaint(game)
+        }
+
+        override fun onUserDirection(direction: Direction) {
+            if (game.state == GameOver) return
+            game = game.updateOnUserInput(direction)
+            gameUI.repaint(game)
+        }
+    })
+}
+
+interface GameUI {
+    fun init(listener: Listener)
+    fun repaint(game: Game)
+
+    interface Listener {
+        fun onTimer()
+        fun onUserDirection(direction: Direction)
+    }
+}
+
+class GameSwingUI : GameUI {
+    private lateinit var gamePanel: GamePanel
+    private lateinit var timer: GameTimer
+
+    override fun init(listener: GameUI.Listener) {
+        gamePanel = GamePanel()
+        timer = GameTimer {
+            SwingUtilities.invokeLater {
+                listener.onTimer()
+            }
+        }.init()
+
+        val jFrame = JFrame("Snake")
+        jFrame.apply {
+            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            addKeyListener(object : KeyAdapter() {
+                override fun keyPressed(event: KeyEvent) {
+                    val direction = when (event.keyCode) {
+                        KeyEvent.VK_UP -> Direction.Up
+                        KeyEvent.VK_RIGHT -> Direction.Right
+                        KeyEvent.VK_DOWN -> Direction.Down
+                        KeyEvent.VK_LEFT -> Direction.Left
+                        else -> null
+                    }
+                    if (direction != null) {
+                        listener.onUserDirection(direction)
+                    }
+                    if (event.keyCode == KeyEvent.VK_Q) {
+                        dispatchEvent(WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING))
+                    }
+                }
+            })
+            add(gamePanel)
+            pack()
+            setLocationRelativeTo(null)
+            isVisible = true
+        }
+    }
+
+    override fun repaint(game: Game) {
+        gamePanel.repaintState(game)
+    }
+}
+
+private class GameTimer(delay: Int = 500, callback: () -> Unit) {
+    private val timer = Timer(delay) { callback() }
+
+    fun init() = this.apply {
+        timer.start()
+    }
+}
+
+private class GamePanel : JPanel() {
+    private var game: Game? = null
+
+    fun repaintState(game: Game) {
+        this.game = game
+        repaint()
+    }
+
+    override fun paintComponent(g: Graphics) {
+        super.paintComponent(g)
+        if (game == null) return
+
+        val cellWidth = 50
+        val cellHeight = 50
+        val xPad = 5
+        val yPad = 5
+
+        g.color = Color.blue
+        for ((x, y) in game!!.snake.body) {
+            g.fillRect(
+                x * cellWidth,
+                y * cellHeight,
+                cellWidth - xPad,
+                cellHeight - yPad
+            )
+        }
+        g.color = Color.red
+        for ((x, y) in game!!.apples) {
+            g.fillRect(
+                x * cellWidth,
+                y * cellHeight,
+                cellWidth - xPad,
+                cellHeight - yPad
+            )
+        }
+
+        if (game!!.state == GameOver) {
+            g.drawString("Game Over!", 100, 100)
+        }
+    }
+
+    override fun getPreferredSize() = Dimension(800, 800)
 }
 
 interface AppleFactory {
