@@ -4,10 +4,10 @@ import katas.kotlin.shouldEqual
 import katas.kotlin.snake.v0.Direction.*
 import katas.kotlin.snake.v0.Game.State.*
 import org.junit.Test
-import java.util.*
+import java.util.Random
 
 class SnakeTests {
-    @Test fun `horizontal snake moves`() {
+    @Test fun `moves of horizontal snake`() {
         // Xxx
         Snake(Point(2, 2), Point(3, 2), Point(4, 2)).apply {
             move(Left).body shouldEqual listOf(Point(1, 2), Point(2, 2), Point(3, 2))
@@ -23,7 +23,7 @@ class SnakeTests {
         }
     }
 
-    @Test fun `vertical snake moves`() {
+    @Test fun `moves of vertical snake`() {
         // X
         // x
         // x
@@ -41,7 +41,7 @@ class SnakeTests {
         }
     }
 
-    @Test fun `shaped snake moves`() {
+    @Test fun `moves of shaped snake`() {
         // X
         // xx
         //  x
@@ -166,26 +166,34 @@ interface AppleFactory {
 }
 
 
-data class Game(val width: Int, val height: Int, val state: State = Playing, val snake: Snake,
-                val apples: List<Point> = emptyList(), val appleFactory: AppleFactory = AppleFactory.noop) {
-
+data class Game(
+    val width: Int, val height: Int,
+    val state: State = Playing,
+    val snake: Snake,
+    val apples: List<Point> = emptyList(),
+    val appleFactory: AppleFactory = AppleFactory.noop
+) {
     fun updateOnTimer() = update(snake.direction, appleFactory)
 
     fun updateOnUserInput(direction: Direction) = update(direction, AppleFactory.noop)
 
     private fun update(direction: Direction, appleFactory: AppleFactory): Game {
         var newApples = appleFactory.produceApples(this)
+
         var newSnake = snake.move(direction)
         if (newSnake.body.first() in apples) {
             newSnake = newSnake.copy(body = newSnake.body + snake.body.last())
             newApples = newApples.filter { it != newSnake.body.first() }
         }
-        return if (newSnake.outsideOf(width, height)) copy(state = SnakeHitWall)
-        else if (newSnake.bitItself) copy(state = SnakeBitItself)
-        else copy(state = Playing, snake = newSnake, apples = newApples)
+
+        return when {
+            newSnake.hitWall() -> copy(state = SnakeHitWall)
+            newSnake.bitItself -> copy(state = SnakeBitItself)
+            else -> copy(state = Playing, snake = newSnake, apples = newApples)
+        }
     }
 
-    private fun Snake.outsideOf(width: Int, height: Int) = body.any{ it.x < 0 || it.x >= width || it.y < 0 || it.y >= height }
+    private fun Snake.hitWall() = body.any { it.x < 0 || it.x >= width || it.y < 0 || it.y >= height }
 
     enum class State {
         Playing, SnakeHitWall, SnakeBitItself
@@ -206,10 +214,11 @@ data class Snake(val body: List<Point>) {
     constructor(vararg body: Point) : this(body.toList())
 
     val bitItself = body.distinct().size != body.size
+
     val direction = body.direction
 
     fun move(direction: Direction): Snake {
-        val reversed = direction.oppositeTo(body.direction)
+        val reversed = direction.isOppositeTo(body.direction)
         val updatedBody = if (reversed) body.reversed() else body
         val actualDirection = if (reversed) updatedBody.direction else direction
         return Snake(updatedBody.moveIn(actualDirection))
@@ -241,7 +250,7 @@ enum class Direction {
     Left, Up, Right, Down
 }
 
-private fun Direction.oppositeTo(direction: Direction): Boolean = when (this) {
+private fun Direction.isOppositeTo(direction: Direction): Boolean = when (this) {
     Left -> direction == Right
     Up -> direction == Down
     Right -> direction == Left
