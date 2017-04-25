@@ -9,64 +9,60 @@ import java.util.Random
 class SnakeTests {
     @Test fun `moves of horizontal snake`() {
         // Xxx
-        Snake(Point(2, 2), Point(3, 2), Point(4, 2)).apply {
-            move(Left).body shouldEqual listOf(Point(1, 2), Point(2, 2), Point(3, 2))
-            move(Right).body shouldEqual listOf(Point(5, 2), Point(4, 2), Point(3, 2))
+        val snake = Snake(Point(2, 2), Point(3, 2), Point(4, 2))
 
-            // xx
-            // X
-            move(Down).body shouldEqual listOf(Point(2, 3), Point(2, 2), Point(3, 2))
-
-            // X
-            // xx
-            move(Up).body shouldEqual listOf(Point(2, 1), Point(2, 2), Point(3, 2))
-        }
+        snake.move(Left) shouldEqual Snake(Point(1, 2), Point(2, 2), Point(3, 2))
+        snake.move(Right) shouldEqual Snake(Point(5, 2), Point(4, 2), Point(3, 2))
+        // xx
+        // X
+        snake.move(Down) shouldEqual Snake(Point(2, 3), Point(2, 2), Point(3, 2))
+        // X
+        // xx
+        snake.move(Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(3, 2))
     }
 
     @Test fun `moves of vertical snake`() {
         // X
         // x
         // x
-        Snake(Point(2, 2), Point(2, 3), Point(2, 4)).apply {
-            move(Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(2, 3))
-            move(Down) shouldEqual Snake(Point(2, 5), Point(2, 4), Point(2, 3))
-
-            // Xx
-            //  x
-            move(Left) shouldEqual Snake(Point(1, 2), Point(2, 2), Point(2, 3))
-
-            // xX
-            // x
-            move(Right) shouldEqual Snake(Point(3, 2), Point(2, 2), Point(2, 3))
-        }
+        val snake = Snake(Point(2, 2), Point(2, 3), Point(2, 4))
+        
+        snake.move(Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(2, 3))
+        snake.move(Down) shouldEqual Snake(Point(2, 5), Point(2, 4), Point(2, 3))
+        // Xx
+        //  x
+        snake.move(Left) shouldEqual Snake(Point(1, 2), Point(2, 2), Point(2, 3))
+        // xX
+        // x
+        snake.move(Right) shouldEqual Snake(Point(3, 2), Point(2, 2), Point(2, 3))
     }
 
-    @Test fun `moves of shaped snake`() {
+    @Test fun `reverse moves of shaped snake`() {
         // X
         // xx
         //  x
-        Snake(Point(1, 1), Point(1, 2), Point(2, 2), Point(2, 3)).apply {
+        Snake(Point(1, 1), Point(1, 2), Point(2, 2), Point(2, 3)).let { snake ->
             // X
             // x
             // xx
-            move(Up) shouldEqual Snake(Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 2))
+            snake.move(Up) shouldEqual Snake(Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 2))
             // xx
             //  x
             //  X
-            move(Down) shouldEqual Snake(Point(2, 4), Point(2, 3), Point(2, 2), Point(1, 2))
+            snake.move(Down) shouldEqual Snake(Point(2, 4), Point(2, 3), Point(2, 2), Point(1, 2))
         }
 
         // Xx
         // xx
-        Snake(Point(1, 1), Point(1, 2), Point(2, 2), Point(2, 1)).apply {
+        Snake(Point(1, 1), Point(1, 2), Point(2, 2), Point(2, 1)).let { snake ->
             // X
             // x
             // xx
-            move(Up) shouldEqual Snake(Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 2))
+            snake.move(Up) shouldEqual Snake(Point(1, 0), Point(1, 1), Point(1, 2), Point(2, 2))
             //  X
             //  x
             // xx
-            move(Down) shouldEqual Snake(Point(2, 0), Point(2, 1), Point(2, 2), Point(1, 2))
+            snake.move(Down) shouldEqual Snake(Point(2, 0), Point(2, 1), Point(2, 2), Point(1, 2))
         }
     }
 }
