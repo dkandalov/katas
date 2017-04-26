@@ -13,6 +13,7 @@ class SnakeTests {
 
         snake.move(Left) shouldEqual Snake(Point(1, 2), Point(2, 2), Point(3, 2))
         snake.move(Right) shouldEqual Snake(Point(5, 2), Point(4, 2), Point(3, 2))
+
         // xx
         // X
         snake.move(Down) shouldEqual Snake(Point(2, 3), Point(2, 2), Point(3, 2))
@@ -85,12 +86,14 @@ class GameTests {
     }
 
     @Test fun `game tracks when snake bites itself`() {
-        val game = Game(width = 5, height = 5,
-            // xxx
-            // xX
-            // xx
-            snake = Snake(Point(1, 1), Point(1, 2), Point(0, 2), Point(0, 1), Point(0, 0), Point(1, 0), Point(2, 0))
+        // xxx
+        // xX
+        // xx
+        val snake = Snake(
+            Point(1, 1), Point(1, 2), Point(0, 2),
+            Point(0, 1), Point(0, 0), Point(1, 0), Point(2, 0)
         )
+        val game = Game(width = 5, height = 5, snake = snake)
 
         game.updateOnTimer().apply {
             state shouldEqual SnakeBitItself
@@ -102,7 +105,6 @@ class GameTests {
             snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)),
             apples = listOf(Point(0, 2))
         )
-
         game.updateOnTimer().apply {
             snake shouldEqual Snake(Point(0, 2), Point(1, 2), Point(2, 2), Point(3, 2))
             apples shouldEqual emptyList()
@@ -124,46 +126,17 @@ class GameTests {
 
     @Test fun `snake moves on user input`() {
         val game = Game(width = 5, height = 5, snake = Snake(Point(1, 2), Point(2, 2), Point(3, 2)))
+
         game.updateOnUserInput(Down).apply {
             snake shouldEqual Snake(Point(1, 3), Point(1, 2), Point(2, 2))
         }
     }
 }
 
-interface GameUI {
-    fun init(listener: Listener)
-    fun paint(game: Game)
-
-    interface Listener {
-        fun onGameStart()
-        fun onTimer()
-        fun onUserInput(direction: Direction)
-    }
-}
-
-
-interface AppleFactory {
-    fun produceApples(game: Game): List<Point>
-
-    companion object {
-        val noop = object : AppleFactory {
-            override fun produceApples(game: Game) = game.apples
-        }
-
-        operator fun invoke(random: Random = Random()) = object : AppleFactory {
-            override fun produceApples(game: Game): List<Point> = game.run {
-                if (apples.size + snake.body.size == width * height) return apples
-
-                val p = Point(random.nextInt(width), random.nextInt(height))
-                return if (p !in apples && p !in snake.body) apples + p else produceApples(this)
-            }
-        }
-    }
-}
-
 
 data class Game(
-    val width: Int, val height: Int,
+    val width: Int,
+    val height: Int,
     val state: State = Playing,
     val snake: Snake,
     val apples: List<Point> = emptyList(),
@@ -205,13 +178,28 @@ data class Game(
     }
 }
 
+interface AppleFactory {
+    fun produceApples(game: Game): List<Point>
+
+    companion object {
+        val noop = object : AppleFactory {
+            override fun produceApples(game: Game) = game.apples
+        }
+
+        operator fun invoke(random: Random = Random()) = object : AppleFactory {
+            override fun produceApples(game: Game): List<Point> = game.run {
+                if (apples.size + snake.body.size == width * height) return apples
+
+                val p = Point(random.nextInt(width), random.nextInt(height))
+                return if (p !in apples && p !in snake.body) apples + p else produceApples(this)
+            }
+        }
+    }
+}
+
 
 data class Snake(val body: List<Point>) {
     constructor(vararg body: Point) : this(body.toList())
-
-    val bitItself = body.distinct().size != body.size
-
-    val direction = body.direction
 
     fun move(direction: Direction): Snake {
         val reversed = direction.isOppositeTo(body.direction)
@@ -228,6 +216,10 @@ data class Snake(val body: List<Point>) {
         Right -> Point(x + 1, y)
         Down -> Point(x, y + 1)
     }
+
+    val bitItself = body.distinct().size != body.size
+
+    val direction = body.direction
 
     private val List<Point>.direction get(): Direction = this.let {
         if (it[0].x == it[1].x - 1) Left

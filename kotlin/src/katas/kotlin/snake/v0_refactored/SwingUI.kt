@@ -1,4 +1,4 @@
-package katas.kotlin.snake.v0
+package katas.kotlin.snake.v0_refactored
 
 import java.awt.*
 import java.awt.event.*

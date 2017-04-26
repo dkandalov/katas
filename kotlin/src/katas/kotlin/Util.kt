@@ -8,6 +8,10 @@ infix fun <T> T.shouldEqual(that: T) {
     assertThat(this, equalTo(that))
 }
 
+infix fun <T> T.shouldNotEqual(that: T) {
+    assertThat(this, !equalTo(that))
+}
+
 fun <T> T.printed(f: (T) -> String = { it.toString() }): T {
     println(f(this))
     return this
