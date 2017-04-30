@@ -11,7 +11,7 @@ import scala.collection.mutable.ArrayBuffer
 class QHeap1 extends Matchers {
 
 	@Test def `hackerrank example`(): Unit = {
-		val heap = new Heap()
+		val heap = new Heap[Int]()
 		heap.add(4)
 		heap.add(9)
 		heap.min shouldBe 4
@@ -20,7 +20,7 @@ class QHeap1 extends Matchers {
 	}
 
 	@Test def `min element while adding and deleting 10 elements`(): Unit = {
-		val heap = new Heap()
+		val heap = new Heap[Int]()
 		(-5).until(5).reverse.foreach { n =>
 			heap.add(n)
 			heap.min shouldBe n
@@ -34,7 +34,7 @@ class QHeap1 extends Matchers {
 	}
 
 	@Test def `min element after add`(): Unit = {
-		val heap = new Heap()
+		val heap = new Heap[Int]()
 		heap.add(1)
 		heap.min shouldBe 1
 		heap.add(2)
@@ -44,7 +44,7 @@ class QHeap1 extends Matchers {
 	}
 
 	@Test def `min element after delete`(): Unit = {
-		val heap = new Heap()
+		val heap = new Heap[Int]()
 		heap.add(1)
 		heap.min shouldBe 1
 		heap.add(0)
@@ -54,7 +54,7 @@ class QHeap1 extends Matchers {
 	}
 
 	@Test def `find index of element`(): Unit = {
-		val heap = new Heap()
+		val heap = new Heap[Int]()
 		1.until(8).foreach(heap.add)
 		1.until(8).map { n => (n, heap.indexOf(n)) } shouldBe Seq(
 			(1, 0),
@@ -69,7 +69,7 @@ class QHeap1 extends Matchers {
 		val scanner = new java.util.Scanner(System.in)
 		val n = scanner.nextLine.toInt
 
-		val heap = new Heap()
+		val heap = new Heap[Long]()
 		0.until(n).foreach { _ =>
 			val values = scanner.nextLine().split(" ").map(_.toInt)
 			if (values(0) == 1) heap.add(values(1))
@@ -78,19 +78,19 @@ class QHeap1 extends Matchers {
 		}
 	}
 
-	class Heap {
-		private val data: ArrayBuffer[Int] = ArrayBuffer()
+	class Heap[T](implicit orderer: T => Ordered[T]) {
+		private val data: ArrayBuffer[T] = ArrayBuffer()
 
-		def min: Int = data(0)
+		def min: T = data(0)
 
 		def size: Int = data.size
 
-		def add(n: Int): Unit = {
+		def add(n: T): Unit = {
 			data.append(n)
 			swim(data.size - 1)
 		}
 
-		def delete(n: Int): Unit = {
+		def delete(n: T): Unit = {
 			val i = indexOf(n)
 			swap(i, data.size - 1, data)
 			data.remove(data.size - 1)
@@ -126,7 +126,7 @@ class QHeap1 extends Matchers {
 			}
 		}
 
-		private[QHeap1] def indexOf(n: Int, i: Int = 0): Int = {
+		private[QHeap1] def indexOf(n: T, i: Int = 0): Int = {
 			if (n < data(i)) return -1
 			if (n == data(i)) return i
 
@@ -148,7 +148,7 @@ class QHeap1 extends Matchers {
 
 		private def parentIndex(i: Int): Int = i / 2
 
-		private def swap(i1: Int, i2: Int, data: ArrayBuffer[Int]) = {
+		private def swap(i1: Int, i2: Int, data: ArrayBuffer[T]) = {
 			val tmp = data(i1)
 			data(i1) = data(i2)
 			data(i2) = tmp
