@@ -4,6 +4,7 @@ import org.junit.Test
 import org.scalatest.Matchers
 
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
 
 /**
 	* https://www.hackerrank.com/challenges/qheap1
@@ -15,7 +16,7 @@ class QHeap1 extends Matchers {
 		heap.add(4)
 		heap.add(9)
 		heap.min shouldBe 4
-		heap.delete(4)
+		heap.delete(4) shouldBe true
 		heap.min shouldBe 9
 	}
 
@@ -26,7 +27,7 @@ class QHeap1 extends Matchers {
 			heap.min shouldBe n
 		}
 		(-5).until(5).foreach { n =>
-			heap.delete(n)
+			heap.delete(n) shouldBe true
 			if (heap.size > 0) {
 				heap.min shouldBe n + 1
 			}
@@ -49,7 +50,7 @@ class QHeap1 extends Matchers {
 		heap.min shouldBe 1
 		heap.add(0)
 		heap.min shouldBe 0
-		heap.delete(0)
+		heap.delete(0) shouldBe true
 		heap.min shouldBe 1
 	}
 
@@ -65,6 +66,46 @@ class QHeap1 extends Matchers {
 		heap.indexOf(10) shouldBe -1
 	}
 
+	@Test def `example which fails when parent index lookup is incorrect`(): Unit = {
+		val values = Seq(3, 5, 1, 2, 4, 6, 0)
+
+		val heap = new Heap[Int]()
+		values.foreach { n =>
+			heap.add(n)
+			heap.toList.foreach { it =>
+				(it, heap.indexOf(it)) shouldNot be(it, -1)
+			}
+		}
+	}
+
+	@Test def `example which fails when delete doesn't do swim/sink`(): Unit = {
+		val values = Seq(62, 65, -90, 82, -3, 22, 81, -56, -51, -49)
+		val heap = new Heap[Long]()
+
+		values.foreach { n => heap.add(n) }
+		
+		values.foreach { n =>
+			heap.delete(n) shouldBe true
+			heap.toList.foreach { it =>
+				(it, heap.indexOf(it)) shouldNot be(it, -1)
+			}
+		}
+	}
+
+	@Test def `add and remove random elements`(): Unit = {
+		val seed = new Random().nextInt
+		println(s"seed = $seed")
+		val random = new Random(seed)
+
+		val heap = new Heap[Long]()
+		val values = 0.until(1000).map { _ => random.nextLong() }.distinct
+
+		values.foreach { n => heap.add(n) }
+		values.foreach { n =>
+			heap.delete(n) shouldBe true
+		}
+	}
+
 	def main(args: Array[String]): Unit = {
 		val scanner = new java.util.Scanner(System.in)
 		val n = scanner.nextLine.toInt
@@ -78,8 +119,7 @@ class QHeap1 extends Matchers {
 		}
 	}
 
-	class Heap[T](implicit orderer: T => Ordered[T]) {
-		private val data: ArrayBuffer[T] = ArrayBuffer()
+	class Heap[T](private val data: ArrayBuffer[T] = ArrayBuffer[T]())(implicit orderer: T => Ordered[T]) {
 
 		def min: T = data(0)
 
@@ -90,18 +130,26 @@ class QHeap1 extends Matchers {
 			swim(data.size - 1)
 		}
 
-		def delete(n: T): Unit = {
+		def delete(n: T): Boolean = {
 			val i = indexOf(n)
+			if (i == -1) return false
+
 			swap(i, data.size - 1, data)
 			data.remove(data.size - 1)
-			sink(i)
+			if (i < data.size) {
+				swim(i)
+				sink(i)
+			}
+			true
 		}
+
+		def toList: List[T] = data.toList
 
 		private def sink(index: Int): Unit = {
 			val childIndex = minChildIndex(index)
 			if (childIndex == -1) return
 			if (data(index) <= data(childIndex)) return
-			
+
 			swap(index, childIndex, data)
 			sink(childIndex)
 		}
@@ -116,13 +164,13 @@ class QHeap1 extends Matchers {
 			else right
 		}
 
-		private def swim(index: Int): Unit = {
+		private def swim(index: Int) {
 			var i = index
-			var pi = parentIndex(i)
+			var pi = parentIndexOf(i)
 			while (i != pi && data(i) < data(pi)) {
 				swap(i, pi, data)
-				i = parentIndex(i)
-				pi = parentIndex(pi)
+				i = parentIndexOf(i)
+				pi = parentIndexOf(pi)
 			}
 		}
 
@@ -142,13 +190,13 @@ class QHeap1 extends Matchers {
 			result
 		}
 
-		private def leftChildIndex(i: Int): Int = (i * 2) + 1
+		private def leftChildIndex(i: Int) = (i * 2) + 1
 
-		private def rightChildIndex(i: Int): Int = (i * 2) + 2
+		private def rightChildIndex(i: Int) = (i * 2) + 2
 
-		private def parentIndex(i: Int): Int = i / 2
+		private def parentIndexOf(i: Int) = (i - 1) / 2
 
-		private def swap(i1: Int, i2: Int, data: ArrayBuffer[T]) = {
+		private def swap(i1: Int, i2: Int, data: ArrayBuffer[T]) {
 			val tmp = data(i1)
 			data(i1) = data(i2)
 			data(i2) = tmp
