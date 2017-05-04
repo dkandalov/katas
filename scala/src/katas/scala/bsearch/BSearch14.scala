@@ -1,36 +1,36 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 05/08/2012
  */
 
-class BSearch14 extends Matchers {
+class BSearch14 extends ShouldMatchers {
 //	@Test def () {
 //	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
-		search(0, Seq()) should equal(None)
+		search(0, Seq()) should equalTo(None)
 
-		search(0, Seq(1)) should equal(None)
-		search(1, Seq(1)) should equal(Some(0))
-		search(2, Seq(1)) should equal(None)
+		search(0, Seq(1)) should equalTo(None)
+		search(1, Seq(1)) should equalTo(Some(0))
+		search(2, Seq(1)) should equalTo(None)
 
-		search(0, Seq(1, 2)) should equal(None)
-		search(1, Seq(1, 2)) should equal(Some(0))
-		search(2, Seq(1, 2)) should equal(Some(1))
-		search(3, Seq(1, 2)) should equal(None)
+		search(0, Seq(1, 2)) should equalTo(None)
+		search(1, Seq(1, 2)) should equalTo(Some(0))
+		search(2, Seq(1, 2)) should equalTo(Some(1))
+		search(3, Seq(1, 2)) should equalTo(None)
 
-		search(0, Seq(1, 2, 3)) should equal(None)
-		search(1, Seq(1, 2, 3)) should equal(Some(0))
-		search(2, Seq(1, 2, 3)) should equal(Some(1))
-		search(3, Seq(1, 2, 3)) should equal(Some(2))
-		search(4, Seq(1, 2, 3)) should equal(None)
+		search(0, Seq(1, 2, 3)) should equalTo(None)
+		search(1, Seq(1, 2, 3)) should equalTo(Some(0))
+		search(2, Seq(1, 2, 3)) should equalTo(Some(1))
+		search(3, Seq(1, 2, 3)) should equalTo(Some(2))
+		search(4, Seq(1, 2, 3)) should equalTo(None)
 
-		search("a", Seq("a", "b", "c")) should equal(Some(0))
+		search("a", Seq("a", "b", "c")) should equalTo(Some(0))
 	}
 
 	def search[T](value: T/*Int*/, seq: Seq[T/*Int*/])(implicit orderer: T => Ordered/*ing*/[T]): Option[Int] = {

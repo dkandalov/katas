@@ -1,25 +1,25 @@
 package katas.scala.coins
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 
 
-class CountChange5 extends Matchers {
+class CountChange5 extends ShouldMatchers {
 	@Test def `should find ways a sum of money can be changed as given types of coin`() {
 		val coinTypes = Seq(1, 5, 10, 25, 50)
-		findChange(0, coinTypes) should equal(Seq(Seq()))
-		findChange(1, coinTypes) should equal(Seq(Seq(1)))
-		findChange(5, coinTypes) should equal(Seq(
+		findChange(0, coinTypes) should equalTo(Seq(Seq()))
+		findChange(1, coinTypes) should equalTo(Seq(Seq(1)))
+		findChange(5, coinTypes) should equalTo(Seq(
 			Seq(1, 1, 1, 1, 1),
 			Seq(5)
 		))
-		findChange(10, coinTypes) should equal(Seq(
+		findChange(10, coinTypes) should equalTo(Seq(
 			Seq(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 			Seq(1, 1, 1, 1, 1, 5),
 			Seq(5, 5),
 			Seq(10)
 		))
-		findChange(100, coinTypes).size should equal(292)
+		findChange(100, coinTypes).size should equalTo(292)
 	}
 
 	private def findChange(amount: Int, coinTypes: Seq[Int]): Seq[Seq[Int]] = {

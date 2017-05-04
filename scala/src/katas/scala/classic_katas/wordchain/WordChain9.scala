@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable
 import scala.io.Source
@@ -11,26 +11,26 @@ import scala.io.Source
  * Date: 31/07/2012
  */
 
-class WordChain9 extends Matchers {
+class WordChain9 extends ShouldMatchers {
 
 	@Test def shouldFindSingleWordChain() {
-		findMinWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equal(Seq("aaa", "aab", "abb", "bbb"))
+		findMinWordChain("aaa", "bbb", Set("aaa", "aab", "abb", "bbb")) should equalTo(Seq("aaa", "aab", "abb", "bbb"))
 	}
 
 	@Test def shouldChooseShortestWordChain() {
-		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equal(Seq("aaa", "aac", "acc", "ccc"))
+		findMinWordChain("aaa", "ccc", Set("aaa", "ccc", "caa", "aca", "aac", "acc", "cca")) should equalTo(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
 	@Test(timeout = 5000)
 	def shouldFindWordChain_FromCatToDog_WithRealDictionary() {
-		findMinWordChain("cat", "dog", loadDictionary()) should equal(Seq("cat", "cag", "cog", "dog"))
+		findMinWordChain("cat", "dog", loadDictionary()) should equalTo(Seq("cat", "cag", "cog", "dog"))
 	}
 
 	@Test(timeout = 5000)
 	def shouldFindWordChain_FromLeadToGold_WithRealDictionary() {
-		findMinWordChain("lead", "gold", loadDictionary()) should equal(Seq("lead", "load", "goad", "gold"))
-//		findMinWordChain("pork", "file", loadDictionary()) should equal(Seq("pork", "polk", "folk", "fole", "file"))
-//		findMinWordChain("cold", "door", loadDictionary()) should equal(Seq("cold", "mold", "mood", "moor", "door"))
+		findMinWordChain("lead", "gold", loadDictionary()) should equalTo(Seq("lead", "load", "goad", "gold"))
+//		findMinWordChain("pork", "file", loadDictionary()) should equalTo(Seq("pork", "polk", "folk", "fole", "file"))
+//		findMinWordChain("cold", "door", loadDictionary()) should equalTo(Seq("cold", "mold", "mood", "moor", "door"))
 	}
 
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Set[String]): Seq[String] = {
@@ -115,7 +115,7 @@ class WordChain9 extends Matchers {
 
 	@Test def shouldLoadStandardMacDictionary() {
 		val words = loadDictionary()
-		words.size should equal(234371)
+		words.size should equalTo(234371)
 	}
 
 	def loadDictionary(): Set[String] = {

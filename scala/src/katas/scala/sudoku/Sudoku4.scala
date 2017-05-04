@@ -1,7 +1,7 @@
 package katas.scala.sudoku
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection._
 
@@ -10,7 +10,7 @@ import scala.collection._
  * Date: 14/04/2013
  */
 
-class Sudoku4 extends Matchers {
+class Sudoku4 extends ShouldMatchers {
 
 	@Test def `should parse sudoku puzzles`() {
 		parseGrid("""
@@ -25,7 +25,7 @@ class Sudoku4 extends Matchers {
 . . . |6 . 3 |. 7 .
 5 . . |2 . . |. . .
 1 . 4 |. . . |. . .
-""").toString should equal("Some(Map(F9 -> 23789, E3 -> 15679, F4 -> 359, I1 -> 1, I5 -> 579, C1 -> 2689, D2 -> 2, D7 -> 13579, B3 -> 1256789, C5 -> 234569, G8 -> 7, G3 -> 289, G7 -> 1259, F6 -> 25679, F1 -> 36789, G4 -> 6, F7 -> 23579, C2 -> 15689, C6 -> 245689, B5 -> 24569, E6 -> 25679, C4 -> 7, C9 -> 123469, D5 -> 34579, H3 -> 3, D9 -> 13789, F2 -> 4, I8 -> 23589, H7 -> 69, H2 -> 6789, G6 -> 3, G1 -> 289, G5 -> 459, A4 -> 139, A9 -> 5, A5 -> 2369, A6 -> 269, D1 -> 3789, D6 -> 4579, E8 -> 12359, I6 -> 5789, H8 -> 489, G2 -> 89, H9 -> 4689, H4 -> 2, I7 -> 23569, I2 -> 6789, H1 -> 5, H6 -> 1, H5 -> 479, B9 -> 124679, A3 -> 12679, B4 -> 14589, A8 -> 1239, B8 -> 1249, A2 -> 1679, A7 -> 8, D4 -> 3459, E5 -> 8, D3 -> 15789, E4 -> 359, E9 -> 12379, D8 -> 6, E1 -> 3679, G9 -> 12489, F3 -> 56789, F8 -> 23589, E2 -> 15679, E7 -> 4, I3 -> 4, I4 -> 589, I9 -> 23689, C7 -> 12369, B6 -> 245689, B1 -> 26789, C3 -> 125689, B2 -> 3, C8 -> 12349, B7 -> 12679, A1 -> 4, F5 -> 1))")
+""").toString should equalTo("Some(Map(F9 -> 23789, E3 -> 15679, F4 -> 359, I1 -> 1, I5 -> 579, C1 -> 2689, D2 -> 2, D7 -> 13579, B3 -> 1256789, C5 -> 234569, G8 -> 7, G3 -> 289, G7 -> 1259, F6 -> 25679, F1 -> 36789, G4 -> 6, F7 -> 23579, C2 -> 15689, C6 -> 245689, B5 -> 24569, E6 -> 25679, C4 -> 7, C9 -> 123469, D5 -> 34579, H3 -> 3, D9 -> 13789, F2 -> 4, I8 -> 23589, H7 -> 69, H2 -> 6789, G6 -> 3, G1 -> 289, G5 -> 459, A4 -> 139, A9 -> 5, A5 -> 2369, A6 -> 269, D1 -> 3789, D6 -> 4579, E8 -> 12359, I6 -> 5789, H8 -> 489, G2 -> 89, H9 -> 4689, H4 -> 2, I7 -> 23569, I2 -> 6789, H1 -> 5, H6 -> 1, H5 -> 479, B9 -> 124679, A3 -> 12679, B4 -> 14589, A8 -> 1239, B8 -> 1249, A2 -> 1679, A7 -> 8, D4 -> 3459, E5 -> 8, D3 -> 15789, E4 -> 359, E9 -> 12379, D8 -> 6, E1 -> 3679, G9 -> 12489, F3 -> 56789, F8 -> 23589, E2 -> 15679, E7 -> 4, I3 -> 4, I4 -> 589, I9 -> 23689, C7 -> 12369, B6 -> 245689, B1 -> 26789, C3 -> 125689, B2 -> 3, C8 -> 12349, B7 -> 12679, A1 -> 4, F5 -> 1))")
 	}
 
 	@Test def `should solve easy puzzle`() {
@@ -45,21 +45,21 @@ class Sudoku4 extends Matchers {
 
 	@Test def `calculation of field values`() {
 		squares.mkString(", ") should startWith("A1, A2, A3, A4, A5, A6, A7, A8, A9, B1, B2, B3, B4, B5, B6, B7, B8, B9")
-		squares.size should equal(81)
+		squares.size should equalTo(81)
 
-		unitlist.indexWhere{_.mkString(", ") == "A1, B1, C1, D1, E1, F1, G1, H1, I1"} should equal(0)
-		unitlist.indexWhere{_.mkString(", ") == "A1, A2, A3, A4, A5, A6, A7, A8, A9"} should equal(9)
-		unitlist.indexWhere{_.mkString(", ") == "A1, A2, A3, B1, B2, B3, C1, C2, C3"} should equal(18)
-		unitlist.size should equal(27)
+		unitlist.indexWhere{_.mkString(", ") == "A1, B1, C1, D1, E1, F1, G1, H1, I1"} should equalTo(0)
+		unitlist.indexWhere{_.mkString(", ") == "A1, A2, A3, A4, A5, A6, A7, A8, A9"} should equalTo(9)
+		unitlist.indexWhere{_.mkString(", ") == "A1, A2, A3, B1, B2, B3, C1, C2, C3"} should equalTo(18)
+		unitlist.size should equalTo(27)
 
 		units("C2").map{"[" + _.mkString(", ") + "]"}.mkString(", ") should
-			equal("[A2, B2, C2, D2, E2, F2, G2, H2, I2], [C1, C2, C3, C4, C5, C6, C7, C8, C9], [A1, A2, A3, B1, B2, B3, C1, C2, C3]")
-		squares.foreach{ units(_).size should equal(3) }
+			equalTo("[A2, B2, C2, D2, E2, F2, G2, H2, I2], [C1, C2, C3, C4, C5, C6, C7, C8, C9], [A1, A2, A3, B1, B2, B3, C1, C2, C3]")
+		squares.foreach{ units(_).size should equalTo(3) }
 
-		peers("C2") should equal(Set(
+		peers("C2") should equalTo(Set(
 			"C6", "H2", "C1", "D2", "C8", "C7", "I2", "E2", "C9", "F2",
 			"B3", "A2", "C4", "A1", "B2", "C3", "G2", "C5", "A3", "B1"))
-		squares.foreach{ peers(_).size should equal(20) }
+		squares.foreach{ peers(_).size should equalTo(20) }
 	}
 
 

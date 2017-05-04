@@ -1,10 +1,10 @@
 package katas.scala.hamming
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class HammingDistance extends Matchers {
+class HammingDistance extends ShouldMatchers {
 
 	// https://en.wikipedia.org/wiki/Hadamard_code
 	// https://en.wikipedia.org/wiki/Hamming_distance
@@ -18,20 +18,20 @@ class HammingDistance extends Matchers {
 			}
 			result
 		}
-		distance(0, 0) should equal(0)
-		distance(0, 1) should equal(1)
-		distance(0, 2) should equal(1)
-		distance(0, 3) should equal(2)
-		distance(1, 3) should equal(1)
+		distance(0, 0) should equalTo(0)
+		distance(0, 1) should equalTo(1)
+		distance(0, 2) should equalTo(1)
+		distance(0, 3) should equalTo(2)
+		distance(1, 3) should equalTo(1)
 
 
 		def intToBinary(n: Int, width: Int): String = {
 			n.toBinaryString.reverse.padTo(width, "0").reverse.mkString
 		}
-		intToBinary(0, 6) should equal("000000")
-		intToBinary(1, 6) should equal("000001")
-		intToBinary(11, 6) should equal("001011")
-		intToBinary(33, 6) should equal("100001")
+		intToBinary(0, 6) should equalTo("000000")
+		intToBinary(1, 6) should equalTo("000001")
+		intToBinary(11, 6) should equalTo("001011")
+		intToBinary(33, 6) should equalTo("100001")
 
 
 		def search(options: List[Int], solution: List[Int]): List[List[Int]] = {
@@ -53,7 +53,7 @@ class HammingDistance extends Matchers {
 //		println(solutions.size)
 
 		val maxSolution = solutions.maxBy(_.size).map(intToBinary(_, 6))
-		maxSolution should equal(List(
+		maxSolution should equalTo(List(
 			"000000",
 			"000111",
 			"011001",

@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.io.Source
 
@@ -11,10 +11,10 @@ import scala.io.Source
  */
 
 
-class WordChain5 extends Matchers {
+class WordChain5 extends ShouldMatchers {
 	@Test def aaa() {
 		val dictionary: Seq[String] = Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase).toSet[String].toSeq
-		findMinWordChain("cat", "dog", dictionary) should equal("cat", "other words", "dog")
+		findMinWordChain("cat", "dog", dictionary) should equalTo("cat", "other words", "dog")
 	}
 	
 	def findMinWordChain(fromWord: String, toWord: String, dictionary: Seq[String]): Seq[String] = {

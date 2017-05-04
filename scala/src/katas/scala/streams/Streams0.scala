@@ -1,6 +1,6 @@
 package katas.scala.streams
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 
 /**
@@ -8,18 +8,18 @@ import org.junit.Test
  * Date: 09/11/2012
  */
 
-class Streams0 extends Matchers {
+class Streams0 extends ShouldMatchers {
 	@Test def test() {
-		from(1).toString() should equal("Stream(1, ?)")
-		from(1).tail.toString() should equal("Stream(3, ?)")
-		from(1).take(10).toList should equal(List(1, 3, 5, 7, 9, 11, 13, 15, 17, 19))
+		from(1).toString() should equalTo("Stream(1, ?)")
+		from(1).tail.toString() should equalTo("Stream(3, ?)")
+		from(1).take(10).toList should equalTo(List(1, 3, 5, 7, 9, 11, 13, 15, 17, 19))
 
 		val stream = new MyFromStream(1, {_ + 2})
-		stream.take() should equal(1)
-		stream.take() should equal(3)
-		stream.take() should equal(5)
-		stream.take() should equal(7)
-		stream.take() should equal(9)
+		stream.take() should equalTo(1)
+		stream.take() should equalTo(3)
+		stream.take() should equalTo(5)
+		stream.take() should equalTo(7)
+		stream.take() should equalTo(9)
 	}
 
 	def from(n: Int): Stream[Int] = {

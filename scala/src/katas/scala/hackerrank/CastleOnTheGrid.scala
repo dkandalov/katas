@@ -1,7 +1,7 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -9,7 +9,7 @@ import scala.collection.mutable.ListBuffer
 /**
 	* https://www.hackerrank.com/challenges/castle-on-the-grid
 	*/
-class CastleOnTheGrid extends Matchers {
+class CastleOnTheGrid extends ShouldMatchers {
 	@Test def `linear downward path`(): Unit = {
 		val grid =
 			"""

@@ -1,25 +1,25 @@
 package katas.scala.sort.mergesort
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 30/04/2012
  */
-class MergeSort10 extends Matchers {
+class MergeSort10 extends ShouldMatchers {
   @Test def shouldSortList() {
-    sort(List[Int]()) should equal(List())
-    sort(List(1)) should equal(List(1))
-    sort(List(1, 2)) should equal(List(1, 2))
-    sort(List(2, 1)) should equal(List(1, 2))
-    sort(List(2, 3, 1)) should equal(List(1, 2, 3))
+    sort(List[Int]()) should equalTo(List())
+    sort(List(1)) should equalTo(List(1))
+    sort(List(1, 2)) should equalTo(List(1, 2))
+    sort(List(2, 1)) should equalTo(List(1, 2))
+    sort(List(2, 3, 1)) should equalTo(List(1, 2, 3))
 
 	  List(1, 2, 3, 4).permutations.foreach { list =>
-			  sort(list) should equal(List(1, 2, 3, 4))
+			  sort(list) should equalTo(List(1, 2, 3, 4))
 	  }
 
-	  sort(List("b", "a")) should equal(List("a", "b"))
+	  sort(List("b", "a")) should equalTo(List("a", "b"))
   }
 
   def sort[T](list: List[T])(implicit o: T => Ordered[T]): List[T] = {

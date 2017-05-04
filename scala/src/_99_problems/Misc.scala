@@ -1,17 +1,18 @@
 package _99_problems
 
-import org.scalatest.Matchers
 import org.junit.Test
+import org.specs2.matcher.ShouldMatchers
+
 import scala.annotation.tailrec
 
 
-class Misc extends Matchers {
+class Misc extends ShouldMatchers {
 
 	@Test def `P92 (***) Von Koch's conjecture.`() {
 		import P7._
 		import P7.Graph._
 
-		fromString("[a-b, a-c, b-d, b-e]").edgesByDepthFrom('a') should equal(Seq(
+		fromString("[a-b, a-c, b-d, b-e]").edgesByDepthFrom('a') should equalTo(Seq(
 			('a', 'b', Unit), ('a', 'c', Unit), ('b', 'd', Unit), ('b', 'e', Unit)
 		))
 
@@ -21,13 +22,13 @@ class Misc extends Matchers {
 		expected.addNode(('c', 2))
 		expected.addEdge(('a', 1), ('b', 3), 2)
 		expected.addEdge(('b', 3), ('c', 2), 1)
-		// TODO fromString("[a-b, b-c]").enumNodes should equal(expected)
+		// TODO fromString("[a-b, b-c]").enumNodes should equalTo(expected)
 	}
 
 	@Test def `P91 (**) Knight's tour.`() {
-		findKnightMoves(boardSize = 1, moves = Seq(Point(0, 0))) should equal(Seq(Point(0, 0)))
-		findKnightMoves(boardSize = 3, moves = Seq(Point(0, 0))) should equal(Seq())
-		findKnightMoves(boardSize = 5, moves = Seq(Point(0, 0))) should equal(
+		findKnightMoves(boardSize = 1, moves = Seq(Point(0, 0))) should equalTo(Seq(Point(0, 0)))
+		findKnightMoves(boardSize = 3, moves = Seq(Point(0, 0))) should equalTo(Seq())
+		findKnightMoves(boardSize = 5, moves = Seq(Point(0, 0))) should equalTo(
 			Seq(
 				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
 				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
@@ -38,7 +39,7 @@ class Misc extends Matchers {
 
 		val moves = findAllKnightMoves(boardSize = 5, moves = Seq(Point(0, 0))).take(3)
 		moves.foreach(println(_))
-		moves should equal(Seq(
+		moves should equalTo(Seq(
 			Seq(
 				Point(0, 0), Point(2, 1), Point(4, 0), Point(3, 2), Point(1, 1),
 				Point(3, 0), Point(4, 2), Point(3, 4), Point(1, 3), Point(0, 1),
@@ -129,11 +130,11 @@ class Misc extends Matchers {
 
 
 	@Test def `P90 (**) Eight queens problem`() {
-		solveEightQueen(2) should equal(Seq())
-		solveEightQueen(3) should equal(Seq())
-		solveEightQueen(4).size should equal(2)
-		solveEightQueen(5).size should equal(10)
-		solveEightQueen(8).size should equal(92)
+		solveEightQueen(2) should equalTo(Seq())
+		solveEightQueen(3) should equalTo(Seq())
+		solveEightQueen(4).size should equalTo(2)
+		solveEightQueen(5).size should equalTo(10)
+		solveEightQueen(8).size should equalTo(92)
 	}
 
 
@@ -164,7 +165,7 @@ class Misc extends Matchers {
 	}
 
 	@Test def `presenting solution as a board`() {
-		asBoard(Seq(Queen(0,0), Queen(2, 2)), 3) should equal(
+		asBoard(Seq(Queen(0,0), Queen(2, 2)), 3) should equalTo(
 			"""
 			  |Q--
 			  |---
@@ -174,16 +175,16 @@ class Misc extends Matchers {
 
 	@Test def `amount of queens in solution should equal board size`() {
 		val solutions = solveEightQueen(8)
-		solutions.size should be(92)
+		solutions.size should equalTo(92)
 		solutions.foreach{ solution =>
-			solution.length should equal(8)
+			solution.length should equalTo(8)
 		}
 	}
 
 	@Test def `queen is on the same row, column or diagonal`() {
-		Queen(0, 0).attacks(Queen(0, 2)) should be(true)
-		Queen(0, 0).attacks(Queen(2, 0)) should be(true)
-		Queen(0, 0).attacks(Queen(2, 2)) should be(true)
-		Queen(0, 0).attacks(Queen(2, 1)) should be(false)
+		Queen(0, 0).attacks(Queen(0, 2)) should be_==(true)
+		Queen(0, 0).attacks(Queen(2, 0)) should be_==(true)
+		Queen(0, 0).attacks(Queen(2, 2)) should be_==(true)
+		Queen(0, 0).attacks(Queen(2, 1)) should be_==(false)
 	}
 }

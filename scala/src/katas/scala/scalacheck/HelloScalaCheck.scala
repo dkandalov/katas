@@ -30,7 +30,7 @@ object HelloScalaCheck {
 		val smallInteger = Gen.choose(0,100)
 		val propSmallInteger = Prop.forAll(smallInteger)(n => n >= 0 && n <= 100)
 
-		val propMakeList = forAll { n: Int => (n >= 0 && n < 10000) ==> (List.make(n, "").length == n) }
+		val propMakeList = forAll { n: Int => (n >= 0 && n < 10000) ==> (List.fill(n){""}.length == n) }
 
 
 /*

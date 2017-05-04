@@ -1,14 +1,14 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 14/07/2012
  */
 
-class EightQueen4 extends Matchers {
+class EightQueen4 extends ShouldMatchers {
 	case class Queen(row: Int, col: Int) {
 		def isBefore(queen: Queen) = queen.row > row || (queen.row == row && queen.col >= col)
 		def notOnTheSameRowOrColumnAs(queen: Queen) = queen.row != row && queen.col != col
@@ -19,7 +19,7 @@ class EightQueen4 extends Matchers {
 
 	@Test def shouldFindSolutionsForBoardOfSize_4() {
 		val solution = solveForBoardOfSize(4)
-		asPrintableSolution(solution, 4) should equal(
+		asPrintableSolution(solution, 4) should equalTo(
 			"""Vector(X, Q, X, X)
 Vector(X, X, X, Q)
 Vector(Q, X, X, X)
@@ -36,7 +36,7 @@ Vector(X, Q, X, X)
 
 	@Test def shouldFindSolutionsForBoardOfSize_8() {
 		val solutions = solveForBoardOfSize(8)
-		solutions.size should equal(92)
+		solutions.size should equalTo(92)
 	}
 
 	def solveForBoardOfSize(boardSize: Int): Seq[Solution] = {
@@ -58,10 +58,10 @@ Vector(X, Q, X, X)
 	@Test def shouldDetermineIfQueensAreOnTheSameDiagonal() {
 		val row = 7
 		val col = 5
-		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col - 2)) should be(false) // top-right
-		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col - 2)) should be(false) // top-left
-		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col + 2)) should be(false) // bottom-left
-		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col + 2)) should be(false) // bottom-right
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col - 2)) should be_==(false) // top-right
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col - 2)) should be_==(false) // top-left
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row - 2, col + 2)) should be_==(false) // bottom-left
+		Queen(row, col).notOnTheSameDiagonalAs(Queen(row + 2, col + 2)) should be_==(false) // bottom-right
 	}
 
 	def isValidMove(solution: Solution, newQueen: Queen): Boolean = {

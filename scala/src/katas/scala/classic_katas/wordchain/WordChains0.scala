@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.immutable.{Seq, TreeSet}
 import scala.io.Source
@@ -11,7 +11,7 @@ import scala.io.Source
  * Date: 22/04/2012
  */
 
-class WordChains0 extends Matchers {
+class WordChains0 extends ShouldMatchers {
 	// TODO finish
 
 	@Test def aaa() {
@@ -60,13 +60,13 @@ class WordChains0 extends Matchers {
 	}
 
 	@Test def shouldDetermineIfCanBeNextWord() {
-		canBeNext("cat", "cad") should equal(true)
-		canBeNext("cat", "cata") should equal(true)
-		canBeNext("cat", "ct") should equal(true)
+		canBeNext("cat", "cad") should equalTo(true)
+		canBeNext("cat", "cata") should equalTo(true)
+		canBeNext("cat", "ct") should equalTo(true)
 
-		canBeNext("cat", "cat") should equal(false)
-		canBeNext("cat", "kata") should equal(false)
-		canBeNext("cat", "ccc") should equal(false)
+		canBeNext("cat", "cat") should equalTo(false)
+		canBeNext("cat", "kata") should equalTo(false)
+		canBeNext("cat", "ccc") should equalTo(false)
 	}
 
 	def canBeNext(fromWord: String, word: String) = {

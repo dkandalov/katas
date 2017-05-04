@@ -1,6 +1,6 @@
 package katas.scala.classic_katas.javalinecout
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import scala.io.Source
 import org.junit.Test
 
@@ -8,7 +8,7 @@ import org.junit.Test
  * User: dima
  * Date: 15/03/2012
  */
-class LineCount2 extends Matchers {
+class LineCount2 extends ShouldMatchers {
   def extractLinesWithCode(s: String): Seq[String] = {
     s.replaceAll("""(?s)/\*.*?\*/""", "")
       .replaceAll("//.*", "")
@@ -22,7 +22,7 @@ class LineCount2 extends Matchers {
     println("Lines of code: " + lines.size)
     println(lines.mkString("\n"))
 
-    lines.size should equal(10)
+    lines.size should equalTo(10)
   }
 
   @Test def file2() {
@@ -32,7 +32,7 @@ class LineCount2 extends Matchers {
     println("Lines of code: " + lines.size)
     println(lines.mkString("\n"))
 
-    lines.size should equal(5)
+    lines.size should equalTo(5)
   }
 
   @Test def file1() {
@@ -42,6 +42,6 @@ class LineCount2 extends Matchers {
     println("Lines of code: " + lines.size)
     println(lines.mkString("\n"))
 
-    lines.size should equal(3)
+    lines.size should equalTo(3)
   }
 }

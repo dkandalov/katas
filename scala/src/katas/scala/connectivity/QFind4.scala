@@ -1,7 +1,7 @@
 package katas.scala.connectivity
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -10,14 +10,14 @@ import scala.collection.mutable.ArrayBuffer
  * Date: 04/09/2012
  */
 
-class QFind4 extends Matchers {
+class QFind4 extends ShouldMatchers {
 	@Test def determineIfPointsAreConnected_InSimpleCase() {
 		val board = new Board(10)
-		board.connected(0, 0) should equal(true)
+		board.connected(0, 0) should equalTo(true)
 
-		board.connected(0, 1) should equal(false)
+		board.connected(0, 1) should equalTo(false)
 		board.connect(0, 1)
-		board.connected(0, 1) should equal(true)
+		board.connected(0, 1) should equalTo(true)
 	}
 
 	@Test def determineIfPointsAreConnected_InSampleCase() {
@@ -31,11 +31,11 @@ class QFind4 extends Matchers {
 			wereConnected
 		}
 
-		output should equal(Seq(false, false, false, false, false,
+		output should equalTo(Seq(false, false, false, false, false,
 			true, false, false, false, true, true, false))
 
 		for (i <- 0 until 10; j <- 0 until 10) {
-			board.connected(i, j) should equal(true)
+			board.connected(i, j) should equalTo(true)
 		}
 	}
 

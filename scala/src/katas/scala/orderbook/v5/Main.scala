@@ -2,14 +2,18 @@ package katas.scala.orderbook.v5
 
 import scala.xml.XML
 import java.io.File
+
 import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.{Attributes}
-import akka.actor.{ActorRef, Actor, Props, ActorSystem}
+import org.xml.sax.Attributes
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 
 import scala.collection._
 import immutable.TreeMap
 import katas.scala.orderbook.v5.XmlCommandReader.ReadFrom
 import java.util.concurrent.{SynchronousQueue, TimeUnit}
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 /**
  * User: dima
@@ -29,7 +33,7 @@ object Main {
 
     println(report.poll(10, TimeUnit.SECONDS))
 
-    system.shutdown()
+    Await.ready(system.terminate(), Duration.Inf)
   }
 }
 

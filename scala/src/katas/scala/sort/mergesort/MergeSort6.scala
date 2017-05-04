@@ -2,7 +2,7 @@ package katas.scala.sort.mergesort
 
 import katas.scala.permutation.Perm1_
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.Seq
 import scala.collection.mutable.ListBuffer
@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 /**
  * @author DKandalov
  */
-class MergeSort6 extends Matchers {
+class MergeSort6 extends ShouldMatchers {
 
   def permutate(seq: Seq[Int]): Seq[Seq[Int]] = {
     val listBuffer = ListBuffer[Int]()
@@ -19,17 +19,17 @@ class MergeSort6 extends Matchers {
   }
 
   @Test def shouldSortSequence() {
-    sort(Seq()) should equal(Seq())
-    sort(Seq(1)) should equal(Seq(1))
+    sort(Seq()) should equalTo(Seq())
+    sort(Seq(1)) should equalTo(Seq(1))
 
-    sort(Seq(1, 2)) should equal(Seq(1, 2))
-    sort(Seq(2, 1)) should equal(Seq(1, 2))
+    sort(Seq(1, 2)) should equalTo(Seq(1, 2))
+    sort(Seq(2, 1)) should equalTo(Seq(1, 2))
 
-    sort(Seq(1, 2, 3)) should equal(Seq(1, 2, 3))
-    sort(Seq(2, 3, 1)) should equal(Seq(1, 2, 3))
+    sort(Seq(1, 2, 3)) should equalTo(Seq(1, 2, 3))
+    sort(Seq(2, 3, 1)) should equalTo(Seq(1, 2, 3))
 
     permutate(Seq(1, 2, 3, 4, 5)).foreach { sequence =>
-      sort(sequence) should equal(Seq(1, 2, 3, 4, 5))
+      sort(sequence) should equalTo(Seq(1, 2, 3, 4, 5))
     }
   }
 

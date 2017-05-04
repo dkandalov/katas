@@ -1,13 +1,13 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 
-class DynamicArray extends Matchers {
+class DynamicArray extends ShouldMatchers {
 	@Test def `the silly task`(): Unit = {
 		val input = """
 			|2 5
@@ -24,7 +24,7 @@ class DynamicArray extends Matchers {
 
 		var actualOutput = ""
 		process(input.toIterator, { actualOutput += _ + "\n" })
-		actualOutput should equal(expectedOutput)
+		actualOutput should equalTo(expectedOutput)
 	}
 
 	private def solution(): Unit = {

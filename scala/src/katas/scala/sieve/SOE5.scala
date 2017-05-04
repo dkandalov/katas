@@ -1,16 +1,16 @@
 package katas.scala.sieve
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ListBuffer
 
 
-class SOE5 extends Matchers {
+class SOE5 extends ShouldMatchers {
 	@Test def `find prime numbers`() {
-		primes().take(10) should equal(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
-		iteratorOfPrimes().take(10).toList should equal(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
-		iteratorOfPrimes().toStream.take(10) should equal(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
+		primes().take(10) should equalTo(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
+		iteratorOfPrimes().take(10).toList should equalTo(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
+		iteratorOfPrimes().toStream.take(10) should equalTo(Seq(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
 	}
 
 	private def primes(): Stream[Int] = {

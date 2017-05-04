@@ -1,12 +1,12 @@
 package katas.scala.sort.mergesort
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import katas.scala.sort.SeqSortTest
 
 import scala.reflect.ClassTag
 
 
-class MergeSort13 extends SeqSortTest with Matchers {
+class MergeSort13 extends SeqSortTest with ShouldMatchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		if (seq.size <= 1) seq
 		else {

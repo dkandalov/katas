@@ -1,6 +1,6 @@
 package katas.scala.w1
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 
 /**
@@ -8,17 +8,17 @@ import org.junit.Test
  * Date: 22/09/2012
  */
 
-class AndOr extends Matchers {
+class AndOr extends ShouldMatchers {
 	@Test def booleanLogic() {
-		and(false, false) should equal(false)
-		and(false, true) should equal(false)
-		and(true, false) should equal(false)
-		and(true, true) should equal(true)
+		and(false, false) should equalTo(false)
+		and(false, true) should equalTo(false)
+		and(true, false) should equalTo(false)
+		and(true, true) should equalTo(true)
 
-		or(false, false) should equal(false)
-		or(false, true) should equal(true)
-		or(true, false) should equal(true)
-		or(true, true) should equal(true)
+		or(false, false) should equalTo(false)
+		or(false, true) should equalTo(true)
+		or(true, false) should equalTo(true)
+		or(true, true) should equalTo(true)
 	}
 
 	def and(x: Boolean, y: => Boolean) = if (!x) false else y

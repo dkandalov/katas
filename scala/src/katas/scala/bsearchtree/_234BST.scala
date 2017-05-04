@@ -1,47 +1,47 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class _234BST extends Matchers {
+class _234BST extends ShouldMatchers {
 	@Test def `inserting elements as described in 'Algorithms in Java' Figure 13.13`() {
-		Empty().insert("a") should equal(Node2("a"))
-		Empty().insert("a", "s") should equal(Node3(("a", "s")))
-		Empty().insert("a", "s", "e") should equal(Node4(("a", "e", "s")))
-		Empty().insert("a", "s", "e", "r") should equal(
+		Empty().insert("a") should equalTo(Node2("a"))
+		Empty().insert("a", "s") should equalTo(Node3(("a", "s")))
+		Empty().insert("a", "s", "e") should equalTo(Node4(("a", "e", "s")))
+		Empty().insert("a", "s", "e", "r") should equalTo(
 			Node2("e", (
 				Node2("a"),
 				Node3(("r", "s"))
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c") should equal(
+		Empty().insert("a", "s", "e", "r", "c") should equalTo(
 			Node2("e", (
 				Node3(("a", "c")),
 				Node3(("r", "s"))
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c", "h") should equal(
+		Empty().insert("a", "s", "e", "r", "c", "h") should equalTo(
 			Node2("e", (
 				Node3(("a", "c")),
 				Node4(("h", "r", "s"))
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c", "h", "i") should equal(
+		Empty().insert("a", "s", "e", "r", "c", "h", "i") should equalTo(
 			Node3(("e", "r"), (
 				Node3(("a", "c")),
 				Node3(("h", "i")),
 				Node2("s")
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n") should equal(
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n") should equalTo(
 			Node3(("e", "r"), (
 				Node3(("a", "c")),
 				Node4(("h", "i", "n")),
 				Node2("s")
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g") should equal(
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g") should equalTo(
 			Node4(("e", "i", "r"), (
 				Node3(("a", "c")),
 				Node3(("g", "h")),
@@ -49,7 +49,7 @@ class _234BST extends Matchers {
 				Node2("s")
 			))
 		)
-		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g", "x") should equal(
+		Empty().insert("a", "s", "e", "r", "c", "h", "i", "n", "g", "x") should equalTo(
 			Node2("i", (
 				Node2("e", (
 					Node3(("a", "c")),

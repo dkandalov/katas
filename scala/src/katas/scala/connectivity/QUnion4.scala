@@ -1,7 +1,7 @@
 package katas.scala.connectivity
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.annotation.tailrec
 
@@ -10,17 +10,17 @@ import scala.annotation.tailrec
  * Date: 05/09/2012
  */
 
-class QUnion4 extends Matchers {
+class QUnion4 extends ShouldMatchers {
 	@Test def pointsAreConnected_InSimpleCases() {
 		var board = new Board(2)
 
-		board.connected(0, 0) should equal(true)
+		board.connected(0, 0) should equalTo(true)
 
-		board.connected(0, 1) should equal(false)
-		board.connected(1, 0) should equal(false)
+		board.connected(0, 1) should equalTo(false)
+		board.connected(1, 0) should equalTo(false)
 		board = board.connect(0, 1)
-		board.connected(0, 1) should equal(true)
-		board.connected(1, 0) should equal(true)
+		board.connected(0, 1) should equalTo(true)
+		board.connected(1, 0) should equalTo(true)
 	}
 
 	@Test def pointsAreConnected_InExampleFromBook() {
@@ -35,12 +35,12 @@ class QUnion4 extends Matchers {
 			wereConnected
 		}
 
-		output should equal(
+		output should equalTo(
 			Seq(false, false, false, false, false, true, false, false, false, true, true, false)
 		)
 
 		for (i <- 0 until 10; j <- 0 until 10) {
-			board.connected(i, j) should equal(true)
+			board.connected(i, j) should equalTo(true)
 		}
 	}
 

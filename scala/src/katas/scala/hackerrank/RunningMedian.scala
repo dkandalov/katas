@@ -1,18 +1,18 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ArrayBuffer
 
 /**
 	* https://www.hackerrank.com/challenges/find-the-running-median
 	*/
-class RunningMedian extends Matchers {
+class RunningMedian extends ShouldMatchers {
 
 	@Test def `hackerrank example`(): Unit = {
 		val runningMedian = new RunningMedian()
-		Seq(12, 4, 5, 3, 8, 7).map{ runningMedian.add } shouldBe Seq(12.0, 8.0, 5.0, 4.5, 5.0, 6.0)
+		Seq(12, 4, 5, 3, 8, 7).map{ runningMedian.add } shouldEqual Seq(12.0, 8.0, 5.0, 4.5, 5.0, 6.0)
 	}
 
 	@Test def `large amount of items`(): Unit = {

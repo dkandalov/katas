@@ -1,24 +1,24 @@
 package katas.scala.fibonacci
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.math._
 
 /**
  * @author DKandalov
  */
-class Fibonacci4_ extends Matchers {
+class Fibonacci4_ extends ShouldMatchers {
   @Test def shouldCalculateFibonacciNumber() {
-    fib(0) should equal(1)
-    fib(1) should equal(1)
-    fib(2) should equal(2)
-    fib(3) should equal(3)
-    fib(4) should equal(5)
-    fib(5) should equal(8)
+    fib(0) should equalTo(1)
+    fib(1) should equalTo(1)
+    fib(2) should equalTo(2)
+    fib(3) should equalTo(3)
+    fib(4) should equalTo(5)
+    fib(5) should equalTo(8)
 
-    List[Long](0, 1, 2, 3, 4, 5, 6, 7, 8, 9).map(fib) should equal(Seq(1, 1, 2, 3, 5, 8, 13, 21, 34, 55))
-    List[Long](20, 30, 40, 50, 60, 70, 80, 90).map(fib) should equal(Seq(10946, 1346269, 165580141, 20365011074L, 2504730781961L, 308061521170130L, 37889062373144008L, 4660046610375544832L))
+    List[Long](0, 1, 2, 3, 4, 5, 6, 7, 8, 9).map(fib) should equalTo(Seq(1, 1, 2, 3, 5, 8, 13, 21, 34, 55))
+    List[Long](20, 30, 40, 50, 60, 70, 80, 90).map(fib) should equalTo(Seq(10946, 1346269, 165580141, 20365011074L, 2504730781961L, 308061521170130L, 37889062373144008L, 4660046610375544832L))
   }
 
   val fi = (1 + sqrt(5)) / 2

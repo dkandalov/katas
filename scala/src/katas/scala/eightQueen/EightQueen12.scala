@@ -1,20 +1,20 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ListBuffer
 
 
-class EightQueen12 extends Matchers {
+class EightQueen12 extends ShouldMatchers {
 
 	@Test def `find queen positions for different board sizes`() {
-		findPositions(BoardSize(1)).size should equal(1)
-		findPositions(BoardSize(2)).size should equal(0)
-		findPositions(BoardSize(3)).size should equal(0)
-		findPositions(BoardSize(4)).size should equal(2)
-		findPositions(BoardSize(5)).size should equal(10)
-		findPositions(BoardSize(8)).size should equal(92)
+		findPositions(BoardSize(1)).size should equalTo(1)
+		findPositions(BoardSize(2)).size should equalTo(0)
+		findPositions(BoardSize(3)).size should equalTo(0)
+		findPositions(BoardSize(4)).size should equalTo(2)
+		findPositions(BoardSize(5)).size should equalTo(10)
+		findPositions(BoardSize(8)).size should equalTo(92)
 	}
 
 	@Test def `generate all positions on the board`() {
@@ -32,7 +32,7 @@ class EightQueen12 extends Matchers {
 			(1, 0), (1, 1), (1, 2),
 			(2, 0), (2, 1), (2, 2)
 		)
-		allPositions should equal(expectedPositions)
+		allPositions should equalTo(expectedPositions)
 	}
 
 	private def findPositions(boardSize: BoardSize): PositionSets = {

@@ -1,13 +1,13 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class EightQueen11 extends Matchers {
+class EightQueen11 extends ShouldMatchers {
 	@Test def findAllValidQueenPositions() {
-		solveForBoardOfSize(3) should equal(Seq())
-		solveForBoardOfSize(4).map{ solution => asPrintableBoard(4, solution) }.mkString("\n\n") should equal(
+		solveForBoardOfSize(3) should equalTo(Seq())
+		solveForBoardOfSize(4).map{ solution => asPrintableBoard(4, solution) }.mkString("\n\n") should equalTo(
 			"""
 			  |--Q-
 			  |Q---
@@ -19,7 +19,7 @@ class EightQueen11 extends Matchers {
 			  |Q---
 			  |--Q-
 			""".stripMargin.trim)
-		solveForBoardOfSize(5).map{ solution => asPrintableBoard(5, solution) }.mkString("\n\n") should equal(
+		solveForBoardOfSize(5).map{ solution => asPrintableBoard(5, solution) }.mkString("\n\n") should equalTo(
 			"""
 			  |Q----
 			  |---Q-
@@ -83,7 +83,7 @@ class EightQueen11 extends Matchers {
 			""".stripMargin.trim
 		)
 
-		solveForBoardOfSize(8).size should equal(92)
+		solveForBoardOfSize(8).size should equalTo(92)
 	}
 
 	def solveForBoardOfSize(boardSize: Int, fromColumn: Int = 0, solution: Seq[(Int, Int)] = Seq()): Seq[Seq[(Int, Int)]] = {
@@ -110,22 +110,22 @@ class EightQueen11 extends Matchers {
 	}
 
 	@Test def convertSolutionToPrintableString() {
-		asPrintableBoard(3, Seq()) should equal("""
+		asPrintableBoard(3, Seq()) should equalTo("""
 			  |---
 			  |---
 			  |---
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((0, 0))) should equal("""
+		asPrintableBoard(3, Seq((0, 0))) should equalTo("""
 			  |Q--
 			  |---
 			  |---
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((2, 2))) should equal("""
+		asPrintableBoard(3, Seq((2, 2))) should equalTo("""
 			  |---
 			  |---
 			  |--Q
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((1, 1))) should equal("""
+		asPrintableBoard(3, Seq((1, 1))) should equalTo("""
 			  |---
 			  |-Q-
 			  |---

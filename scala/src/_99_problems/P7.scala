@@ -7,7 +7,7 @@ object P7 {
 	abstract class GraphBase[T, U] {
 		case class Edge(fromNode: Node, toNode: Node, value: U) {
 			def reverse = Edge(toNode, fromNode, value)
-			def toTuple = (fromNode.value, toNode.value, value)
+			def toTuple: (T, T, U) = (fromNode.value, toNode.value, value)
 			def hasSameNodes(edge: Edge): Boolean = fromNode == edge.fromNode && toNode == edge.toNode
 		}
 		case class Node(value: T) {
@@ -28,7 +28,7 @@ object P7 {
 		var edges: Set[Edge] = Set()
 
 
-		override def toString = toTermForm.toString()
+		override def toString: String = toTermForm.toString()
 
 		/**
 		 * based on http://en.wikipedia.org/wiki/Bipartite_graph#Testing_bipartiteness
@@ -197,7 +197,7 @@ object P7 {
 			(nodesByValue.keySet.toList, edges.map(_.toTuple).toList)
 		}
 
-		def addNode(value: T) = {
+		def addNode(value: T): Node = {
 			val node = Node(value)
 			nodesByValue = ListMap(value -> node) ++ nodesByValue
 			node
@@ -346,7 +346,7 @@ object P7 {
 
 		def isConnected: Boolean = spanningTrees().nonEmpty
 
-		def addEdge(value1: T, value2: T, edgeValue: U) = {
+		def addEdge(value1: T, value2: T, edgeValue: U): Unit = {
 			if (!nodesByValue.contains(value1) || !nodesByValue.contains(value2)) throw new IllegalStateException
 
 			val edge = Edge(nodesByValue(value1), nodesByValue(value2), edgeValue)
@@ -354,7 +354,7 @@ object P7 {
 			if (!edges.contains(edge.reverse)) edges = edges + edge.reverse
 		}
 
-		override def equals(o: Any) = o match {
+		override def equals(o: Any): Boolean = o match {
 			case graph: Graph[T, U] =>
 				val thisValues = nodesByValue.keys.toList
 				val thatValues = graph.nodesByValue.keys.toList
@@ -367,7 +367,7 @@ object P7 {
 				false
 		}
 
-		override def toString = {
+		override def toString: String = {
 			val result = toAdjacentForm
 				.flatMap{ case (nodeValue, connections) =>
 					if (connections.isEmpty) Seq(Left(nodeValue))
@@ -375,7 +375,7 @@ object P7 {
 				}
 				.foldLeft(Seq[Either[T, (T, T, U)]]()) {
 					case (seq, nodeValue@Left(_)) => seq :+ nodeValue
-					case (seq, connection@Right((from, to, weight))) =>
+					case (seq, connection@Right((from, to, _))) =>
 						if (seq.exists{case Right(pair) => pair._1 == to && pair._2 == from}) seq
 						else seq :+ connection
 				}
@@ -444,12 +444,12 @@ object P7 {
 
 	class Digraph[T, U] extends GraphBase[T, U] {
 
-		def addArc(source: T, dest: T, value: U) = {
+		def addArc(source: T, dest: T, value: U): Unit = {
 			val edge = Edge(nodesByValue(source), nodesByValue(dest), value)
 			edges = edges + edge
 		}
 
-		override def equals(o: Any) = o match {
+		override def equals(o: Any): Boolean = o match {
 			case graph: Digraph[T, U] =>
 				nodesByValue.keys.toList.forall(graph.nodesByValue.keys.toList.contains(_)) &&
 					(edges.map(_.toTuple) -- graph.edges.map(_.toTuple)).isEmpty
@@ -509,7 +509,7 @@ object P7 {
 
 		def nodeCount: Int = 1 + children.map(_.nodeCount).sum
 
-		override def toString = "M(" + value.toString + " {" + children.map(_.toString).mkString(",") + "})"
+		override def toString: String = "M(" + value.toString + " {" + children.map(_.toString).mkString(",") + "})"
 
 		def asString: String = value + children.map(_.asString).mkString("") + "^"
 	}

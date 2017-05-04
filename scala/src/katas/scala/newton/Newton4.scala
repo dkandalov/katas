@@ -1,15 +1,14 @@
 package katas.scala.newton
 
 import org.junit.Test
-import org.scalatest.Matchers
-import org.scalatest.matchers.{MatchResult, Matcher}
+import org.specs2.matcher.{Expectable, MatchResult, Matcher, ShouldMatchers}
 
 /**
  * User: dima
  * Date: 04/04/2013
  */
 
-class Newton4 extends Matchers {
+class Newton4 extends ShouldMatchers {
 	@Test def `should find square root of a number`() {
 		squareRootOf(1 + 1) should beCloseTo(0)
 		squareRootOf(1.0) should beCloseTo(1.0)
@@ -27,11 +26,12 @@ class Newton4 extends Matchers {
 
 	def beCloseTo(right: Double, threshold: Double = 0.0001) =
 		new Matcher[Double] {
-			override def apply(left: Double) =
-				MatchResult(
-					(left - right).abs < threshold,
-					left + " is not close to " + right,
-					left + " is close to " + right
+			override def apply[S <: Double](left: Expectable[S]): MatchResult[S] =
+				result(
+					{(left.value - right).abs < threshold},
+					{ left + " is not close to " + right },
+					{ left + " is close to " + right },
+					left
 				)
 		}
 }

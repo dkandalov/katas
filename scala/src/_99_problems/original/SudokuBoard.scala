@@ -3,13 +3,13 @@ package _99_problems.original
 
 class SudokuBoard[T](aboard: Array[Either[T, List[T]]]) {
 	type Board = Array[Either[T, List[T]]]
-	val width = Math.sqrt(aboard.length).toInt
-	val squareWidth = Math.sqrt(width).toInt
+	private val width = Math.sqrt(aboard.length).toInt
+	private val squareWidth = Math.sqrt(width).toInt
 	val board: Board = cleanBoard(aboard)
 
-	override def toString = {
+	override def toString: String = {
 		def mkSep =
-			List.make(squareWidth, List.make(squareWidth * 3, '-').mkString("")).mkString("+").substring(1, width * 3 + squareWidth - 2)
+			List.fill(squareWidth){ List.fill(squareWidth * 3){'-'}.mkString("") }.mkString("+").substring(1, width * 3 + squareWidth - 2)
 
 		def chunk[U](n: Int, seq: Seq[U]): Seq[Seq[U]] =
 			(seq.indices by n).toList.zip((n to seq.length by n).toList).map {

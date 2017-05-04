@@ -1,10 +1,10 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class BSearch18 extends Matchers {
+class BSearch18 extends ShouldMatchers {
 	@Test def bbb() {
 		def search(n: Int, values: Seq[Int]): Int = {
 //			if (values.isEmpty) {
@@ -29,29 +29,29 @@ class BSearch18 extends Matchers {
 			-1
 		}
 
-		search(1, Seq()) should be(-1)
+		search(1, Seq()) should beEqualTo(-1)
 
-		search(0, Seq(1)) should be(-1)
-		search(1, Seq(1)) should be(0)
-		search(2, Seq(1)) should be(-1)
+		search(0, Seq(1)) should beEqualTo(-1)
+		search(1, Seq(1)) should beEqualTo(0)
+		search(2, Seq(1)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2)) should be(-1)
-		search(1, Seq(1, 2)) should be(0)
-		search(2, Seq(1, 2)) should be(1)
-		search(3, Seq(1, 2)) should be(-1)
+		search(0, Seq(1, 2)) should beEqualTo(-1)
+		search(1, Seq(1, 2)) should beEqualTo(0)
+		search(2, Seq(1, 2)) should beEqualTo(1)
+		search(3, Seq(1, 2)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2, 3)) should be(-1)
-		search(1, Seq(1, 2, 3)) should be(0)
-		search(2, Seq(1, 2, 3)) should be(1)
-		search(3, Seq(1, 2, 3)) should be(2)
-		search(4, Seq(1, 2, 3)) should be(-1)
+		search(0, Seq(1, 2, 3)) should beEqualTo(-1)
+		search(1, Seq(1, 2, 3)) should beEqualTo(0)
+		search(2, Seq(1, 2, 3)) should beEqualTo(1)
+		search(3, Seq(1, 2, 3)) should beEqualTo(2)
+		search(4, Seq(1, 2, 3)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2, 3, 4)) should be(-1)
-		search(1, Seq(1, 2, 3, 4)) should be(0)
-		search(2, Seq(1, 2, 3, 4)) should be(1)
-		search(3, Seq(1, 2, 3, 4)) should be(2)
-		search(4, Seq(1, 2, 3, 4)) should be(3)
-		search(5, Seq(1, 2, 3, 4)) should be(-1)
+		search(0, Seq(1, 2, 3, 4)) should beEqualTo(-1)
+		search(1, Seq(1, 2, 3, 4)) should beEqualTo(0)
+		search(2, Seq(1, 2, 3, 4)) should beEqualTo(1)
+		search(3, Seq(1, 2, 3, 4)) should beEqualTo(2)
+		search(4, Seq(1, 2, 3, 4)) should beEqualTo(3)
+		search(5, Seq(1, 2, 3, 4)) should beEqualTo(-1)
 	}
 
 	@Test def aa() {
@@ -69,29 +69,29 @@ class BSearch18 extends Matchers {
 				midIndex + shift
 			}
 		}
-		search(1, Seq()) should be(-1)
+		search(1, Seq()) should beEqualTo(-1)
 
-		search(0, Seq(1)) should be(-1)
-		search(1, Seq(1)) should be(0)
-		search(2, Seq(1)) should be(-1)
+		search(0, Seq(1)) should beEqualTo(-1)
+		search(1, Seq(1)) should beEqualTo(0)
+		search(2, Seq(1)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2)) should be(-1)
-		search(1, Seq(1, 2)) should be(0)
-		search(2, Seq(1, 2)) should be(1)
-		search(3, Seq(1, 2)) should be(-1)
+		search(0, Seq(1, 2)) should beEqualTo(-1)
+		search(1, Seq(1, 2)) should beEqualTo(0)
+		search(2, Seq(1, 2)) should beEqualTo(1)
+		search(3, Seq(1, 2)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2, 3)) should be(-1)
-		search(1, Seq(1, 2, 3)) should be(0)
-		search(2, Seq(1, 2, 3)) should be(1)
-		search(3, Seq(1, 2, 3)) should be(2)
-		search(4, Seq(1, 2, 3)) should be(-1)
+		search(0, Seq(1, 2, 3)) should beEqualTo(-1)
+		search(1, Seq(1, 2, 3)) should beEqualTo(0)
+		search(2, Seq(1, 2, 3)) should beEqualTo(1)
+		search(3, Seq(1, 2, 3)) should beEqualTo(2)
+		search(4, Seq(1, 2, 3)) should beEqualTo(-1)
 
-		search(0, Seq(1, 2, 3, 4)) should be(-1)
-		search(1, Seq(1, 2, 3, 4)) should be(0)
-		search(2, Seq(1, 2, 3, 4)) should be(1)
-		search(3, Seq(1, 2, 3, 4)) should be(2)
-		search(4, Seq(1, 2, 3, 4)) should be(3)
-		search(5, Seq(1, 2, 3, 4)) should be(-1)
+		search(0, Seq(1, 2, 3, 4)) should beEqualTo(-1)
+		search(1, Seq(1, 2, 3, 4)) should beEqualTo(0)
+		search(2, Seq(1, 2, 3, 4)) should beEqualTo(1)
+		search(3, Seq(1, 2, 3, 4)) should beEqualTo(2)
+		search(4, Seq(1, 2, 3, 4)) should beEqualTo(3)
+		search(5, Seq(1, 2, 3, 4)) should beEqualTo(-1)
 	}
 
 }

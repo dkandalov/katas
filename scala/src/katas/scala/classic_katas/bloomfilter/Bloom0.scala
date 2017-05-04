@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.bloomfilter
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -12,17 +12,17 @@ import scala.util.Random
  * Date: 12/09/2012
  */
 
-class Bloom0 extends Matchers {
+class Bloom0 extends ShouldMatchers {
 	@Test def determineIfWordIsInFilter_InSimplestCases() {
 		val bloomFilter = new BloomFilter(100)
 
-		bloomFilter.contains("aaa") should equal(false)
-		bloomFilter.contains("bbb") should equal(false)
+		bloomFilter.contains("aaa") should equalTo(false)
+		bloomFilter.contains("bbb") should equalTo(false)
 		bloomFilter.add("aaa")
-		bloomFilter.contains("aaa") should equal(true)
-		bloomFilter.contains("bbb") should equal(false)
+		bloomFilter.contains("aaa") should equalTo(true)
+		bloomFilter.contains("bbb") should equalTo(false)
 
-		bloomFilter.data.count{ _ == true } should equal(3)
+		bloomFilter.data.count{ _ == true } should equalTo(3)
 	}
 
 	@Test def determineIfWordIsInFilter_ForRealDictionary() {
@@ -31,9 +31,9 @@ class Bloom0 extends Matchers {
 		val words = Source.fromFile("/usr/share/dict/words").getLines().toSeq
 
 		words.foreach{ bloomFilter.add(_) }
-		bloomFilter.data.count{ _ == true } should equal(592227)
-		bloomFilter.contains("aaa") should equal(false)
-		bloomFilter.contains("bbb") should equal(false)
+		bloomFilter.data.count{ _ == true } should equalTo(592227)
+		bloomFilter.contains("aaa") should equalTo(false)
+		bloomFilter.contains("bbb") should equalTo(false)
 
 		var count = 0
 		for (i <- 3 to 6; j <- 1 to 20) {
@@ -44,7 +44,7 @@ class Bloom0 extends Matchers {
 			}
 		}
 		println("count = " + count)
-		count < 10 should equal(true)
+		count < 10 should equalTo(true)
 	}
 
 	private class BloomFilter(size: Int) {

@@ -1,26 +1,26 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable
 
 
-class TruckTour extends Matchers {
+class TruckTour extends ShouldMatchers {
 
 	@Test def `hackerrank example`(): Unit = {
 		val stations = List(Station(1, 5), Station(10, 3), Station(3, 4))
-		findStartStation(stations) shouldBe 1
+		findStartStation(stations) shouldEqual 1
 	}
 
 	@Test def `long tour`(): Unit = {
 		val stations = 0.until(100000).map { _ => Station(0, 1) } :+ Station(200000, 1)
-		findStartStation(stations) shouldBe 100000
+		findStartStation(stations) shouldEqual 100000
 	}
 
 	@Test def `determine if tour over stations is valid`(): Unit = {
-		isValidTour(List(Station(1, 1)), List()) shouldBe true
-		isValidTour(List(Station(0, 1), Station(1, 1)), List()) shouldBe false
+		isValidTour(List(Station(1, 1)), List()) shouldEqual true
+		isValidTour(List(Station(0, 1), Station(1, 1)), List()) shouldEqual false
 	}
 
 	def main(args: Array[String]): Unit = {

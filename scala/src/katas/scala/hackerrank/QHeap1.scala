@@ -1,7 +1,7 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -9,27 +9,27 @@ import scala.util.Random
 /**
 	* https://www.hackerrank.com/challenges/qheap1
 	*/
-class QHeap1 extends Matchers {
+class QHeap1 extends ShouldMatchers {
 
 	@Test def `hackerrank example`(): Unit = {
 		val heap = new Heap[Int]()
 		heap.add(4)
 		heap.add(9)
-		heap.min shouldBe 4
-		heap.delete(4) shouldBe true
-		heap.min shouldBe 9
+		heap.min shouldEqual 4
+		heap.delete(4) shouldEqual true
+		heap.min shouldEqual 9
 	}
 
 	@Test def `min element while adding and deleting 10 elements`(): Unit = {
 		val heap = new Heap[Int]()
 		(-5).until(5).reverse.foreach { n =>
 			heap.add(n)
-			heap.min shouldBe n
+			heap.min shouldEqual n
 		}
 		(-5).until(5).foreach { n =>
-			heap.delete(n) shouldBe true
+			heap.delete(n) shouldEqual true
 			if (heap.size > 0) {
-				heap.min shouldBe n + 1
+				heap.min shouldEqual n + 1
 			}
 		}
 	}
@@ -37,33 +37,33 @@ class QHeap1 extends Matchers {
 	@Test def `min element after add`(): Unit = {
 		val heap = new Heap[Int]()
 		heap.add(1)
-		heap.min shouldBe 1
+		heap.min shouldEqual 1
 		heap.add(2)
-		heap.min shouldBe 1
+		heap.min shouldEqual 1
 		heap.add(0)
-		heap.min shouldBe 0
+		heap.min shouldEqual 0
 	}
 
 	@Test def `min element after delete`(): Unit = {
 		val heap = new Heap[Int]()
 		heap.add(1)
-		heap.min shouldBe 1
+		heap.min shouldEqual 1
 		heap.add(0)
-		heap.min shouldBe 0
-		heap.delete(0) shouldBe true
-		heap.min shouldBe 1
+		heap.min shouldEqual 0
+		heap.delete(0) shouldEqual true
+		heap.min shouldEqual 1
 	}
 
 	@Test def `find index of element`(): Unit = {
 		val heap = new Heap[Int]()
 		1.until(8).foreach(heap.add)
-		1.until(8).map { n => (n, heap.indexOf(n)) } shouldBe Seq(
+		1.until(8).map { n => (n, heap.indexOf(n)) } shouldEqual Seq(
 			(1, 0),
 			(2, 1), (3, 2),
 			(4, 3), (5, 4), (6, 5), (7, 6)
 		)
-		heap.indexOf(0) shouldBe -1
-		heap.indexOf(10) shouldBe -1
+		heap.indexOf(0) shouldEqual -1
+		heap.indexOf(10) shouldEqual -1
 	}
 
 	@Test def `example which fails when parent index lookup is incorrect`(): Unit = {
@@ -73,7 +73,7 @@ class QHeap1 extends Matchers {
 		values.foreach { n =>
 			heap.add(n)
 			heap.toList.foreach { it =>
-				(it, heap.indexOf(it)) shouldNot be(it, -1)
+				(it, heap.indexOf(it)) shouldNotEqual (it, -1)
 			}
 		}
 	}
@@ -85,9 +85,9 @@ class QHeap1 extends Matchers {
 		values.foreach { n => heap.add(n) }
 		
 		values.foreach { n =>
-			heap.delete(n) shouldBe true
+			heap.delete(n) shouldEqual true
 			heap.toList.foreach { it =>
-				(it, heap.indexOf(it)) shouldNot be(it, -1)
+				(it, heap.indexOf(it)) shouldNotEqual (it, -1)
 			}
 		}
 	}
@@ -102,7 +102,7 @@ class QHeap1 extends Matchers {
 
 		values.foreach { n => heap.add(n) }
 		values.foreach { n =>
-			heap.delete(n) shouldBe true
+			heap.delete(n) shouldEqual true
 		}
 	}
 

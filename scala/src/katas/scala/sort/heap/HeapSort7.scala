@@ -1,6 +1,6 @@
 package katas.scala.sort.heap
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 import collection.Seq
 import java.lang.IllegalStateException
@@ -9,16 +9,16 @@ import java.lang.IllegalStateException
  * User: dima
  * Date: 30/01/2012
  */
-class HeapSort7 extends Matchers {
+class HeapSort7 extends ShouldMatchers {
   @Test def GIVEN_aSequence_SHOULD_sortUsingHeapSort() {
-    new Heap().addAll(Seq()).takeAll() should equal(Seq())
-    new Heap().addAll(Seq(1)).takeAll() should equal(Seq(1))
-    new Heap().addAll(Seq(1, 2)).takeAll() should equal(Seq(1, 2))
-    new Heap().addAll(Seq(2, 1)).takeAll() should equal(Seq(1, 2))
-    new Heap().addAll(Seq(2, 3, 1)).takeAll() should equal(Seq(1, 2, 3))
-    new Heap().addAll(Seq(2, 4, 3, 1)).takeAll() should equal(Seq(1, 2, 3, 4))
+    new Heap().addAll(Seq()).takeAll() should equalTo(Seq())
+    new Heap().addAll(Seq(1)).takeAll() should equalTo(Seq(1))
+    new Heap().addAll(Seq(1, 2)).takeAll() should equalTo(Seq(1, 2))
+    new Heap().addAll(Seq(2, 1)).takeAll() should equalTo(Seq(1, 2))
+    new Heap().addAll(Seq(2, 3, 1)).takeAll() should equalTo(Seq(1, 2, 3))
+    new Heap().addAll(Seq(2, 4, 3, 1)).takeAll() should equalTo(Seq(1, 2, 3, 4))
     List(1, 2, 3, 4, 5).permutations.toList.foreach { list =>
-        new Heap().addAll(list).takeAll() should equal(Seq(1, 2, 3, 4, 5))
+        new Heap().addAll(list).takeAll() should equalTo(Seq(1, 2, 3, 4, 5))
     }
   }
 

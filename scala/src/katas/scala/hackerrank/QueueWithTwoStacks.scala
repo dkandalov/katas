@@ -1,42 +1,42 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
 	* https://www.hackerrank.com/challenges/queue-using-two-stacks
 	*/
-class QueueWithTwoStacks extends Matchers {
+class QueueWithTwoStacks extends ShouldMatchers {
 	
 	@Test def `example from the task`(): Unit = {
 		val queue = new Queue()
 
 		queue.push(42)
-		queue.toList shouldBe List(42)
+		queue.toList shouldEqual List(42)
 
-		queue.pop() shouldBe 42
+		queue.pop() shouldEqual 42
 
 		queue.push(14)
-		queue.peek shouldBe 14
+		queue.peek shouldEqual 14
 
 		queue.push(28)
-		queue.peek shouldBe 14
-		queue.toList shouldBe List(14, 28)
+		queue.peek shouldEqual 14
+		queue.toList shouldEqual List(14, 28)
 
 		queue.push(60)
 		queue.push(78)
-		queue.toList shouldBe List(14, 28, 60, 78)
+		queue.toList shouldEqual List(14, 28, 60, 78)
 
-		queue.pop() shouldBe 14
-		queue.pop() shouldBe 28
-		queue.toList shouldBe List(60, 78)
+		queue.pop() shouldEqual 14
+		queue.pop() shouldEqual 28
+		queue.toList shouldEqual List(60, 78)
 	}
 
 	@Test def `performance for large queue`(): Unit = {
 		val queue = new Queue()
 		0.until(100000).foreach(queue.push)
 		0.until(100000).foreach { i =>
-			queue.pop() shouldBe i
+			queue.pop() shouldEqual i
 		}
 	}
 

@@ -1,18 +1,18 @@
 package _99_problems
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.annotation.tailrec
 
 /**
  * http://aperiodic.net/phil/scala/s-99/
  */
-class P0 extends Matchers {
+class P0 extends ShouldMatchers {
 	@Test def `should find last element of a list`() {
-		last(List[Int]()) should equal(None)
-		last(List(1)) should equal(Some(1))
-		last(List(1,2)) should equal(Some(2))
+		last(List[Int]()) should beNone
+		last(List(1)) should beSome(1)
+		last(List(1,2)) should beSome(2)
 	}
 
 	@tailrec final def last[T] (list: List[T]): Option[T] = list match {
@@ -29,10 +29,10 @@ class P0 extends Matchers {
 	}
 
 	@Test def `should return second last`() {
-		secondLast(List[Int]()) should equal(None)
-		secondLast(List(1)) should equal(None)
-		secondLast(List(1, 2)) should equal(Some(1))
-		secondLast(List(1, 2, 3)) should equal(Some(2))
+		secondLast(List[Int]()) should beNone
+		secondLast(List(1)) should beNone
+		secondLast(List(1, 2)) should beSome(1)
+		secondLast(List(1, 2, 3)) should beSome(2)
 	}
 
 
@@ -48,16 +48,16 @@ class P0 extends Matchers {
 	}
 
 	@Test def `should find amount of elements in a list`(){
-		length(List()) should equal(0)
-		length(List(1)) should equal(1)
-		length(List(1, 2)) should equal(2)
+		length(List()) should equalTo(0)
+		length(List(1)) should equalTo(1)
+		length(List(1, 2)) should equalTo(2)
 	}
 
 	@Test def `should return the kth element in the list`(){
-		   kth(0, List()) should equal(None)
-		   kth(0, List(1)) should equal(Some(1))
-		   kth(1, List(1,2)) should equal(Some(2))
-		   kth(4, List(1,2,5,6,9)) should equal(Some(9))
+		   kth(0, List()) should beNone
+		   kth(0, List(1)) should beSome(1)
+		   kth(1, List(1,2)) should beSome(2)
+		   kth(4, List(1,2,5,6,9)) should beSome(9)
 	}
 
 
@@ -67,9 +67,9 @@ class P0 extends Matchers {
 	}
 
 	@Test def `should return the reverse of list`(){
-		   reverse(List()) should equal(List())
-		   reverse(List(1)) should equal(List(1))
-		   reverse(List(1,2)) should equal(List(2,1))
+		   reverse(List()) should equalTo(List())
+		   reverse(List(1)) should equalTo(List(1))
+		   reverse(List(1,2)) should equalTo(List(2,1))
 	}
 
 	def palindrome[T](value: List[T]) : Boolean = {
@@ -77,12 +77,12 @@ class P0 extends Matchers {
 	}
 
 	@Test def `should check for palindrome`(){
-		palindrome(List()) should equal(true)
-		palindrome(List(1)) should equal(true)
-		palindrome(List(1,1)) should equal(true)
-		palindrome(List(1,2,1)) should equal(true)
+		palindrome(List()) should equalTo(true)
+		palindrome(List(1)) should equalTo(true)
+		palindrome(List(1,1)) should equalTo(true)
+		palindrome(List(1,2,1)) should equalTo(true)
 
-		palindrome(List(1,2)) should equal(false)
+		palindrome(List(1,2)) should equalTo(false)
 	}
 
 	def flatten[T](lists: List[Any]): List[Any] = {
@@ -98,11 +98,11 @@ class P0 extends Matchers {
 	}
 
 	@Test def `should flatten a list`() {
-		flatten(List()) should equal(List())
-		flatten(List(1)) should equal(List(1))
-		flatten(List(1, List(2))) should equal(List(1, 2))
+		flatten(List()) should equalTo(List())
+		flatten(List(1)) should equalTo(List(1))
+		flatten(List(1, List(2))) should equalTo(List(1, 2))
 
-		flatten(List(List(List(1, 1), 2, List(3, List(5, 8))))) should equal(List(1, 1, 2, 3, 5, 8))
+		flatten(List(List(List(1, 1), 2, List(3, List(5, 8))))) should equalTo(List(1, 1, 2, 3, 5, 8))
 	}
 
 	@Test def `should remove the duplicate symbols`() {
@@ -114,10 +114,10 @@ class P0 extends Matchers {
 			}
 		}
 
-		compress(List()) should equal(List())
-		compress(List('a)) should equal(List('a))
-		compress(List('a, 'b)) should equal(List('a, 'b))
-		compress(List('a, 'a, 'b, 'a)) should equal(List('a, 'b, 'a))
+		compress(List()) should equalTo(List())
+		compress(List('a)) should equalTo(List('a))
+		compress(List('a, 'b)) should equalTo(List('a, 'b))
+		compress(List('a, 'a, 'b, 'a)) should equalTo(List('a, 'b, 'a))
 	}
 
 	def pack[T](seq: Seq[T], group: Seq[T] = Seq()): Seq[Seq[T]] = {
@@ -133,10 +133,10 @@ class P0 extends Matchers {
 	}
 
 	@Test def `P09 (**) Pack consecutive duplicates of list elements into sublists.`() {
-		pack(Seq()) should equal(Seq())
-		pack(Seq('a)) should equal(Seq(Seq('a)))
-		pack(Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
-		pack(Seq('a, 'a, 'b, 'b, 'a)) should equal(Seq(Seq('a, 'a), Seq('b, 'b), Seq('a)))
+		pack(Seq()) should equalTo(Seq())
+		pack(Seq('a)) should equalTo(Seq(Seq('a)))
+		pack(Seq('a, 'b)) should equalTo(Seq(Seq('a), Seq('b)))
+		pack(Seq('a, 'a, 'b, 'b, 'a)) should equalTo(Seq(Seq('a, 'a), Seq('b, 'b), Seq('a)))
 	}
 
 }

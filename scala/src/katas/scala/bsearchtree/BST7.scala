@@ -1,7 +1,7 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.annotation.tailrec
 
@@ -9,30 +9,30 @@ import scala.annotation.tailrec
  * User: dima
  * Date: 08/02/2012
  */
-class BST7 extends Matchers {
+class BST7 extends ShouldMatchers {
   @Test def GIVEN_aSetOfKeysAndValues_SHOULD_addThemToBST_AND_determineIfBSTContainsThem() {
-    new BST[Int, String]().get(1) should equal(None)
-    new BST[Int, String]().put(1, "a").get(1) should equal(Some("a"))
+    new BST[Int, String]().get(1) should equalTo(None)
+    new BST[Int, String]().put(1, "a").get(1) should equalTo(Some("a"))
 
     val bst = new BST[Int, String]().putAll(Map(1 -> "a", 2 -> "b", 3 -> "c"))
-    bst.get(0) should equal(None)
-    bst.get(1) should equal(Some("a"))
-    bst.get(2) should equal(Some("b"))
-    bst.get(3) should equal(Some("c"))
-    bst.get(4) should equal(None)
+    bst.get(0) should equalTo(None)
+    bst.get(1) should equalTo(Some("a"))
+    bst.get(2) should equalTo(Some("b"))
+    bst.get(3) should equalTo(Some("c"))
+    bst.get(4) should equalTo(None)
 
     Map(1 -> "a", 2 -> "b", 3 -> "c", 4 -> "d").toList.permutations.foreach { list =>
       val bst = new BST[Int, String]().putAll(list)
-      bst.get(0) should equal(None)
-      bst.get(1) should equal(Some("a"))
-      bst.get(2) should equal(Some("b"))
-      bst.get(3) should equal(Some("c"))
-      bst.get(4) should equal(Some("d"))
-      bst.get(5) should equal(None)
+      bst.get(0) should equalTo(None)
+      bst.get(1) should equalTo(Some("a"))
+      bst.get(2) should equalTo(Some("b"))
+      bst.get(3) should equalTo(Some("c"))
+      bst.get(4) should equalTo(Some("d"))
+      bst.get(5) should equalTo(None)
     }
 
     // covariance
-    new BST[Int, AnyVal]().put(1, 123).get(1) should equal(Some(123))
+    new BST[Int, AnyVal]().put(1, 123).get(1) should equalTo(Some(123))
 //    val numBST: BST[Int, AnyVal] = new BST[Int, Int]()
   }
 

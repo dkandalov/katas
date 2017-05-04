@@ -1,11 +1,11 @@
 package _99_problems.original
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import _99_problems.original.SudokuBoard.{solve, string2Board}
 
 
-class SudokuBoardTest extends Matchers {
+class SudokuBoardTest extends ShouldMatchers {
 	@Test def `solving sudoku examples`(): Unit = {
 		var board: SudokuBoard[Int] = null
 
@@ -21,7 +21,7 @@ class SudokuBoardTest extends Matchers {
 			|24...15..
     """.stripMargin.trim.replace("\n", "")
 
-		solve(board).get.toString should equal("""
+		solve(board).get.toString should equalTo("""
        |9  3  4 | 8  2  5 | 6  1  7
        |6  7  2 | 9  1  4 | 8  5  3
        |5  1  8 | 6  3  7 | 9  2  4
@@ -49,7 +49,7 @@ class SudokuBoardTest extends Matchers {
 	    |..96.....
 	    |8.4.....2
     """.stripMargin.trim.replace("\n", "")
-		solve(string2Board(s)).get.toString should equal("""
+		solve(string2Board(s)).get.toString should equalTo("""
       |6  4  1 | 8  5  9 | 2  7  3
       |9  2  7 | 4  1  3 | 8  5  6
       |5  3  8 | 7  6  2 | 4  1  9
@@ -77,7 +77,7 @@ class SudokuBoardTest extends Matchers {
 	    |...9.4.86
 	    |...1...5.
     """.stripMargin.trim.replace("\n", "")
-		solve(string2Board(s)).get.toString should equal("""
+		solve(string2Board(s)).get.toString should equalTo("""
       |2  7  5 | 8  9  1 | 6  3  4
       |1  9  3 | 6  4  5 | 7  2  8
       |8  4  6 | 3  7  2 | 1  9  5
@@ -105,7 +105,7 @@ class SudokuBoardTest extends Matchers {
 	    |2..5..3.1
 	    |1......6.
     """.stripMargin.trim.replace("\n", "")
-		solve(string2Board(s)).get.toString should equal("""
+		solve(string2Board(s)).get.toString should equalTo("""
 	     |8  1  6 | 2  3  5 | 7  9  4
 	     |7  2  9 | 4  6  1 | 8  3  5
 	     |4  3  5 | 9  8  7 | 2  1  6

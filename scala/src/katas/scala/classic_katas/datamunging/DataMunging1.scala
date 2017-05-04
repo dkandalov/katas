@@ -1,19 +1,19 @@
 package katas.scala.classic_katas.datamunging
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import scala.io.Source
 import org.hamcrest.Matchers._
 import org.junit.{Assert, Test}
 import collection.Seq
 
 
-class DataMunging1 extends Matchers {
+class DataMunging1 extends ShouldMatchers {
 	val path = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat"
 	val path2 = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat"
 
 	@Test def shouldReadWeatherDataFile() {
-		readFile(path).size should equal(40)
-		readFile(path2).size should equal(27)
+		readFile(path).size should equalTo(40)
+		readFile(path2).size should equalTo(27)
 	}
 
 	@Test def extractDataReturnsLinesContainingOnlyNumericalData() {
@@ -28,13 +28,13 @@ class DataMunging1 extends Matchers {
 
 	@Test def shouldExtractFirstThreeColumns() {
 		val lines = extractData(readFile(path))
-		extractColumns(lines, 0, 1, 2)(0) should equal(Seq("1", "88", "59"))
-		extractColumns(lines, 0, 1, 2)(25) should equal(Seq("26", "97*", "64"))
-		extractColumns(lines, 0, 1, 2)(29) should equal(Seq("30", "90", "45"))
+		extractColumns(lines, 0, 1, 2)(0) should equalTo(Seq("1", "88", "59"))
+		extractColumns(lines, 0, 1, 2)(25) should equalTo(Seq("26", "97*", "64"))
+		extractColumns(lines, 0, 1, 2)(29) should equalTo(Seq("30", "90", "45"))
 
 		val lines2 = extractData(readFile(path2))
-		extractColumns(lines2, 1, 6, 8)(0) should equal(Seq("Arsenal", "79", "36"))
-		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
+		extractColumns(lines2, 1, 6, 8)(0) should equalTo(Seq("Arsenal", "79", "36"))
+		extractColumns(lines2, 1, 6, 8)(19) should equalTo(Seq("Leicester", "30", "64"))
 	}
 
 	abstract class ARow[+T](val id: T, val min: Int, val max: Int)
@@ -43,29 +43,29 @@ class DataMunging1 extends Matchers {
 
 	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
-		convertIntoWeatherRows(rows)(0) should equal(WeatherRow(1, 88, 59))
-		convertIntoWeatherRows(rows)(25) should equal(WeatherRow(26, 97, 64))
+		convertIntoWeatherRows(rows)(0) should equalTo(WeatherRow(1, 88, 59))
+		convertIntoWeatherRows(rows)(25) should equalTo(WeatherRow(26, 97, 64))
 
 		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
-		convertIntoFootballRows(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
+		convertIntoFootballRows(rows2)(0) should equalTo(FootballRow("Arsenal", 79, 36))
 	}
 
 	@Test def shouldCalculateSpreads() {
 		val rows = convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2))
-		calcSpread(rows)(0)._2 should equal(29)
-		calcSpread(rows)(29)._2 should equal(45)
+		calcSpread(rows)(0)._2 should equalTo(29)
+		calcSpread(rows)(29)._2 should equalTo(45)
 
 		val rows2 = convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8))
-		calcSpread(rows2)(0)._2 should equal(43)
-		calcSpread(rows2)(19)._2 should equal(34)
+		calcSpread(rows2)(0)._2 should equalTo(43)
+		calcSpread(rows2)(19)._2 should equalTo(34)
 	}
 
 	@Test def shouldFindMinSpread() {
 		val rows = calcSpread(convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2)))
-		findMinSpread(rows).id should equal(14)
+		findMinSpread(rows).id should equalTo(14)
 
 		val rows2 = calcSpread(convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8)))
-		findMinSpread(rows2).id should equal("Aston_Villa")
+		findMinSpread(rows2).id should equalTo("Aston_Villa")
 	}
 
 	def findMinSpread[T](rows: Seq[(T, Int)]) = rows.minBy(_._2)._1

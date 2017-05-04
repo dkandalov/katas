@@ -1,6 +1,6 @@
 package katas.scala.dojo
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 import annotation.tailrec
 
@@ -9,14 +9,14 @@ import annotation.tailrec
  * Date: 20/09/2012
  */
 
-class Paren extends Matchers {
+class Paren extends ShouldMatchers {
 	@Test def aaa() {
-		balance("".toList) should equal(true)
+		balance("".toList) should equalTo(true)
 
-		balance("(if (zero? x) max (/ 1 x))".toList) should equal(true)
-		balance("I told him (that it’s not (yet) done). (But he wasn’t listening)".toList) should equal(true)
-		balance(":-)".toList) should equal(false)
-		balance("())(".toList) should equal(false)
+		balance("(if (zero? x) max (/ 1 x))".toList) should equalTo(true)
+		balance("I told him (that it’s not (yet) done). (But he wasn’t listening)".toList) should equalTo(true)
+		balance(":-)".toList) should equalTo(false)
+		balance("())(".toList) should equalTo(false)
 	}
 
 	def balance(chars: List[Char]): Boolean = {

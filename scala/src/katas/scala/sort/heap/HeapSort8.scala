@@ -1,6 +1,6 @@
 package katas.scala.sort.heap
 
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 import org.junit.Test
 import java.lang.IllegalStateException
 import annotation.tailrec
@@ -9,15 +9,15 @@ import annotation.tailrec
  * User: dima
  * Date: 06/02/2012
  */
-class HeapSort8 extends Matchers {
+class HeapSort8 extends ShouldMatchers {
   @Test def GIVEN_aSequence_SHOULD_sortItUsingHeapSort() {
-    sort(Seq()) should equal(Seq())
-    sort(Seq(1)) should equal(Seq(1))
-    sort(Seq(1, 2)) should equal(Seq(1, 2))
-    sort(Seq(2, 1)) should equal(Seq(1, 2))
-    sort(Seq(2, 3, 1)) should equal(Seq(1, 2, 3))
+    sort(Seq()) should equalTo(Seq())
+    sort(Seq(1)) should equalTo(Seq(1))
+    sort(Seq(1, 2)) should equalTo(Seq(1, 2))
+    sort(Seq(2, 1)) should equalTo(Seq(1, 2))
+    sort(Seq(2, 3, 1)) should equalTo(Seq(1, 2, 3))
     Seq(1, 2, 3, 4, 5).permutations.foreach { seq =>
-      sort(seq) should equal(Seq(1, 2, 3, 4, 5))
+      sort(seq) should equalTo(Seq(1, 2, 3, 4, 5))
     }
   }
 

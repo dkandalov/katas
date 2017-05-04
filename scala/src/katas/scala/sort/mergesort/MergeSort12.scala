@@ -1,21 +1,21 @@
 package katas.scala.sort.mergesort
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class MergeSort12 extends Matchers {
+class MergeSort12 extends ShouldMatchers {
 	@Test def sortValues() {
-		sort(Seq()) should equal(Seq())
-		sort(Seq(1)) should equal(Seq(1))
-		sort(Seq(1, 2)) should equal(Seq(1, 2))
-		sort(Seq(2, 1)) should equal(Seq(1, 2))
-		sort(Seq(1, 2, 3)) should equal(Seq(1, 2, 3))
-		sort(Seq(1, 3, 2)) should equal(Seq(1, 2, 3))
-		sort(Seq(2, 1, 3)) should equal(Seq(1, 2, 3))
-		sort(Seq(2, 3, 1)) should equal(Seq(1, 2, 3))
-		sort(Seq(3, 2, 1)) should equal(Seq(1, 2, 3))
-		sort(Seq(3, 1, 2)) should equal(Seq(1, 2, 3))
+		sort(Seq()) should equalTo(Seq())
+		sort(Seq(1)) should equalTo(Seq(1))
+		sort(Seq(1, 2)) should equalTo(Seq(1, 2))
+		sort(Seq(2, 1)) should equalTo(Seq(1, 2))
+		sort(Seq(1, 2, 3)) should equalTo(Seq(1, 2, 3))
+		sort(Seq(1, 3, 2)) should equalTo(Seq(1, 2, 3))
+		sort(Seq(2, 1, 3)) should equalTo(Seq(1, 2, 3))
+		sort(Seq(2, 3, 1)) should equalTo(Seq(1, 2, 3))
+		sort(Seq(3, 2, 1)) should equalTo(Seq(1, 2, 3))
+		sort(Seq(3, 1, 2)) should equalTo(Seq(1, 2, 3))
 	}
 
 	def sort[T](values: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {

@@ -1,23 +1,21 @@
 package _99_problems
 
-import org.junit.Test
-import org.scalatest.Matchers
-import org.scalatest.matchers._
-import org.scalautils.Equality
 import _99_problems.CustomMatchers._
+import org.junit.Test
+import org.specs2.matcher.{Matcher, ShouldMatchers}
 
 import scala.util.Random
 
 
-class P1 extends Matchers {
+class P1 extends ShouldMatchers {
 	def encode[T](seq: Seq[T]): Seq[(Int, T)] = {
 		new P0().pack(seq).map{ it => (it.size, it.head) }
 	}
 
 	@Test def `P10 (*) Run-length encoding of a list.`() {
-		encode(Seq()) should equal(Seq())
-		encode(Seq('a)) should equal(Seq((1, 'a)))
-		encode(Seq('a, 'a, 'b)) should equal(Seq((2, 'a), (1, 'b)))
+		encode(Seq()) should equalTo(Seq())
+		encode(Seq('a)) should equalTo(Seq((1, 'a)))
+		encode(Seq('a, 'a, 'b)) should equalTo(Seq((2, 'a), (1, 'b)))
 	}
 
 	@Test def `P11 (*) Modified run-length encoding.`() {
@@ -28,10 +26,10 @@ class P1 extends Matchers {
 			}
 		}
 
-		encodeModified(Seq()) should equal(Seq())
-		encodeModified(Seq('a)) should equal(Seq('a))
-		encodeModified(Seq('a, 'b)) should equal(Seq('a, 'b))
-		encodeModified(Seq('a, 'a, 'b)) should equal(Seq((2, 'a), 'b))
+		encodeModified(Seq()) should equalTo(Seq())
+		encodeModified(Seq('a)) should equalTo(Seq('a))
+		encodeModified(Seq('a, 'b)) should equalTo(Seq('a, 'b))
+		encodeModified(Seq('a, 'a, 'b)) should equalTo(Seq((2, 'a), 'b))
 	}
 
 	@Test def `P12 (**) Decode a run-length encoded list.`() {
@@ -39,9 +37,9 @@ class P1 extends Matchers {
 			seq.flatMap{ entry => Seq.fill(entry._1)(entry._2) }
 		}
 
-		decode(Seq()) should equal(Seq())
-		decode(Seq((1, 'a))) should equal(Seq('a))
-		decode(Seq((2, 'a), (1, 'b))) should equal(Seq('a, 'a, 'b))
+		decode(Seq()) should equalTo(Seq())
+		decode(Seq((1, 'a))) should equalTo(Seq('a))
+		decode(Seq((2, 'a), (1, 'b))) should equalTo(Seq('a, 'a, 'b))
 	}
 
 	@Test def `P13 (**) Run-length encoding of a list (direct solution).`() {
@@ -57,9 +55,9 @@ class P1 extends Matchers {
 			}
 		}
 
-		encodeDirect(Seq()) should equal(Seq())
-		encodeDirect(Seq('a)) should equal(Seq((1, 'a)))
-		encodeDirect(Seq('a, 'a, 'b)) should equal(Seq((2, 'a), (1, 'b)))
+		encodeDirect(Seq()) should equalTo(Seq())
+		encodeDirect(Seq('a)) should equalTo(Seq((1, 'a)))
+		encodeDirect(Seq('a, 'a, 'b)) should equalTo(Seq((2, 'a), (1, 'b)))
 	}
 
 	@Test def `P14 (*) Duplicate the elements of a list.`() {
@@ -67,9 +65,9 @@ class P1 extends Matchers {
 			case Seq() => Seq()
 			case x :: xs => Seq(x, x) ++ duplicate(xs)
 		}
-		duplicate(Seq()) should equal(Seq())
-		duplicate(Seq('a)) should equal(Seq('a, 'a))
-		duplicate(Seq('a, 'b)) should equal(Seq('a, 'a, 'b, 'b))
+		duplicate(Seq()) should equalTo(Seq())
+		duplicate(Seq('a)) should equalTo(Seq('a, 'a))
+		duplicate(Seq('a, 'b)) should equalTo(Seq('a, 'a, 'b, 'b))
 	}
 
 	@Test def `P15 (**) Duplicate the elements of a list a given number of times.`() {
@@ -81,10 +79,10 @@ class P1 extends Matchers {
 			case Seq() => Seq()
 			case x :: xs => nTimes(x, times) ++ duplicateN(times, xs)
 		}
-		duplicateN(1, Seq()) should equal(Seq())
-		duplicateN(1, Seq('a)) should equal(Seq('a))
-		duplicateN(2, Seq('a)) should equal(Seq('a, 'a))
-		duplicateN(2, Seq('a, 'b)) should equal(Seq('a, 'a, 'b, 'b))
+		duplicateN(1, Seq()) should equalTo(Seq())
+		duplicateN(1, Seq('a)) should equalTo(Seq('a))
+		duplicateN(2, Seq('a)) should equalTo(Seq('a, 'a))
+		duplicateN(2, Seq('a, 'b)) should equalTo(Seq('a, 'a, 'b, 'b))
 	}
 
 	@Test def `P16 (**) Drop every Nth element from a list.`() {
@@ -94,12 +92,12 @@ class P1 extends Matchers {
 				if (counter < step) x +: dropEvery(step, xs, counter + 1)
 				else dropEvery(step, xs)
 		}
-		dropEvery(2, Seq()) should equal(Seq())
-		dropEvery(1, Seq('a)) should equal(Seq())
-		dropEvery(2, Seq('a)) should equal(Seq('a))
-		dropEvery(1, Seq('a, 'b)) should equal(Seq())
-		dropEvery(2, Seq('a, 'b)) should equal(Seq('a))
-		dropEvery(2, Seq('a, 'b, 'c)) should equal(Seq('a, 'c))
+		dropEvery(2, Seq()) should equalTo(Seq())
+		dropEvery(1, Seq('a)) should equalTo(Seq())
+		dropEvery(2, Seq('a)) should equalTo(Seq('a))
+		dropEvery(1, Seq('a, 'b)) should equalTo(Seq())
+		dropEvery(2, Seq('a, 'b)) should equalTo(Seq('a))
+		dropEvery(2, Seq('a, 'b, 'c)) should equalTo(Seq('a, 'c))
 	}
 
 	def split[T](size: Int, seq: Seq[T], firstPart: Seq[T] = Seq()): (Seq[T], Seq[T]) = {
@@ -108,12 +106,12 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P17 (*) Split a list into two parts.`() {
-		split(0, Seq()) should equal(Seq(), Seq())
-		split(0, Seq('a)) should equal(Seq(), Seq('a))
-		split(1, Seq('a)) should equal(Seq('a), Seq())
-		split(1, Seq('a, 'b)) should equal((Seq('a), Seq('b)))
-		split(2, Seq('a, 'b)) should equal(Seq('a, 'b), Seq())
-		split(2, Seq('a, 'b, 'c)) should equal((Seq('a, 'b), Seq('c)))
+		split(0, Seq()) should equalTo(Seq(), Seq())
+		split(0, Seq('a)) should equalTo(Seq(), Seq('a))
+		split(1, Seq('a)) should equalTo(Seq('a), Seq())
+		split(1, Seq('a, 'b)) should equalTo((Seq('a), Seq('b)))
+		split(2, Seq('a, 'b)) should equalTo(Seq('a, 'b), Seq())
+		split(2, Seq('a, 'b, 'c)) should equalTo((Seq('a, 'b), Seq('c)))
 	}
 
 	@Test def `P18 (**) Extract a slice from a list.`() {
@@ -122,16 +120,16 @@ class P1 extends Matchers {
 			else if (to > 0) slice(from, to - 1, seq.tail, result :+ seq.head)
 			else result
 		}
-		slice(0, 0, Seq()) should equal(Seq())
-		slice(0, 0, Seq('a)) should equal(Seq())
-		slice(0, 1, Seq('a)) should equal(Seq('a))
-		slice(0, 1, Seq('a, 'b)) should equal(Seq('a))
-		slice(0, 2, Seq('a, 'b)) should equal(Seq('a, 'b))
-		slice(1, 2, Seq('a, 'b)) should equal(Seq('b))
-		slice(1, 2, Seq('a, 'b, 'c)) should equal(Seq('b))
-		slice(1, 3, Seq('a, 'b, 'c)) should equal(Seq('b, 'c))
-		slice(0, 3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
-		slice(3, 7, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('d, 'e, 'f, 'g))
+		slice(0, 0, Seq()) should equalTo(Seq())
+		slice(0, 0, Seq('a)) should equalTo(Seq())
+		slice(0, 1, Seq('a)) should equalTo(Seq('a))
+		slice(0, 1, Seq('a, 'b)) should equalTo(Seq('a))
+		slice(0, 2, Seq('a, 'b)) should equalTo(Seq('a, 'b))
+		slice(1, 2, Seq('a, 'b)) should equalTo(Seq('b))
+		slice(1, 2, Seq('a, 'b, 'c)) should equalTo(Seq('b))
+		slice(1, 3, Seq('a, 'b, 'c)) should equalTo(Seq('b, 'c))
+		slice(0, 3, Seq('a, 'b, 'c)) should equalTo(Seq('a, 'b, 'c))
+		slice(3, 7, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equalTo(Seq('d, 'e, 'f, 'g))
 	}
 
 	@Test def `P19 (**) Rotate a list N places to the left.`() {
@@ -144,25 +142,25 @@ class P1 extends Matchers {
 				split._2 ++ split._1
 			}
 		}
-		rotate(0, Seq()) should equal(Seq())
-		rotate(1, Seq()) should equal(Seq())
-		rotate(0, Seq('a)) should equal(Seq('a))
-		rotate(1, Seq('a)) should equal(Seq('a))
-		rotate(2, Seq('a)) should equal(Seq('a))
+		rotate(0, Seq()) should equalTo(Seq())
+		rotate(1, Seq()) should equalTo(Seq())
+		rotate(0, Seq('a)) should equalTo(Seq('a))
+		rotate(1, Seq('a)) should equalTo(Seq('a))
+		rotate(2, Seq('a)) should equalTo(Seq('a))
 
-		rotate(-1, Seq('a, 'b)) should equal(Seq('b, 'a))
-		rotate(0, Seq('a, 'b)) should equal(Seq('a, 'b))
-		rotate(1, Seq('a, 'b)) should equal(Seq('b, 'a))
-		rotate(2, Seq('a, 'b)) should equal(Seq('a, 'b))
+		rotate(-1, Seq('a, 'b)) should equalTo(Seq('b, 'a))
+		rotate(0, Seq('a, 'b)) should equalTo(Seq('a, 'b))
+		rotate(1, Seq('a, 'b)) should equalTo(Seq('b, 'a))
+		rotate(2, Seq('a, 'b)) should equalTo(Seq('a, 'b))
 
-		rotate(0, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
-		rotate(3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
-		rotate(4, Seq('a, 'b, 'c)) should equal(Seq('b, 'c, 'a))
-		rotate(-1, Seq('a, 'b, 'c)) should equal(Seq('c, 'a, 'b))
-		rotate(-3, Seq('a, 'b, 'c)) should equal(Seq('a, 'b, 'c))
-		rotate(-4, Seq('a, 'b, 'c)) should equal(Seq('c, 'a, 'b))
+		rotate(0, Seq('a, 'b, 'c)) should equalTo(Seq('a, 'b, 'c))
+		rotate(3, Seq('a, 'b, 'c)) should equalTo(Seq('a, 'b, 'c))
+		rotate(4, Seq('a, 'b, 'c)) should equalTo(Seq('b, 'c, 'a))
+		rotate(-1, Seq('a, 'b, 'c)) should equalTo(Seq('c, 'a, 'b))
+		rotate(-3, Seq('a, 'b, 'c)) should equalTo(Seq('a, 'b, 'c))
+		rotate(-4, Seq('a, 'b, 'c)) should equalTo(Seq('c, 'a, 'b))
 
-		rotate(-2, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equal(Seq('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i))
+		rotate(-2, Seq('a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i, 'j, 'k)) should equalTo(Seq('j, 'k, 'a, 'b, 'c, 'd, 'e, 'f, 'g, 'h, 'i))
 	}
 
 	def removeAt[T](k: Int, seq: Seq[T]): (Seq[T], T) = {
@@ -172,15 +170,13 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P20 (*) Remove the Kth element from a list.`() {
-		an [IndexOutOfBoundsException] should be thrownBy {
-			removeAt(0, Seq())
-		}
-		removeAt(0, Seq('a)) should equal((Seq(), 'a))
-		removeAt(0, Seq('a, 'b)) should equal((Seq('b), 'a))
-		removeAt(1, Seq('a, 'b)) should equal((Seq('a), 'b))
-		removeAt(1, Seq('a, 'b, 'c)) should equal((Seq('a, 'c), 'b))
+		{ removeAt(0, Seq())} should throwA[IndexOutOfBoundsException]
+		removeAt(0, Seq('a)) should equalTo((Seq(), 'a))
+		removeAt(0, Seq('a, 'b)) should equalTo((Seq('b), 'a))
+		removeAt(1, Seq('a, 'b)) should equalTo((Seq('a), 'b))
+		removeAt(1, Seq('a, 'b, 'c)) should equalTo((Seq('a, 'c), 'b))
 
-		removeAt(1, List('a, 'b, 'c, 'd)) should equal((List('a, 'c, 'd),'b))
+		removeAt(1, List('a, 'b, 'c, 'd)) should equalTo((List('a, 'c, 'd),'b))
 	}
 
 	@Test def `P21 (*) Insert an element at a given position into a list.`() {
@@ -190,14 +186,13 @@ class P1 extends Matchers {
 			splitted._1 ++ Seq(value) ++ splitted._2
 		}
 
-		insertAt('a, 0, Seq()) should equal(Seq('a))
-		insertAt('a, 0, Seq('b)) should equal(Seq('a, 'b))
-		insertAt('a, 1, Seq('b)) should equal(Seq('b, 'a))
-		an [IndexOutOfBoundsException] should be thrownBy {
-			insertAt('a, 1, Seq())
-		}
+		insertAt('a, 0, Seq()) should equalTo(Seq('a))
+		insertAt('a, 0, Seq('b)) should equalTo(Seq('a, 'b))
+		insertAt('a, 1, Seq('b)) should equalTo(Seq('b, 'a))
+		//noinspection ScalaUnnecessaryParentheses // parenthesis below are necessary for compilation
+		({ insertAt('a, 1, Seq()) }) should throwA[IndexOutOfBoundsException]
 
-		insertAt('new, 1, List('a, 'b, 'c, 'd)) should equal(List('a, 'new, 'b, 'c, 'd))
+		insertAt('new, 1, List('a, 'b, 'c, 'd)) should equalTo(List('a, 'new, 'b, 'c, 'd))
 	}
 
 	@Test def `P22 (*) Create a list containing all integers within a given range.`() {
@@ -209,10 +204,10 @@ class P1 extends Matchers {
 			else if (start == end) List(end)
 			else start :: range(start + 1, end)
 		}
-		range(0, 0) should equal(List(0))
-		range(0, 1) should equal(List(0, 1))
-		range(4, 9) should equal(List(4, 5, 6, 7, 8, 9))
-		range(-1, 2) should equal(List(-1, 0, 1, 2))
+		range(0, 0) should equalTo(List(0))
+		range(0, 1) should equalTo(List(0, 1))
+		range(4, 9) should equalTo(List(4, 5, 6, 7, 8, 9))
+		range(-1, 2) should equalTo(List(-1, 0, 1, 2))
 	}
 
 	def randomSelect[T](n: Int, seq: Seq[T], random: (Int => Int) = Random.nextInt): Seq[T] = {
@@ -225,10 +220,10 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P23 (**) Extract a given number of randomly selected elements from a list.`() {
-		randomSelect(0, Seq()) should equal(Seq())
-		randomSelect(1, Seq('a)) should equal(Seq('a))
-		randomSelect(1, Seq('a, 'b)) should (equal(Seq('a)) or equal(Seq('b)))
-		randomSelect(2, Seq('a, 'b)) should (equal(Seq('a, 'b)) or equal(Seq('b, 'a)))
+		randomSelect(0, Seq()) should equalTo(Seq())
+		randomSelect(1, Seq('a)) should equalTo(Seq('a))
+		randomSelect(1, Seq('a, 'b)) should (equalTo(Seq('a)) or equalTo(Seq('b)))
+		randomSelect(2, Seq('a, 'b)) should (equalTo(Seq('a, 'b)) or equalTo(Seq('b, 'a)))
 	}
 
 	@Test def `P24 (*) Lotto: Draw N different random numbers from the set 1..M.`() {
@@ -236,11 +231,11 @@ class P1 extends Matchers {
 			randomSelect(amount, Range(1, upTo))
 		}
 
-		lotto(0, 5) should equal(Seq())
+		lotto(0, 5) should equalTo(Seq())
 		lotto(1, 5) should equalOneOf(Seq(1), Seq(2), Seq(3), Seq(4), Seq(5))
 
 		for (i <- 0 to 100) {
-			lotto(6, 49) should have(noDuplicates)
+			lotto(6, 49) should be(noDuplicates)
 			lotto(6, 49) should be(subSetOf(Range(1, 49)))
 		}
 	}
@@ -249,19 +244,20 @@ class P1 extends Matchers {
 		def randomPermute[T](seq: Seq[T]): Seq[T] = {
 			randomSelect(seq.size, seq)
 		}
-		randomPermute(Seq()) should equal(Seq())
-		randomPermute(Seq('a)) should equal(Seq('a))
+		randomPermute(Seq()) should equalTo(Seq())
+		randomPermute(Seq('a)) should equalTo(Seq('a))
 		randomPermute(Seq('a, 'b)) should equalOneOf(Seq('a, 'b), Seq('b, 'a))
 		randomPermute(Seq('a, 'b, 'c)) should equalOneOf(Seq('a, 'b, 'c).permutations.toSeq)
 	}
 
-	private def equalOneOf[T](first: T, second: T, values: T*): MatcherFactory1[Any, Equality] = {
+	private def equalOneOf[T](first: T, second: T, values: T*): Matcher[T] = {
 		equalOneOf(first +: second +: values.toSeq)
 	}
 
-	private def equalOneOf[T](seq: Seq[T]): MatcherFactory1[Any, Equality] = {
-		seq.tail.foldLeft(equal(seq.head)){
-			(z, xs) => z.or(equal(xs))
+	private def equalOneOf[T](seq: Seq[T]): Matcher[T] = {
+		val headMatcher: Matcher[T] = equalTo(seq.head)
+		seq.tail.foldLeft(headMatcher){ (expr: Matcher[T], nextValue: T) =>
+			expr.or(equalTo(nextValue))
 		}
 	}
 
@@ -274,13 +270,13 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P26 (**) Generate the combinations of K distinct objects chosen from the N elements of a list.`() {
-		combinations(1, Seq()) should equal(Seq())
-		combinations(1, Seq('a)) should equal(Seq(Seq('a)))
-		combinations(1, Seq('a, 'b)) should equal(Seq(Seq('a), Seq('b)))
-		combinations(2, Seq('a, 'b)) should equal(Seq(Seq('a, 'b)))
-		combinations(1, Seq('a, 'b, 'c)) should equal(Seq(Seq('a), Seq('b), Seq('c)))
-		combinations(2, Seq('a, 'b, 'c)) should equal(Seq(Seq('a, 'b), Seq('a, 'c), Seq('b, 'c)))
-		combinations(3, Range(1, 13).toList).size should equal(220)
+		combinations(1, Seq()) should equalTo(Seq())
+		combinations(1, Seq('a)) should equalTo(Seq(Seq('a)))
+		combinations(1, Seq('a, 'b)) should equalTo(Seq(Seq('a), Seq('b)))
+		combinations(2, Seq('a, 'b)) should equalTo(Seq(Seq('a, 'b)))
+		combinations(1, Seq('a, 'b, 'c)) should equalTo(Seq(Seq('a), Seq('b), Seq('c)))
+		combinations(2, Seq('a, 'b, 'c)) should equalTo(Seq(Seq('a, 'b), Seq('a, 'c), Seq('b, 'c)))
+		combinations(3, Range(1, 13).toList).size should equalTo(220)
 	}
 
 	@Test def `P27 (**) Group the elements of a set into disjoint subsets.`() {
@@ -303,7 +299,7 @@ class P1 extends Matchers {
 			}
 		}
 //		println(group3(Range(1, 10)).mkString("\n"))
-		group3(Range(1, 10)).size should equal(1260)
+		group3(Range(1, 10)).size should equalTo(1260)
 
 
 		// b) Generalize the above predicate in a way that we can specify a list of group sizes and the predicate will return a list of groups.
@@ -317,30 +313,30 @@ class P1 extends Matchers {
 				}
 			}
 		}
-		group(Seq(1), Seq[Int]()) should equal(Seq(Seq()))
-		group(Seq(1), Seq('a)) should equal(Seq(Seq(Seq('a))))
-		group(Seq(1), Seq('a, 'b)) should equal(Seq(
+		group(Seq(1), Seq[Int]()) should equalTo(Seq(Seq()))
+		group(Seq(1), Seq('a)) should equalTo(Seq(Seq(Seq('a))))
+		group(Seq(1), Seq('a, 'b)) should equalTo(Seq(
 			Seq(Seq('a)),
 			Seq(Seq('b))
 		))
-		group(Seq(1, 1), Seq('a, 'b)) should equal(Seq(
+		group(Seq(1, 1), Seq('a, 'b)) should equalTo(Seq(
 			Seq(Seq('a), Seq('b)),
 			Seq(Seq('b), Seq('a))
 		))
-		group(Seq(2, 3, 4), Range(1, 10)) should equal(group3(Range(1, 10)))
+		group(Seq(2, 3, 4), Range(1, 10)) should equalTo(group3(Range(1, 10)))
 	}
 
 	@Test def `P28 (**) Sorting a list of lists according to length of sublists.`() {
 		def lsort[T](seq: Seq[Seq[T]]): Seq[Seq[T]] = seq.sortBy(_.size)
-		lsort(Seq()) should equal(Seq())
-		lsort(Seq(Seq('a))) should equal(Seq(Seq('a)))
-		lsort(Seq(Seq('a, 'b), Seq('c))) should equal(Seq(Seq('c), Seq('a, 'b)))
-		lsort(Seq(Seq('c), Seq('a, 'b))) should equal(Seq(Seq('c), Seq('a, 'b)))
+		lsort(Seq()) should equalTo(Seq())
+		lsort(Seq(Seq('a))) should equalTo(Seq(Seq('a)))
+		lsort(Seq(Seq('a, 'b), Seq('c))) should equalTo(Seq(Seq('c), Seq('a, 'b)))
+		lsort(Seq(Seq('c), Seq('a, 'b))) should equalTo(Seq(Seq('c), Seq('a, 'b)))
 
 		def frequencyOf[T](size: Int, seq: Seq[Seq[T]]): Int = seq.count{_.size == size}
 		def lsortFreq[T](seq: Seq[Seq[T]]): Seq[Seq[T]] = seq.sortBy{ subSeq => frequencyOf(subSeq.size, seq) }
-		lsortFreq(Seq(Seq('c), Seq('a, 'b))) should equal(Seq(Seq('c), Seq('a, 'b)))
-		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equal(Seq(Seq('a, 'b), Seq('c), Seq('c)))
+		lsortFreq(Seq(Seq('c), Seq('a, 'b))) should equalTo(Seq(Seq('c), Seq('a, 'b)))
+		lsortFreq(Seq(Seq('c), Seq('c), Seq('a, 'b))) should equalTo(Seq(Seq('a, 'b), Seq('c), Seq('c)))
 	}
 
 	private class IntWithPrime(n: Int) {
@@ -349,13 +345,13 @@ class P1 extends Matchers {
 	private implicit def intToIntWithPrime(n: Int): IntWithPrime = new IntWithPrime(n)
 
 	@Test def `P31 (**) Determine whether a given integer number is prime.`() {
-		1.isPrime should be(false)
-		2.isPrime should be(true)
-		3.isPrime should be(true)
-		4.isPrime should be(false)
-		5.isPrime should be(true)
-		6.isPrime should be(false)
-		7.isPrime should be(true)
+		1.isPrime should be_==(false)
+		2.isPrime should be_==(true)
+		3.isPrime should be_==(true)
+		4.isPrime should be_==(false)
+		5.isPrime should be_==(true)
+		6.isPrime should be_==(false)
+		7.isPrime should be_==(true)
 	}
 
 	private def gcd(a: Int, b: Int): Int = {
@@ -368,10 +364,10 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P32 (**) Determine the greatest common divisor of two positive integer numbers.`() {
-		gcd(1, 1) should be(1)
-		gcd(1, 2) should be(1)
-		gcd(2, 2) should be(2)
-		gcd(36, 63) should be(9)
+		gcd(1, 1) should be_==(1)
+		gcd(1, 2) should be_==(1)
+		gcd(2, 2) should be_==(2)
+		gcd(36, 63) should be_==(9)
 	}
 
 	private class IntWithCoPrime(n: Int) {
@@ -380,11 +376,11 @@ class P1 extends Matchers {
 	private implicit def intToIntWithCoPrime(n: Int): IntWithCoPrime = new IntWithCoPrime(n)
 
 	@Test def `P33 (*) Determine whether two positive integer numbers are coprime.`() {
-		1.isCoprimeTo(2) should be(true)
-		2.isCoprimeTo(2) should be(false)
-		4.isCoprimeTo(2) should be(false)
-		4.isCoprimeTo(5) should be(true)
-		35.isCoprimeTo(64) should be(true)
+		1.isCoprimeTo(2) should be_==(true)
+		2.isCoprimeTo(2) should be_==(false)
+		4.isCoprimeTo(2) should be_==(false)
+		4.isCoprimeTo(5) should be_==(true)
+		35.isCoprimeTo(64) should be_==(true)
 	}
 
 	@Test def `P34 (**) Calculate Euler's totient function phi(m).`() {
@@ -392,7 +388,7 @@ class P1 extends Matchers {
 			def totient(): Int = Range(1, n + 1).count(it => n.isCoprimeTo(it))
 		}
 		implicit def intToIntWithTotient(n: Int): IntWithTotient = new IntWithTotient(n)
-		10.totient should be(4)
+		10.totient should be_==(4)
 	}
 
 	def primeFactorsOf(n: Int): Seq[Int] = {
@@ -408,11 +404,11 @@ class P1 extends Matchers {
 	implicit def intToIntWithPrimeFactors(n: Int): IntWithPrimeFactors = new IntWithPrimeFactors(n)
 
 	@Test def `P35 (**) Determine the prime factors of a given positive integer.`() {
-		1.primeFactors should equal(Seq(1))
-		2.primeFactors should equal(Seq(2))
-		3.primeFactors should equal(Seq(3))
-		4.primeFactors should equal(Seq(2, 2))
-		315.primeFactors should equal(Seq(3, 3, 5, 7))
+		1.primeFactors should equalTo(Seq(1))
+		2.primeFactors should equalTo(Seq(2))
+		3.primeFactors should equalTo(Seq(3))
+		4.primeFactors should equalTo(Seq(2, 2))
+		315.primeFactors should equalTo(Seq(3, 3, 5, 7))
 	}
 
 	private class IntWithPrimeFactors2(n: Int) {
@@ -422,7 +418,7 @@ class P1 extends Matchers {
 	private implicit def intToIntWithPrimeFactors2(n: Int): IntWithPrimeFactors2 = new IntWithPrimeFactors2(n)
 
 	@Test def `P36 (**) Determine the prime factors of a given positive integer (2).`() {
-		315.primeFactorMultiplicity should equal(Map(3 -> 2, 5 -> 1, 7 -> 1))
+		315.primeFactorMultiplicity should equalTo(Map(3 -> 2, 5 -> 1, 7 -> 1))
 	}
 
 	@Test def `P37 (**) Calculate Euler's totient function phi(m) (improved).`() {
@@ -433,8 +429,8 @@ class P1 extends Matchers {
 				result * (p - 1) * math.pow(p, m - 1).toInt
 			}
 		}
-		totientOf(10) should be(4)
-		totientOf(10090) should be(4032)
+		totientOf(10) should be_==(4)
+		totientOf(10090) should be_==(4032)
 	}
 
 	def listPrimes(range: Range): Seq[Int] = {
@@ -462,9 +458,7 @@ class P1 extends Matchers {
 	private implicit def intToIntWithGoldbach(n: Int): IntWithGoldbach = new IntWithGoldbach(n)
 
 	@Test def `P40 (**) Goldbach's conjecture.`() {
-		an [IllegalArgumentException] should be thrownBy {
-			2.goldbach
-		}
+		{ 2.goldbach } should throwA[IllegalArgumentException]
 		4.goldbach should be((2, 2))
 		6.goldbach should be((3, 3))
 		8.goldbach should be((3, 5))
@@ -475,12 +469,12 @@ class P1 extends Matchers {
 		def goldbachList(range: Range): Seq[(Int, (Int, Int))] = {
 			range.filter{ _ % 2 == 0 }.map{ it => it -> it.goldbach }
 		}
-		goldbachList(9 to 20) should equal(Seq((10, (3, 7)), (12, (5, 7)), (14, (3, 11)), (16, (3, 13)), (18, (5, 13)), (20, (3, 17))))
+		goldbachList(9 to 20) should equalTo(Seq((10, (3, 7)), (12, (5, 7)), (14, (3, 11)), (16, (3, 13)), (18, (5, 13)), (20, (3, 17))))
 
 		def golbachListLimited(range: Range, limit: Int): Seq[(Int, (Int, Int))] = {
 			goldbachList(range).filter{ it => it._2._1 > limit && it._2._2 > limit }
 		}
-		golbachListLimited(3 to 3000, 50) should equal(Seq(
+		golbachListLimited(3 to 3000, 50) should equalTo(Seq(
 			(992, (73, 919)), (1382, (61, 1321)), (1856, (67, 1789)), (1928, (61, 1867)), (2078, (61, 2017)),
 			(2438, (61, 2377)), (2512, (53, 2459)), (2530, (53, 2477)), (2618, (61, 2557)), (2642, (103, 2539)))
 		)
@@ -498,9 +492,9 @@ class P1 extends Matchers {
 			if (n < 1) throw new IllegalArgumentException
 			doGray(n, Seq(""))
 		}
-		gray(1) should equal(Seq("0", "1"))
-		gray(2) should equal(Seq("00", "01", "11", "10"))
-		gray(3) should equal(Seq("000", "001", "011", "010", "110", "111", "101", "100"))
+		gray(1) should equalTo(Seq("0", "1"))
+		gray(2) should equalTo(Seq("00", "01", "11", "10"))
+		gray(3) should equalTo(Seq("000", "001", "011", "010", "110", "111", "101", "100"))
 	}
 
 	@Test def `P50 (***) Huffman code.`() {
@@ -546,13 +540,13 @@ class P1 extends Matchers {
 			allCodesIn(tree).sortBy{_._1}
 		}
 
-		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equal(LeafNode("a", 45))
-		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equal(
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45)))) should equalTo(LeafNode("a", 45))
+		buildTreeFrom(sortByWeight(Seq(LeafNode("a", 45), LeafNode("b", 13)))) should equalTo(
 			Node(45 + 13, LeafNode("b", 13), LeafNode("a", 45))
 		)
 
 		val frequencies = Seq(("a", 45), ("b", 13), ("c", 12), ("d", 16), ("e", 9), ("f", 5))
-		huffman(frequencies) should equal(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
+		huffman(frequencies) should equalTo(Seq(("a", 0), ("b", 101), ("c", 100), ("d", 111), ("e", 1101), ("f", 1100)))
 	}
 
 	@Test def `P55 (**) Construct completely balanced binary trees.`() {
@@ -575,16 +569,16 @@ class P1 extends Matchers {
 			}
 		}
 
-		Tree.constructBalanced(0, "x") should equal(List(End))
-		Tree.constructBalanced(1, "x") should equal(List(Node("x")))
-		Tree.constructBalanced(2, "x") should equal(List(
+		Tree.constructBalanced(0, "x") should equalTo(List(End))
+		Tree.constructBalanced(1, "x") should equalTo(List(Node("x")))
+		Tree.constructBalanced(2, "x") should equalTo(List(
 			Node("x", End, Node("x")),
 			Node("x", Node("x"), End)
 		))
-		Tree.constructBalanced(3, "x") should equal(List(
+		Tree.constructBalanced(3, "x") should equalTo(List(
 			Node("x", Node("x"), Node("x"))
 		))
-		Tree.constructBalanced(4, "x") should equal(List(
+		Tree.constructBalanced(4, "x") should equalTo(List(
 			Node("x",
 				Node("x"),
 				Node("x", End, Node("x"))),
@@ -601,45 +595,45 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P56 (**) Symmetric binary trees.`() {
-		Node("a").mirror should equal(Node("a"))
-		Node("a", Node("b")).mirror should equal(Node("a", End, Node("b")))
+		Node("a").mirror should equalTo(Node("a"))
+		Node("a", Node("b")).mirror should equalTo(Node("a", End, Node("b")))
 		Node("",
 			Node("0"),
 			Node("1", End, Node("11"))
-		).mirror should equal(
+		).mirror should equalTo(
 			Node("",
 				Node("1", Node("11")),
 				Node("0")
 		))
 
-		Node('a', Node('b'), Node('c')).isSymmetric should be(true)
+		Node('a', Node('b'), Node('c')).isSymmetric should be_==(true)
 		Node("",
 			Node("0", Node("00")),
 			Node("1", End, Node("11"))
-		).isSymmetric should be(true)
+		).isSymmetric should be_==(true)
 		Node("",
 			Node("0", Node("00")),
 			Node("1", Node("11"))
-		).isSymmetric should be(false)
+		).isSymmetric should be_==(false)
 	}
 
 	@Test def `P57 (**) Binary search trees (dictionaries).`() {
-		End.addValue(2) should equal(Node(2))
-		Node(2).addValue(3) should equal(Node(2, End, Node(3)))
-		Node(2, End, Node(3)).addValue(0) should equal(Node(2, Node(0), Node(3)))
+		End.addValue(2) should equalTo(Node(2))
+		Node(2).addValue(3) should equalTo(Node(2, End, Node(3)))
+		Node(2, End, Node(3)).addValue(0) should equalTo(Node(2, Node(0), Node(3)))
 
-		Tree.from(Seq()) should equal(End)
-		Tree.from(Seq(1)) should equal(Node(1))
-		Tree.from(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric should be(true)
-		Tree.from(List(3, 2, 5, 7, 4)).isSymmetric should be(false)
+		Tree.from(Seq()) should equalTo(End)
+		Tree.from(Seq(1)) should equalTo(Node(1))
+		Tree.from(List(5, 3, 18, 1, 4, 12, 21)).isSymmetric should be_==(true)
+		Tree.from(List(3, 2, 5, 7, 4)).isSymmetric should be_==(false)
 	}
 
 	@Test def `P58 (**) Generate-and-test paradigm.`() {
 		import Tree._
 
-		allTrees(1, "x") should equal(Seq(Node("x")))
-		allTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
-		allTrees(3, "x") should equal(Seq(
+		allTrees(1, "x") should equalTo(Seq(Node("x")))
+		allTrees(2, "x") should equalTo(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
+		allTrees(3, "x") should equalTo(Seq(
 			Node("x",
 				Node("x",
 					Node("x"))),
@@ -662,13 +656,13 @@ class P1 extends Matchers {
 		))
 
 
-		symmetricBalancedTrees(3, "x") should equal(Seq(
+		symmetricBalancedTrees(3, "x") should equalTo(Seq(
 			Node("x",
 				Node("x"),
 				Node("x"))
 		))
-		symmetricBalancedTrees(4, "x") should equal(Seq())
-		symmetricBalancedTrees(5, "x") should equal(Seq(
+		symmetricBalancedTrees(4, "x") should equalTo(Seq())
+		symmetricBalancedTrees(5, "x") should equalTo(Seq(
 			Node("x",
 				Node("x",
 					Node("x"),
@@ -691,9 +685,9 @@ class P1 extends Matchers {
 	@Test def `P59 (**) Construct height-balanced binary trees.`() {
 		import Tree._
 
-		heightBalancedTrees(1, "x") should equal(Seq(Node("x")))
+		heightBalancedTrees(1, "x") should equalTo(Seq(Node("x")))
 
-		heightBalancedTrees(2, "x") should equal(Seq(
+		heightBalancedTrees(2, "x") should equalTo(Seq(
 			Node("x",
 				Node("x"),
 				Node("x")),
@@ -705,7 +699,7 @@ class P1 extends Matchers {
 				Node("x"))))
 
 		heightBalancedTrees(3, "x").foreach(println)
-		heightBalancedTrees(3, "x").size should equal(15)
+		heightBalancedTrees(3, "x").size should equalTo(15)
 	}
 
 	@Test def `P60 (**) Construct height-balanced binary trees with a given number of nodes.`() {
@@ -721,21 +715,21 @@ class P1 extends Matchers {
 			case 1          => 1
 			case n          => minHbalNodes(n - 1) + minHbalNodes(n - 2) + 1
 		}
-		minAmountOfNodes(1) should equal(1)
-		minAmountOfNodes(2) should equal(2)
-		minAmountOfNodes(3) should equal(4)
-		minAmountOfNodes(4) should equal(6)
-		minHbalNodes(1) should equal(1)
-		minHbalNodes(2) should equal(2)
-		minHbalNodes(3) should equal(4)
-		minHbalNodes(4) should equal(7)
-		minHbalNodes(5) should equal(12)
+		minAmountOfNodes(1) should equalTo(1)
+		minAmountOfNodes(2) should equalTo(2)
+		minAmountOfNodes(3) should equalTo(4)
+		minAmountOfNodes(4) should equalTo(6)
+		minHbalNodes(1) should equalTo(1)
+		minHbalNodes(2) should equalTo(2)
+		minHbalNodes(3) should equalTo(4)
+		minHbalNodes(4) should equalTo(7)
+		minHbalNodes(5) should equalTo(12)
 
 		def maxBalancedHeight(amountOfNodes: Int): Int = amountOfNodes / 2 + 1
-		maxBalancedHeight(1) should equal(1)
-		maxBalancedHeight(2) should equal(2)
-		maxBalancedHeight(3) should equal(2)
-		maxBalancedHeight(4) should equal(3)
+		maxBalancedHeight(1) should equalTo(1)
+		maxBalancedHeight(2) should equalTo(2)
+		maxBalancedHeight(3) should equalTo(2)
+		maxBalancedHeight(4) should equalTo(3)
 
 		def minHeightBalancedTreeHeight(amountOfNodes: Int): Int = if (amountOfNodes == 0) 0 else minHeightBalancedTreeHeight(amountOfNodes / 2) + 1
 		def maxHeightBalancedTreeHeight(amountOfNodes: Int): Int = Stream.from(1).takeWhile(height => minHbalNodes(height) <= amountOfNodes).last
@@ -743,64 +737,64 @@ class P1 extends Matchers {
 			(minHeightBalancedTreeHeight(amountOfNodes) to maxHeightBalancedTreeHeight(amountOfNodes))
 				.flatMap(heightBalancedTrees(_, value)).filter(_.nodeCount == amountOfNodes)
 
-		allHeightBalancedTrees(1, "x") should equal(Seq(Node("x")))
-		allHeightBalancedTrees(2, "x") should equal(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
-		allHeightBalancedTrees(3, "x") should equal(Seq(Node("x", Node("x"), Node("x"))))
-		allHeightBalancedTrees(15, "x").size should equal(1553)
+		allHeightBalancedTrees(1, "x") should equalTo(Seq(Node("x")))
+		allHeightBalancedTrees(2, "x") should equalTo(Seq(Node("x", Node("x")), Node("x", End, Node("x"))))
+		allHeightBalancedTrees(3, "x") should equalTo(Seq(Node("x", Node("x"), Node("x"))))
+		allHeightBalancedTrees(15, "x").size should equalTo(1553)
 	}
 
 	@Test def `P61 (*) Count the leaves of a binary tree.`() {
-		End.leafCount should equal(0)
-		Node("x").leafCount should equal(1)
-		Node("x", Node("x")).leafCount should equal(1)
-		Node("x", Node("x"), Node("x")).leafCount should equal(2)
+		End.leafCount should equalTo(0)
+		Node("x").leafCount should equalTo(1)
+		Node("x", Node("x")).leafCount should equalTo(1)
+		Node("x", Node("x"), Node("x")).leafCount should equalTo(2)
 
 		Node("x",
 			Node("x", Node("x")),
 			Node("x")
-		).leafCount should equal(2)
+		).leafCount should equalTo(2)
 	}
 
 	@Test def `61A (*) Collect the leaves of a binary tree in a list.`() {
-		End.leafList should equal(List())
-		Node("a").leafList should equal(List("a"))
+		End.leafList should equalTo(List())
+		Node("a").leafList should equalTo(List("a"))
 		Node("a",
 			Node("b"),
 			Node("c",
 				Node("d"),
 				Node("e")
 			)
-		).leafList should equal(List("b", "d", "e"))
+		).leafList should equalTo(List("b", "d", "e"))
 	}
 
 	@Test def `P62 (*) Collect the internal nodes of a binary tree in a list.`() {
-		End.internalList should equal(List())
-		Node("x").internalList should equal(List())
+		End.internalList should equalTo(List())
+		Node("x").internalList should equalTo(List())
 		Node("a",
 			Node("b"),
 			Node("c",
 				Node("d"),
 				Node("e")
 			)
-		).internalList should equal(List("a", "c"))
+		).internalList should equalTo(List("a", "c"))
 	}
 
 	@Test def `P62B (*) Collect the nodes at a given level in a list.`() {
-		End.atLevel(1) should equal(List())
-		Node("x").atLevel(1) should equal(List("x"))
+		End.atLevel(1) should equalTo(List())
+		Node("x").atLevel(1) should equalTo(List("x"))
 		Node("a",
 			Node("b", End, Node("b2")),
 			Node("c", Node("c1"), Node("c2")
 			)
-		).atLevel(3) should equal(List("b2", "c1", "c2"))
+		).atLevel(3) should equalTo(List("b2", "c1", "c2"))
 	}
 
 	@Test def `P63 (**) Construct a complete binary tree.`() {
-		Tree.completeBinaryTree(0, "x") should equal(End)
-		Tree.completeBinaryTree(1, "x") should equal(Node("x"))
-		Tree.completeBinaryTree(2, "x") should equal(Node("x", Node("x")))
-		Tree.completeBinaryTree(3, "x") should equal(Node("x", Node("x"), Node("x")))
-		Tree.completeBinaryTree(6, "x") should equal(
+		Tree.completeBinaryTree(0, "x") should equalTo(End)
+		Tree.completeBinaryTree(1, "x") should equalTo(Node("x"))
+		Tree.completeBinaryTree(2, "x") should equalTo(Node("x", Node("x")))
+		Tree.completeBinaryTree(3, "x") should equalTo(Node("x", Node("x"), Node("x")))
+		Tree.completeBinaryTree(6, "x") should equalTo(
 			Node("x",
 				Node("x", Node("x"), Node("x")),
 				Node("x", Node("x"))
@@ -808,20 +802,20 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P64 (**) Layout a binary tree (1).`() {
-		Node("a").layoutBinaryTree() should equal(PositionedNode("a", End, End, 1, 1))
-		Node("a", Node("b")).layoutBinaryTree() should equal(
+		Node("a").layoutBinaryTree() should equalTo(PositionedNode("a", End, End, 1, 1))
+		Node("a", Node("b")).layoutBinaryTree() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b", End, End, 1, 2),
 				End,
 				2, 1)
 		)
-		Node("a", Node("b"), Node("c")).layoutBinaryTree() should equal(
+		Node("a", Node("b"), Node("c")).layoutBinaryTree() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b", End, End, 1, 2),
 				PositionedNode("c", End, End, 3, 2),
 				2, 1)
 		)
-		Node("a", Node("b", Node("b1"), Node("b2")), Node("c", Node("c1"), Node("c2"))).layoutBinaryTree() should equal(
+		Node("a", Node("b", Node("b1"), Node("b2")), Node("c", Node("c1"), Node("c2"))).layoutBinaryTree() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b",
 					PositionedNode("b1", End, End, 1, 3),
@@ -836,16 +830,16 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P65 (**) Layout a binary tree (2).`() {
-		End.layoutBinaryTree2() should equal(End)
-		Node("a").layoutBinaryTree2() should equal(PositionedNode("a", End, End, 1, 1))
+		End.layoutBinaryTree2() should equalTo(End)
+		Node("a").layoutBinaryTree2() should equalTo(PositionedNode("a", End, End, 1, 1))
 
-		Node("a", Node("b"), Node("c")).layoutBinaryTree2() should equal(
+		Node("a", Node("b"), Node("c")).layoutBinaryTree2() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b", End, End, 1, 2),
 				PositionedNode("c", End, End, 3, 2),
 				2, 1))
 
-		Node("a", Node("b", Node("c"))).layoutBinaryTree2() should equal(
+		Node("a", Node("b", Node("c"))).layoutBinaryTree2() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b",
 					PositionedNode("c", End, End, 1, 3),
@@ -853,7 +847,7 @@ class P1 extends Matchers {
 				End,
 				4, 1))
 
-		Node("a", End, Node("b", End, Node("c"))).layoutBinaryTree2() should equal(
+		Node("a", End, Node("b", End, Node("c"))).layoutBinaryTree2() should equalTo(
 			PositionedNode("a",
 				End,
 				PositionedNode("b",
@@ -862,7 +856,7 @@ class P1 extends Matchers {
 					3, 2),
 				1, 1))
 
-		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2() should equal(
+		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree2() should equalTo(
 			PositionedNode("n",
 				PositionedNode("k",
 					PositionedNode("c",
@@ -886,16 +880,16 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P66 (***) Layout a binary tree (3).`() {
-		End.layoutBinaryTree3() should equal(End)
-		Node("a").layoutBinaryTree3() should equal(PositionedNode("a", End, End, 1, 1))
+		End.layoutBinaryTree3() should equalTo(End)
+		Node("a").layoutBinaryTree3() should equalTo(PositionedNode("a", End, End, 1, 1))
 
-		Node("a", Node("b"), Node("c")).layoutBinaryTree3() should equal(
+		Node("a", Node("b"), Node("c")).layoutBinaryTree3() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b", End, End, 1, 2),
 				PositionedNode("c", End, End, 3, 2),
 			2, 1))
 
-		Node("a", Node("b", End, Node("c")), Node("d")).layoutBinaryTree3() should equal(
+		Node("a", Node("b", End, Node("c")), Node("d")).layoutBinaryTree3() should equalTo(
 			PositionedNode("a",
 				PositionedNode("b", End,
 					PositionedNode("c", End, End, 2, 3),
@@ -903,7 +897,7 @@ class P1 extends Matchers {
 				PositionedNode("d", End, End, 3, 2),
 			2, 1))
 
-		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree3() should equal(
+		Tree.from(Seq("n","k","m","c","a","e","d","g","u","p","q")).layoutBinaryTree3() should equalTo(
 			PositionedNode("n",
 				PositionedNode("k",
 					PositionedNode("c",
@@ -926,14 +920,14 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P67 (**) A string representation of binary trees.`() {
-		End.asString should equal("")
-		Node("a").asString should equal("a")
-		Node("a", Node("b")).asString should equal("a(b,)")
+		End.asString should equalTo("")
+		Node("a").asString should equalTo("a")
+		Node("a", Node("b")).asString should equalTo("a(b,)")
 
-		Tree.fromString("") should equal(End)
-		Tree.fromString("a") should equal(Node("a"))
-		Tree.fromString("a(b,)") should equal(Node("a", Node("b")))
-		Tree.fromString("a(b(d,e),c(,f(g,)))") should equal(
+		Tree.fromString("") should equalTo(End)
+		Tree.fromString("a") should equalTo(Node("a"))
+		Tree.fromString("a(b,)") should equalTo(Node("a", Node("b")))
+		Tree.fromString("a(b(d,e),c(,f(g,)))") should equalTo(
 			Node("a",
 				Node("b",
 					Node("d"),
@@ -949,25 +943,25 @@ class P1 extends Matchers {
 	}
 
 	@Test def `P68 (**) Pre-order and in-order sequences of binary trees.`() {
-		Tree.fromString("a(b(d,e),c(,f(g,)))").preorder should equal(Seq("a", "b", "d", "e", "c", "f", "g"))
-		Tree.fromString("a(b(d,e),c(,f(g,)))").inorder should equal(Seq("d", "b", "e", "a", "c", "g", "f"))
+		Tree.fromString("a(b(d,e),c(,f(g,)))").preorder should equalTo(Seq("a", "b", "d", "e", "c", "f", "g"))
+		Tree.fromString("a(b(d,e),c(,f(g,)))").inorder should equalTo(Seq("d", "b", "e", "a", "c", "g", "f"))
 
-		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equal(
+		Tree.preInTree(List("a", "b", "d", "e", "c", "f", "g"), List("d", "b", "e", "a", "c", "g", "f")) should equalTo(
 			Tree.fromString("a(b(d,e),c(,f(g,)))")
 		)
 
-		Tree.fromString("a(b,a)").preorder should equal(Seq("a", "b", "a"))
-		Tree.fromString("a(b,a)").inorder should equal(Seq("b", "a", "a"))
-		Tree.preInTree(List("a", "b", "a"), List("b", "a", "a")) should equal(Tree.fromString("a(b,a)"))
+		Tree.fromString("a(b,a)").preorder should equalTo(Seq("a", "b", "a"))
+		Tree.fromString("a(b,a)").inorder should equalTo(Seq("b", "a", "a"))
+		Tree.preInTree(List("a", "b", "a"), List("b", "a", "a")) should equalTo(Tree.fromString("a(b,a)"))
 
-		Tree.fromString("a(a(a,a),)").preorder should equal(Seq("a", "a", "a", "a"))
-		Tree.fromString("a(a(a,a),)").inorder should equal(Seq("a", "a", "a", "a"))
-		Tree.preInTree(List("a", "a", "a", "a"), List("a", "a", "a", "a")) should equal(Tree.fromString("a(,a(,a(,a))))"))
+		Tree.fromString("a(a(a,a),)").preorder should equalTo(Seq("a", "a", "a", "a"))
+		Tree.fromString("a(a(a,a),)").inorder should equalTo(Seq("a", "a", "a", "a"))
+		Tree.preInTree(List("a", "a", "a", "a"), List("a", "a", "a", "a")) should equalTo(Tree.fromString("a(,a(,a(,a))))"))
 	}
 
 	@Test def `P69 (**) Dotstring representation of binary trees.`() {
-		Tree.fromString("a(b(d,e),c(,f(g,)))").toDotString should equal("abd..e..c.fg...")
-		Tree.fromDotString("abd..e..c.fg...") should equal(Tree.fromString("a(b(d,e),c(,f(g,)))"))
+		Tree.fromString("a(b(d,e),c(,f(g,)))").toDotString should equalTo("abd..e..c.fg...")
+		Tree.fromDotString("abd..e..c.fg...") should equalTo(Tree.fromString("a(b(d,e),c(,f(g,)))"))
 	}
 
 

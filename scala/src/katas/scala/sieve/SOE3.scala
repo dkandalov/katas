@@ -1,14 +1,14 @@
 package katas.scala.sieve
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class SOE3 extends Matchers {
+class SOE3 extends ShouldMatchers {
 	@Test def `finding prime numbers`() {
-		findPrimes(10) should equal(Seq(1, 2, 3, 5, 7))
-		findPrimes(20) should equal(Seq(1, 2, 3, 5, 7, 11, 13, 17, 19))
-		findPrimes(50) should equal(Seq(1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47))
+		findPrimes(10) should equalTo(Seq(1, 2, 3, 5, 7))
+		findPrimes(20) should equalTo(Seq(1, 2, 3, 5, 7, 11, 13, 17, 19))
+		findPrimes(50) should equalTo(Seq(1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47))
 	}
 
 	private def findPrimes(n: Int): Seq[Int] = {

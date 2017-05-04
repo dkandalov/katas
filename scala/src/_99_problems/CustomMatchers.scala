@@ -1,46 +1,48 @@
 package _99_problems
 
-import org.scalatest.matchers.{BeMatcher, HavePropertyMatchResult, HavePropertyMatcher, MatchResult}
+import org.specs2.matcher.{Expectable, MatchResult, Matcher}
 
 
 trait CustomMatchers {
-	val noDuplicates = new NoDuplicates()
+	def noDuplicates[T]: Matcher[Seq[T]] = new NoDuplicates[T]()
 
-	class NoDuplicates extends HavePropertyMatcher[Seq[Any], Any] {
-		def apply(seq: Seq[Any]) = {
-			val hasDuplicates = seq.toSet.size == seq.size
-			HavePropertyMatchResult(
-				hasDuplicates,
-				"has no duplicates",
-			  "true",
-				hasDuplicates
+	class NoDuplicates[T]() extends Matcher[Seq[T]] {
+		def apply[S <: Seq[T]](value: Expectable[S]): MatchResult[S] = {
+			result(
+				value.value.toSet.size == value.value.size,
+				value.description + " is None",
+				value.description + " is not None",
+				value
 			)
 		}
-
 	}
 
 	def subSetOf[T](seq: Seq[T]): SubSetOf[T] = new SubSetOf(seq)
 
-	class SubSetOf[T](seq: Seq[T]) extends BeMatcher[Seq[T]] {
-		def apply(left: Seq[T]) =
-			MatchResult(
-				left.forall{seq.contains(_)},
-				left.toString + " was not subset of expected values",
-				left.toString + " was subset of expected values"
+	class SubSetOf[T](seq: Seq[T]) extends Matcher[Seq[T]] {
+		override def apply[S <: Seq[T]](value: Expectable[S]): MatchResult[S] = {
+			result(
+				{ value.value.forall {seq.contains(_)} },
+				{ value.value.toString + " was not subset of expected values" },
+				{ value.value.toString + " was subset of expected values" },
+				value
 			)
+		}
 	}
 
 
 	def oneOf[T](acceptedValues: T*): OneOfMatcher[T] = new OneOfMatcher(acceptedValues.toSeq)
 	def oneOf[T](i: Iterator[T]): OneOfMatcher[T] = new OneOfMatcher(i.toSeq)
 
-	class OneOfMatcher[T](values: Seq[T]) extends BeMatcher[T] {
-		def apply(left: T) =
-			MatchResult(
-				values.contains(left),
-				left.toString + " was not one of expected values",
-				left.toString + " was one of expected values"
+	class OneOfMatcher[T](values: Seq[T]) extends Matcher[Seq[T]] {
+		override def apply[S <: Seq[T]](value: Expectable[S]): MatchResult[S] = {
+			result(
+				{ values.contains(value.value) },
+				{ value.value.toString + " was not one of expected values" },
+				{ value.value.toString + " was one of expected values" },
+				value
 			)
+		}
 	}
 }
 

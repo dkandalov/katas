@@ -1,14 +1,14 @@
 package katas.scala.permutation
 
 import org.junit.Test
-import org.scalatest.junit.{JUnitSuite, ShouldMatchersForJUnit}
+import org.scalatest.junit.{JUnitSuite}
 
 import scala.collection.mutable.ListBuffer
 
 /**
  * User: DKandalov
  */
-class Perm1_ extends JUnitSuite with ShouldMatchersForJUnit {
+class Perm1_ extends JUnitSuite {
   @Test def shouldCreateListOfAllPermutations() {
     assert(permutation(ListBuffer()) === ListBuffer())
     assert(permutation(ListBuffer(1)) === ListBuffer(ListBuffer(1)))

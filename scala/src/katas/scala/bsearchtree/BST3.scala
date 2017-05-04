@@ -1,50 +1,50 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 04/11/2011
  */
-class BST3 extends Matchers {
+class BST3 extends ShouldMatchers {
   @Test def shouldFindIfBinarySearchTreeContainsElement() {
     var bst = BST()
-    bst.contains(1) should equal(false)
+    bst.contains(1) should equalTo(false)
 
     bst = bst.add(1)
-    bst.contains(0) should equal(false)
-    bst.contains(1) should equal(true)
-    bst.contains(2) should equal(false)
+    bst.contains(0) should equalTo(false)
+    bst.contains(1) should equalTo(true)
+    bst.contains(2) should equalTo(false)
 
     bst = bst.add(2)
-    bst.contains(0) should equal(false)
-    bst.contains(1) should equal(true)
-    bst.contains(2) should equal(true)
-    bst.contains(3) should equal(false)
+    bst.contains(0) should equalTo(false)
+    bst.contains(1) should equalTo(true)
+    bst.contains(2) should equalTo(true)
+    bst.contains(3) should equalTo(false)
 
     bst = bst.add(3)
-    bst.contains(0) should equal(false)
-    bst.contains(1) should equal(true)
-    bst.contains(2) should equal(true)
-    bst.contains(3) should equal(true)
-    bst.contains(4) should equal(false)
+    bst.contains(0) should equalTo(false)
+    bst.contains(1) should equalTo(true)
+    bst.contains(2) should equalTo(true)
+    bst.contains(3) should equalTo(true)
+    bst.contains(4) should equalTo(false)
   }
 
   @Test def shouldAddElementsToBottomOfBST() {
-    BST() should equal(BST())
-    BST(1) should equal(BST(1))
-    BST().add(1) should equal(BST(1))
+    BST() should equalTo(BST())
+    BST(1) should equalTo(BST(1))
+    BST().add(1) should equalTo(BST(1))
 
-    BST(1).add(2) should equal(BST(1, null, BST(2)))
-    BST(2).add(1) should equal(BST(2, BST(1)))
+    BST(1).add(2) should equalTo(BST(1, null, BST(2)))
+    BST(2).add(1) should equalTo(BST(2, BST(1)))
 
-    BST(1).add(2).add(3) should equal(BST(1, null, BST(2, null, BST(3))))
-    BST(3).add(2).add(1) should equal(BST(3, BST(2, BST(1))))
-    BST(2).add(3).add(1) should equal(BST(2, BST(1), BST(3)))
-    BST(2).add(1).add(3) should equal(BST(2, BST(1), BST(3)))
+    BST(1).add(2).add(3) should equalTo(BST(1, null, BST(2, null, BST(3))))
+    BST(3).add(2).add(1) should equalTo(BST(3, BST(2, BST(1))))
+    BST(2).add(3).add(1) should equalTo(BST(2, BST(1), BST(3)))
+    BST(2).add(1).add(3) should equalTo(BST(2, BST(1), BST(3)))
 
-    BST(3).add(2).add(1).add(4) should equal(BST(3, BST(2, BST(1)), BST(4)))
+    BST(3).add(2).add(1).add(4) should equalTo(BST(3, BST(2, BST(1)), BST(4)))
   }
 
   case class BST(value: Int = Int.MinValue, left: BST = null, right: BST = null) {

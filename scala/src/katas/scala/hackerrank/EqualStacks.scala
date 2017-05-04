@@ -1,12 +1,12 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
 	* https://www.hackerrank.com/challenges/equal-stacks
 	*/
-class EqualStacks extends Matchers {
+class EqualStacks extends ShouldMatchers {
 
 	def main(args: Array[String]) {
 		val scanner = new java.util.Scanner(System.in)
@@ -49,11 +49,11 @@ class EqualStacks extends Matchers {
 	}
 
 	@Test def `can find min stack height`() {
-		findMinStack(Array(), Array(), Array()) shouldBe 0
-		findMinStack(Array(1), Array(), Array()) shouldBe 0
-		findMinStack(Array(1), Array(1), Array()) shouldBe 0
-		findMinStack(Array(1), Array(1), Array(2)) shouldBe 0
-		findMinStack(Array(1), Array(1), Array(1)) shouldBe 1
-		findMinStack(Array(3, 2, 1, 1, 1), Array(4, 3, 2), Array(1, 1, 4, 1)) shouldBe 5
+		findMinStack(Array(), Array(), Array()) shouldEqual 0
+		findMinStack(Array(1), Array(), Array()) shouldEqual 0
+		findMinStack(Array(1), Array(1), Array()) shouldEqual 0
+		findMinStack(Array(1), Array(1), Array(2)) shouldEqual 0
+		findMinStack(Array(1), Array(1), Array(1)) shouldEqual 1
+		findMinStack(Array(3, 2, 1, 1, 1), Array(4, 3, 2), Array(1, 1, 4, 1)) shouldEqual 5
 	}
 }

@@ -1,14 +1,14 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 23/07/2012
  */
 
-class EightQueen7 extends Matchers {
+class EightQueen7 extends ShouldMatchers {
 	@Test def shouldSolveForBoardOfSize_4() {
 		val boardSize = 4
 
@@ -16,7 +16,7 @@ class EightQueen7 extends Matchers {
 		println(solutions)
 		assertIsValid(solutions, boardSize)
 
-		solutions.size should equal(2)
+		solutions.size should equalTo(2)
 	}
 
 	@Test def shouldSolveForBoardOfSize_5() {
@@ -26,7 +26,7 @@ class EightQueen7 extends Matchers {
 		println(solutions)
 		assertIsValid(solutions, boardSize)
 
-		solutions.size should equal(10)
+		solutions.size should equalTo(10)
 	}
 
 	@Test def shouldSolveForBoardOfSize_8() {
@@ -36,16 +36,16 @@ class EightQueen7 extends Matchers {
 		println(solutions)
 		assertIsValid(solutions, boardSize)
 
-		solutions.size should equal(92)
+		solutions.size should equalTo(92)
 	}
 
 	def assertIsValid(solutions: scala.Seq[scala.Seq[(Int, Int)]], boardSize: Int) {
 		solutions.foreach { solution => println(asBoard(boardSize, solution))}
-		solutions.foreach { _.size should equal(boardSize)}
+		solutions.foreach { _.size should equalTo(boardSize)}
 		solutions.foreach { solution =>
 				solution.foreach { queen =>
-						noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equal(true)
-						noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equal(true)
+						noQueensOnSameRowOrColumn(solution.filterNot(_ == queen), queen) should equalTo(true)
+						noQueensOnSameDiagonal(solution.filterNot(_ == queen), queen) should equalTo(true)
 				}
 		}
 	}
@@ -79,14 +79,14 @@ class EightQueen7 extends Matchers {
 		solution.forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {
-		asBoard(4, Seq()).trim should equal(
+		asBoard(4, Seq()).trim should equalTo(
 """
 X,X,X,X
 X,X,X,X
 X,X,X,X
 X,X,X,X
 """.trim)
-		asBoard(4, Seq((0, 0), (0, 3), (3, 0), (3, 3))).trim should equal(
+		asBoard(4, Seq((0, 0), (0, 3), (3, 0), (3, 3))).trim should equalTo(
 """
 Q,X,X,Q
 X,X,X,X

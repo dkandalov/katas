@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 import scala.io.Source
 
@@ -10,7 +10,7 @@ import scala.io.Source
  * Date: 28/04/2012
  */
 
-class WordChains1 extends Matchers {
+class WordChains1 extends ShouldMatchers {
 
 	@Test def aaa() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().toSet[String]

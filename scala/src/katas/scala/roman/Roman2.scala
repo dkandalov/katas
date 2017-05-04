@@ -1,33 +1,33 @@
 package katas.scala.roman
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 23/05/2012
  */
 
-class Roman2 extends Matchers {
+class Roman2 extends ShouldMatchers {
 	@Test def shouldConvertNumbersToRomanNumerals() {
-		toRoman(1) should equal("I")
-		toRoman(2) should equal("II")
-		toRoman(4) should equal("IV")
-		toRoman(5) should equal("V")
-		toRoman(9) should equal("IX")
-		toRoman(10) should equal("X")
-		toRoman(40) should equal("XL")
-		toRoman(41) should equal("XLI")
-		toRoman(49) should equal("XLIX")
-		toRoman(50) should equal("L")
+		toRoman(1) should equalTo("I")
+		toRoman(2) should equalTo("II")
+		toRoman(4) should equalTo("IV")
+		toRoman(5) should equalTo("V")
+		toRoman(9) should equalTo("IX")
+		toRoman(10) should equalTo("X")
+		toRoman(40) should equalTo("XL")
+		toRoman(41) should equalTo("XLI")
+		toRoman(49) should equalTo("XLIX")
+		toRoman(50) should equalTo("L")
 
-		toRoman(99) should equal("XCIX")
-		toRoman(118) should equal("CXVIII")
-		toRoman(399) should equal("CCCXCIX")
-		toRoman(488) should equal("CDLXXXVIII")
-		toRoman(588) should equal("DLXXXVIII")
-		toRoman(999) should equal("CMXCIX")
-		toRoman(1234) should equal("MCCXXXIV")
+		toRoman(99) should equalTo("XCIX")
+		toRoman(118) should equalTo("CXVIII")
+		toRoman(399) should equalTo("CCCXCIX")
+		toRoman(488) should equalTo("CDLXXXVIII")
+		toRoman(588) should equalTo("DLXXXVIII")
+		toRoman(999) should equalTo("CMXCIX")
+		toRoman(1234) should equalTo("MCCXXXIV")
 	}
 
 	val numerals = Seq(

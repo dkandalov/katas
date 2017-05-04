@@ -1,19 +1,19 @@
 package katas.scala.doors
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 
-class Doors8 extends Matchers {
+class Doors8 extends ShouldMatchers {
 	@Test def `end state of doors`() {
-		walkDoors(amount = 1) should equal(Seq(true))
-		walkDoors(amount = 2) should equal(Seq(true, false))
-		walkDoors(amount = 3) should equal(Seq(true, false, false))
-		walkDoors(amount = 4) should equal(Seq(true, false, false, true))
-		walkDoors(amount = 5) should equal(Seq(true, false, false, true, false))
-		walkDoors(amount = 6) should equal(Seq(true, false, false, true, false, false))
-		walkDoors(amount = 7) should equal(Seq(true, false, false, true, false, false, false))
-		walkDoors(amount = 8) should equal(Seq(true, false, false, true, false, false, false, false))
+		walkDoors(amount = 1) should equalTo(Seq(true))
+		walkDoors(amount = 2) should equalTo(Seq(true, false))
+		walkDoors(amount = 3) should equalTo(Seq(true, false, false))
+		walkDoors(amount = 4) should equalTo(Seq(true, false, false, true))
+		walkDoors(amount = 5) should equalTo(Seq(true, false, false, true, false))
+		walkDoors(amount = 6) should equalTo(Seq(true, false, false, true, false, false))
+		walkDoors(amount = 7) should equalTo(Seq(true, false, false, true, false, false, false))
+		walkDoors(amount = 8) should equalTo(Seq(true, false, false, true, false, false, false, false))
 	}
 
 	private def walkDoors(amount: Int): Seq[Boolean] = {

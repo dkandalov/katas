@@ -1,25 +1,25 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.scalatest.Matchers
+import org.specs2.matcher.ShouldMatchers
 
 /**
  * User: dima
  * Date: 09/02/2013
  */
 
-class EightQueen10 extends Matchers {
+class EightQueen10 extends ShouldMatchers {
 
 	@Test def shouldFindSolutionsForEightQueenProblem() {
-		solveForBoardSize(2).size should equal(0)
-		solveForBoardSize(3).size should equal(0)
-		solveForBoardSize(4).size should equal(2)
-		solveForBoardSize(5).size should equal(10)
-		solveForBoardSize(8).size should equal(92)
+		solveForBoardSize(2).size should equalTo(0)
+		solveForBoardSize(3).size should equalTo(0)
+		solveForBoardSize(4).size should equalTo(2)
+		solveForBoardSize(5).size should equalTo(10)
+		solveForBoardSize(8).size should equalTo(92)
 	}
 
 	@Test def printingSolutions() {
-		solveForBoardSize(4).map{ asBoard }.mkString("\n=====\n") should equal("""
+		solveForBoardSize(4).map{ asBoard }.mkString("\n=====\n") should equalTo("""
 		  |-Q--
 		  |---Q
 		  |Q---
