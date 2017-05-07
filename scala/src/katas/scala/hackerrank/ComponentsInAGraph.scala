@@ -3,20 +3,21 @@ package katas.scala.hackerrank
 import org.junit.Test
 import org.scalatest.Matchers
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
 import scala.util.Random
 
 
 class ComponentsInAGraph extends Matchers {
+
 	@Test def `determine if components are connected`(): Unit = {
-		val board = new Board(10)
+		val board = new Board()
 		board.areConnected(0, 1) should equal(false)
 		board.connect(0, 1)
 		board.areConnected(0, 1) should equal(true)
 	}
 
 	@Test def `hackerrank example`(): Unit = {
-		val board = new Board(10)
+		val board = new Board()
 		board.connect(1, 6)
 		board.connect(2, 7)
 		board.connect(3, 8)
@@ -30,10 +31,11 @@ class ComponentsInAGraph extends Matchers {
 		println(s"seed = $seed")
 		val random = new Random(seed)
 
-		val board = new Board(1000)
-		0.until(board.size).foreach{ _ =>
-			val p1 = random.nextInt(board.size)
-			val p2 = random.nextInt(board.size)
+		val board = new Board()
+		val n = 1000
+		0.until(n).foreach{ _ =>
+			val p1 = random.nextInt(n)
+			val p2 = random.nextInt(n)
 			board.connect(p1, p2)
 		}
 		println(board.minMaxComponentsSize())
@@ -42,7 +44,7 @@ class ComponentsInAGraph extends Matchers {
 	def main(args: Array[String]): Unit = {
 		val scanner = new java.util.Scanner(System.in)
 
-		val board = new Board(25000)
+		val board = new Board()
 		val n = scanner.nextLine().toInt
 		0.until(n)
 			.map { _ => scanner.nextLine().split(" +") }
@@ -53,40 +55,41 @@ class ComponentsInAGraph extends Matchers {
 		println(min + " " + max)
 	}
 
-	class Board(val size: Int) {
-		private val data: ArrayBuffer[Int] = new ArrayBuffer[Int]()
-		data.insertAll(0, Range(0, size))
+	class Board() {
+		private val map: mutable.HashMap[Int, Int] = new mutable.HashMap[Int, Int]()
 
 		def areConnected(p1: Int, p2: Int): Boolean = {
-			data(p1) == data(p2)
+			if (!map.contains(p1)) false
+			else if (!map.contains(p2)) false
+			else map(p1) == map(p2)
 		}
 
 		def minMaxComponentsSize(): (Int, Int) = {
-			val grouped = data.zipWithIndex
-				.groupBy{ _._1 }
+			val grouped = map
+				.groupBy{ _._2 }
 				.map{ it => (it._1, it._2.size) }
 				.filter{ _._2 > 1 }
 			(grouped.minBy(_._2)._2, grouped.maxBy(_._2)._2)
 		}
 
 		def connect(p1: Int, p2: Int) {
-			if (p1 == p2) return
+			if (!map.contains(p1)) map.put(p1, p1)
+			if (!map.contains(p2)) map.put(p2, p2)
 
-			val p1Root = rootOf(p1, data)
-			val p2Root = rootOf(p2, data)
+			val p1Root = rootOf(p1)
+			val p2Root = rootOf(p2)
 
-			data.indices
-				.filter {data(_) == p1Root}
-				.foreach {data(_) = p2Root}
+			map.keySet
+				.filter{ map(_) == p1Root }
+				.foreach{ map(_) = p2Root }
 		}
 
-		private def rootOf(p: Int, data: ArrayBuffer[Int]): Int = {
-			var root = data(p)
-			while (data(root) != root) {
-				root = data(root)
+		private def rootOf(p: Int): Int = {
+			var root = map(p)
+			while (map(root) != root) {
+				root = map(root)
 			}
 			root
 		}
 	}
-
 }
