@@ -1,54 +1,54 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 06/06/2012
  */
 
-class BSearch12 extends ShouldMatchers {
+class BSearch12 extends Matchers {
 	import BinarySearch._
 
 	@Test def shouldProgressFromOneStateOfBinarySearchToAnother() {
-		State(0, Seq(), 0, None).next should equalTo(State(0, Seq(), 0, Some(None)))
-		State(1, Seq(), 0, None).next should equalTo(State(1, Seq(), 0, Some(None)))
+		State(0, Seq(), 0, None).next should equal(State(0, Seq(), 0, Some(None)))
+		State(1, Seq(), 0, None).next should equal(State(1, Seq(), 0, Some(None)))
 
-		State(0, Seq(1), 0, None).next should equalTo(State(0, Seq(), 0, None))
-		State(1, Seq(1), 0, None).next should equalTo(State(1, Seq(1), 0, Some(Some(0))))
-		State(2, Seq(1), 0, None).next should equalTo(State(2, Seq(), 1, None))
+		State(0, Seq(1), 0, None).next should equal(State(0, Seq(), 0, None))
+		State(1, Seq(1), 0, None).next should equal(State(1, Seq(1), 0, Some(Some(0))))
+		State(2, Seq(1), 0, None).next should equal(State(2, Seq(), 1, None))
 
-		State(0, Seq(1, 2), 0, None).next should equalTo(State(0, Seq(1), 0, None))
-		State(1, Seq(1, 2), 0, None).next should equalTo(State(1, Seq(1), 0, None))
-		State(2, Seq(1, 2), 0, None).next should equalTo(State(2, Seq(1, 2), 0, Some(Some(1))))
-		State(3, Seq(1, 2), 0, None).next should equalTo(State(3, Seq(), 2, None))
+		State(0, Seq(1, 2), 0, None).next should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2), 0, None).next should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2), 0, None).next should equal(State(2, Seq(1, 2), 0, Some(Some(1))))
+		State(3, Seq(1, 2), 0, None).next should equal(State(3, Seq(), 2, None))
 
-		State(0, Seq(1, 2, 3), 0, None).next should equalTo(State(0, Seq(1), 0, None))
-		State(1, Seq(1, 2, 3), 0, None).next should equalTo(State(1, Seq(1), 0, None))
-		State(2, Seq(1, 2, 3), 0, None).next should equalTo(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
-		State(3, Seq(1, 2, 3), 0, None).next should equalTo(State(3, Seq(3), 2, None))
+		State(0, Seq(1, 2, 3), 0, None).next should equal(State(0, Seq(1), 0, None))
+		State(1, Seq(1, 2, 3), 0, None).next should equal(State(1, Seq(1), 0, None))
+		State(2, Seq(1, 2, 3), 0, None).next should equal(State(2, Seq(1, 2, 3), 0, Some(Some(1))))
+		State(3, Seq(1, 2, 3), 0, None).next should equal(State(3, Seq(3), 2, None))
 
-		State(3, Seq(3), 2, None).next should equalTo(State(3, Seq(3), 2, Some(Some(2))))
+		State(3, Seq(3), 2, None).next should equal(State(3, Seq(3), 2, Some(Some(2))))
 	}
 
 	@Test def shouldFindIndexOfAnElementInASequence() {
-		binarySearch(0, Seq()) should equalTo(None)
+		binarySearch(0, Seq()) should equal(None)
 
-		binarySearch(0, Seq(1)) should equalTo(None)
-		binarySearch(1, Seq(1)) should equalTo(Some(0))
-		binarySearch(2, Seq(1)) should equalTo(None)
+		binarySearch(0, Seq(1)) should equal(None)
+		binarySearch(1, Seq(1)) should equal(Some(0))
+		binarySearch(2, Seq(1)) should equal(None)
 
-		binarySearch(0, Seq(1, 2)) should equalTo(None)
-		binarySearch(1, Seq(1, 2)) should equalTo(Some(0))
-		binarySearch(2, Seq(1, 2)) should equalTo(Some(1))
-		binarySearch(3, Seq(1, 2)) should equalTo(None)
+		binarySearch(0, Seq(1, 2)) should equal(None)
+		binarySearch(1, Seq(1, 2)) should equal(Some(0))
+		binarySearch(2, Seq(1, 2)) should equal(Some(1))
+		binarySearch(3, Seq(1, 2)) should equal(None)
 
-		binarySearch(0, Seq(1, 2, 3)) should equalTo(None)
-		binarySearch(1, Seq(1, 2, 3)) should equalTo(Some(0))
-		binarySearch(2, Seq(1, 2, 3)) should equalTo(Some(1))
-		binarySearch(3, Seq(1, 2, 3)) should equalTo(Some(2))
-		binarySearch(4, Seq(1, 2, 3)) should equalTo(None)
+		binarySearch(0, Seq(1, 2, 3)) should equal(None)
+		binarySearch(1, Seq(1, 2, 3)) should equal(Some(0))
+		binarySearch(2, Seq(1, 2, 3)) should equal(Some(1))
+		binarySearch(3, Seq(1, 2, 3)) should equal(Some(2))
+		binarySearch(4, Seq(1, 2, 3)) should equal(None)
 	}
 
 	object BinarySearch {

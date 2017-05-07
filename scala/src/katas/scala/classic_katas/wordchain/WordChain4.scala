@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.io.Source
 
@@ -10,12 +10,12 @@ import scala.io.Source
  * Date: 14/05/2012
  */
 
-class WordChain4 extends ShouldMatchers {
+class WordChain4 extends Matchers {
 	@Test def aaa() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().toSeq
-		findMinChain("cat", "cat", dictionary) should equalTo(Seq("cat"))
-		findMinChain("cat", "cot", dictionary) should equalTo(Seq("cat", "cot"))
-//		findMinChain("cat", "dog", dictionary) should equalTo(Seq("cat", "dog"))
+		findMinChain("cat", "cat", dictionary) should equal(Seq("cat"))
+		findMinChain("cat", "cot", dictionary) should equal(Seq("cat", "cot"))
+//		findMinChain("cat", "dog", dictionary) should equal(Seq("cat", "dog"))
 	}
 
 	var minSize = Int.MaxValue

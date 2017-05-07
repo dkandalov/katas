@@ -1,13 +1,13 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class EightQueen11 extends ShouldMatchers {
+class EightQueen11 extends Matchers {
 	@Test def findAllValidQueenPositions() {
-		solveForBoardOfSize(3) should equalTo(Seq())
-		solveForBoardOfSize(4).map{ solution => asPrintableBoard(4, solution) }.mkString("\n\n") should equalTo(
+		solveForBoardOfSize(3) should equal(Seq())
+		solveForBoardOfSize(4).map{ solution => asPrintableBoard(4, solution) }.mkString("\n\n") should equal(
 			"""
 			  |--Q-
 			  |Q---
@@ -19,7 +19,7 @@ class EightQueen11 extends ShouldMatchers {
 			  |Q---
 			  |--Q-
 			""".stripMargin.trim)
-		solveForBoardOfSize(5).map{ solution => asPrintableBoard(5, solution) }.mkString("\n\n") should equalTo(
+		solveForBoardOfSize(5).map{ solution => asPrintableBoard(5, solution) }.mkString("\n\n") should equal(
 			"""
 			  |Q----
 			  |---Q-
@@ -83,7 +83,7 @@ class EightQueen11 extends ShouldMatchers {
 			""".stripMargin.trim
 		)
 
-		solveForBoardOfSize(8).size should equalTo(92)
+		solveForBoardOfSize(8).size should equal(92)
 	}
 
 	def solveForBoardOfSize(boardSize: Int, fromColumn: Int = 0, solution: Seq[(Int, Int)] = Seq()): Seq[Seq[(Int, Int)]] = {
@@ -110,22 +110,22 @@ class EightQueen11 extends ShouldMatchers {
 	}
 
 	@Test def convertSolutionToPrintableString() {
-		asPrintableBoard(3, Seq()) should equalTo("""
+		asPrintableBoard(3, Seq()) should equal("""
 			  |---
 			  |---
 			  |---
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((0, 0))) should equalTo("""
+		asPrintableBoard(3, Seq((0, 0))) should equal("""
 			  |Q--
 			  |---
 			  |---
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((2, 2))) should equalTo("""
+		asPrintableBoard(3, Seq((2, 2))) should equal("""
 			  |---
 			  |---
 			  |--Q
 			""".stripMargin.trim)
-		asPrintableBoard(3, Seq((1, 1))) should equalTo("""
+		asPrintableBoard(3, Seq((1, 1))) should equal("""
 			  |---
 			  |-Q-
 			  |---

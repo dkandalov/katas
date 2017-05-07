@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.anagrams
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.io.Source
 
@@ -10,23 +10,23 @@ import scala.io.Source
  * Date: 06/12/2012
  */
 
-class Anagrams1 extends ShouldMatchers {
+class Anagrams1 extends Matchers {
 	@Test def shouldReadDictionary() {
 		val words = readDictionary
-		words.size should equalTo(234371)
+		words.size should equal(234371)
 	}
 
 	@Test def shouldTransformWordIntoCharacterCountMap() {
-		characterCountOf("") should equalTo(Map())
-		characterCountOf("aaa") should equalTo(Map('a' -> 3))
-		characterCountOf("abab") should equalTo(Map('a' -> 2, 'b' -> 2))
-		characterCountOf("cat") should equalTo(Map('c' -> 1, 'a' -> 1, 't' -> 1))
+		characterCountOf("") should equal(Map())
+		characterCountOf("aaa") should equal(Map('a' -> 3))
+		characterCountOf("abab") should equal(Map('a' -> 2, 'b' -> 2))
+		characterCountOf("cat") should equal(Map('c' -> 1, 'a' -> 1, 't' -> 1))
 	}
 
 	@Test def shouldGroupWordsByCharacterCount() {
-		groupByCharCount(Seq()) should equalTo(Map())
-		groupByCharCount(Seq("abba")) should equalTo(Map(Map('a' -> 2, 'b' -> 2) -> Seq("abba")))
-		groupByCharCount(Seq("abba", "abab")) should equalTo(Map(Map('a' -> 2, 'b' -> 2) -> Seq("abba", "abab")))
+		groupByCharCount(Seq()) should equal(Map())
+		groupByCharCount(Seq("abba")) should equal(Map(Map('a' -> 2, 'b' -> 2) -> Seq("abba")))
+		groupByCharCount(Seq("abba", "abab")) should equal(Map(Map('a' -> 2, 'b' -> 2) -> Seq("abba", "abab")))
 	}
 
 	@Test def shouldFindAnagrams() {

@@ -1,51 +1,51 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 15/09/2012
  */
 
-class BSearch15 extends ShouldMatchers {
+class BSearch15 extends Matchers {
 	@Test def findIndexOfElementInASequence() {
 		given(Seq()) {
-			bsearch(1, _) should equalTo(-1)
+			bsearch(1, _) should equal(-1)
 		}
 		given(Seq(1)) { seq =>
-			bsearch(Int.MinValue, seq) should equalTo(-1)
-			bsearch(0, seq) should equalTo(-1)
-			bsearch(1, seq) should equalTo(0)
-			bsearch(2, seq) should equalTo(-1)
-			bsearch(Int.MaxValue, seq) should equalTo(-1)
+			bsearch(Int.MinValue, seq) should equal(-1)
+			bsearch(0, seq) should equal(-1)
+			bsearch(1, seq) should equal(0)
+			bsearch(2, seq) should equal(-1)
+			bsearch(Int.MaxValue, seq) should equal(-1)
 		}
 		given(Seq(1, 2)) { seq =>
-			bsearch(Int.MinValue, seq) should equalTo(-1)
-			bsearch(0, seq) should equalTo(-1)
-			bsearch(1, seq) should equalTo(0)
-			bsearch(2, seq) should equalTo(1)
-			bsearch(3, seq) should equalTo(-1)
-			bsearch(Int.MaxValue, seq) should equalTo(-1)
+			bsearch(Int.MinValue, seq) should equal(-1)
+			bsearch(0, seq) should equal(-1)
+			bsearch(1, seq) should equal(0)
+			bsearch(2, seq) should equal(1)
+			bsearch(3, seq) should equal(-1)
+			bsearch(Int.MaxValue, seq) should equal(-1)
 		}
 		given(Seq(1, 2, 3)) { seq =>
-			bsearch(Int.MinValue, seq) should equalTo(-1)
-			bsearch(0, seq) should equalTo(-1)
-			bsearch(1, seq) should equalTo(0)
-			bsearch(2, seq) should equalTo(1)
-			bsearch(3, seq) should equalTo(2)
-			bsearch(4, seq) should equalTo(-1)
-			bsearch(Int.MaxValue, seq) should equalTo(-1)
+			bsearch(Int.MinValue, seq) should equal(-1)
+			bsearch(0, seq) should equal(-1)
+			bsearch(1, seq) should equal(0)
+			bsearch(2, seq) should equal(1)
+			bsearch(3, seq) should equal(2)
+			bsearch(4, seq) should equal(-1)
+			bsearch(Int.MaxValue, seq) should equal(-1)
 		}
 		given(Seq(1, 2, 3, 4)) { seq =>
-			bsearch(Int.MinValue, seq) should equalTo(-1)
-			bsearch(0, seq) should equalTo(-1)
-			bsearch(1, seq) should equalTo(0)
-			bsearch(2, seq) should equalTo(1)
-			bsearch(3, seq) should equalTo(2)
-			bsearch(4, seq) should equalTo(3)
-			bsearch(5, seq) should equalTo(-1)
-			bsearch(Int.MaxValue, seq) should equalTo(-1)
+			bsearch(Int.MinValue, seq) should equal(-1)
+			bsearch(0, seq) should equal(-1)
+			bsearch(1, seq) should equal(0)
+			bsearch(2, seq) should equal(1)
+			bsearch(3, seq) should equal(2)
+			bsearch(4, seq) should equal(3)
+			bsearch(5, seq) should equal(-1)
+			bsearch(Int.MaxValue, seq) should equal(-1)
 		}
 	}
 

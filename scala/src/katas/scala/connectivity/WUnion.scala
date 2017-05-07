@@ -1,7 +1,7 @@
 package katas.scala.connectivity
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ArrayBuffer
@@ -11,17 +11,17 @@ import scala.collection.mutable.ArrayBuffer
  * Date: 06/09/2012
  */
 
-class WUnion extends ShouldMatchers {
+class WUnion extends Matchers {
 	@Test def determineIfPointAreConnected_InSimplestCases() {
 		val board = new Board(2)
 
-		board.areConnected(0, 0) should equalTo(true)
+		board.areConnected(0, 0) should equal(true)
 		board.connect(0, 0)
-		board.areConnected(0, 0) should equalTo(true)
+		board.areConnected(0, 0) should equal(true)
 
-		board.areConnected(0, 1) should equalTo(false)
+		board.areConnected(0, 1) should equal(false)
 		board.connect(0, 1)
-		board.areConnected(0, 1) should equalTo(true)
+		board.areConnected(0, 1) should equal(true)
 	}
 
 	@Test def determineIfPointsAreConnected_InSampleCase() {
@@ -35,11 +35,11 @@ class WUnion extends ShouldMatchers {
 			wereConnected
 		}
 
-		output should equalTo(Seq(false, false, false, false, false,
+		output should equal(Seq(false, false, false, false, false,
 			true, false, false, false, true, true, false))
 
 		for (i <- 0 until 10; j <- 0 until 10) {
-			board.areConnected(i, j) should equalTo(true)
+			board.areConnected(i, j) should equal(true)
 		}
 	}
 
@@ -48,9 +48,9 @@ class WUnion extends ShouldMatchers {
 		Range(0, 9).foreach { p =>
 			board.connect(p, p + 1)
 		}
-		board.data should equalTo(Seq(2, 0, 3, 4, 5, 6, 7, 8, 9, 9))
+		board.data should equal(Seq(2, 0, 3, 4, 5, 6, 7, 8, 9, 9))
 		for (i <- 0 until 10; j <- 0 until 10) {
-			board.areConnected(i, j) should equalTo(true)
+			board.areConnected(i, j) should equal(true)
 		}
 	}
 

@@ -1,12 +1,12 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
 	* https://www.hackerrank.com/challenges/2d-array
 	*/
-class TwoDArrayDS extends ShouldMatchers {
+class TwoDArrayDS extends Matchers {
 	def main(args: Array[String]) {
 		val sc = new java.util.Scanner(System.in)
 		val arr = Array.ofDim[Int](6, 6)

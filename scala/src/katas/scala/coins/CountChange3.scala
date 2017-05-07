@@ -1,24 +1,24 @@
 package katas.scala.coins
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 03/04/2012
  */
-class CountChange3 extends ShouldMatchers {
+class CountChange3 extends Matchers {
   import EnhancedInt._
 
   @Test def GIVEN_amount_of_money_SHOULD_find_all_unique_ways_to_change_it() {
-    waysToChange(1).size should equalTo(1)
-    waysToChange(1) should equalTo(Seq(Seq(1)))
+    waysToChange(1).size should equal(1)
+    waysToChange(1) should equal(Seq(Seq(1)))
 
-    waysToChange(5).size should equalTo(2)
-    waysToChange(5) should equalTo(Seq(Seq(1, 1, 1, 1, 1), Seq(5)))
+    waysToChange(5).size should equal(2)
+    waysToChange(5) should equal(Seq(Seq(1, 1, 1, 1, 1), Seq(5)))
 
-    waysToChange(10) should equalTo(Seq((10 times 1), (5 times 1) :+ 5, Seq(5, 5), Seq(10)))
-    waysToChange(15) should equalTo(Seq(
+    waysToChange(10) should equal(Seq((10 times 1), (5 times 1) :+ 5, Seq(5, 5), Seq(10)))
+    waysToChange(15) should equal(Seq(
       (15 times 1),
       (10 times 1) :+ 5,
       (5 times 1) ++ Seq(5, 5),
@@ -27,7 +27,7 @@ class CountChange3 extends ShouldMatchers {
       Seq(5, 10)
     ))
 
-    waysToChange(100).size should equalTo(292)
+    waysToChange(100).size should equal(292)
   }
 
   def waysToChange(money: Int, coinType: Int = 4): Seq[Seq[Int]] = {

@@ -1,6 +1,6 @@
 package katas.scala.sort.insertsort
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import katas.scala.sort.SeqSortTest
 
 import scala.reflect.ClassTag
@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
  */
 
 
-class InsertSort9 extends SeqSortTest with ShouldMatchers {
+class InsertSort9 extends SeqSortTest with Matchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 
 		def insert(v: T, sorted: Seq[T]): Seq[T] = {
@@ -26,7 +26,7 @@ class InsertSort9 extends SeqSortTest with ShouldMatchers {
 }
 
 
-class InsertSort9_ extends SeqSortTest with ShouldMatchers {
+class InsertSort9_ extends SeqSortTest with Matchers {
 	def sort[T](seq: Seq[T])(implicit ordered: (T => Ordered[T]), tag: ClassTag[T]): Seq[T] = {
 		def swap(s: Seq[T], i1: Int, i2: Int) = s.updated(i1, s(i2)).updated(i2, s(i1))
 

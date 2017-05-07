@@ -1,26 +1,26 @@
 package katas.scala.dojo
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 
-class CountChange extends ShouldMatchers {
+class CountChange extends Matchers {
 	@Test def aaa() {
 		val coins = List(2, 1)
 
-		calculateChanges(0, coins) should equalTo(List())
-		countChange(0, coins) should equalTo(0)
+		calculateChanges(0, coins) should equal(List())
+		countChange(0, coins) should equal(0)
 
-		calculateChanges(1, coins) should equalTo(List(List(1)))
-		countChange(1, coins) should equalTo(1)
+		calculateChanges(1, coins) should equal(List(List(1)))
+		countChange(1, coins) should equal(1)
 
-		calculateChanges(2, coins) should equalTo(List(List(2), List(1, 1)))
-		countChange(2, coins) should equalTo(2)
+		calculateChanges(2, coins) should equal(List(List(2), List(1, 1)))
+		countChange(2, coins) should equal(2)
 
-		countChange(4, coins) should equalTo(3)
-		calculateChanges(4, coins) should equalTo(List(List(2, 2), List(1, 1, 2), List(1, 1, 1, 1)))
+		countChange(4, coins) should equal(3)
+		calculateChanges(4, coins) should equal(List(List(2, 2), List(1, 1, 2), List(1, 1, 1, 1)))
 
-		countChange(100, List(50, 25, 10, 5, 1)) should equalTo(292)
+		countChange(100, List(50, 25, 10, 5, 1)) should equal(292)
 	}
 
 	def countChange(money: Int, coins: List[Int]): Int = {

@@ -1,7 +1,7 @@
 package katas.scala.connectivity
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -10,14 +10,14 @@ import scala.collection.mutable.ArrayBuffer
  * Date: 07/09/2012
  */
 
-class QFind5 extends ShouldMatchers {
+class QFind5 extends Matchers {
 	@Test def determineIfPointsAreConnected_InSimpleCase() {
 		val board = new Board(2)
-		board.connected(0, 0) should equalTo(true)
+		board.connected(0, 0) should equal(true)
 
-		board.connected(0, 1) should equalTo(false)
+		board.connected(0, 1) should equal(false)
 		board.connect(0, 1)
-		board.connected(0, 1) should equalTo(true)
+		board.connected(0, 1) should equal(true)
 	}
 
 	@Test def determineIfPointsAreConnected_InSampleCase() {
@@ -29,21 +29,21 @@ class QFind5 extends ShouldMatchers {
 			wereConnected
 		}
 
-		connect(3, 4) should equalTo(false)
-		connect(4, 9) should equalTo(false)
-		connect(8, 0) should equalTo(false)
-		connect(2, 3) should equalTo(false)
-		connect(5, 6) should equalTo(false)
-		connect(2, 9) should equalTo(true)
-		connect(5, 9) should equalTo(false)
-		connect(7, 3) should equalTo(false)
-		connect(4, 8) should equalTo(false)
-		connect(5, 6) should equalTo(true)
-		connect(0, 2) should equalTo(true)
-		connect(6, 1) should equalTo(false)
+		connect(3, 4) should equal(false)
+		connect(4, 9) should equal(false)
+		connect(8, 0) should equal(false)
+		connect(2, 3) should equal(false)
+		connect(5, 6) should equal(false)
+		connect(2, 9) should equal(true)
+		connect(5, 9) should equal(false)
+		connect(7, 3) should equal(false)
+		connect(4, 8) should equal(false)
+		connect(5, 6) should equal(true)
+		connect(0, 2) should equal(true)
+		connect(6, 1) should equal(false)
 
 		for (i <- 0 until 10; j <- 0 until 10) {
-			board.connected(i, j) should equalTo(true)
+			board.connected(i, j) should equal(true)
 		}
 	}
 

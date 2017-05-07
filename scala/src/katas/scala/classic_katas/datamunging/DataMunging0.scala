@@ -1,6 +1,6 @@
 package katas.scala.classic_katas.datamunging
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 
@@ -8,7 +8,7 @@ import scala.io.Source
  * User: dima
  * Date: 15/03/2012
  */
-class DataMunging0 extends ShouldMatchers {
+class DataMunging0 extends Matchers {
   @Test def findDayWithMinTemperatureSpread() {
     val lines = trimFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
     lines.foreach{ line => println(line) }

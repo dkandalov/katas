@@ -1,21 +1,21 @@
 package katas.scala.game_of_life
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 23/10/2012
  */
 
-class Conway3 extends ShouldMatchers {
+class Conway3 extends Matchers {
 	@Test def whenAllCellsAreDeadNothingHappens() {
 		new Field(
 			"""
 			  |---
 			  |---
 			  |---
-			""").next() should equalTo(new Field("""
+			""").next() should equal(new Field("""
         |---
         |---
         |---
@@ -28,7 +28,7 @@ class Conway3 extends ShouldMatchers {
 			  |---
 			  |-0-
 			  |---
-			""").next() should equalTo(new Field("""
+			""").next() should equal(new Field("""
         |---
         |---
         |---
@@ -42,7 +42,7 @@ class Conway3 extends ShouldMatchers {
 			  |-00-
 			  |----
 			  |----
-			""").next() should equalTo(new Field("""
+			""").next() should equal(new Field("""
 				|-00-
 				|----
 				|-00-
@@ -56,7 +56,7 @@ class Conway3 extends ShouldMatchers {
 			  |-0-
 			  |000
 			  |-0-
-			""").next().cellAt(1, 1).toString should equalTo("-")
+			""").next().cellAt(1, 1).toString should equal("-")
 	}
 
 	@Test def gettingCellShouldWrapAroundFieldBorder() {
@@ -66,16 +66,16 @@ class Conway3 extends ShouldMatchers {
 			  |-0-
 			  |0--
 			""")
-		field.cellAt(0, 0) should equalTo(DeadCell)
-		field.cellAt(0, 1) should equalTo(DeadCell)
-		field.cellAt(0, 2) should equalTo(LivingCell)
-		field.cellAt(-1, 0) should equalTo(LivingCell)
-		field.cellAt(-2, 0) should equalTo(DeadCell)
-		field.cellAt(-3, 0) should equalTo(DeadCell)
+		field.cellAt(0, 0) should equal(DeadCell)
+		field.cellAt(0, 1) should equal(DeadCell)
+		field.cellAt(0, 2) should equal(LivingCell)
+		field.cellAt(-1, 0) should equal(LivingCell)
+		field.cellAt(-2, 0) should equal(DeadCell)
+		field.cellAt(-3, 0) should equal(DeadCell)
 
-		field.cellAt(-1, -1) should equalTo(DeadCell)
-		field.cellAt(-2, -2) should equalTo(LivingCell)
-		field.cellAt(0, 5) should equalTo(LivingCell)
+		field.cellAt(-1, -1) should equal(DeadCell)
+		field.cellAt(-2, -2) should equal(LivingCell)
+		field.cellAt(0, 5) should equal(LivingCell)
 	}
 
 	case class Cell(c: Char) {

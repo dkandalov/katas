@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.io.Source
 
@@ -10,22 +10,22 @@ import scala.io.Source
  * Date: 10/08/2012
  */
 
-class WordChain11 extends ShouldMatchers {
+class WordChain11 extends Matchers {
 
 	@Test def shouldFindSimpleWordChains() {
-		findShortestWordChain("aaa", "aaa", Seq("aaa")) should equalTo(Seq("aaa"))
-		findShortestWordChain("aaa", "ccc", Seq("aaa", "ccc")) should equalTo(Seq())
-		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "ccc")) should equalTo(Seq("aaa", "aac", "acc", "ccc"))
+		findShortestWordChain("aaa", "aaa", Seq("aaa")) should equal(Seq("aaa"))
+		findShortestWordChain("aaa", "ccc", Seq("aaa", "ccc")) should equal(Seq())
+		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "ccc")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
 	@Test def shouldFindShortestWordChains() {
-		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "abc", "cbc", "ccc")) should equalTo(Seq("aaa", "aac", "acc", "ccc"))
+		findShortestWordChain("aaa", "ccc", Seq("aaa", "aac", "acc", "abc", "cbc", "ccc")) should equal(Seq("aaa", "aac", "acc", "ccc"))
 	}
 
 	@Test def shouldFindShortestWordChain_From_Cat_to_Dog() {
 		val dict = loadMacDict()
-		findShortestWordChain("cat", "dog", dict) should equalTo(Seq("cat", "cag", "cog", "dog"))
-		findShortestWordChain("dog", "cat", dict) should equalTo(Seq("dog", "cog", "cag", "cat"))
+		findShortestWordChain("cat", "dog", dict) should equal(Seq("cat", "cag", "cog", "dog"))
+		findShortestWordChain("dog", "cat", dict) should equal(Seq("dog", "cog", "cag", "cat"))
 	}
 
 	private def loadMacDict(): Seq[String] = {
@@ -70,11 +70,11 @@ class WordChain11 extends ShouldMatchers {
 	}
 
 	@Test def shouldFindNextWords() {
-		canBeNext("aaa", "aaa") should beEqualTo(false)
-		canBeNext("aaa", "aab") should beEqualTo(true)
-		canBeNext("aaa", "aba") should beEqualTo(true)
-		canBeNext("aaa", "baa") should beEqualTo(true)
-		canBeNext("aaa", "bba") should beEqualTo(false)
+		canBeNext("aaa", "aaa") should equal(false)
+		canBeNext("aaa", "aab") should equal(true)
+		canBeNext("aaa", "aba") should equal(true)
+		canBeNext("aaa", "baa") should equal(true)
+		canBeNext("aaa", "bba") should equal(false)
 	}
 
 	private def canBeNext(fromWord: String, toWord: String, diffs: Int = 0): Boolean = {

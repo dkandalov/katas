@@ -1,7 +1,7 @@
 package katas.scala.sort.mergesort
 
 import katas.scala.sort.SeqSortTest
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.reflect.ClassTag
 
@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
  * Date: 08/07/2012
  */
 
-class MergeSort11 extends SeqSortTest with ShouldMatchers {
+class MergeSort11 extends SeqSortTest with Matchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		def split(seq: Seq[T]): (Seq[T], Seq[T]) = {
 			seq.splitAt(seq.size / 2)

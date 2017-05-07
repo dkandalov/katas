@@ -1,7 +1,7 @@
 package katas.scala.connectivity
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable
 
@@ -10,14 +10,14 @@ import scala.collection.mutable
  * Date: 23/02/2013
  */
 
-class QUnion5 extends ShouldMatchers {
+class QUnion5 extends Matchers {
 	@Test def connectingTwoPoints() {
 		val board = new Board(10)
-		board.areConnected(0, 1) should equalTo(false)
-		board.areConnected(1, 0) should equalTo(false)
-		board.connect(0, 1) should equalTo(false)
-		board.areConnected(0, 1) should equalTo(true)
-		board.areConnected(1, 0) should equalTo(true)
+		board.areConnected(0, 1) should equal(false)
+		board.areConnected(1, 0) should equal(false)
+		board.connect(0, 1) should equal(false)
+		board.areConnected(0, 1) should equal(true)
+		board.areConnected(1, 0) should equal(true)
 	}
 
 	@Test def exampleFromTheBook() {
@@ -26,7 +26,7 @@ class QUnion5 extends ShouldMatchers {
 		val output = Seq(false, false, false, false, false, true, false, false, false, true, true, false)
 
 		val actualOutput = input.map{ p => board.connect(p._1, p._2) }
-		actualOutput should equalTo(output)
+		actualOutput should equal(output)
 	}
 
 	class Board(size: Int) {

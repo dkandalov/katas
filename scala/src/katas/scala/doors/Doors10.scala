@@ -1,14 +1,14 @@
 package katas.scala.doors
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class Doors10 extends ShouldMatchers {
+class Doors10 extends Matchers {
 	@Test def `walking doors`() {
-		walkDoors(amount = 1) should equalTo(Seq(open))
-		walkDoors(amount = 2) should equalTo(Seq(open, closed))
-		walkDoors(amount = 10) should equalTo(Seq(open, closed, closed, open, closed, closed, closed, closed, open, closed))
+		walkDoors(amount = 1) should equal(Seq(open))
+		walkDoors(amount = 2) should equal(Seq(open, closed))
+		walkDoors(amount = 10) should equal(Seq(open, closed, closed, open, closed, closed, closed, closed, open, closed))
 	}
 
 	private class DoorState

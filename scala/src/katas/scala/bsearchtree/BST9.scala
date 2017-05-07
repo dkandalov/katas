@@ -1,20 +1,20 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 15/02/2012
  */
-class BST9 extends ShouldMatchers {
+class BST9 extends Matchers {
   @Test def WHEN_insertingValueToBST_it_SHOULD_beInsertedAtTheRoot() {
-    BST().add(List(1)) should equalTo(BST(Node(1)))
-    BST().add(List(1, 2)) should equalTo(BST(Node(2, Node(1), null)))
-    BST().add(List(2, 1)) should equalTo(BST(Node(1, null, Node(2))))
-    BST().add(List(1, 2, 3)) should equalTo(BST(Node(3,Node(2,Node(1))))) // was wrong test case
-    BST().add(List(3, 2, 1)) should equalTo(BST(Node(1, null, Node(2, null, Node(3)))))
-    BST().add(List(1, 3, 2)) should equalTo(BST(Node(2, Node(1), Node(3)))) // was wrong test case
+    BST().add(List(1)) should equal(BST(Node(1)))
+    BST().add(List(1, 2)) should equal(BST(Node(2, Node(1), null)))
+    BST().add(List(2, 1)) should equal(BST(Node(1, null, Node(2))))
+    BST().add(List(1, 2, 3)) should equal(BST(Node(3,Node(2,Node(1))))) // was wrong test case
+    BST().add(List(3, 2, 1)) should equal(BST(Node(1, null, Node(2, null, Node(3)))))
+    BST().add(List(1, 3, 2)) should equal(BST(Node(2, Node(1), Node(3)))) // was wrong test case
   }
 
   case class BST(root: Node = null) {

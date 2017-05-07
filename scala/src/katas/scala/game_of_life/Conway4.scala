@@ -1,7 +1,7 @@
 package katas.scala.game_of_life
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable
 
@@ -10,7 +10,7 @@ import scala.collection.mutable
  * Date: 27/10/2012
  */
 
-class Conway4 extends ShouldMatchers {
+class Conway4 extends Matchers {
 
 	@Test def fieldShouldReturnCellState() {
 		def field = new Field(
@@ -19,13 +19,13 @@ class Conway4 extends ShouldMatchers {
 			  |-0-
 			  |--0
 			""")
-		field.cellAt(0, 0) should equalTo('0')
-		field.cellAt(0, 1) should equalTo('-')
-		field.cellAt(0, 2) should equalTo('-')
+		field.cellAt(0, 0) should equal('0')
+		field.cellAt(0, 1) should equal('-')
+		field.cellAt(0, 2) should equal('-')
 
-		field.cellAt(1, 0) should equalTo('-')
-		field.cellAt(1, 1) should equalTo('0')
-		field.cellAt(1, 2) should equalTo('-')
+		field.cellAt(1, 0) should equal('-')
+		field.cellAt(1, 1) should equal('0')
+		field.cellAt(1, 2) should equal('-')
 	}
 
 	@Test def fieldBorderShouldWrap() {
@@ -36,15 +36,15 @@ class Conway4 extends ShouldMatchers {
 			  |--0
 			""")
 
-		field.cellAt(-1, -1) should equalTo('0')
+		field.cellAt(-1, -1) should equal('0')
 
-		field.cellAt(-1, 0) should equalTo('-')
-		field.cellAt(-2, 0) should equalTo('-')
-		field.cellAt(-3, 0) should equalTo('0')
+		field.cellAt(-1, 0) should equal('-')
+		field.cellAt(-2, 0) should equal('-')
+		field.cellAt(-3, 0) should equal('0')
 
-		field.cellAt(0, -1) should equalTo('-')
-		field.cellAt(0, -2) should equalTo('-')
-		field.cellAt(0, -3) should equalTo('0')
+		field.cellAt(0, -1) should equal('-')
+		field.cellAt(0, -2) should equal('-')
+		field.cellAt(0, -3) should equal('0')
 	}
 
 	@Test def whenFieldIsEmptyNothingHappens() {
@@ -53,7 +53,7 @@ class Conway4 extends ShouldMatchers {
 			  |---
 			  |---
 			  |---
-			""").next() should equalTo(new Field(
+			""").next() should equal(new Field(
 			"""
 			  |---
 			  |---
@@ -67,7 +67,7 @@ class Conway4 extends ShouldMatchers {
 			  |---
 			  |-0-
 			  |---
-			""").next() should equalTo(new Field(
+			""").next() should equal(new Field(
 			"""
 			  |---
 			  |---
@@ -81,7 +81,7 @@ class Conway4 extends ShouldMatchers {
 			  |0-0
 			  |---
 			  |0--
-			""").next().cellAt(1, 1) should equalTo('0')
+			""").next().cellAt(1, 1) should equal('0')
 	}
 
 	@Test def overpopulatedCellDies() {
@@ -90,7 +90,7 @@ class Conway4 extends ShouldMatchers {
 			  |0-0
 			  |-0-
 			  |0-0
-			""").next().cellAt(1, 1) should equalTo('-')
+			""").next().cellAt(1, 1) should equal('-')
 	}
 
 	class Field(val data: mutable.Buffer[mutable.Buffer[Char]]) {

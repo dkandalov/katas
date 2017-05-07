@@ -1,6 +1,6 @@
 package katas.scala.sort.insertsort
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import katas.scala.sort.SeqSortTest
 import collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
  * Date: 06/07/2012
  */
 
-class InsertSort10 extends SeqSortTest with ShouldMatchers {
+class InsertSort10 extends SeqSortTest with Matchers {
 
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		val array = ArrayBuffer(seq: _*)

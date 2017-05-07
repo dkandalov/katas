@@ -1,37 +1,37 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 17/11/2011
  */
-class BSearch8 extends ShouldMatchers {
+class BSearch8 extends Matchers {
   @Test def shouldFindIndexOfItemsInAList() {
-    search(0, List()) should equalTo(-1)
+    search(0, List()) should equal(-1)
 
-    search(0, List(1)) should equalTo(-1)
-    search(1, List(1)) should equalTo(0)
-    search(2, List(1)) should equalTo(-1)
+    search(0, List(1)) should equal(-1)
+    search(1, List(1)) should equal(0)
+    search(2, List(1)) should equal(-1)
 
-    search(0, List(1, 2)) should equalTo(-1)
-    search(1, List(1, 2)) should equalTo(0)
-    search(2, List(1, 2)) should equalTo(1)
-    search(3, List(1, 2)) should equalTo(-1)
+    search(0, List(1, 2)) should equal(-1)
+    search(1, List(1, 2)) should equal(0)
+    search(2, List(1, 2)) should equal(1)
+    search(3, List(1, 2)) should equal(-1)
 
-    search(0, List(1, 2, 3)) should equalTo(-1)
-    search(1, List(1, 2, 3)) should equalTo(0)
-    search(2, List(1, 2, 3)) should equalTo(1)
-    search(3, List(1, 2, 3)) should equalTo(2)
-    search(4, List(1, 2, 3)) should equalTo(-1)
+    search(0, List(1, 2, 3)) should equal(-1)
+    search(1, List(1, 2, 3)) should equal(0)
+    search(2, List(1, 2, 3)) should equal(1)
+    search(3, List(1, 2, 3)) should equal(2)
+    search(4, List(1, 2, 3)) should equal(-1)
 
-    search(0, List(1, 2, 3, 4)) should equalTo(-1)
-    search(1, List(1, 2, 3, 4)) should equalTo(0)
-    search(2, List(1, 2, 3, 4)) should equalTo(1)
-    search(3, List(1, 2, 3, 4)) should equalTo(2)
-    search(4, List(1, 2, 3, 4)) should equalTo(3)
-    search(5, List(1, 2, 3, 4)) should equalTo(-1)
+    search(0, List(1, 2, 3, 4)) should equal(-1)
+    search(1, List(1, 2, 3, 4)) should equal(0)
+    search(2, List(1, 2, 3, 4)) should equal(1)
+    search(3, List(1, 2, 3, 4)) should equal(2)
+    search(4, List(1, 2, 3, 4)) should equal(3)
+    search(5, List(1, 2, 3, 4)) should equal(-1)
   }
 
   def search(n: Int, list: List[Int], shift: Int = 0): Int = {

@@ -1,15 +1,15 @@
 package katas.scala.coins
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
  * @author DKandalov
  */
-class CountChange1 extends ShouldMatchers {
+class CountChange1 extends Matchers {
 
   @Test def shouldCountNumberOfWaysToChangeAmountOfMoney() {
-    countChangeVariants(100) should equalTo(292)
+    countChangeVariants(100) should equal(292)
   }
 
   def countChangeVariants(amount: Int, coinType: Int = 4): Int = {

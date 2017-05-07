@@ -1,7 +1,7 @@
 package katas.scala.backtrack
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * This code is C translation into scala
@@ -11,7 +11,7 @@ import org.specs2.matcher.ShouldMatchers
  * Date: 11/04/2012
  */
 
-class Backtrack0 extends ShouldMatchers {
+class Backtrack0 extends Matchers {
   @Test def shouldPrintAllSubsets() {
     println(new Subsets().backtrack(new Array[Int](1000), 0, 3))
   }

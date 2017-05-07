@@ -1,12 +1,12 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
 	* https://www.hackerrank.com/challenges/equal-stacks
 	*/
-class EqualStacks extends ShouldMatchers {
+class EqualStacks extends Matchers {
 
 	def main(args: Array[String]) {
 		val scanner = new java.util.Scanner(System.in)

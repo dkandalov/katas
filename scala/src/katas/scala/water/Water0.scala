@@ -1,6 +1,6 @@
 package katas.scala.water
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 
 /**
@@ -8,7 +8,7 @@ import org.junit.Test
  * Date: 10/11/2012
  */
 
-class Water0 extends ShouldMatchers {
+class Water0 extends Matchers {
 
 	class Pouring(capacity: Vector[Int]) {
 		type State = Vector[Int]
@@ -70,7 +70,7 @@ class Water0 extends ShouldMatchers {
 		val pouring = new Pouring(Vector(4, 7))
 		import pouring._
 
-		moves should equalTo(Seq(
+		moves should equal(Seq(
 			Empty(0),
 			Empty(1),
 			Fill(0),
@@ -85,8 +85,8 @@ class Water0 extends ShouldMatchers {
 		import pouring._
 
 		val solution = solutions(6).head
-		solution.endState should equalTo(Vector(4, 6))
-		solution should equalTo(Path(List(
+		solution.endState should equal(Vector(4, 6))
+		solution should equal(Path(List(
 			Fill(1), Pour(1, 0), Empty(0), Pour(1, 0), Fill(1), Pour(1, 0)
 		).reverse))
 	}
@@ -96,8 +96,8 @@ class Water0 extends ShouldMatchers {
 		import pouring._
 
 		val solution = solutions(17).head
-		solution.endState should equalTo(Vector(0, 0, 17))
-		solution should equalTo(Path(List(
+		solution.endState should equal(Vector(0, 0, 17))
+		solution should equal(Path(List(
 			Fill(0), Pour(0, 2), Fill(1), Fill(0), Pour(0, 2), Pour(1, 2)
 		).reverse))
 	}

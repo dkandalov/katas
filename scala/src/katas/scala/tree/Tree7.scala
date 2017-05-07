@@ -1,13 +1,13 @@
 package katas.scala.tree
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 26/10/2011
  */
-class Tree7 extends ShouldMatchers {
+class Tree7 extends Matchers {
   @Test def shouldCalculateTreeProperties () {
     val tree = Node("root",
       Node("1",
@@ -20,17 +20,17 @@ class Tree7 extends ShouldMatchers {
       )
     )
     val a = { (l:List[String], s:String) => l ::: List(s) }
-    traverseInOrder(tree, a, List()) should equalTo(List("11", "1", "12", "root", "21", "2", "22"))
-    traversePreOrder(tree, a, List()) should equalTo(List("root", "1", "11", "12", "2", "21", "22"))
-    traversePostOrder(tree, a, List()) should equalTo(List("11", "12", "1", "21", "22", "2", "root"))
+    traverseInOrder(tree, a, List()) should equal(List("11", "1", "12", "root", "21", "2", "22"))
+    traversePreOrder(tree, a, List()) should equal(List("root", "1", "11", "12", "2", "21", "22"))
+    traversePostOrder(tree, a, List()) should equal(List("11", "12", "1", "21", "22", "2", "root"))
 
-    heightOf(tree) should equalTo(2)
-    level(1, tree, List(), a) should equalTo(List("1", "2"))
-    level(2, tree, List(), a) should equalTo(List("11", "12", "21", "22"))
+    heightOf(tree) should equal(2)
+    level(1, tree, List(), a) should equal(List("1", "2"))
+    level(2, tree, List(), a) should equal(List("11", "12", "21", "22"))
 
-    pathLengthOf(tree) should equalTo(10)
-    internalPathLengthOf(tree) should equalTo(2)
-    externalPathLengthOf(tree) should equalTo(8)
+    pathLengthOf(tree) should equal(10)
+    internalPathLengthOf(tree) should equal(2)
+    externalPathLengthOf(tree) should equal(8)
   }
 
   def externalPathLengthOf[T](node: Node[T], h: Int = 0): Int = node match {

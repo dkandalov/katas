@@ -1,12 +1,12 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable
 
 
-class TruckTour extends ShouldMatchers {
+class TruckTour extends Matchers {
 
 	@Test def `hackerrank example`(): Unit = {
 		val stations = List(Station(1, 5), Station(10, 3), Station(3, 4))

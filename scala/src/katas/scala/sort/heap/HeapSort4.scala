@@ -4,22 +4,22 @@ import katas.scala.permutation.Perm3_
 import org.junit.Test
 import org.scalatest.Matchers
 import org.scalatest.Matchers._
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * User: dima
  * Date: 05/11/2011
  */
-class HeapSort4 extends ShouldMatchers {
+class HeapSort4 extends Matchers {
   @Test def shouldSortList() {
-    sort(List()) should equalTo(List())
-    sort(List(1)) should equalTo(List(1))
-    sort(List(1, 2)) should equalTo(List(1, 2))
-    sort(List(2, 1)) should equalTo(List(1, 2))
-    sort(List(3, 1, 2)) should equalTo(List(1, 2, 3))
+    sort(List()) should equal(List())
+    sort(List(1)) should equal(List(1))
+    sort(List(1, 2)) should equal(List(1, 2))
+    sort(List(2, 1)) should equal(List(1, 2))
+    sort(List(3, 1, 2)) should equal(List(1, 2, 3))
 
     new Perm3_().perm(List(1, 2, 3, 4, 5)).foreach { list =>
-      sort(list) should equalTo(List(1, 2, 3, 4, 5))
+      sort(list) should equal(List(1, 2, 3, 4, 5))
     }
   }
 
@@ -37,29 +37,29 @@ class HeapSort4 extends ShouldMatchers {
   }
 
   @Test def shouldAddElementsToEmptyHeap() {
-    EmptyHeap() should equalTo(EmptyHeap())
-    Heap(1) should equalTo(Heap(1))
+    EmptyHeap() should equal(EmptyHeap())
+    Heap(1) should equal(Heap(1))
 
-    EmptyHeap().add(4) should equalTo(Heap(4))
-    EmptyHeap().add(4).add(3) should equalTo(Heap(4, Heap(3)))
-    EmptyHeap().add(4).add(3).add(2) should equalTo(Heap(4, Heap(3), Heap(2)))
-    EmptyHeap().add(4).add(2).add(3) should equalTo(Heap(4, Heap(2), Heap(3)))
-    EmptyHeap().add(4).add(2).add(3).add(1) should equalTo(Heap(4, Heap(2, Heap(1)), Heap(3)))
+    EmptyHeap().add(4) should equal(Heap(4))
+    EmptyHeap().add(4).add(3) should equal(Heap(4, Heap(3)))
+    EmptyHeap().add(4).add(3).add(2) should equal(Heap(4, Heap(3), Heap(2)))
+    EmptyHeap().add(4).add(2).add(3) should equal(Heap(4, Heap(2), Heap(3)))
+    EmptyHeap().add(4).add(2).add(3).add(1) should equal(Heap(4, Heap(2, Heap(1)), Heap(3)))
 
-    EmptyHeap().add(4).add(5) should equalTo(Heap(5, Heap(4)))
-    EmptyHeap().add(4).add(5).add(3) should equalTo(Heap(5, Heap(4), Heap(3)))
+    EmptyHeap().add(4).add(5) should equal(Heap(5, Heap(4)))
+    EmptyHeap().add(4).add(5).add(3) should equal(Heap(5, Heap(4), Heap(3)))
 
-    EmptyHeap().add(4).add(4) should equalTo(Heap(4, Heap(4)))
-    EmptyHeap().add(4).add(4).add(4) should equalTo(Heap(4, Heap(4), Heap(4)))
+    EmptyHeap().add(4).add(4) should equal(Heap(4, Heap(4)))
+    EmptyHeap().add(4).add(4).add(4) should equal(Heap(4, Heap(4), Heap(4)))
   }
 
   @Test def shouldRemoveMaxElementFromHeap() {
     intercept[UnsupportedOperationException] { EmptyHeap().removeMax() }
-    Heap(3).removeMax() should equalTo((3, EmptyHeap()))
-    Heap(3, Heap(2)).removeMax() should equalTo((3, Heap(2)))
-    Heap(3, Heap(2), Heap(1)).removeMax() should equalTo((3, Heap(2, EmptyHeap(), Heap(1))))
-    Heap(3, Heap(1), Heap(2)).removeMax() should equalTo((3, Heap(2, Heap(1))))
-    Heap(3, Heap(1, Heap(0)), Heap(2)).removeMax() should equalTo((3, Heap(2, Heap(1, Heap(0)))))
+    Heap(3).removeMax() should equal((3, EmptyHeap()))
+    Heap(3, Heap(2)).removeMax() should equal((3, Heap(2)))
+    Heap(3, Heap(2), Heap(1)).removeMax() should equal((3, Heap(2, EmptyHeap(), Heap(1))))
+    Heap(3, Heap(1), Heap(2)).removeMax() should equal((3, Heap(2, Heap(1))))
+    Heap(3, Heap(1, Heap(0)), Heap(2)).removeMax() should equal((3, Heap(2, Heap(1, Heap(0)))))
   }
 
   abstract class AHeap {

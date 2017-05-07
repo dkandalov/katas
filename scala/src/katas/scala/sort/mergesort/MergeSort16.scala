@@ -1,11 +1,11 @@
 package katas.scala.sort.mergesort
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import katas.scala.sort.SeqSortTest
 
 import scala.reflect.ClassTag
 
-class MergeSort16 extends SeqSortTest with ShouldMatchers {
+class MergeSort16 extends SeqSortTest with Matchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		def merge(seq1: Seq[T], seq2: Seq[T]): Seq[T] = {
 			if (seq1.isEmpty) seq2

@@ -1,20 +1,20 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.tailrec
 
 
-class BinarySearch18 extends ShouldMatchers {
+class BinarySearch18 extends Matchers {
 
 	@Test def findIndexOfElementInAList() {
-		binarySearch(List(), 1) should equalTo(notFound)
+		binarySearch(List(), 1) should equal(notFound)
 
-		Range(0, 2).toList.map{ binarySearch(Seq(1), _)} should equalTo(Seq(notFound, 0, notFound))
-		Range(0, 3).toList.map{ binarySearch(Seq(1, 2), _)} should equalTo(Seq(notFound, 0, 1, notFound))
-		Range(0, 4).toList.map{ binarySearch(Seq(1, 2, 3), _)} should equalTo(Seq(notFound, 0, 1, 2, notFound))
-		Range(0, 5).toList.map{ binarySearch(Seq(1, 2, 3, 4), _)} should equalTo(Seq(notFound, 0, 1, 2, 3, notFound))
+		Range(0, 2).toList.map{ binarySearch(Seq(1), _)} should equal(Seq(notFound, 0, notFound))
+		Range(0, 3).toList.map{ binarySearch(Seq(1, 2), _)} should equal(Seq(notFound, 0, 1, notFound))
+		Range(0, 4).toList.map{ binarySearch(Seq(1, 2, 3), _)} should equal(Seq(notFound, 0, 1, 2, notFound))
+		Range(0, 5).toList.map{ binarySearch(Seq(1, 2, 3, 4), _)} should equal(Seq(notFound, 0, 1, 2, 3, notFound))
 	}
 
 	private val notFound = -1

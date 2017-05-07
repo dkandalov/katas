@@ -1,18 +1,18 @@
 package katas.scala.eightQueen
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class EightQueen13 extends ShouldMatchers {
+class EightQueen13 extends Matchers {
 	@Test def `aaa`() {
-		queens(0) should equalTo(List(List()))
-		queens(1) should equalTo(List(List(1)))
-		queens(2) should equalTo(List())
-		queens(3) should equalTo(List())
-		queens(4) should equalTo(List(List(3, 1, 4, 2), List(2, 4, 1, 3)))
-		queens(5).size should equalTo(10)
-		queens(8).size should equalTo(92)
+		queens(0) should equal(List(List()))
+		queens(1) should equal(List(List(1)))
+		queens(2) should equal(List())
+		queens(3) should equal(List())
+		queens(4) should equal(List(List(3, 1, 4, 2), List(2, 4, 1, 3)))
+		queens(5).size should equal(10)
+		queens(8).size should equal(92)
 	}
 
 	private def queens(boardSize: Int): List[List[Int]] = {

@@ -2,7 +2,7 @@ package katas.scala.rx
 
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
 import scala.collection.JavaConversions._
@@ -12,7 +12,7 @@ import rx.lang.scala.Observable
 
 // TODO these tests are not deterministic (although might work most of the time)
 // TODO these tests are ugly
-class ObservableFun extends ShouldMatchers {
+class ObservableFun extends Matchers {
 	private val events = new CopyOnWriteArrayList[Any]()
 	private val someException = new IllegalStateException("no future, no past")
 
@@ -20,7 +20,7 @@ class ObservableFun extends ShouldMatchers {
 		val f: Future[String] = future { "future!" }
 		f.onSuccess { case it => events.add(it) }
 
-		events.toList should equalTo(Seq("future!"))
+		events.toList should equal(Seq("future!"))
 	}
 
 	@Test def failedFuture() {
@@ -28,7 +28,7 @@ class ObservableFun extends ShouldMatchers {
 		f.onFailure { case e => events.add(e.toString) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def completedFuture() {
@@ -39,7 +39,7 @@ class ObservableFun extends ShouldMatchers {
 		}
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("future!"))
+		events.toList should equal(Seq("future!"))
 	}
 
 	@Test def failedProjectionFails() {
@@ -50,7 +50,7 @@ class ObservableFun extends ShouldMatchers {
 		}
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("java.util.NoSuchElementException: Future.failed not completed with a throwable."))
+		events.toList should equal(Seq("java.util.NoSuchElementException: Future.failed not completed with a throwable."))
 	}
 	
 	@Test def failedProjectionSucceeds() {
@@ -61,7 +61,7 @@ class ObservableFun extends ShouldMatchers {
 		}
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def mapFutureSuccess() {
@@ -69,7 +69,7 @@ class ObservableFun extends ShouldMatchers {
 		f.onSuccess { case it => events.add(it) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("future! mapped"))
+		events.toList should equal(Seq("future! mapped"))
 	}
 
 	@Test def mapFutureFailure() {
@@ -77,7 +77,7 @@ class ObservableFun extends ShouldMatchers {
 		f.onFailure { case e => events.add(e.toString) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test(expected = classOf[IllegalStateException])
@@ -93,7 +93,7 @@ class ObservableFun extends ShouldMatchers {
 		f.onSuccess { case it => events.add(it) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("future! flat mapped"))
+		events.toList should equal(Seq("future! flat mapped"))
 	}
 
 	@Test def flatMapFutureFailure() {
@@ -101,7 +101,7 @@ class ObservableFun extends ShouldMatchers {
 		f.onFailure { case e => events.add(e.toString) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def failingFlatMapFuture() {
@@ -109,14 +109,14 @@ class ObservableFun extends ShouldMatchers {
 		f.onFailure { case e => events.add(e.toString) }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def awaitingFuture() {
 		val f = future { "future!" }
 		f.onSuccess { case it => events.add(it) }
 
-		Await.result(f, 1 second) should equalTo("future!")
+		Await.result(f, 1 second) should equal("future!")
 	}
 
 	@Test def successfulPromise() {
@@ -126,7 +126,7 @@ class ObservableFun extends ShouldMatchers {
 		promise.complete(Success("future!"))
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("future!"))
+		events.toList should equal(Seq("future!"))
 	}
 
 	@Test def failedPromise() {
@@ -136,13 +136,13 @@ class ObservableFun extends ShouldMatchers {
 		promise.complete(Failure(someException))
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def tryingToCompletePromise() {
 		val promise = Promise[String]()
-		promise.tryComplete(Success("yay!")) should equalTo(true)
-		promise.tryComplete(Success("yay!")) should equalTo(false)
+		promise.tryComplete(Success("yay!")) should equal(true)
+		promise.tryComplete(Success("yay!")) should equal(false)
 	}
 
 	@Test def completePromise_With_SuccessfulFuture() {
@@ -152,7 +152,7 @@ class ObservableFun extends ShouldMatchers {
 		promise.completeWith(future { "future!" })
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("future!"))
+		events.toList should equal(Seq("future!"))
 	}
 
 	@Test def completePromise_With_FailedFuture() {
@@ -162,7 +162,7 @@ class ObservableFun extends ShouldMatchers {
 		promise.completeWith(future { throw someException })
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(someException.toString))
+		events.toList should equal(Seq(someException.toString))
 	}
 
 	@Test def valuesFromObservable() {
@@ -170,7 +170,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.subscribe { it => events add it.toString }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("1", "2"))
+		events.toList should equal(Seq("1", "2"))
 	}
 
 	@Test def mapObservable() {
@@ -178,7 +178,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.map{_ + 1}.subscribe { it => events add it.toString }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("2", "3"))
+		events.toList should equal(Seq("2", "3"))
 	}
 
 	@Test def flatMapObservable() {
@@ -188,7 +188,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.flatMap(observeTwice).subscribe { it => events add it.toString }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("1", "1", "2", "2"))
+		events.toList should equal(Seq("1", "1", "2", "2"))
 	}
 
 	@Test def scanObservable() {
@@ -196,7 +196,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.scan{(acc: Int, it: Int) => acc + it}.subscribe { it => events add it.toString }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("1", "3"))
+		events.toList should equal(Seq("1", "3"))
 	}
 
 	@Test def groupObservable() {
@@ -209,7 +209,7 @@ class ObservableFun extends ShouldMatchers {
 		}
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq("observing odd", "odd1", "observing even", "even2", "odd3", "even4", "odd5"))
+		events.toList should equal(Seq("observing odd", "odd1", "observing even", "even2", "odd3", "even4", "odd5"))
 	}
 
 	// TODO doesn't compile after rx lib upgrade
@@ -227,7 +227,7 @@ class ObservableFun extends ShouldMatchers {
 		}
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(
+		events.toList should equal(Seq(
 			"observing odd", "odd1",
 			"observing even", "even2",
 			"odd3", // second odd event
@@ -246,7 +246,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.slidingBuffer(count = 2, 0).subscribe{ it => events add it }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
+		events.toList should equal(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
 	}
 
 	@Test def bufferSkippingObservable() {
@@ -254,7 +254,7 @@ class ObservableFun extends ShouldMatchers {
 		observable.slidingBuffer(count = 2, skip = 3).subscribe{ it => events add it }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(Seq(1, 2), Seq(4, 5)))
+		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
 	}
 
 /*
@@ -266,7 +266,7 @@ class ObservableFun extends ShouldMatchers {
 		observable1.subscribe{ it => events add it }
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(Seq(1, 2), Seq(4, 5)))
+		events.toList should equal(Seq(Seq(1, 2), Seq(4, 5)))
 	}
 */
 
@@ -277,7 +277,7 @@ class ObservableFun extends ShouldMatchers {
 		// TODO error: Cannot prove that rx.lang.scala.Observable[Seq[Any]] <:< rx.lang.scala.Observable[rx.lang.scala.Observable[U]].
 
 		Thread.sleep(10)
-		events.toList should equalTo(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
+		events.toList should equal(Seq(Seq(1, 2), Seq(3, 4), Seq(5)))
 	}
 */
 

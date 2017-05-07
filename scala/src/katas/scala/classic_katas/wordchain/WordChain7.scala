@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.immutable.SortedSet
 import scala.io.Source
@@ -11,23 +11,23 @@ import scala.io.Source
  * Date: 24/05/2012
  */
 
-class WordChain7 extends ShouldMatchers {
+class WordChain7 extends Matchers {
 	@Test def shouldChainOneWordToAnotherUsingOneLetterModification() {
-		findMinChain("aaa", "aaaa", SortedSet()) should equalTo(Seq())
-		findMinChain("aaa", "abc", SortedSet("aaa")) should equalTo(Seq())
-		findMinChain("aaa", "aaa", SortedSet("aaa")) should equalTo(Seq("aaa"))
+		findMinChain("aaa", "aaaa", SortedSet()) should equal(Seq())
+		findMinChain("aaa", "abc", SortedSet("aaa")) should equal(Seq())
+		findMinChain("aaa", "aaa", SortedSet("aaa")) should equal(Seq("aaa"))
 
 		val dictionary = SortedSet("aaa", "aba", "abc")
-		findMinChain("aaa", "abc", dictionary) should equalTo(Seq("aaa", "aba", "abc"))
+		findMinChain("aaa", "abc", dictionary) should equal(Seq("aaa", "aba", "abc"))
 	}
 
 	@Test def shouldLoadDictionaryFromFileAsSortedSet() {
 		val dictionary = loadDictionary()
-		dictionary.size should equalTo(234371)
+		dictionary.size should equal(234371)
 	}
 
 	@Test def shouldFindMinimalChainFromCatToDog() {
-		findMinChain("cat", "dog", loadDictionary()) should equalTo("") // TODO
+		findMinChain("cat", "dog", loadDictionary()) should equal("") // TODO
 	}
 
 	def loadDictionary(): SortedSet[String] = {

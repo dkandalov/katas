@@ -1,19 +1,19 @@
 package katas.scala.gcd
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.tailrec
 
 
-class GCD6 extends ShouldMatchers {
+class GCD6 extends Matchers {
 	@Test def `find greatest common denominator`() {
-		gcd(1, 1) should equalTo(1)
-		gcd(2, 2) should equalTo(2)
-		gcd(2, 3) should equalTo(1)
-		gcd(27, 3) should equalTo(3)
-		gcd(27, 13) should equalTo(1)
-		gcd(13, 27) should equalTo(1)
+		gcd(1, 1) should equal(1)
+		gcd(2, 2) should equal(2)
+		gcd(2, 3) should equal(1)
+		gcd(27, 3) should equal(3)
+		gcd(27, 13) should equal(1)
+		gcd(13, 27) should equal(1)
 	}
 
 	private def gcd(a: Int, b: Int): Int = {

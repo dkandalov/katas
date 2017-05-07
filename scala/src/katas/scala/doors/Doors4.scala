@@ -1,23 +1,23 @@
 package katas.scala.doors
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
  * @author DKandalov
  */
-class Doors4 extends ShouldMatchers {
+class Doors4 extends Matchers {
 
   @Test def shouldWalkDoors() {
-    walkDoors(2) should equalTo(List(true, false))
-    walkDoors(3) should equalTo(List(true, false, false))
-    walkDoors(4) should equalTo(List(true, false, false, true))
-    walkDoors(5) should equalTo(List(true, false, false, true, false))
-    walkDoors(6) should equalTo(List(true, false, false, true, false, false))
-    walkDoors(7) should equalTo(List(true, false, false, true, false, false, false))
-    walkDoors(8) should equalTo(List(true, false, false, true, false, false, false, false))
-    walkDoors(9) should equalTo(List(true, false, false, true, false, false, false, false, true))
-    walkDoors(10) should equalTo(List(true, false, false, true, false, false, false, false, true, false))
+    walkDoors(2) should equal(List(true, false))
+    walkDoors(3) should equal(List(true, false, false))
+    walkDoors(4) should equal(List(true, false, false, true))
+    walkDoors(5) should equal(List(true, false, false, true, false))
+    walkDoors(6) should equal(List(true, false, false, true, false, false))
+    walkDoors(7) should equal(List(true, false, false, true, false, false, false))
+    walkDoors(8) should equal(List(true, false, false, true, false, false, false, false))
+    walkDoors(9) should equal(List(true, false, false, true, false, false, false, false, true))
+    walkDoors(10) should equal(List(true, false, false, true, false, false, false, false, true, false))
   }
 
   def walkDoors_(doorsSize: Int): List[Boolean] = {

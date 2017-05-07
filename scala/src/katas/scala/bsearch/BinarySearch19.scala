@@ -1,21 +1,21 @@
 package katas.scala.bsearch
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.tailrec
 
 
-class BinarySearch19 extends ShouldMatchers {
+class BinarySearch19 extends Matchers {
 	@Test def findIndexOfElementInASequence() {
-		search(1, Seq()) should equalTo(notFound)
+		search(1, Seq()) should equal(notFound)
 
-		Seq(0, 1, 2).map{ search(_, Seq(1)) } should equalTo(Seq(notFound, 0, notFound))
-		Seq(0, 1, 2, 3).map{ search(_, Seq(1, 2)) } should equalTo(Seq(notFound, 0, 1, notFound))
-		Seq(0, 1, 2, 3, 4).map{ search(_, Seq(1, 2, 3)) } should equalTo(Seq(notFound, 0, 1, 2, notFound))
-		Seq(0, 1, 2, 3, 4, 5).map{ search(_, Seq(1, 2, 3, 4)) } should equalTo(Seq(notFound, 0, 1, 2, 3, notFound))
+		Seq(0, 1, 2).map{ search(_, Seq(1)) } should equal(Seq(notFound, 0, notFound))
+		Seq(0, 1, 2, 3).map{ search(_, Seq(1, 2)) } should equal(Seq(notFound, 0, 1, notFound))
+		Seq(0, 1, 2, 3, 4).map{ search(_, Seq(1, 2, 3)) } should equal(Seq(notFound, 0, 1, 2, notFound))
+		Seq(0, 1, 2, 3, 4, 5).map{ search(_, Seq(1, 2, 3, 4)) } should equal(Seq(notFound, 0, 1, 2, 3, notFound))
 
-		Seq('a', 'b', 'd', 'e').map{ search(_, Seq('b', 'd')) } should equalTo(Seq(notFound, 0, 1, notFound))
+		Seq('a', 'b', 'd', 'e').map{ search(_, Seq('b', 'd')) } should equal(Seq(notFound, 0, 1, notFound))
 	}
 
 	val notFound = -1

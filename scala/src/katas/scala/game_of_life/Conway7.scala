@@ -1,22 +1,22 @@
 package katas.scala.game_of_life
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class Conway7 extends ShouldMatchers {
+class Conway7 extends Matchers {
 	@Test def emptyUniverse_Evolves_IntoEmptyUniverse() {
 		val universe = new Universe()
 		val evolvedUniverse = universe.evolve()
 
-		evolvedUniverse should equalTo(emptyUniverse)
+		evolvedUniverse should equal(emptyUniverse)
 	}
 
 	@Test def universeWithOneCell_Evolves_IntoEmptyUniverse() {
 		val universe = new Universe().withCell()
 		val evolvedUniverse = universe.evolve()
 
-		evolvedUniverse should equalTo(emptyUniverse)
+		evolvedUniverse should equal(emptyUniverse)
 	}
 
 	@Test def universeWithThreeNeighbouringCells_Evolves_IntoThreeCellsUniverse(){
@@ -29,13 +29,13 @@ class Conway7 extends ShouldMatchers {
 
 		val evolvedUniverse = universe.evolve()
 
-		evolvedUniverse.cellsCount() should equalTo(3)
+		evolvedUniverse.cellsCount() should equal(3)
 	}
 
 	@Test def newUniverse_Has_NoCells() {
 		val universe = new Universe()
 
-		universe.cellsCount() should equalTo(0)
+		universe.cellsCount() should equal(0)
 	}
 
 	val emptyUniverse: Universe = new Universe()

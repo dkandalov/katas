@@ -1,29 +1,29 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class BST10 extends ShouldMatchers {
+class BST10 extends Matchers {
 	@Test def `size of tree`() {
-		EmptyNode().size() should equalTo(0)
-		Node("b").size() should equalTo(1)
-		Node("b", Node("a"), Node("c")).size() should equalTo(3)
+		EmptyNode().size() should equal(0)
+		Node("b").size() should equal(1)
+		Node("b", Node("a"), Node("c")).size() should equal(3)
 	}
 
 	@Test def `node insertion`() {
-		EmptyNode().insert("a") should equalTo(Node("a"))
-		Node("b").insert("a") should equalTo(Node("b", Node("a"), EmptyNode()))
-		Node("b").insert("a").insert("c") should equalTo(Node("b", Node("a"), Node("c")))
+		EmptyNode().insert("a") should equal(Node("a"))
+		Node("b").insert("a") should equal(Node("b", Node("a"), EmptyNode()))
+		Node("b").insert("a").insert("c") should equal(Node("b", Node("a"), Node("c")))
 	}
 
 	@Test def `root node insertion`() {
-		EmptyNode().rootInsert("a") should equalTo(Node("a"))
-		Node("b").rootInsert("a") should equalTo(Node("a", EmptyNode(), Node("b")))
-		Node("b").rootInsert("a").rootInsert("c") should equalTo(Node("c", Node("a", EmptyNode(), Node("b"))))
+		EmptyNode().rootInsert("a") should equal(Node("a"))
+		Node("b").rootInsert("a") should equal(Node("a", EmptyNode(), Node("b")))
+		Node("b").rootInsert("a").rootInsert("c") should equal(Node("c", Node("a", EmptyNode(), Node("b"))))
 
 		val tree = "aserchi".foldLeft(EmptyNode().asInstanceOf[Tree]) { (tree, c) => tree.rootInsert(c.toString) }
-		tree should equalTo(
+		tree should equal(
 			Node("i",
 				Node("h",
 					Node("c",
@@ -36,12 +36,12 @@ class BST10 extends ShouldMatchers {
 	}
 
 	@Test def `splay root node insertion`() {
-		EmptyNode().splayInsert("a") should equalTo(Node("a"))
-		Node("b").splayInsert("a") should equalTo(Node("a", EmptyNode(), Node("b")))
-		Node("b").splayInsert("a").splayInsert("c") should equalTo(Node("c", Node("b", Node("a"))))
+		EmptyNode().splayInsert("a") should equal(Node("a"))
+		Node("b").splayInsert("a") should equal(Node("a", EmptyNode(), Node("b")))
+		Node("b").splayInsert("a").splayInsert("c") should equal(Node("c", Node("b", Node("a"))))
 
 		val tree = "aserching".foldLeft(EmptyNode().asInstanceOf[Tree]) { (tree, c) => tree.splayInsert(c.toString) }
-		tree should equalTo(
+		tree should equal(
 			Node("g",
 				Node("e",
 					Node("c",

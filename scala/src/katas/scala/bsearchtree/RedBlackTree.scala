@@ -1,10 +1,10 @@
 package katas.scala.bsearchtree
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class RedBlackTree extends ShouldMatchers {
+class RedBlackTree extends Matchers {
 	private object NodeColor extends Enumeration {
 		type NodeColor = Value
 		val None, Red, Black = Value
@@ -13,39 +13,39 @@ class RedBlackTree extends ShouldMatchers {
 
 
 	@Test def `inserting elements as described in 'Algorithms in Java' Figure 13.20`() {
-		emptyNode().insert("a") should equalTo(Node("a", Black))
-		emptyNode().insert("a", "s") should equalTo(Node("a", Black, emptyNode(), Node("s", Red)))
-		emptyNode().insert("a", "s", "e") should equalTo(Node("e", Black, Node("a", Red), Node("s", Red)))
-		emptyNode().insert("a", "s", "e", "r") should equalTo(
+		emptyNode().insert("a") should equal(Node("a", Black))
+		emptyNode().insert("a", "s") should equal(Node("a", Black, emptyNode(), Node("s", Red)))
+		emptyNode().insert("a", "s", "e") should equal(Node("e", Black, Node("a", Red), Node("s", Red)))
+		emptyNode().insert("a", "s", "e", "r") should equal(
 			Node("e", Black,
 				Node("a", Black),
 				Node("s", Black, Node("r", Red))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c") should equal(
 			Node("e", Black,
 				Node("a", Black, emptyNode(), Node("c", Red)),
 				Node("s", Black, Node("r", Red))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c", "h") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c", "h") should equal(
 			Node("e", Black,
 				Node("a", Black, emptyNode(), Node("c", Red)),
 				Node("r", Black, Node("h", Red), Node("s", Red))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c", "h", "i") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c", "h", "i") should equal(
 			Node("e", Black,
 				Node("a", Black, emptyNode(), Node("c", Red)),
 				Node("r", Red,
 					Node("h", Black, emptyNode(), Node("i", Red)),
 					Node("s", Black))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n") should equal(
 			Node("e", Black,
 				Node("a", Black, emptyNode(), Node("c", Red)),
 				Node("r", Red,
 					Node("i", Black, Node("h", Red), Node("n", Red)),
 					Node("s", Black))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n", "g") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n", "g") should equal(
 			Node("i", Black,
 				Node("e", Red,
 					Node("a", Black, emptyNode(), Node("c", Red)),
@@ -54,7 +54,7 @@ class RedBlackTree extends ShouldMatchers {
 					Node("n", Black),
 					Node("s", Black))
 		))
-		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n", "g", "x") should equalTo(
+		emptyNode().insert("a", "s", "e", "r", "c", "h", "i", "n", "g", "x") should equal(
 			Node("i", Black,
 				Node("e", Black,
 					Node("a", Black, emptyNode(), Node("c", Red)),

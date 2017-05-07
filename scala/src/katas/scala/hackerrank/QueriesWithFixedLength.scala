@@ -3,17 +3,17 @@ package katas.scala.hackerrank
 import java.util.{Comparator, Scanner}
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.annotation.tailrec
 import scala.util.Random
 
 
-class QueriesWithFixedLength extends ShouldMatchers {
+class QueriesWithFixedLength extends Matchers {
 	@Test def `example`(): Unit = {
 		val seq = Seq(1, 2, 3, 4, 5)
 		val queries = Seq(1, 2, 3, 4, 5)
-		queries.map(minMax(seq, _)) should equalTo(Seq(1, 2, 3, 4, 5))
+		queries.map(minMax(seq, _)) should equal(Seq(1, 2, 3, 4, 5))
 	}
 
 	@Test def `queries produce the same result as sliding min/max`(): Unit = {
@@ -30,78 +30,78 @@ class QueriesWithFixedLength extends ShouldMatchers {
 			println(s"seq: $seq")
 
 			val queries = 1.to(n)
-			queries.map(minMax(seq, _)) should equalTo(queries.map(simpleMinMax(seq, _)))
+			queries.map(minMax(seq, _)) should equal(queries.map(simpleMinMax(seq, _)))
 		}
 	}
 
 	@Test def `adding elements to queue`(): Unit = {
 		val q = new Queue(3)
-		q.add(1).toSeq should equalTo(Seq(1));       q.max should equalTo(1)
-		q.add(2).toSeq should equalTo(Seq(1, 2));    q.max should equalTo(2)
-		q.add(3).toSeq should equalTo(Seq(1, 2, 3)); q.max should equalTo(3)
-		q.add(4).toSeq should equalTo(Seq(2, 3, 4)); q.max should equalTo(4)
-		q.add(5).toSeq should equalTo(Seq(3, 4, 5)); q.max should equalTo(5)
+		q.add(1).toSeq should equal(Seq(1));       q.max should equal(1)
+		q.add(2).toSeq should equal(Seq(1, 2));    q.max should equal(2)
+		q.add(3).toSeq should equal(Seq(1, 2, 3)); q.max should equal(3)
+		q.add(4).toSeq should equal(Seq(2, 3, 4)); q.max should equal(4)
+		q.add(5).toSeq should equal(Seq(3, 4, 5)); q.max should equal(5)
 	}
 
 	@Test def `add elements to heap`(): Unit = {
 		val heap = new Heap(8, Ordering.Int)
-		heap.size should equalTo(0)
-		heap.data should equalTo(Seq(0, 0, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(0)
+		heap.data should equal(Seq(0, 0, 0, 0, 0, 0, 0, 0))
 
 		heap.add(0)
-		heap.size should equalTo(1)
-		heap.data should equalTo(Seq(0, 0, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(1)
+		heap.data should equal(Seq(0, 0, 0, 0, 0, 0, 0, 0))
 
 		heap.add(1)
-		heap.size should equalTo(2)
-		heap.data should equalTo(Seq(1, 0, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(2)
+		heap.data should equal(Seq(1, 0, 0, 0, 0, 0, 0, 0))
 
 		heap.add(2)
-		heap.size should equalTo(3)
-		heap.data should equalTo(Seq(2, 0, 1, 0, 0, 0, 0, 0))
+		heap.size should equal(3)
+		heap.data should equal(Seq(2, 0, 1, 0, 0, 0, 0, 0))
 
 		heap.add(3)
-		heap.size should equalTo(4)
-		heap.data should equalTo(Seq(3, 2, 1, 0, 0, 0, 0, 0))
+		heap.size should equal(4)
+		heap.data should equal(Seq(3, 2, 1, 0, 0, 0, 0, 0))
 
 		heap.add(4)
-		heap.size should equalTo(5)
-		heap.data should equalTo(Seq(4, 3, 1, 0, 2, 0, 0, 0))
+		heap.size should equal(5)
+		heap.data should equal(Seq(4, 3, 1, 0, 2, 0, 0, 0))
 
 		heap.add(5)
-		heap.size should equalTo(6)
-		heap.data should equalTo(Seq(5, 3, 4, 0, 2, 1, 0, 0))
+		heap.size should equal(6)
+		heap.data should equal(Seq(5, 3, 4, 0, 2, 1, 0, 0))
 	}
 
 	@Test def `remove elements from heap`(): Unit = {
 		val heap = new Heap(8, Ordering.Int)
 		List(0, 1, 2, 3, 4, 5).foreach(heap.add)
-		heap.size should equalTo(6)
-		heap.data should equalTo(Seq(5, 3, 4, 0, 2, 1, 0, 0))
+		heap.size should equal(6)
+		heap.data should equal(Seq(5, 3, 4, 0, 2, 1, 0, 0))
 
 		heap.remove(0)
-		heap.size should equalTo(5)
-		heap.data should equalTo(Seq(5, 3, 4, 1, 2, 0, 0, 0))
+		heap.size should equal(5)
+		heap.data should equal(Seq(5, 3, 4, 1, 2, 0, 0, 0))
 
 		heap.remove(1)
-		heap.size should equalTo(4)
-		heap.data should equalTo(Seq(5, 3, 4, 2, 0, 0, 0, 0))
+		heap.size should equal(4)
+		heap.data should equal(Seq(5, 3, 4, 2, 0, 0, 0, 0))
 
 		heap.remove(2)
-		heap.size should equalTo(3)
-		heap.data should equalTo(Seq(5, 3, 4, 0, 0, 0, 0, 0))
+		heap.size should equal(3)
+		heap.data should equal(Seq(5, 3, 4, 0, 0, 0, 0, 0))
 
 		heap.remove(3)
-		heap.size should equalTo(2)
-		heap.data should equalTo(Seq(5, 4, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(2)
+		heap.data should equal(Seq(5, 4, 0, 0, 0, 0, 0, 0))
 
 		heap.remove(4)
-		heap.size should equalTo(1)
-		heap.data should equalTo(Seq(5, 0, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(1)
+		heap.data should equal(Seq(5, 0, 0, 0, 0, 0, 0, 0))
 
 		heap.remove(5)
-		heap.size should equalTo(0)
-		heap.data should equalTo(Seq(0, 0, 0, 0, 0, 0, 0, 0))
+		heap.size should equal(0)
+		heap.data should equal(Seq(0, 0, 0, 0, 0, 0, 0, 0))
 	}
 
 	def main(args: Array[String]): Unit = {

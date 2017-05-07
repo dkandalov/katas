@@ -1,7 +1,7 @@
 package katas.scala.doors
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -10,9 +10,9 @@ import scala.collection.mutable.ArrayBuffer
  * Date: 03/09/2012
  */
 
-class Doors6 extends ShouldMatchers {
+class Doors6 extends Matchers {
 	@Test def walkingDoors() {
-		doors(20) should equalTo(ArrayBuffer(true, false, false, true, false, false, false, false, true,
+		doors(20) should equal(ArrayBuffer(true, false, false, true, false, false, false, false, true,
 			false, false, false, false, false, false, true, false, false, false, true))
 	}
 

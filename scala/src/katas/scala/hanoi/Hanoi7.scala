@@ -1,14 +1,14 @@
 package katas.scala.hanoi
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class Hanoi7 extends ShouldMatchers {
+class Hanoi7 extends Matchers {
 	@Test def `find moves to solve Towers of Hanoi problem`() {
-		findMoves(towerSize = 1) should equalTo(Seq(Move(0, -1)))
-		findMoves(towerSize = 2) should equalTo(Seq(Move(0, 1), Move(1, -1), Move(0, 1)))
-		findMoves(towerSize = 3) should equalTo(Seq(
+		findMoves(towerSize = 1) should equal(Seq(Move(0, -1)))
+		findMoves(towerSize = 2) should equal(Seq(Move(0, 1), Move(1, -1), Move(0, 1)))
+		findMoves(towerSize = 3) should equal(Seq(
 			Move(0, -1), Move(1, 1), Move(0, -1),
 			Move(2, -1),
 			Move(0, -1), Move(1, 1), Move(0, -1)

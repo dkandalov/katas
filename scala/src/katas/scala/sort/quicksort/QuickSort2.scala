@@ -1,12 +1,12 @@
 package katas.scala.sort.quicksort
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import katas.scala.sort.SeqSortTest
 
 import scala.reflect.ClassTag
 
 
-class QuickSort2 extends SeqSortTest with ShouldMatchers {
+class QuickSort2 extends SeqSortTest with Matchers {
 	override def sort[T](seq: Seq[T])(implicit ordered: (T) => Ordered[T], tag: ClassTag[T]): Seq[T] = {
 		if (seq.size <= 1) return seq
 		val pivot = seq(seq.size / 2)

@@ -1,39 +1,39 @@
 package katas.scala.textindex
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class TextIndex2 extends ShouldMatchers {
+class TextIndex2 extends Matchers {
 	@Test def `indexed text`() {
-		indexed("") should equalTo(List())
-		indexed("abc") should equalTo(List(
+		indexed("") should equal(List())
+		indexed("abc") should equal(List(
 			(0, "abc"), (1, "bc"), (2, "c")
 		))
-		indexed("cba") should equalTo(List(
+		indexed("cba") should equal(List(
 			(2, "a"), (1, "ba"), (0, "cba")
 		))
 	}
 
 	@Test def `finding position of string in indexed text`() {
-		positionOf("", indexed("")) should equalTo(-1)
-		positionOf("a", indexed("a")) should equalTo(0)
+		positionOf("", indexed("")) should equal(-1)
+		positionOf("a", indexed("a")) should equal(0)
 
-		positionOf("a", indexed("abc")) should equalTo(0)
-		positionOf("b", indexed("abc")) should equalTo(1)
-		positionOf("c", indexed("abc")) should equalTo(2)
+		positionOf("a", indexed("abc")) should equal(0)
+		positionOf("b", indexed("abc")) should equal(1)
+		positionOf("c", indexed("abc")) should equal(2)
 
-		positionOf("a", indexed("cba")) should equalTo(2)
-		positionOf("b", indexed("cba")) should equalTo(1)
-		positionOf("c", indexed("cba")) should equalTo(0)
+		positionOf("a", indexed("cba")) should equal(2)
+		positionOf("b", indexed("cba")) should equal(1)
+		positionOf("c", indexed("cba")) should equal(0)
 	}
 
 	@Test def `realistic example`() {
 		val text = "Then we can use binary search on this table. For example, to find out whether " +
 			"the phrase never mind appears in this text, we compare with long"
 
-		positionOf("apple", indexed(text)) should equalTo(-1)
-		positionOf("never mind", indexed(text)) should equalTo(89)
+		positionOf("apple", indexed(text)) should equal(-1)
+		positionOf("never mind", indexed(text)) should equal(89)
 	}
 
 

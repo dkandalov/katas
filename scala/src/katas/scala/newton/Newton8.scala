@@ -1,10 +1,10 @@
 package katas.scala.newton
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class Newton8 extends ShouldMatchers {
+class Newton8 extends Matchers {
 	@Test def `find square root`() {
 		sqrt(1) should beTolerantEqualTo(1)
 		sqrt(2) should beTolerantEqualTo(1.414)

@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.immutable.SortedSet
 import scala.io.Source
@@ -11,28 +11,28 @@ import scala.io.Source
  * Date: 26/05/2012
  */
 
-class WordChain8 extends ShouldMatchers {
+class WordChain8 extends Matchers {
 	@Test def shouldFindMinChainOfTransformationsFromOneWordToAnother() {
-		findMinChain("aaa", "bbb", Set()) should equalTo(Seq())
-		findMinChain("aaa", "aaa", Set()) should equalTo(Seq("aaa"))
-		findMinChain("aaa", "abc", Set("aaa", "aba", "abc")) should equalTo(Seq("aaa", "aba", "abc"))
-		findMinChain("aaa", "abc", Set("aaa", "aac", "aba", "abc")) should equalTo(Seq("aaa", "aac", "abc"))
+		findMinChain("aaa", "bbb", Set()) should equal(Seq())
+		findMinChain("aaa", "aaa", Set()) should equal(Seq("aaa"))
+		findMinChain("aaa", "abc", Set("aaa", "aba", "abc")) should equal(Seq("aaa", "aba", "abc"))
+		findMinChain("aaa", "abc", Set("aaa", "aac", "aba", "abc")) should equal(Seq("aaa", "aac", "abc"))
 	}
 
 	@Test def shouldLoadStandardUnixDictionary() {
 		val dictionary = loadDictionary()
-		dictionary.size should equalTo(234371)
+		dictionary.size should equal(234371)
 	}
 
 	@Test def shouldDetermineIfWordsAreDifferentByJustOneCharacter() {
-		canBeNextWord("cat", "car") should beEqualTo(true)
-		canBeNextWord("cat", "rca") should beEqualTo(false)
-		canBeNextWord("cat", "act") should beEqualTo(false)
+		canBeNextWord("cat", "car") should equal(true)
+		canBeNextWord("cat", "rca") should equal(false)
+		canBeNextWord("cat", "act") should equal(false)
 	}
 
 	@Test def shouldFindMinWordChainFromCatToDog() {
 		val dictionary = loadDictionary()
-		findMinChain("cat", "dog", dictionary) should equalTo(Seq("cat", "cag", "cog", "dog"))
+		findMinChain("cat", "dog", dictionary) should equal(Seq("cat", "cag", "cog", "dog"))
 	}
 
 	def loadDictionary(): Set[String] = {

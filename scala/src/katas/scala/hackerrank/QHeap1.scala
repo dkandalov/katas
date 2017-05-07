@@ -1,7 +1,7 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -9,7 +9,7 @@ import scala.util.Random
 /**
 	* https://www.hackerrank.com/challenges/qheap1
 	*/
-class QHeap1 extends ShouldMatchers {
+class QHeap1 extends Matchers {
 
 	@Test def `hackerrank example`(): Unit = {
 		val heap = new Heap[Int]()
@@ -73,7 +73,7 @@ class QHeap1 extends ShouldMatchers {
 		values.foreach { n =>
 			heap.add(n)
 			heap.toList.foreach { it =>
-				(it, heap.indexOf(it)) shouldNotEqual (it, -1)
+				(it, heap.indexOf(it)) shouldNot equal(it, -1)
 			}
 		}
 	}
@@ -87,7 +87,7 @@ class QHeap1 extends ShouldMatchers {
 		values.foreach { n =>
 			heap.delete(n) shouldEqual true
 			heap.toList.foreach { it =>
-				(it, heap.indexOf(it)) shouldNotEqual (it, -1)
+				(it, heap.indexOf(it)) shouldNot equal(it, -1)
 			}
 		}
 	}

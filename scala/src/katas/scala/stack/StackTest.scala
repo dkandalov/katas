@@ -1,20 +1,20 @@
 package katas.scala.stack
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class StackTest extends ShouldMatchers {
+class StackTest extends Matchers {
 	@Test def `push and pop elements from stack`() {
 		var stack = new Stack[Int]()
-		stack.size should equalTo(0)
+		stack.size should equal(0)
 
 		stack = stack.push(1).push(2).push(3)
-		stack.size should equalTo(3)
+		stack.size should equal(3)
 
 		val (value, updatedStack) = stack.pop
-		updatedStack.size should equalTo(2)
-		value should equalTo(3)
+		updatedStack.size should equal(2)
+		value should equal(3)
 	}
 
 	@Test def `covariance`() {

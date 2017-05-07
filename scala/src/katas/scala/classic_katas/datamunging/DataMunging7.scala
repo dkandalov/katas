@@ -1,6 +1,6 @@
 package katas.scala.classic_katas.datamunging
 
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 import org.junit.Test
 import scala.io.Source
 
@@ -9,21 +9,21 @@ import scala.io.Source
  * Date: 13/10/2012
  */
 
-class DataMunging7 extends ShouldMatchers { // TODO try streaming implementation
+class DataMunging7 extends Matchers { // TODO try streaming implementation
 	@Test def shouldFindDayWithMinTemperatureSpread() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat", 8, 2)
 		val dayWithMinTempSpread = convertToEntries(lines, 0, 1, 2).minBy{ _.valueDifference }.key
 
-		lines.size should equalTo(30)
-		dayWithMinTempSpread should equalTo("14")
+		lines.size should equal(30)
+		dayWithMinTempSpread should equal("14")
 	}
 
 	@Test def shouldFindTeamWithMinGoalDifference() {
 		val lines = readLines("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat", 5, 1)
 		val teamWithMinGoalDiff = convertToEntries(lines, 1, 6, 8).minBy{ _.valueDifference }.key
 
-		lines.size should equalTo(20)
-		teamWithMinGoalDiff should equalTo("Aston_Villa")
+		lines.size should equal(20)
+		teamWithMinGoalDiff should equal("Aston_Villa")
 	}
 
 	private def readLines(fileName: String, dropLeft: Int, dropRight: Int): Seq[String] = {

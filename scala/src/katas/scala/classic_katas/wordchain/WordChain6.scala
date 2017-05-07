@@ -1,7 +1,7 @@
 package katas.scala.classic_katas.wordchain
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 import scala.collection.immutable.Set
 import scala.io.Source
@@ -12,12 +12,12 @@ import scala.io.Source
  */
 
 
-class WordChain6 extends ShouldMatchers {
+class WordChain6 extends Matchers {
 
 	@Test def shouldFindShortestWordChain() {
 		val dictionary = Source.fromFile("/usr/share/dict/words").getLines().map(_.toLowerCase).toSet
-		findShortestWordChain("cat", "cat", dictionary) should equalTo(Seq("cat", "cat"))
-		findShortestWordChain("cat", "dog", dictionary) should equalTo(Seq("cat", "other words", "dog"))
+		findShortestWordChain("cat", "cat", dictionary) should equal(Seq("cat", "cat"))
+		findShortestWordChain("cat", "dog", dictionary) should equal(Seq("cat", "other words", "dog"))
 	}
 
 	var chainCache: Map[(String, String), Seq[String]] = Map()

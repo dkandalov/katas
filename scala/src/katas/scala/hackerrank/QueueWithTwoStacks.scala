@@ -1,12 +1,12 @@
 package katas.scala.hackerrank
 
 import org.junit.Test
-import org.specs2.matcher.ShouldMatchers
+import org.scalatest.Matchers
 
 /**
 	* https://www.hackerrank.com/challenges/queue-using-two-stacks
 	*/
-class QueueWithTwoStacks extends ShouldMatchers {
+class QueueWithTwoStacks extends Matchers {
 	
 	@Test def `example from the task`(): Unit = {
 		val queue = new Queue()
