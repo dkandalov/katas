@@ -56,20 +56,24 @@ class ComponentsInAGraph extends Matchers {
 	}
 
 	class Board() {
-		private val map: mutable.HashMap[Int, Int] = new mutable.HashMap[Int, Int]()
+		private val map = new mutable.HashMap[Int, Int]()
+
+		def minMaxComponentsSize(): (Int, Int) = {
+			val countByRoot = new mutable.HashMap[Int, Int]().withDefaultValue(0)
+			map.foreach{ entry =>
+				countByRoot(rootOf(entry._1)) += 1
+			}
+			(countByRoot.minBy(_._2)._2, countByRoot.maxBy(_._2)._2)
+		}
 
 		def areConnected(p1: Int, p2: Int): Boolean = {
 			if (!map.contains(p1)) false
 			else if (!map.contains(p2)) false
-			else map(p1) == map(p2)
-		}
-
-		def minMaxComponentsSize(): (Int, Int) = {
-			val grouped = map
-				.groupBy{ _._2 }
-				.map{ it => (it._1, it._2.size) }
-				.filter{ _._2 > 1 }
-			(grouped.minBy(_._2)._2, grouped.maxBy(_._2)._2)
+			else {
+				val p1Root = rootOf(p1)
+				val p2Root = rootOf(p2)
+				p1Root == p2Root
+			}
 		}
 
 		def connect(p1: Int, p2: Int) {
@@ -79,9 +83,7 @@ class ComponentsInAGraph extends Matchers {
 			val p1Root = rootOf(p1)
 			val p2Root = rootOf(p2)
 
-			map.keySet
-				.filter{ map(_) == p1Root }
-				.foreach{ map(_) = p2Root }
+			map(p1Root) = p2Root
 		}
 
 		private def rootOf(p: Int): Int = {
