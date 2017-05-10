@@ -59,7 +59,7 @@ class ComponentsInAGraph extends Matchers {
 		private val map = new mutable.HashMap[Int, Int]()
 
 		def minMaxComponentsSize(): (Int, Int) = {
-			val countByRoot = new mutable.HashMap[Int, Int]().withDefaultValue(0)
+			val countByRoot = new mutable.TreeMap[Int, Int]().withDefaultValue(0)
 			map.foreach{ entry =>
 				countByRoot(rootOf(entry._1)) += 1
 			}

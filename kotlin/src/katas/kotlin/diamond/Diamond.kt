@@ -26,28 +26,28 @@ class DiamondTests {
         makeQuarterDiamond(size = 1) shouldEqual "A"
 
         makeQuarterDiamond(size = 2) shouldEqual """
-            |A-
-            |-B
+            |-A
+            |B-
         """.trimMargin()
 
         makeQuarterDiamond(size = 3) shouldEqual """
-            |A--
+            |--A
             |-B-
-            |--C
+            |C--
         """.trimMargin()
     }
 
     @Test fun `reflect string`() {
-        "A-\n-B".reflectLeft() shouldEqual "-A-\nB-B"
+        "-A\nB-".reflectRight() shouldEqual "-A-\nB-B"
         "-A-\nB-B".reflectDown() shouldEqual "-A-\nB-B\n-A-"
     }
 
     private fun makeDiamond(size: Int): String {
-        return makeQuarterDiamond(size).reflectLeft().reflectDown()
+        return makeQuarterDiamond(size).reflectRight().reflectDown()
     }
 
-    private fun String.reflectLeft() =
-        split('\n').map{ it.reversed().dropLast(1) + it }.joinToString("\n")
+    private fun String.reflectRight() =
+        split('\n').map{ it + it.reversed().drop(1) }.joinToString("\n")
 
     private fun String.reflectDown() =
         split('\n').let { it + it.reversed().drop(1) }.joinToString("\n")
@@ -57,7 +57,7 @@ class DiamondTests {
         return 0.until(size)
             .map { shift ->
                 (startLetter + shift).toString()
-                    .padStart(shift + 1, '-')
+                    .padStart(size - shift, '-')
                     .padEnd(size, '-')
             }
             .joinToString("\n")
