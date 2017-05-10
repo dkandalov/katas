@@ -16,11 +16,13 @@ class Diamonds2Tests {
         """.trimMargin()
 
         diamond(size = 3) shouldEqual """
-            |--A--
-            |-B-B-
+            |A
+            |B-B
             |C---C
-            |-B-B-
-            |--A--
+            |D-----D
+            |C---C
+            |B-B
+            |A
         """.trimMargin()
     }
 
