@@ -26,6 +26,13 @@ class ComponentsInAGraph extends Matchers {
 		board.minMaxComponentsSize() should equal((2, 4))
 	}
 
+	@Test def `hackerrank timing out example`(): Unit = {
+		val board = new Board()
+		15000.to(30000).foreach {
+			board.connect(1, _)
+		}
+	}
+
 	@Test def `inserting random elements into large board`(): Unit = {
 		val seed = new Random().nextLong()
 		println(s"seed = $seed")
@@ -59,7 +66,7 @@ class ComponentsInAGraph extends Matchers {
 		private val map = new mutable.HashMap[Int, Int]()
 
 		def minMaxComponentsSize(): (Int, Int) = {
-			val countByRoot = new mutable.TreeMap[Int, Int]().withDefaultValue(0)
+			val countByRoot = new mutable.HashMap[Int, Int]().withDefaultValue(0)
 			map.foreach{ entry =>
 				countByRoot(rootOf(entry._1)) += 1
 			}
@@ -78,7 +85,10 @@ class ComponentsInAGraph extends Matchers {
 
 		def connect(p1: Int, p2: Int) {
 			if (!map.contains(p1)) map.put(p1, p1)
-			if (!map.contains(p2)) map.put(p2, p2)
+			if (!map.contains(p2)) {
+				map.put(p2, p1)
+				return
+			}
 
 			val p1Root = rootOf(p1)
 			val p2Root = rootOf(p2)
