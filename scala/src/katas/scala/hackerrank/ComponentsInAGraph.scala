@@ -6,7 +6,9 @@ import org.scalatest.Matchers
 import scala.collection.mutable
 import scala.util.Random
 
-
+/**
+	* https://www.hackerrank.com/challenges/components-in-graph
+	*/
 class ComponentsInAGraph extends Matchers {
 
 	@Test def `determine if components are connected`(): Unit = {
