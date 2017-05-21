@@ -1,5 +1,5 @@
 @file:Suppress("PackageDirectoryMismatch")
-package tapl.chapter5
+package katas.kotlin.tapl.chapter5
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -22,6 +22,13 @@ data class Apply(val t1: Term, val t2: Term): Term {
     override fun toString() = "($t1)($t2)"
 }
 
+fun Term.eval(): Term = when {
+    this is Apply && t1.isReducible() -> Apply(t1.eval(), t2) // E-App1
+    this is Apply && t1 is Value && t2.isReducible() -> Apply(t1, t2.eval()) // E-App2
+    this is Apply && t1 is Lambda && t2 is Value -> t1.body.substitute(t1.arg, t2) // E-AppAbs
+    else -> this
+}
+
 fun Term.fullEval(): Term {
     var (lastResult, context) = this.varNamesToInts()
     var result = lastResult.eval()
@@ -30,13 +37,6 @@ fun Term.fullEval(): Term {
         result = result.eval()
     }
     return result.intsToVarNames(context)
-}
-
-fun Term.eval(): Term = when {
-    this is Apply && t1.isReducible() -> Apply(t1.eval(), t2) // E-App1
-    this is Apply && t1 is Value && t2.isReducible() -> Apply(t1, t2.eval()) // E-App2
-    this is Apply && t1 is Lambda && t2 is Value -> t1.body.substitute(t1.arg, t2) // E-AppAbs
-    else -> this
 }
 
 fun Term.isReducible() = this != eval()
@@ -95,12 +95,6 @@ private fun Term.varNamesToInts(context: Context = Context()): Pair<Term, Contex
     }
     else -> Pair(this, context)
 }
-
-fun λ(argName: String, varName: String) = λ(argName, Var(varName))
-fun λ(argName: String, t: Term) = Lambda(Var(argName), t)
-fun v(name: String) = Var(name)
-operator fun Term.invoke(varName: String) = this.invoke(Var(varName))
-operator fun Term.invoke(t: Term) = Apply(this, t)
 
 
 class EvaluationTest {
@@ -164,6 +158,12 @@ class EvaluationTest {
     @Test fun `substitution`() {
         λ("y", "x").substitute(v("x"), λ("z", v("z")(v("w")))) isEqualTo λ("y", λ("z", v("z")(v("w"))))
     }
+
+    fun λ(argName: String, varName: String) = λ(argName, Var(varName))
+    fun λ(argName: String, t: Term) = Lambda(Var(argName), t)
+    fun v(name: String) = Var(name)
+    operator fun Term.invoke(varName: String) = this.invoke(Var(varName))
+    operator fun Term.invoke(t: Term) = Apply(this, t)
 
     private infix fun Term.aka(termAsString: String): Term = apply {
         assertThat("input term", this.toString(), equalTo(termAsString))

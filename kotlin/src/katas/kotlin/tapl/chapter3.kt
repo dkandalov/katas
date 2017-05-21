@@ -1,5 +1,5 @@
 @file:Suppress("PackageDirectoryMismatch")
-package tapl.chapter3
+package katas.kotlin.tapl.chapter3
 
 /*
 This file contains implementation of language described in Chapter 3
@@ -26,29 +26,25 @@ fun Term.eval(): Term = when {
     this is `if` -> when {
         predicate == `true` -> then                                      // E-IfTrue
         predicate == `false` -> `else`                                   // E-IfFalse
-        predicate.reducible() -> copy(predicate = predicate.eval())      // E-If
+        predicate.isReducible() -> copy(predicate = predicate.eval())      // E-If
         else -> this
     }
-    this is succ && t.reducible() -> copy(t.eval())                      // E-Succ
+    this is succ && t.isReducible() -> copy(t.eval())                      // E-Succ
 
     this == pred(zero) -> zero                                           // E-PredZero
     this is pred && t is succ && t.t.isNumericValue() -> t.t             // E-PredSucc
-    this is pred && t.reducible() -> copy(t.eval())                      // E-Pred
+    this is pred && t.isReducible() -> copy(t.eval())                      // E-Pred
 
     this == iszero(zero) -> `true`                                       // E-IszeroZero
     this is iszero && t is succ && t.t.isNumericValue() -> `false`       // E-IszeroSucc
-    this is iszero && t.reducible() -> copy(t.eval())                    // E-IsZero
+    this is iszero && t.isReducible() -> copy(t.eval())                    // E-IsZero
 
     else -> this
 }
 
-fun Term.reducible() = !isValue() && this != this.eval()
-
-fun Term.isValue() =
-        this == `true` || this == `false` || isNumericValue()
-
-fun Term.isNumericValue(): Boolean =
-        this == zero || (this is succ && t.isNumericValue())
+fun Term.isReducible() = !isValue() && this != this.eval()
+fun Term.isValue() = this == `true` || this == `false` || isNumericValue()
+fun Term.isNumericValue(): Boolean = this == zero || (this is succ && t.isNumericValue())
 
 
 class EvaluationTest {
