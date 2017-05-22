@@ -3,12 +3,20 @@ package katas.kotlin.tapl.chapter9
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import katas.kotlin.shouldEqual
+import katas.kotlin.tapl.chapter9.TestUtil.aka
+import katas.kotlin.tapl.chapter9.TestUtil.evaluatesTo
+import katas.kotlin.tapl.chapter9.TestUtil.invoke
+import katas.kotlin.tapl.chapter9.TestUtil.v
+import katas.kotlin.tapl.chapter9.TestUtil.λ
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
-
 
 interface Term
 interface Value
 interface NumericValue : Value
+
 
 data class Var(val name: String): Term, Value {
     override fun toString() = name
@@ -19,8 +27,12 @@ data class Lambda(val arg: Var, val argType: TermType, val body: Term): Term, Va
 data class Apply(val t1: Term, val t2: Term): Term {
     override fun toString() = "($t1)($t2)"
 }
-object `true`: Term
-object `false`: Term
+object `true`: Term {
+    override fun toString() = "true"
+}
+object `false`: Term {
+    override fun toString() = "false"
+}
 data class `if`(val predicate: Term, val then: Term, val `else`: Term): Term {
     override fun toString() = "if ($predicate) $then else $`else`"
 }
@@ -45,9 +57,10 @@ object Bool: TermType {
 object Nat: TermType {
     override fun toString() = "Nat"
 }
-class FunctionType(val from: TermType, val to: TermType) : TermType {
+data class FunctionType(val from: TermType, val to: TermType) : TermType {
     override fun toString() = "$from->$to"
 }
+
 
 fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
     // Rules from figure 8.2
@@ -55,12 +68,13 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
     this is `false` -> Bool                                 // T-False
     this is `if` && predicate.type(Γ) is Bool &&
             then.type(Γ) == `else`.type(Γ) -> then.type(Γ)  // T-If
+    this is zero -> Nat                                     // ???
     this is succ && t.type(Γ) is Nat -> Nat                 // T-Succ
     this is pred && t.type(Γ) is Nat -> Nat                 // T-Pred
     this is isZero && t.type(Γ) is Nat -> Bool              // T-IsZero
 
     // Rules from figure 9.1
-    this is Var -> Γ[this]!!                                // T-Var
+    this is Var && Γ.contains(this) -> Γ[this]!!            // T-Var
     this is Lambda -> {                                     // T-Abs
         val type1 = argType
         val type2 = body.type(Γ + (arg to argType))
@@ -69,11 +83,14 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
     this is Apply -> {                                      // T-App
         val type12 = t1.type(Γ) as FunctionType
         val type11 = t2.type(Γ)
-        check(type12.from == type11)
-        type12.to
+        if (type12.from != type11) {
+            error("Can't infer type of: '$this' where Γ is $Γ")
+        } else {
+            type12.to
+        }
     }
 
-    else -> error("")
+    else -> error("Can't infer type of: '$this' where Γ is $Γ")
 }
 
 fun Term.eval(): Term = when {
@@ -171,7 +188,61 @@ private fun Term.varNamesToInts(context: Context = Context()): Pair<Term, Contex
 }
 
 
-class EvaluationTest {
+class TermTypeTest {
+    @Test fun `type of a term`() {
+        `false` hasType Bool
+        `true` hasType Bool
+        zero hasType Nat
+        v("b") hasType Bool
+        v("n") hasType Nat
+
+        `if`(`true`, then = `true`, `else` = `false`) hasType Bool
+        `if`(`true`, then = `true`, `else` = `false`) hasType Bool
+        `if`(`true`, then = zero, `else` = zero) hasType Nat
+        `if`(`true`, then = Var("b"), `else` = `false`) hasType Bool
+        `if`(`true`, then = zero, `else` = `false`).hasNoValidType()
+        `if`(`true`, then = Var("b"), `else` = Var("n")).hasNoValidType()
+
+        isZero(succ(zero)) hasType Bool
+        isZero(`false`).hasNoValidType()
+        isZero(v("a")).hasNoValidType()
+
+        succ(zero) hasType Nat
+        pred(zero) hasType Nat
+        pred(succ(succ(zero))) hasType Nat
+        succ(Var("b")).hasNoValidType()
+
+        λ("x:Bool", `true`) hasType "Bool->Bool"
+        λ("x:Bool", zero) hasType "Bool->Nat"
+        λ("x:Bool", λ("y:Nat", `true`)) hasType "Bool->Nat->Bool"
+        λ("x", FunctionType(Nat, Nat), λ("y:Bool", "x")) aka "λx:Nat->Nat.λy:Bool.x" hasType "Nat->Nat->Bool->Nat->Nat"
+
+        λ("x:Bool", `true`)(`true`) hasType Bool
+        λ("x:Bool", `true`)(zero).hasNoValidType()
+        λ("a:Bool", λ("a:Nat", "a"))("b") aka "(λa:Bool.λa:Nat.a)(b)" hasType "Nat->Nat"
+        λ("a:Bool", λ("a:Nat", "b"))("b") aka "(λa:Bool.λa:Nat.b)(b)" hasType "Nat->Bool"
+    }
+
+    private val Γ = mapOf(
+        Var("b") to Bool,
+        Var("n") to Nat
+    )
+
+    private infix fun Term.hasType(expectedType: TermType) = type(Γ) shouldEqual expectedType
+
+    private infix fun Term.hasType(expectedType: String) = type(Γ).toString() shouldEqual expectedType
+
+    private fun Term.hasNoValidType() {
+        try {
+            type(Γ)
+            fail("Expected IllegalStateException")
+        } catch (e: IllegalStateException) {
+            assertTrue(e.message!!.startsWith("Can't infer type"))
+        }
+    }
+}
+
+class TermEvaluationTest {
     @Test fun `variables and lambdas evaluate to themselves`() {
         v("a") aka "a" evaluatesTo "a"
         λ("a:Bool", "a") aka "λa:Bool.a" evaluatesTo "λa:Bool.a"
@@ -182,58 +253,28 @@ class EvaluationTest {
         λ("a:Nat", "a")(λ("x:Bool", "x")) aka "(λa:Nat.a)(λx:Bool.x)" evaluatesTo "λx:Bool.x"
     }
 
-//    @Test fun `application of free and bound variables`() {
-//        //                              unused argument
-//        //                              ↓
-//        λ("a", λ("a", "a"))("x") aka "(λa.λa.a)(x)" evaluatesTo "λa.a"
-//        λ("a", λ("b", "a"))("x") aka "(λa.λb.a)(x)" evaluatesTo "λb.x"
-//    }
-//
-//    @Test fun `application avoids variable capture`() {
-//        //                                       have the same name but different meaning
-//        //                                       ↓    ↓
-//        λ("a", λ("b", "a"))("b")("c") aka "((λa.λb.a)(b))(c)" evaluatesTo "b"
-//    }
-//
-//    @Test fun `map term variable names to unique integers`() {
-//        v("a").varNamesToInts().first.toString() shouldEqual "0"
-//
-//        λ("a", "a").aka("λa.a").varNamesToInts().let { (term, context) ->
-//            term.toString() shouldEqual "λ0.0"
-//            context.mapping shouldEqual mapOf(0 to "a")
-//        }
-//
-//        λ("a", "a")("a").aka("(λa.a)(a)").varNamesToInts().let { (term, context) ->
-//            term.toString() shouldEqual "(λ0.0)(1)"
-//            context.mapping shouldEqual mapOf(0 to "a", 1 to "a")
-//        }
-//
-//        λ("a", "a")("b").aka("(λa.a)(b)").varNamesToInts().let { (term, context) ->
-//            term.toString() shouldEqual "(λ0.0)(1)"
-//            context.mapping shouldEqual mapOf(0 to "a", 1 to "b")
-//        }
-//
-//        λ("a", λ("a", "a")).aka("λa.λa.a").varNamesToInts().let { (term, context) ->
-//            term.toString() shouldEqual "λ0.λ1.1"
-//            context.mapping shouldEqual mapOf(0 to "a", 1 to "a")
-//        }
-//
-//        λ("a", λ("a", λ("a", "a"))).aka("λa.λa.λa.a").varNamesToInts().let{ (term, context) ->
-//            term.toString() shouldEqual "λ0.λ1.λ2.2"
-//            context.mapping shouldEqual mapOf(0 to "a", 1 to "a", 2 to "a")
-//        }
-//    }
-//
-//    @Test fun `map integers to variable names`() {
-//        val context = Context(mapping = mapOf(0 to "a", 1 to "a", 2 to "a"))
-//        λ("0", λ("1", λ("2", "2"))).aka("λ0.λ1.λ2.2").intsToVarNames(context).toString() shouldEqual "λa.λa.λa.a"
-//    }
-//
-//    @Test fun `substitution`() {
-//        λ("y", "x").substitute(v("x"), λ("z", v("z")(v("w")))) isEqualTo λ("y", λ("z", v("z")(v("w"))))
-//    }
+    @Test fun `application of free and bound variables`() {
+        //                                       unused argument
+        //                                       ↓
+        λ("a:Bool", λ("a:Nat", "a"))("x") aka "(λa:Bool.λa:Nat.a)(x)" evaluatesTo "λa:Nat.a"
+        λ("a:Bool", λ("b:Nat", "a"))("x") aka "(λa:Bool.λb:Nat.a)(x)" evaluatesTo "λb:Nat.x"
+    }
 
-    fun λ(arg: String, varName: String): Lambda {
+    @Test fun `application avoids variable capture`() {
+        //                                                     have the same name but different meaning
+        //                                                     ↓        ↓
+        λ("a:Bool", λ("b:Nat", "a"))("b")("c") aka "((λa:Bool.λb:Nat.a)(b))(c)" evaluatesTo "b"
+    }
+}
+
+object TestUtil {
+    fun v(name: String) = Var(name)
+
+    fun λ(argName: String, argType: TermType, t: Term) = Lambda(Var(argName), argType, t)
+
+    fun λ(arg: String, varName: String) = λ(arg, Var(varName))
+
+    fun λ(arg: String, t: Term): Lambda {
         val (argName, type) = arg.split(":").let {
             if (it.size != 2) error("Expected arg with name and type but it was '$arg'") else it
         }
@@ -242,19 +283,17 @@ class EvaluationTest {
             "Bool" -> Bool
             else -> error("Unknown type $type")
         }
-        return λ(argName, argType, Var(varName))
+        return Lambda(Var(argName), argType, t)
     }
-    fun λ(argName: String, argType: TermType, t: Term) = Lambda(Var(argName), argType, t)
-    fun v(name: String) = Var(name)
+
     operator fun Term.invoke(varName: String) = this.invoke(Var(varName))
+
     operator fun Term.invoke(t: Term) = Apply(this, t)
 
-    private infix fun Term.aka(termAsString: String): Term = apply {
+    infix fun Term.aka(termAsString: String): Term = apply {
         assertThat("input term", this.toString(), equalTo(termAsString))
     }
 
-    private infix fun Term.evaluatesTo(termAsString: String) =
+    infix fun Term.evaluatesTo(termAsString: String) =
         assertThat("evaluated term", fullEval().toString(), equalTo(termAsString))
-
-    private infix fun Term.isEqualTo(expectedTerm: Term) = assertThat(this, equalTo(expectedTerm))
 }
