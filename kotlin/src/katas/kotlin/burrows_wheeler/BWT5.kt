@@ -6,6 +6,7 @@ import katas.kotlin.join
 import org.junit.Test
 
 class BWT5 {
+
     @Test fun `encode string`() {
         assertThat("banana".encode(), equalTo("bnn{aa}a"))
         assertThat("apple".encode(), equalTo("{lppa}e"))
