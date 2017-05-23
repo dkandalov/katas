@@ -188,7 +188,7 @@ private fun Term.varNamesToInts(context: Context = Context()): Pair<Term, Contex
 }
 
 
-class TermTypeTest {
+class TermTypeTests {
     @Test fun `type of a term`() {
         `false` hasType Bool
         `true` hasType Bool
@@ -242,7 +242,7 @@ class TermTypeTest {
     }
 }
 
-class TermEvaluationTest {
+class TermEvaluationTests {
     @Test fun `variables and lambdas evaluate to themselves`() {
         v("a") aka "a" evaluatesTo "a"
         λ("a:Bool", "a") aka "λa:Bool.a" evaluatesTo "λa:Bool.a"
