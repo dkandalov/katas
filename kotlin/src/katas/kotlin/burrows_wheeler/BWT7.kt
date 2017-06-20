@@ -30,7 +30,7 @@ class BWT7 {
     }
 
     private fun String.encode(): String {
-        return this.let { "{$it}" }.run {
+        return "{$this}".run {
             indices
                 .map { drop(it) + take(it) }.sorted()
                 .map { it.last() }.join("")
