@@ -28,7 +28,7 @@ fun <E> Iterable<E>.skip(n: Int): Iterable<E> {
         if (!iterator.hasNext()) throw IllegalStateException()
         iterator.next()
     }
-    return object : Iterable<E> {
+    return object: Iterable<E> {
         override fun iterator() = iterator
     }
 }
@@ -37,7 +37,16 @@ fun <E> List<E>.sliding(windowSize: Int): List<List<E>> {
     return (0..(size - windowSize)).map { subList(it, it + windowSize) }
 }
 
-class UtilFunctionsTest : StringSpec() {
+fun <E> List<E>.tail() = drop(1)
+
+fun <E> List<E>.permutations(): List<List<E>> =
+    if (size <= 1) listOf(this)
+    else flatMap { item ->
+        (this - item).permutations().map { it: List<E> -> listOf(item) + it }
+    }
+
+
+class UtilFunctionsTest: StringSpec() {
     init {
         "sliding window" {
             listOf<Int>().sliding(2) shouldEqual listOf<List<Int>>()
@@ -53,6 +62,20 @@ class UtilFunctionsTest : StringSpec() {
             listOf(1, 2, 3).skip(1).toList() shouldEqual listOf(2, 3)
             listOf(1, 2, 3).skip(2).toList() shouldEqual listOf(3)
             listOf(1, 2, 3).skip(3).toList() shouldEqual listOf<Int>()
+        }
+
+        "permutation of elements" {
+            listOf<Int>().permutations() shouldEqual listOf(listOf<Int>())
+            listOf(1).permutations() shouldEqual listOf(listOf(1))
+            listOf(1, 2).permutations() shouldEqual listOf(listOf(1, 2), listOf(2, 1))
+            listOf(1, 2, 3).permutations() shouldEqual listOf(
+                listOf(1, 2, 3),
+                listOf(1, 3, 2),
+                listOf(2, 1, 3),
+                listOf(2, 3, 1),
+                listOf(3, 1, 2),
+                listOf(3, 2, 1)
+            )
         }
     }
 }
