@@ -2,6 +2,8 @@ package katas.kotlin.sort.mergesort
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import katas.kotlin.permutations
+import katas.kotlin.shouldEqual
 import org.junit.Test
 
 class MergeSort0Test {
@@ -17,6 +19,10 @@ class MergeSort0Test {
         assertThat(listOf(2, 3, 1).mergeSort(), equalTo(listOf(1, 2, 3)))
         assertThat(listOf(3, 1, 2).mergeSort(), equalTo(listOf(1, 2, 3)))
         assertThat(listOf(3, 2, 1).mergeSort(), equalTo(listOf(1, 2, 3)))
+
+        listOf(1, 2, 2, 3).permutations().forEach { list ->
+            list.mergeSort() shouldEqual listOf(1, 2, 2, 3)
+        }
     }
 }
 

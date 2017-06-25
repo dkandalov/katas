@@ -43,7 +43,7 @@ fun <E> List<E>.permutations(): List<List<E>> =
     if (size <= 1) listOf(this)
     else flatMap { item ->
         (this - item).permutations().map { it: List<E> -> listOf(item) + it }
-    }
+    }.distinct()
 
 
 class UtilFunctionsTest: StringSpec() {
@@ -68,6 +68,7 @@ class UtilFunctionsTest: StringSpec() {
             listOf<Int>().permutations() shouldEqual listOf(listOf<Int>())
             listOf(1).permutations() shouldEqual listOf(listOf(1))
             listOf(1, 2).permutations() shouldEqual listOf(listOf(1, 2), listOf(2, 1))
+            listOf(2, 2).permutations() shouldEqual listOf(listOf(2, 2))
             listOf(1, 2, 3).permutations() shouldEqual listOf(
                 listOf(1, 2, 3),
                 listOf(1, 3, 2),

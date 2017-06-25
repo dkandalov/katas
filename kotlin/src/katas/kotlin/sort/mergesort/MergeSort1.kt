@@ -25,11 +25,7 @@ class MergeSort1 {
         if (this.size <= 1) return this
 
         val pivotIndex = size / 2
-        val pivot = this[pivotIndex]
-        val left = filterIndexed { index, n -> n <= pivot && index != pivotIndex }
-        val right = filterIndexed { index, n -> n > pivot && index != pivotIndex }
-
-        return merge(left.mergeSort() + pivot, right.mergeSort())
+        return merge(take(pivotIndex).mergeSort(), drop(pivotIndex).mergeSort())
     }
 
     private fun <T: Comparable<T>> merge(list1: List<T>, list2: List<T>): List<T> =
