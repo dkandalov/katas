@@ -114,7 +114,7 @@ class HelloNN {
     }
 
 
-    private class NeuralNetwork(val layers: List<Layer>) {
+    private class NeuralNetwork(layers: List<Layer>) {
         private val inputLayer = layers.first()
         private val hiddenLayers = layers.tail()
         private val outputLayer = layers.last()
@@ -137,8 +137,8 @@ class HelloNN {
                     .map { it.first - it.second }
                     .toTypedArray()
 
-            hiddenLayers.foldRight(errors) { layer, errors ->
-                layer.backPropagate(errors)
+            hiddenLayers.foldRight(errors) { layer, aggErrors ->
+                layer.backPropagate(aggErrors)
             }
             return errors
         }
@@ -154,7 +154,7 @@ class HelloNN {
                         val activation: (Double) -> Double = ::sigmoid,
                         val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
                         val learningRate: Double = 0.01,
-                        val biasValue: Double = 1.0
+                        biasValue: Double = 1.0
     ) {
         val outputs = Array(size, { 0.0 })
         private val inputs = arrayOf(biasValue) + Array(inputLayer?.size ?: 0, { 0.0 })

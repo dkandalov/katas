@@ -22,7 +22,7 @@ class BWT8 {
             }
         }
 
-        val table = List(this.length, { _ -> "" }).toMutableList()
+        val table = List(length, { _ -> "" }).toMutableList()
         indices.forEach {
             table.addColumn(this)
             table.sort()

@@ -18,13 +18,13 @@ class BTW0_Test {
         ))
     }
 
-    private fun encode(s: String): String {
+    private fun encode(string: String): String {
         fun doEncode(s: String): String {
             val rotations = s.indices.map { shift -> s.rotate(shift) }
             val sortedRotations = rotations.sorted()
             return sortedRotations.map { it.last() }.join()
         }
-        return doEncode("^$s|")
+        return doEncode("^$string|")
     }
 
     private fun decode(s: String): String {

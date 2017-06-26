@@ -13,15 +13,15 @@ class DiamondTests {
     }
 
     @Test fun `generate triangle`() {
-        triangle(letter = 'C') shouldEqual """
+        triangle(toLetter = 'C') shouldEqual """
             |A
             |B-B
             |C---C
         """.trimMargin()
     }
 
-    private fun triangle(letter: Char): String {
-        return 'A'.rangeTo(letter).map { letter ->
+    private fun triangle(toLetter: Char): String {
+        return 'A'.rangeTo(toLetter).map { letter ->
             val dashes = '-'.repeat(numberOfDashes(letter))
             val result = letter + dashes
             return if (dashes != "") result + letter else result
@@ -31,10 +31,6 @@ class DiamondTests {
     private fun numberOfDashes(letter: Char): Int {
         val distance = letter - 'A'
         return if (distance == 0) distance else 2 * distance - 1
-    }
-
-    private fun drawLetters(letter: Char): String {
-        return 'A'.rangeTo(letter).joinToString("")
     }
 }
 
