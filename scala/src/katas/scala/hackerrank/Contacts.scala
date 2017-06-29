@@ -1,9 +1,11 @@
 package katas.scala.hackerrank
 
+import katas.scala.Util
 import org.junit.{Ignore, Test}
 import org.scalatest.Matchers
 
 import scala.collection.mutable
+import scala.concurrent.duration.Duration
 import scala.io.Source
 import scala.util.Random
 
@@ -39,32 +41,22 @@ class Contacts extends Matchers {
 		}
 	}
 
-	@Test def `hackerrank test case 2`(): Unit = {
+	@Test def `hackerrank test case 2 (fixing performance)`(): Unit = {
 		val lines = Source.fromFile("scala/src/katas/scala/hackerrank/Contacts-testcase2-input.txt").getLines()
-		main(lines.toSeq)
+		main(lines.toStream)
 	}
 
 	def main(args: Array[String]): Unit = {
 		val scanner = new java.util.Scanner(System.in)
-		val contacts = new Contacts()
-
-		val n = scanner.nextLine().toInt
-		0.until(n).foreach { _ =>
-			val parts = scanner.nextLine().split(" +")
-			val command = parts(0)
-			val value = parts(1)
-			if (command == "add") {
-				contacts.add(value)
-			} else if (command == "find") {
-				val amountOfMatches: Int = contacts.amountOfMatches(value)
-				println(amountOfMatches)
-			}
-		}
+		main(lines = Stream.continually(scanner.nextLine()))
 	}
 
-	def main(lines: Seq[String]): Unit = {
+	def main(lines: Stream[String]): Unit = {
 		val n = lines.head.toInt
 		val i = lines.tail.iterator
+
+		var addDuration = Duration.Zero
+		var matchDuration = Duration.Zero
 
 		val contacts = new Contacts()
 		0.until(n).foreach { _ =>
@@ -72,14 +64,23 @@ class Contacts extends Matchers {
 			val command = parts(0)
 			val value = parts(1)
 			if (command == "add") {
-				contacts.add(value)
+				addDuration += Util.measureDuration {
+					contacts.add(value)
+				}
 			} else if (command == "find") {
-				println(contacts.amountOfMatches(value))
+				matchDuration += Util.measureDuration {
+					println(contacts.amountOfMatches(value))
+				}
 			}
 		}
+		println(addDuration)
+		println(matchDuration)
 	}
 
-	private case class Node(value: Char = '\0', children: mutable.Map[Char, Node] = mutable.Map()) {
+	private case class Node(
+     value: Char = '\0',
+     children: mutable.Map[Char, Node] = mutable.Map()
+  ) {
 
 		def add(s: String): Unit = {
 			if (s.isEmpty) return
@@ -99,7 +100,7 @@ class Contacts extends Matchers {
 
 		def leafCount: Int = {
 			if (children.isEmpty) 1
-			else children.values.toList.map{ _.leafCount }.sum
+			else children.values.foldLeft(0){ (sum, node) => sum + node.leafCount }
 		}
 
 		override def toString: String = value.toString
