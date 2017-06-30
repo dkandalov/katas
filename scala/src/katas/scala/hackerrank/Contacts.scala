@@ -1,11 +1,10 @@
 package katas.scala.hackerrank
 
-import katas.scala.Util
+import java.util
+
 import org.junit.{Ignore, Test}
 import org.scalatest.Matchers
 
-import scala.collection.mutable
-import scala.concurrent.duration.Duration
 import scala.io.Source
 import scala.util.Random
 
@@ -41,6 +40,7 @@ class Contacts extends Matchers {
 		}
 	}
 
+	@Ignore
 	@Test def `hackerrank test case 2 (fixing performance)`(): Unit = {
 		val lines = Source.fromFile("scala/src/katas/scala/hackerrank/Contacts-testcase2-input.txt").getLines()
 		main(lines.toStream)
@@ -55,36 +55,29 @@ class Contacts extends Matchers {
 		val n = lines.head.toInt
 		val i = lines.tail.iterator
 
-		var addDuration = Duration.Zero
-		var matchDuration = Duration.Zero
-
 		val contacts = new Contacts()
 		0.until(n).foreach { _ =>
 			val parts = i.next().split(" +")
 			val command = parts(0)
 			val value = parts(1)
 			if (command == "add") {
-				addDuration += Util.measureDuration {
-					contacts.add(value)
-				}
+				contacts.add(value)
 			} else if (command == "find") {
-				matchDuration += Util.measureDuration {
-					println(contacts.amountOfMatches(value))
-				}
+				println(contacts.amountOfMatches(value))
 			}
 		}
-		println(addDuration)
-		println(matchDuration)
 	}
 
 	private case class Node(
      value: Char = '\0',
-     children: mutable.Map[Char, Node] = mutable.Map()
+     children: util.Map[Char, Node] = new util.HashMap(),
+     var leafCount: Int = 0
   ) {
 
 		def add(s: String): Unit = {
 			if (s.isEmpty) return
-			var childNode = children.getOrElse(s.head, null)
+			leafCount = leafCount + 1
+			var childNode = children.get(s.head)
 			if (childNode == null) {
 				childNode = Node(s.head)
 				children.put(childNode.value, childNode)
@@ -93,14 +86,17 @@ class Contacts extends Matchers {
 		}
 
 		def deepestMatchingNode(s: String): Node = {
-			if (s.isEmpty) return this
-			val childNode = children.getOrElse(s.head, null)
-			if (childNode == null) null else childNode.deepestMatchingNode(s.tail)
-		}
-
-		def leafCount: Int = {
-			if (children.isEmpty) 1
-			else children.values.foldLeft(0){ (sum, node) => sum + node.leafCount }
+			var string = s
+			var node = this
+			while (string.nonEmpty) {
+				node = node.children.get(string.head)
+				if (node != null) {
+					string = string.tail
+				} else {
+					return null
+				}
+			}
+			node
 		}
 
 		override def toString: String = value.toString
