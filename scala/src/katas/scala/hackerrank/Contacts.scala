@@ -46,6 +46,12 @@ class Contacts extends Matchers {
 		main(lines.toStream)
 	}
 
+	@Ignore
+	@Test def `hackerrank test case 3 (fixing performance)`(): Unit = {
+		val lines = Source.fromFile("scala/src/katas/scala/hackerrank/Contacts-testcase3-input.txt").getLines()
+		main(lines.toStream)
+	}
+
 	def main(args: Array[String]): Unit = {
 		val scanner = new java.util.Scanner(System.in)
 		main(lines = Stream.continually(scanner.nextLine()))
