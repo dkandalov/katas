@@ -3,6 +3,7 @@ package katas.kotlin.stringsearch
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.fail
+import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 
@@ -209,6 +210,7 @@ class BoyerMoore0 {
         )
     }
 
+    @Ignore
     @Test fun `shift on prefix lookup`() {
         fun shiftsOnMismatch(needle: String): List<Int> {
             val lookupShift = makePrefixShiftLookup(needle)
