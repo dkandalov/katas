@@ -3,6 +3,9 @@ package katas.kotlin
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.kotlintest.specs.StringSpec
+import java.time.Duration
+import java.time.Duration.of
+import java.time.temporal.ChronoUnit
 
 infix fun <T> T.shouldEqual(that: T) {
     assertThat(this, equalTo(that))
@@ -37,13 +40,20 @@ fun <E> List<E>.sliding(windowSize: Int): List<List<E>> {
     return (0..(size - windowSize)).map { subList(it, it + windowSize) }
 }
 
-fun <E> List<E>.tail() = drop(1)
+fun <E> Iterable<E>.tail() = drop(1)
+
+fun String.tail() = drop(1)
 
 fun <E> List<E>.permutations(): List<List<E>> =
     if (size <= 1) listOf(this)
     else flatMap { item ->
         (this - item).permutations().map { it: List<E> -> listOf(item) + it }
     }.distinct()
+
+fun measureTimeMillis(block: () -> Unit): Duration {
+    val millis = kotlin.system.measureTimeMillis(block)
+    return of(millis, ChronoUnit.MILLIS)
+}
 
 
 class UtilFunctionsTest: StringSpec() {

@@ -1,19 +1,15 @@
 package katas.kotlin.hackerrank
 
 import katas.kotlin.shouldEqual
-import katas.kotlin.tail
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.util.*
-import java.util.Spliterators.iterator
-import java.util.stream.Stream
-import kotlin.coroutines.experimental.buildSequence
 
 class ContactsTests {
 
     @Test fun `add and find contacts`() {
-        val contacts = Contacts()
+        val contacts = TrieNode()
         contacts.add("value")
         contacts.add("value2")
         contacts.amountOfMatches("val") shouldEqual 2
@@ -23,7 +19,7 @@ class ContactsTests {
     }
 
     @Test fun `hackerrank test`() {
-        val contacts = Contacts()
+        val contacts = TrieNode()
         contacts.add("hack")
         contacts.add("hackerrank")
         contacts.amountOfMatches("hac") shouldEqual 2
@@ -32,7 +28,7 @@ class ContactsTests {
 
     @Ignore
     @Test fun `adding maximum amount of elements`() {
-        val contacts = Contacts()
+        val contacts = TrieNode()
         val random = Random(123)
         0.until(100000).forEach { _ ->
             contacts.add(random.nextString(21))
@@ -41,13 +37,25 @@ class ContactsTests {
 
     @Ignore
     @Test fun `hackerrank test case 2 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase2-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-2-input.txt").readLines()
         main(lines.asSequence())
     }
 
     @Ignore
     @Test fun `hackerrank test case 3 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase3-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-3-input.txt").readLines()
+        main(lines.asSequence())
+    }
+
+    @Ignore
+    @Test fun `hackerrank test case 5 (fixing performance)`() {
+        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-5-input.txt").readLines()
+        main(lines.asSequence())
+    }
+
+    @Ignore
+    @Test fun `hackerrank test case 12 (fixing performance)`() {
+        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-12-input.txt").readLines()
         main(lines.asSequence())
     }
 
@@ -59,76 +67,62 @@ class ContactsTests {
         }
         return List(length, { safeChar() }).joinToString("")
     }
-
-    private fun Random.nextPrintableChar(): Char {
-        val low  = 33
-        val high = 127
-        return (nextInt(high - low) + low).toChar()
-    }
-
 }
 
 fun main(args: Array<String>) {
     val scanner = Scanner(System.`in`)
-    main(lines = buildSequence { scanner.nextLine() })
+    main(lines = generateSequence { scanner.nextLine() })
 }
 
 fun main(lines: Sequence<String>) {
-    val n = lines.first().toInt()
-    val i = lines.drop(1).iterator()
+    val i = lines.iterator()
+    val n = i.next().toInt()
 
-    val contacts = Contacts()
+//    var addDuration: Duration = Duration.ZERO
+//    var findDuration: Duration = Duration.ZERO
+
+    val tree = TrieNode()
     0.until(n).forEach {
         val parts = i.next().split(Regex(" +"))
         val command = parts[0]
         val value = parts[1]
         if (command == "add") {
-            contacts.add(value)
+//            addDuration += measureTimeMillis {
+                tree.add(value)
+//            }
         } else if (command == "find") {
-            println(contacts.amountOfMatches(value))
+//            findDuration += measureTimeMillis {
+                println(tree.amountOfMatches(value))
+//            }
         }
     }
+
+//    println("addDuration = $addDuration")
+//    println("findDuration = $findDuration")
 }
 
 
-private class Contacts {
-    private val tree = Node()
-
-    fun add(s: String) = tree.add(s + '\u0000')
-
-    fun amountOfMatches(s: String): Int {
-        val node = tree.deepestMatchingNode(s)
-        return if (node == null || node == tree) 0 else node.leafCount
-    }
-}
-
-
-private data class Node(
-    val value: Char = '\u0000',
-    val children: MutableMap<Char, Node> = HashMap(),
+private data class TrieNode(
+    val children: MutableMap<Char, TrieNode> = HashMap(),
     var leafCount: Int = 0
 ) {
     fun add(s: String) {
-        if (s.isEmpty()) return
-        leafCount += 1
-        var childNode = children[s.first()]
-        if (childNode == null) {
-            childNode = Node(s.first())
-            children[childNode.value] = childNode
+        var node = this
+        s.forEach { c ->
+            node.children.putIfAbsent(c, TrieNode())
+            node = node.children[c]!!
+            node.leafCount++
         }
-        childNode.add(s.tail())
     }
 
-    fun deepestMatchingNode(s: String): Node? {
-        var string = s
-        var node: Node? = this
-        while (string.isNotEmpty()) {
-            node = node!!.children[string.first()]
-            node ?: return null
-            string = string.tail()
+    fun amountOfMatches(s: String): Int {
+        var node = this
+        for (i in s.indices) {
+            val child = node.children[s[i]]
+            if (child == null) return 0 else node = child
         }
-        return node
+        return node.leafCount
     }
 
-    override fun toString() = value.toString()
+    override fun toString() = children.toString()
 }
