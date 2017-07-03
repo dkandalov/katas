@@ -22,7 +22,7 @@ class BTW0_Test {
         fun doEncode(s: String): String {
             val rotations = s.indices.map { shift -> s.rotate(shift) }
             val sortedRotations = rotations.sorted()
-            return sortedRotations.map { it.last() }.join()
+            return sortedRotations.map { it.last() }.join("")
         }
         return doEncode("^$string|")
     }
@@ -34,7 +34,7 @@ class BTW0_Test {
             table.sortBy { it.first() }
         }
         val i = table.indexOfFirst { it.first() == '^' && it.last() == '|' }
-        return table[i].drop(1).dropLast(1).join()
+        return table[i].drop(1).dropLast(1).join("")
     }
 
     private fun <T> MutableList<T>.push(element: T) {

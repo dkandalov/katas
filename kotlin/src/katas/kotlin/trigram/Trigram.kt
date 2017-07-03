@@ -11,7 +11,7 @@ import java.util.*
  */
 class TrigramTest {
     @Test fun `process couple books and generate text based on trigrams from all of them`() {
-        val load = { fileName: String -> File("kotlin/src/katas/kotlin/trigram/$fileName").readLines() }
+        val load = { fileName: String -> File("src/katas/kotlin/trigram/$fileName").readLines() }
         val words = (load("53970-0.txt") + load("18440-0.txt") + load("39702-0.txt"))
                 .map { it.trim().replace(Regex("[_#—]"), "") }
                 .filter { it.isNotEmpty() }

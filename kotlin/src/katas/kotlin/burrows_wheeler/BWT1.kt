@@ -2,7 +2,8 @@ package katas.kotlin.burrows_wheeler
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.*
+import katas.kotlin.join
+import katas.kotlin.printed
 import org.junit.Test
 
 class BWT1 {
@@ -13,7 +14,7 @@ class BWT1 {
                 .map{ s.rotate(it) }
                 .sorted()
                 .map{ it.last() }
-                .join()
+                .join("")
         assertThat(encoded.printed(), equalTo("|bnn^aaa"))
 
         val table = MutableList(encoded.length, { ArrayList<Char>() })
@@ -22,7 +23,7 @@ class BWT1 {
             table.sortBy{ it[0] }
         }
         val decoded = table
-                .map{ it.join().unwrap('^', '|') }
+                .map{ it.join("").unwrap('^', '|') }
                 .find { it != null }!!
         assertThat(decoded.printed(), equalTo("banana"))
     }

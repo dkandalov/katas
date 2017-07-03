@@ -2,7 +2,8 @@ package katas.kotlin.burrows_wheeler
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.*
+import katas.kotlin.join
+import katas.kotlin.printed
 import org.junit.Test
 
 class BWT2 {
@@ -29,6 +30,6 @@ class BWT2 {
             .map { s.drop(it) + s.take(it) }
             .sorted()
             .map{ it.last() }
-            .join()
+            .join("")
     }
 }

@@ -15,14 +15,14 @@ class Diamonds2Tests {
             |-A-
         """.trimMargin()
 
-        diamond(size = 3) shouldEqual """
-            |A
-            |B-B
-            |C---C
+        diamond(size = 4) shouldEqual """
+            |---A---
+            |--B-B--
+            |-C---C-
             |D-----D
-            |C---C
-            |B-B
-            |A
+            |-C---C-
+            |--B-B--
+            |---A---
         """.trimMargin()
     }
 

@@ -7,8 +7,8 @@ import java.io.File
 import kotlin.reflect.KClass
 
 class DataMunging15 {
-    private val weatherFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/weather.dat"
-    private val footballFile = "/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n4/football.dat"
+    private val weatherFile = "src/katas/kotlin/datamunging/weather.dat"
+    private val footballFile = "src/katas/kotlin/datamunging/football.dat"
 
     @Test fun `find day with minimum temperature spread`() {
         val days = File(weatherFile)

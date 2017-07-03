@@ -24,8 +24,8 @@ class DiamondTests {
         return 'A'.rangeTo(toLetter).map { letter ->
             val dashes = '-'.repeat(numberOfDashes(letter))
             val result = letter + dashes
-            return if (dashes != "") result + letter else result
-        }.joinToString("\n")
+            if (dashes != "") result + letter else result
+        }.join("\n")
     }
 
     private fun numberOfDashes(letter: Char): Int {
