@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
     main(lines = generateSequence { scanner.nextLine() })
 }
 
-fun main(lines: Sequence<String>) {
+private fun main(lines: Sequence<String>) {
     val i = lines.iterator()
     val n = i.next().toInt()
 
