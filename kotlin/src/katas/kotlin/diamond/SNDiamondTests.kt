@@ -1,10 +1,10 @@
-package katas.kotlin.`sn-dojo`
+package katas.kotlin.diamond
 
 import katas.kotlin.join
 import katas.kotlin.shouldEqual
 import org.junit.Test
 
-class DiamondTests {
+class SNDiamondTests {
     @Test fun `number of dashes`() {
         numberOfDashes(letter = 'A') shouldEqual 0
         numberOfDashes(letter = 'B') shouldEqual 1
