@@ -6,9 +6,9 @@ import com.natpryce.hamkrest.equalTo
 import katas.kotlin.shouldEqual
 import katas.kotlin.tapl.chapter11.TestUtil.aka
 import katas.kotlin.tapl.chapter11.TestUtil.evaluatesTo
+import katas.kotlin.tapl.chapter11.TestUtil.invoke
 import katas.kotlin.tapl.chapter11.TestUtil.v
 import katas.kotlin.tapl.chapter11.TestUtil.λ
-import katas.kotlin.tapl.chapter11.TestUtil.invoke
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -48,6 +48,9 @@ data class pred(val t: Term): Term, Value {
 data class isZero(val t: Term): Term, Value {
     override fun toString() = "isZero($t)"
 }
+object unit: Term, Value {
+    override fun toString() = "unit"
+}
 
 
 interface TermType
@@ -60,6 +63,9 @@ object Nat: TermType {
 data class FunctionType(val from: TermType, val to: TermType) : TermType {
     override fun toString() = "$from->$to"
 }
+object UnitType: TermType {
+    override fun toString() = "Unit"
+}
 
 
 fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
@@ -69,6 +75,7 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
     this is `if` && predicate.type(Γ) is Bool &&
             then.type(Γ) == `else`.type(Γ) -> then.type(Γ)  // T-If
     this is zero -> Nat                                     // ???
+    this is unit -> UnitType                                // T-Unit
     this is succ && t.type(Γ) is Nat -> Nat                 // T-Succ
     this is pred && t.type(Γ) is Nat -> Nat                 // T-Pred
     this is isZero && t.type(Γ) is Nat -> Bool              // T-IsZero
@@ -84,13 +91,13 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
         val type12 = t1.type(Γ) as FunctionType
         val type11 = t2.type(Γ)
         if (type12.from != type11) {
-            error("Can't infer type of: '$this' where Γ is $Γ")
+            error("Cannot infer type of: '$this' where Γ is $Γ")
         } else {
             type12.to
         }
     }
 
-    else -> error("Can't infer type of: '$this' where Γ is $Γ")
+    else -> error("Cannot infer type of: '$this' where Γ is $Γ")
 }
 
 fun Term.eval(): Term = when {
@@ -195,6 +202,7 @@ class TermTypeTests {
         zero hasType Nat
         v("b") hasType Bool
         v("n") hasType Nat
+        unit hasType UnitType
 
         `if`(`true`, then = `true`, `else` = `false`) hasType Bool
         `if`(`true`, then = `true`, `else` = `false`) hasType Bool
@@ -234,15 +242,22 @@ class TermTypeTests {
 
     private fun Term.hasNoValidType() {
         try {
-            type(Γ)
-            fail("Expected IllegalStateException")
+            val termType = type(Γ)
+            fail("Expected type error but was '$termType'")
         } catch (e: IllegalStateException) {
-            assertTrue(e.message!!.startsWith("Can't infer type"))
+            assertTrue(e.message!!.startsWith("Cannot infer type"))
         }
     }
 }
 
 class TermEvaluationTests {
+    @Test fun `values evaluate to themselves`() {
+        `true` evaluatesTo "true"
+        `false` evaluatesTo "false"
+        zero evaluatesTo "0"
+        unit evaluatesTo "unit"
+    }
+
     @Test fun `variables and lambdas evaluate to themselves`() {
         v("a") aka "a" evaluatesTo "a"
         λ("a:Bool", "a") aka "λa:Bool.a" evaluatesTo "λa:Bool.a"
