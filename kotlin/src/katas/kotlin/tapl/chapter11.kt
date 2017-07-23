@@ -16,7 +16,9 @@ import org.junit.Test
 interface Term
 interface Value
 interface NumericValue : Value
-
+interface DerivedForm {
+    fun derive(): Term
+}
 
 data class Var(val name: String): Term, Value {
     override fun toString() = name
@@ -51,6 +53,14 @@ data class isZero(val t: Term): Term, Value {
 object unit: Term, Value {
     override fun toString() = "unit"
 }
+data class Seq(val t1: Term, val t2: Term): Term, DerivedForm {
+    override fun derive() = Apply(Lambda(Var("x"), UnitType, t2), t1)
+    override fun toString() = "$t1; $t2"
+}
+object Wildcard: Term, DerivedForm {
+    override fun derive() = Var("unused")
+    override fun toString() = "_"
+}
 
 
 interface TermType
@@ -62,6 +72,9 @@ object Nat: TermType {
 }
 data class FunctionType(val from: TermType, val to: TermType) : TermType {
     override fun toString() = "$from->$to"
+}
+data class BaseType(val name: String): TermType {
+    override fun toString() = "BaseType($name)"
 }
 object UnitType: TermType {
     override fun toString() = "Unit"
@@ -91,11 +104,13 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
         val type12 = t1.type(Γ) as FunctionType
         val type11 = t2.type(Γ)
         if (type12.from != type11) {
-            error("Cannot infer type of: '$this' where Γ is $Γ")
+            error("Cannot infer type of: '$this' where Γ is $Γ.\n" +
+                  "Because type '${type12.from}' != '$type11'.")
         } else {
             type12.to
         }
     }
+    this is DerivedForm -> derive().type(Γ)
 
     else -> error("Cannot infer type of: '$this' where Γ is $Γ")
 }
@@ -120,6 +135,8 @@ fun Term.eval(): Term = when {
     this is Apply && t1.isReducible() -> Apply(t1.eval(), t2)                      // E-App1
     this is Apply && t1 is Value && t2.isReducible() -> Apply(t1, t2.eval())       // E-App2
     this is Apply && t1 is Lambda && t2 is Value -> t1.body.substitute(t1.arg, t2) // E-AppAbs
+
+    this is DerivedForm -> derive().eval()
 
     else -> this
 }
@@ -229,6 +246,10 @@ class TermTypeTests {
         λ("x:Bool", `true`)(zero).hasNoValidType()
         λ("a:Bool", λ("a:Nat", "a"))("b") aka "(λa:Bool.λa:Nat.a)(b)" hasType "Nat->Nat"
         λ("a:Bool", λ("a:Nat", "b"))("b") aka "(λa:Bool.λa:Nat.b)(b)" hasType "Nat->Bool"
+        Lambda(Wildcard.derive(), Bool, zero)(`true`) hasType Nat
+
+        Seq(`true`, zero).hasNoValidType()
+        Seq(unit, `false`) hasType Bool
     }
 
     private val Γ = mapOf(
