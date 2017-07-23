@@ -53,6 +53,9 @@ object unit: Term, Value {
 data class Ascribe(val t: Term, val type: TermType): Term {
     override fun toString() = "$t as $type"
 }
+data class Let(val x: Var, val t1: Term, val t2: Term): Term {
+    override fun toString() = "let $x=$t1 in $t2"
+}
 
 
 interface DerivedForm {
@@ -115,11 +118,11 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
             type12.to
         }
     }
-    this is Ascribe -> {
-        val termType = t.type(Γ)
-        if (termType != type) error("Ascribed type '$termType' is not equal to inferred type '$type'")
-        termType
+    this is Ascribe -> t.type(Γ).also {                     // T-Ascribe
+        if (it != type) error("Ascribed type '$it' is not equal to inferred type '$type'")
     }
+    this is Let -> t2.type(Γ + (x to t1.type(Γ)))           // T-Let
+
     this is DerivedForm -> derive().type(Γ)
 
     else -> error("Cannot infer type of: '$this' where Γ is $Γ")
@@ -146,7 +149,9 @@ fun Term.eval(): Term = when {
     this is Apply && t1 is Value && t2.isReducible() -> Apply(t1, t2.eval())       // E-App2
     this is Apply && t1 is Lambda && t2 is Value -> t1.body.substitute(t1.arg, t2) // E-AppAbs
 
-    this is Ascribe -> t
+    this is Ascribe -> t                                                 // E-Ascribe
+    this is Let -> t2.substitute(x, t1.eval())                           // E-Let
+
     this is DerivedForm -> derive().eval()
 
     else -> this
@@ -165,7 +170,12 @@ fun Term.fullEval(): Term {
 fun Term.substitute(arg: Var, term: Term): Term = when {
     this is Var && this.name == arg.name -> term
     this is Apply -> Apply(t1.substitute(arg, term), t2.substitute(arg, term))
-    this is Lambda -> this.copy(body = this.body.substitute(arg, term))
+    this is Lambda -> copy(body = body.substitute(arg, term))
+    this is `if` -> copy(predicate.substitute(arg, term), then.substitute(arg, term), `else`.substitute(arg, term))
+    this is isZero -> copy(t.substitute(arg, term))
+    this is succ -> copy(t.substitute(arg, term))
+    this is pred -> copy(t.substitute(arg, term))
+    this is Ascribe -> copy(t.substitute(arg, term))
     else -> this
 }
 
@@ -246,7 +256,7 @@ class TermTypeTests {
         succ(zero) hasType Nat
         pred(zero) hasType Nat
         pred(succ(succ(zero))) hasType Nat
-        succ(Var("b")).hasNoValidType()
+        succ(v("b")).hasNoValidType()
 
         λ("x:Bool", `true`) hasType "Bool->Bool"
         λ("x:Bool", zero) hasType "Bool->Nat"
@@ -264,6 +274,9 @@ class TermTypeTests {
 
         Ascribe(succ(zero), Nat) hasType Nat
         Ascribe(succ(zero), Bool).hasNoValidType("Ascribed type 'Nat' is not equal to inferred type 'Bool'")
+
+        Let(v("x"), `true`, v("x")) hasType Bool
+        Let(v("x"), `true`, zero) hasType Nat
     }
 
     private val Γ = mapOf(
@@ -318,6 +331,11 @@ class TermEvaluationTests {
 
     @Test fun `ascription doesn't affect evaluation`() {
         Ascribe(pred(succ(zero)), Nat) evaluatesTo "0"
+    }
+
+    @Test fun `evaluation of 'let'`() {
+        Let(Var("two"), succ(succ(zero)), isZero(Var("two"))) aka "let two=succ(succ(0)) in isZero(two)" evaluatesTo "false"
+        Let(Var("t"), `true`, `if`(Var("t"), succ(zero), zero)) aka "let t=true in if (t) succ(0) else 0" evaluatesTo "succ(0)"
     }
 }
 
