@@ -2,6 +2,7 @@
 package katas.kotlin.tapl.chapter11
 
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
 import katas.kotlin.shouldEqual
 import katas.kotlin.tapl.chapter11.TestUtil.aka
@@ -9,16 +10,12 @@ import katas.kotlin.tapl.chapter11.TestUtil.evaluatesTo
 import katas.kotlin.tapl.chapter11.TestUtil.invoke
 import katas.kotlin.tapl.chapter11.TestUtil.v
 import katas.kotlin.tapl.chapter11.TestUtil.λ
-import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
 interface Term
 interface Value
 interface NumericValue : Value
-interface DerivedForm {
-    fun derive(): Term
-}
 
 data class Var(val name: String): Term, Value {
     override fun toString() = name
@@ -52,6 +49,14 @@ data class isZero(val t: Term): Term, Value {
 }
 object unit: Term, Value {
     override fun toString() = "unit"
+}
+data class Ascribe(val t: Term, val type: TermType): Term {
+    override fun toString() = "$t as $type"
+}
+
+
+interface DerivedForm {
+    fun derive(): Term
 }
 data class Seq(val t1: Term, val t2: Term): Term, DerivedForm {
     override fun derive() = Apply(Lambda(Var("x"), UnitType, t2), t1)
@@ -104,11 +109,16 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
         val type12 = t1.type(Γ) as FunctionType
         val type11 = t2.type(Γ)
         if (type12.from != type11) {
-            error("Cannot infer type of: '$this' where Γ is $Γ.\n" +
-                  "Because type '${type12.from}' != '$type11'.")
+            error("Cannot infer type of: '$this' where Γ is $Γ. " +
+                  "Argument type '${type12.from}' is not equal body type '$type11'.")
         } else {
             type12.to
         }
+    }
+    this is Ascribe -> {
+        val termType = t.type(Γ)
+        if (termType != type) error("Ascribed type '$termType' is not equal to inferred type '$type'")
+        termType
     }
     this is DerivedForm -> derive().type(Γ)
 
@@ -136,6 +146,7 @@ fun Term.eval(): Term = when {
     this is Apply && t1 is Value && t2.isReducible() -> Apply(t1, t2.eval())       // E-App2
     this is Apply && t1 is Lambda && t2 is Value -> t1.body.substitute(t1.arg, t2) // E-AppAbs
 
+    this is Ascribe -> t
     this is DerivedForm -> derive().eval()
 
     else -> this
@@ -250,6 +261,9 @@ class TermTypeTests {
 
         Seq(`true`, zero).hasNoValidType()
         Seq(unit, `false`) hasType Bool
+
+        Ascribe(succ(zero), Nat) hasType Nat
+        Ascribe(succ(zero), Bool).hasNoValidType("Ascribed type 'Nat' is not equal to inferred type 'Bool'")
     }
 
     private val Γ = mapOf(
@@ -261,12 +275,12 @@ class TermTypeTests {
 
     private infix fun Term.hasType(expectedType: String) = type(Γ).toString() shouldEqual expectedType
 
-    private fun Term.hasNoValidType() {
+    private fun Term.hasNoValidType(expectedError: String = "Cannot infer type") {
         try {
             val termType = type(Γ)
             fail("Expected type error but was '$termType'")
         } catch (e: IllegalStateException) {
-            assertTrue(e.message!!.startsWith("Cannot infer type"))
+            assertThat(e.message!!, containsSubstring(expectedError))
         }
     }
 }
@@ -300,6 +314,10 @@ class TermEvaluationTests {
         //                                                     have the same name but different meaning
         //                                                     ↓        ↓
         λ("a:Bool", λ("b:Nat", "a"))("b")("c") aka "((λa:Bool.λb:Nat.a)(b))(c)" evaluatesTo "b"
+    }
+
+    @Test fun `ascription doesn't affect evaluation`() {
+        Ascribe(pred(succ(zero)), Nat) evaluatesTo "0"
     }
 }
 
