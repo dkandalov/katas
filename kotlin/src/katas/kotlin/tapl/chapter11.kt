@@ -56,6 +56,9 @@ data class Ascribe(val t: Term, val type: TermType): Term {
 data class Let(val x: Var, val t1: Term, val t2: Term): Term {
     override fun toString() = "let $x=$t1 in $t2"
 }
+data class APair(val t1: Term, val t2: Term): Term {
+    override fun toString() = "{$t1,$t2}"
+}
 
 
 interface DerivedForm {
@@ -86,6 +89,9 @@ data class BaseType(val name: String): TermType {
 }
 object UnitType: TermType {
     override fun toString() = "Unit"
+}
+data class PairType(val type1: TermType, val type2: TermType): TermType {
+    override fun toString() = "${type1}X$type2"
 }
 
 
@@ -122,6 +128,7 @@ fun Term.type(Γ: Map<Var, TermType> = emptyMap()): TermType = when {
         if (it != type) error("Ascribed type '$it' is not equal to inferred type '$type'")
     }
     this is Let -> t2.type(Γ + (x to t1.type(Γ)))           // T-Let
+    this is APair -> PairType(t1.type(Γ), t2.type(Γ))
 
     this is DerivedForm -> derive().type(Γ)
 
@@ -151,6 +158,7 @@ fun Term.eval(): Term = when {
 
     this is Ascribe -> t                                                 // E-Ascribe
     this is Let -> t2.substitute(x, t1.eval())                           // E-Let
+    this is APair -> APair(t1.eval(), t2.eval())
 
     this is DerivedForm -> derive().eval()
 
@@ -277,6 +285,8 @@ class TermTypeTests {
 
         Let(v("x"), `true`, v("x")) hasType Bool
         Let(v("x"), `true`, zero) hasType Nat
+
+        APair(`true`, zero) hasType PairType(Bool, Nat)
     }
 
     private val Γ = mapOf(
@@ -336,6 +346,10 @@ class TermEvaluationTests {
     @Test fun `evaluation of 'let'`() {
         Let(Var("two"), succ(succ(zero)), isZero(Var("two"))) aka "let two=succ(succ(0)) in isZero(two)" evaluatesTo "false"
         Let(Var("t"), `true`, `if`(Var("t"), succ(zero), zero)) aka "let t=true in if (t) succ(0) else 0" evaluatesTo "succ(0)"
+    }
+
+    @Test fun `evaluation of pair`() {
+        APair(pred(succ(zero)), succ(pred(succ(zero)))) aka "{pred(succ(0)),succ(pred(succ(0)))}" evaluatesTo "{0,succ(0)}"
     }
 }
 
