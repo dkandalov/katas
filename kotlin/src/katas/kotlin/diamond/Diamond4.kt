@@ -2,6 +2,7 @@ package katas.kotlin.diamond
 
 import katas.kotlin.shouldEqual
 import katas.kotlin.tail
+import katas.kotlin.times
 import org.junit.Test
 
 class Diamond4 {
@@ -33,8 +34,6 @@ class Diamond4 {
             .mirrored()
             .joinToString("\n")
     }
-
-    private operator fun String.times(size: Int) = 0.until(size).map { this }.joinToString("")
 
     private fun String.mirrored() = this + this.reversed().tail()
 

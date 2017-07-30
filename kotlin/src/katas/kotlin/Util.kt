@@ -44,6 +44,8 @@ fun <E> Iterable<E>.tail() = drop(1)
 
 fun String.tail() = drop(1)
 
+operator fun String.times(size: Int) = 0.until(size).map { this }.joinToString("")
+
 fun <E> List<E>.permutations(): List<List<E>> =
     if (size <= 1) listOf(this)
     else flatMap { item ->
