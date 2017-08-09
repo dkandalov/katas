@@ -12,11 +12,9 @@ abstract class Tag(val name: String): Element {
     val children = arrayListOf<Element>()
     val attributes = hashMapOf<String, String>()
 
-    override fun toString(): String {
-        return "Tag(name='$name', attributes=$attributes, children=$children)"
-    }
-
     operator fun String.unaryPlus() = children.add(TextElement(this))
+
+    override fun toString() = "Tag(name='$name', attributes=$attributes, children=$children)"
 }
 
 private class Html: Tag("html") {
@@ -27,20 +25,19 @@ private class Html: Tag("html") {
 private class Head: Tag("head") {
     fun title(init: Title.() -> Unit) = children.add(Title().apply { init() })
 }
-
 private class Title: Tag("title")
 
-private class Body: Tag("body") {
+private abstract class BodyTag(name: String): Tag(name) {
     fun h1(init: H1.() -> Unit) = children.add(H1().apply { init() })
     fun a(href: String, init: A.() -> Unit) = children.add(A().apply { attributes["href"] = href; init() })
     fun b(init: B.() -> Unit) = children.add(B().apply { init() })
     fun p(init: P.() -> Unit) = children.add(P().apply { init() })
 }
-
-private class H1: Tag("h1")
-private class A: Tag("a")
-private class B: Tag("b")
-private class P: Tag("p")
+private class Body: BodyTag("body")
+private class H1: BodyTag("h1")
+private class A: BodyTag("a")
+private class B: BodyTag("b")
+private class P: BodyTag("p")
 
 private fun html(init: Html.() -> Unit): Html {
     val html = Html()
@@ -62,9 +59,9 @@ fun main(args: Array<String>) {
 
             p {
                 +"This is some"
-                // TODO b { +"mixed" }
+                b { +"mixed" }
                 +"text. For more see the"
-                // TODO a(href = "http://kotlinlang.org") { +"Kotlin" }
+                a(href = "http://kotlinlang.org") { +"Kotlin" }
                 +"project"
             }
             p { +"some text" }
