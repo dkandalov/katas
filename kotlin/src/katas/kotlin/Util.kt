@@ -57,6 +57,15 @@ fun measureTimeMillis(block: () -> Unit): Duration {
     return of(millis, ChronoUnit.MILLIS)
 }
 
+fun byteArray(vararg bytes: Byte): ByteArray = bytes
+
+fun byteList(vararg bytes: Byte): List<Byte> = bytes.toList()
+
+private fun Int.toBinaryString() = Integer.toBinaryString(this).padStart(32, '0')
+
+private fun ByteArray.toBinaryString() = this
+    .map { Integer.toBinaryString(it.toInt().and(0xFF)).padStart(8, '0') }
+    .joinToString("")
 
 class UtilFunctionsTest: StringSpec() {
     init {
