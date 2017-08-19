@@ -1,5 +1,7 @@
 package katas.kotlin.dsl
 
+// Based on https://kotlinlang.org/docs/reference/type-safe-builders.html#scope-control-dslmarker-since-11
+
 interface Element
 
 data class TextElement(val text: String): Element
