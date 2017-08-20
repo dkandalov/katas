@@ -19,15 +19,22 @@ fun main(args: Array<String>) {
 
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
 fun `mapping output`() {
-    val addition = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
-        if (payload is Node && payload.id == "str") 0
+    val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
+        if (payload is Str) 0
         else {
-            val nodes = (payload as Node).value as List<Node>
-            val values = listOf(nodes[0].value as String) + (nodes[1].value as List<Node>).map { it.value as String }
-            values.joinToString("").toInt()
+            val seqValues = (payload as Seq).values
+            val chars = (listOf(seqValues[0] as Chr) + ((seqValues[1] as Rep).values as List<Chr>)).map { it.s }
+            chars.joinToString("").toInt()
         }
     }
-    addition(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
+    number(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
+    val whitespace = rep(str(" "), 0)
+
+    val addition = seq(number, whitespace, str("+"), whitespace, number).map { payload ->
+        val seqValues = (payload as Seq).values
+        Addition(seqValues[0] as Int, seqValues[4] as Int)
+    }
+    addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
 }
 
 fun `alt combinator`() {
@@ -45,11 +52,11 @@ fun `rep combinator`() {
     val number = rep(chr("[0-9]"), 1)
 
     number(input).printed() shouldEqual Output(
-        Node("rep", listOf(
-            Node("chr", "2"),
-            Node("chr", "0"),
-            Node("chr", "1"),
-            Node("chr", "7")
+        Rep(listOf(
+            Chr("2"),
+            Chr("0"),
+            Chr("1"),
+            Chr("7")
         )),
         Input("2017", offset = 4)
     )
@@ -62,12 +69,12 @@ private fun `seq combinator`() {
 
     val input = Input("7+8")
 
-    number(input.read(0)) shouldEqual Output(Node("chr", "7"), Input("7+8", offset = 1))
-    plus(input.read(1)) shouldEqual Output(Node("str", "+"), Input("7+8", offset = 2))
-    number(input.read(2)) shouldEqual Output(Node("chr", "8"), Input("7+8", offset = 3))
+    number(input.read(0)) shouldEqual Output(Chr("7"), Input("7+8", offset = 1))
+    plus(input.read(1)) shouldEqual Output(Str("+"), Input("7+8", offset = 2))
+    number(input.read(2)) shouldEqual Output(Chr("8"), Input("7+8", offset = 3))
 
     addition(input).printed() shouldEqual (Output(
-        Node("seq", listOf(Node("chr", "7"), Node("str", "+"), Node("chr", "8"))),
+        Seq(listOf(Chr("7"), Str("+"), Chr("8"))),
         Input("7+8", offset = 3)
     ))
 }
@@ -76,8 +83,8 @@ private fun `regex parser`() {
     val input = Input("12 + 34")
     val digit = chr("[0-9]")
 
-    digit(input.read(1)).printed() shouldEqual Output(Node("chr", "2"), Input("12 + 34", offset = 2))
-    digit(input.read(5)).printed() shouldEqual Output(Node("chr", "3"), Input("12 + 34", offset = 6))
+    digit(input.read(1)).printed() shouldEqual Output(Chr("2"), Input("12 + 34", offset = 2))
+    digit(input.read(5)).printed() shouldEqual Output(Chr("3"), Input("12 + 34", offset = 6))
     digit(input.read(2)).printed() shouldEqual null
 }
 
@@ -87,13 +94,13 @@ private fun `str parser`() {
     val world = str("world")
 
     world(input.read(6)).printed() shouldEqual Output(
-        Node("str", "world"),
+        Str("world"),
         Input("hello world", 11)
     )
 
     world(input).printed() shouldEqual null
 
-    hello(input).printed() shouldEqual Output(Node("str", "hello"), Input("hello world", offset = 5))
+    hello(input).printed() shouldEqual Output(Str("hello"), Input("hello world", offset = 5))
 }
 
 private fun `hello parser`() {
@@ -114,26 +121,27 @@ data class Input(val s: String, val offset: Int = 0) {
 
 data class Output(val payload: Any, val input: Input)
 
-data class Node(val id: String, val value: Any) {
-    override fun toString() = "$id($value)"
-}
-
+data class Str(val s: String)
 
 fun str(s: String): Parser = { input: Input ->
     if (input.complete) null
     else {
         val chunk = input.peek(s.length)
-        if (chunk == s) Output(Node("str", chunk), input.read(s.length)) else null
+        if (chunk == s) Output(Str(chunk), input.read(s.length)) else null
     }
 }
+
+data class Chr(val s: String)
 
 fun chr(regex: String): Parser = { input: Input ->
     if (input.complete) null
     else {
         val chunk = input.peek(1)
-        if (Regex(regex).matches(chunk)) Output(Node("chr", chunk), input.read(1)) else null
+        if (Regex(regex).matches(chunk)) Output(Chr(chunk), input.read(1)) else null
     }
 }
+
+data class Seq(val values: List<Any>)
 
 fun seq(vararg parsers: Parser) = object: Parser {
     override fun invoke(input: Input): Output? {
@@ -145,9 +153,11 @@ fun seq(vararg parsers: Parser) = object: Parser {
             lastInput = output.input
             seqPayload.add(output.payload)
         }
-        return Output(Node("seq", seqPayload), lastInput)
+        return Output(Seq(seqPayload), lastInput)
     }
 }
+
+data class Rep(val values: List<Any>)
 
 fun rep(parser: Parser, n: Int) = object: Parser {
     override fun invoke(input: Input): Output? {
@@ -159,7 +169,7 @@ fun rep(parser: Parser, n: Int) = object: Parser {
             lastInput = output.input
             repPayload.add(output.payload)
         }
-        return if (repPayload.size >= n) Output(Node("rep", repPayload), lastInput!!) else null
+        return if (repPayload.size >= n) Output(Rep(repPayload), lastInput!!) else null
     }
 }
 
@@ -178,3 +188,5 @@ fun <T : Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
     if (output == null) null
     else Output(f(output.payload), output.input)
 }
+
+data class Addition(val n1: Int, val n2: Int)
