@@ -24,6 +24,10 @@
             <id>kotlin-eap</id>
             <url>http://dl.bintray.com/kotlin/kotlin-eap-1.1</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -33,6 +37,11 @@
     </pluginRepositories>
     
     <dependencies>
+        <dependency>
+            <groupId>com.github.h0tk3y.betterParse</groupId>
+            <artifactId>better-parse</artifactId>
+            <version>0.2.1</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
