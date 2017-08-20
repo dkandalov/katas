@@ -17,17 +17,17 @@ fun main(args: Array<String>) {
     `mapping output`()
 }
 
+@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
 fun `mapping output`() {
     val addition = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
         if (payload is Node && payload.id == "str") 0
         else {
-            payload.printed()
             val nodes = (payload as Node).value as List<Node>
             val values = listOf(nodes[0].value as String) + (nodes[1].value as List<Node>).map { it.value as String }
-            values.joinToString("")
+            values.joinToString("").toInt()
         }
     }
-    addition(Input("34 + 567")).printed()
+    addition(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
 }
 
 fun `alt combinator`() {
@@ -176,5 +176,5 @@ fun alt(vararg parsers: Parser) = object: Parser {
 fun <T : Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
     val output = this(input)
     if (output == null) null
-    else Output(f(output.payload), input)
+    else Output(f(output.payload), output.input)
 }
