@@ -15,10 +15,23 @@ fun main(args: Array<String>) {
     `rep combinator`()
     `alt combinator`()
     `mapping output`()
+    `ref combinator`()
 }
 
-@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-fun `mapping output`() {
+object `ref combinator`: () -> Unit {
+    val number = `mapping output`.number
+    val whitespace = `mapping output`.whitespace
+
+    val addition: Parser = seq(number, whitespace, str("+"), whitespace, ref { expression })
+    val expression = alt({ addition(it) }, number)
+
+    override fun invoke() {
+        addition(Input("7 + 8 + 9")).printed()
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+object `mapping output`: () -> Unit {
     val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
         if (payload is Str) 0
         else {
@@ -27,14 +40,18 @@ fun `mapping output`() {
             chars.joinToString("").toInt()
         }
     }
-    number(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
+
     val whitespace = rep(str(" "), 0)
 
     val addition = seq(number, whitespace, str("+"), whitespace, number).map { payload ->
         val seqValues = (payload as Seq).values
         Addition(seqValues[0] as Int, seqValues[4] as Int)
     }
-    addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
+
+    override fun invoke() {
+        number(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
+        addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
+    }
 }
 
 fun `alt combinator`() {
@@ -121,7 +138,9 @@ data class Input(val s: String, val offset: Int = 0) {
 
 data class Output(val payload: Any, val input: Input)
 
-data class Str(val s: String)
+data class Str(val s: String) {
+    override fun toString() = "Str($s)"
+}
 
 fun str(s: String): Parser = { input: Input ->
     if (input.complete) null
@@ -131,7 +150,9 @@ fun str(s: String): Parser = { input: Input ->
     }
 }
 
-data class Chr(val s: String)
+data class Chr(val s: String) {
+    override fun toString() = "Chr($s)"
+}
 
 fun chr(regex: String): Parser = { input: Input ->
     if (input.complete) null
@@ -141,7 +162,9 @@ fun chr(regex: String): Parser = { input: Input ->
     }
 }
 
-data class Seq(val values: List<Any>)
+data class Seq(val values: List<Any>) {
+    override fun toString() = "Seq(${values.joinToString()})"
+}
 
 fun seq(vararg parsers: Parser) = object: Parser {
     override fun invoke(input: Input): Output? {
@@ -157,7 +180,9 @@ fun seq(vararg parsers: Parser) = object: Parser {
     }
 }
 
-data class Rep(val values: List<Any>)
+data class Rep(val values: List<Any>) {
+    override fun toString() = "Rep(${values.joinToString()})"
+}
 
 fun rep(parser: Parser, n: Int) = object: Parser {
     override fun invoke(input: Input): Output? {
@@ -183,10 +208,14 @@ fun alt(vararg parsers: Parser) = object: Parser {
     }
 }
 
-fun <T : Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
+fun <T: Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
     val output = this(input)
     if (output == null) null
     else Output(f(output.payload), output.input)
 }
 
 data class Addition(val n1: Int, val n2: Int)
+
+fun ref(f: () -> Parser) = object: Parser {
+    override fun invoke(input: Input) = f()(input)
+}
