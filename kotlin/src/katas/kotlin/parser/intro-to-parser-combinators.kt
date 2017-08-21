@@ -1,7 +1,11 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package katas.kotlin.parser
 
 import katas.kotlin.printed
 import katas.kotlin.shouldEqual
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 
 /**
  * The code below is translation from Ruby to Kotlin of this blog post
@@ -16,6 +20,8 @@ fun main(args: Array<String>) {
     `alt combinator`()
     `mapping output`()
     `ref combinator`()
+    `matching parens`()
+    `multiplication precedence`()
 }
 
 
@@ -38,17 +44,12 @@ data class Input(val s: String, val offset: Int = 0) {
 
 
 fun `str parser`() {
-    val input = Input("hello world")
     val hello = str("hello")
     val world = str("world")
+    val input = Input("hello world")
 
-    world(input.read(6)).printed() shouldEqual Output(
-        Str("world"),
-        Input("hello world", 11)
-    )
-
+    world(input.read(6)).printed() shouldEqual Output(Str("world"), Input("hello world", 11))
     world(input).printed() shouldEqual null
-
     hello(input).printed() shouldEqual Output(Str("hello"), Input("hello world", offset = 5))
 }
 
@@ -232,23 +233,25 @@ data class Addition(val n1: Int, val n2: Int)
 
 @Suppress("UNCHECKED_CAST")
 object `ref combinator`: () -> Unit {
+    val whitespace = rep(str(" "), 0)
+
     val number = rep(chr("[0-9]"), 1).map { payload ->
-        val s = (payload as Rep).values.map{ (it as Chr).s }.joinToString("")
+        val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
         IntValue(s.toInt())
     }
-    val whitespace = rep(str(" "), 0)
 
     val addition: Parser = seq(number, whitespace, str("+"), whitespace, ref { expression }).map { payload ->
         val seqValues = (payload as Seq).values
         Add(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
     }
+
     val expression = alt(addition, number)
 
     override fun invoke() {
-        addition(Input("7 + 8 + 9")).printed()!!.let { (payload, input) ->
-            payload shouldEqual Add(IntValue(7), Add(IntValue(8), IntValue(9)))
-            input.complete shouldEqual true
-            (payload as Expression<*>).eval().printed() shouldEqual 24
+        val output = expression(Input("7 + 8 + 9")).printed()!!
+        (output.payload as Expression<*>).let {
+            it shouldEqual Add(IntValue(7), Add(IntValue(8), IntValue(9)))
+            it.eval().printed() shouldEqual 24
         }
     }
 }
@@ -267,4 +270,84 @@ data class Add(val n1: Expression<Int>, val n2: Expression<Int>): Expression<Int
 
 data class IntValue(val n: Int): Expression<Int> {
     override fun eval() = n
+}
+
+
+// --------------------------------
+
+
+object `matching parens`: () -> Unit {
+    val expression: Parser = rep(seq(str("("), ref{ e }, str(")")), 0)
+    val e = expression
+
+    override fun invoke() {
+        fun parensMatch(s: String): Boolean {
+            val (_, input) = expression(Input(s)).printed() ?: return false
+            return input.complete
+        }
+
+        assertFalse(parensMatch("("))
+        assertFalse(parensMatch(")"))
+        assertFalse(parensMatch(")()"))
+        assertFalse(parensMatch("(()"))
+        assertFalse(parensMatch("(()()))"))
+
+        assertTrue(parensMatch("()"))
+        assertTrue(parensMatch("()()"))
+        assertTrue(parensMatch("(())"))
+        assertTrue(parensMatch("(()())"))
+        assertTrue(parensMatch("(()())()"))
+    }
+}
+
+
+// --------------------------------
+
+
+@Suppress("UNCHECKED_CAST")
+object `multiplication precedence`: () -> Unit {
+    val ` ` = rep(str(" "), 0)
+
+    val number = rep(chr("[0-9]"), 1).map { payload ->
+        val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
+        IntValue(s.toInt())
+    }
+
+    val addition: Parser = seq(ref { terminalExpr }, ` `, str("+"), ` `, ref { expression }).map { payload ->
+        val seqValues = (payload as Seq).values
+        Add(seqValues[0] as Expression<Int>, seqValues[4] as Expression<Int>)
+    }
+
+    val multiply: Parser = seq(number, ` `, str("*"), ` `, ref { terminalExpr }).map { payload ->
+        val seqValues = (payload as Seq).values
+        Mult(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
+    }
+
+    val terminalExpr = alt(multiply, number)
+
+    val expression = alt(addition, terminalExpr)
+
+    override fun invoke() {
+        fun eval(s: String): Int {
+            return (expression(Input(s)).printed()!!.payload as Expression<Int>).eval()
+        }
+
+        eval("2 + 3") shouldEqual 5
+        eval("2 * 3") shouldEqual 6
+
+        eval("2 + 3 + 4") shouldEqual 9
+        eval("2 + 3 * 4") shouldEqual 14
+        eval("2 * 3 + 4") shouldEqual 10
+        eval("2 * 3 * 4") shouldEqual 24
+
+        eval("2 + 3 + 4 + 5") shouldEqual 14
+        eval("2 * 3 + 4 + 5") shouldEqual 15
+        eval("2 + 3 * 4 + 5") shouldEqual 19
+        eval("2 + 3 + 4 * 5") shouldEqual 25
+        eval("2 * 3 + 4 * 5") shouldEqual 26
+    }
+}
+
+data class Mult(val n1: Expression<Int>, val n2: Expression<Int>): Expression<Int> {
+    override fun eval() = n1.eval() * n2.eval()
 }
