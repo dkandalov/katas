@@ -197,7 +197,7 @@ fun alt(vararg parsers: Parser) = object: Parser {
 
 
 @Suppress("UNCHECKED_CAST")
-object `mapping output`: () -> Unit {
+fun `mapping output`() {
     val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
         if (payload is Str) 0
         else {
@@ -214,10 +214,8 @@ object `mapping output`: () -> Unit {
         Addition(seqValues[0] as Int, seqValues[4] as Int)
     }
 
-    override fun invoke() {
-        number(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
-        addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
-    }
+    number(Input("34 + 567")).printed() shouldEqual Output(34, Input("34 + 567", offset = 2))
+    addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
 }
 
 fun <T: Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
@@ -232,18 +230,41 @@ data class Addition(val n1: Int, val n2: Int)
 // --------------------------------
 
 
+@Suppress("UNCHECKED_CAST")
 object `ref combinator`: () -> Unit {
-    val number = `mapping output`.number
-    val whitespace = `mapping output`.whitespace
+    val number = rep(chr("[0-9]"), 1).map { payload ->
+        val s = (payload as Rep).values.map{ (it as Chr).s }.joinToString("")
+        IntValue(s.toInt())
+    }
+    val whitespace = rep(str(" "), 0)
 
-    val addition: Parser = seq(number, whitespace, str("+"), whitespace, ref { expression })
-    val expression = alt({ addition(it) }, number)
+    val addition: Parser = seq(number, whitespace, str("+"), whitespace, ref { expression }).map { payload ->
+        val seqValues = (payload as Seq).values
+        Add(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
+    }
+    val expression = alt(addition, number)
 
     override fun invoke() {
-        addition(Input("7 + 8 + 9")).printed()
+        addition(Input("7 + 8 + 9")).printed()!!.let { (payload, input) ->
+            payload shouldEqual Add(IntValue(7), Add(IntValue(8), IntValue(9)))
+            input.complete shouldEqual true
+            (payload as Expression<*>).eval().printed() shouldEqual 24
+        }
     }
 }
 
 fun ref(f: () -> Parser) = object: Parser {
     override fun invoke(input: Input) = f()(input)
+}
+
+interface Expression<out T> {
+    fun eval(): T
+}
+
+data class Add(val n1: Expression<Int>, val n2: Expression<Int>): Expression<Int> {
+    override fun eval() = n1.eval() + n2.eval()
+}
+
+data class IntValue(val n: Int): Expression<Int> {
+    override fun eval() = n
 }
