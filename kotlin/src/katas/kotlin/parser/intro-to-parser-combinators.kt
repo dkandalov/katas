@@ -48,7 +48,7 @@ fun `str parser`() {
     val world = str("world")
     val input = Input("hello world")
 
-    world(input.read(6)).printed() shouldEqual Output(Str("world"), Input("hello world", 11))
+    world(input.read(6)).printed() shouldEqual Output(Str("world"), Input("hello world", offset = 11))
     world(input).printed() shouldEqual null
     hello(input).printed() shouldEqual Output(Str("hello"), Input("hello world", offset = 5))
 }
@@ -138,7 +138,7 @@ fun seq(vararg parsers: Parser) = object: Parser {
 
 fun `rep combinator`() {
     val input = Input("2017")
-    val number = rep(chr("[0-9]"), 1)
+    val number = rep(chr("[0-9]"), atLeast = 1)
 
     number(input).printed() shouldEqual Output(
         Rep(listOf(
@@ -155,7 +155,7 @@ data class Rep(val values: List<Any>) {
     override fun toString() = "Rep(${values.joinToString()})"
 }
 
-fun rep(parser: Parser, n: Int) = object: Parser {
+fun rep(parser: Parser, atLeast: Int = 0) = object: Parser {
     override fun invoke(input: Input): Output? {
         val repPayload = ArrayList<Any>()
         var lastInput: Input? = input
@@ -165,7 +165,7 @@ fun rep(parser: Parser, n: Int) = object: Parser {
             lastInput = output.input
             repPayload.add(output.payload)
         }
-        return if (repPayload.size >= n) Output(Rep(repPayload), lastInput!!) else null
+        return if (repPayload.size >= atLeast) Output(Rep(repPayload), lastInput!!) else null
     }
 }
 
@@ -174,8 +174,8 @@ fun rep(parser: Parser, n: Int) = object: Parser {
 
 
 fun `alt combinator`() {
-    val whitespace = rep(str(" "), 0)
-    val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0)))
+    val whitespace = rep(str(" "))
+    val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"))))
     val addition = seq(number, whitespace, str("+"), whitespace, number)
     val expression = alt(addition, number)
 
@@ -199,16 +199,18 @@ fun alt(vararg parsers: Parser) = object: Parser {
 
 @Suppress("UNCHECKED_CAST")
 fun `mapping output`() {
-    val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]"), 0))).map { payload ->
+    val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]")))).map { payload ->
         if (payload is Str) 0
         else {
             val seqValues = (payload as Seq).values
-            val chars = (listOf(seqValues[0] as Chr) + ((seqValues[1] as Rep).values as List<Chr>)).map { it.s }
+            val seqChr = seqValues[0] as Chr
+            val repChars = (seqValues[1] as Rep).values as List<Chr>
+            val chars = (listOf(seqChr) + repChars).map { it.s }
             chars.joinToString("").toInt()
         }
     }
 
-    val whitespace = rep(str(" "), 0)
+    val whitespace = rep(str(" "))
 
     val addition = seq(number, whitespace, str("+"), whitespace, number).map { payload ->
         val seqValues = (payload as Seq).values
@@ -233,9 +235,9 @@ data class Addition(val n1: Int, val n2: Int)
 
 @Suppress("UNCHECKED_CAST")
 object `ref combinator`: () -> Unit {
-    val whitespace = rep(str(" "), 0)
+    val whitespace = rep(str(" "))
 
-    val number = rep(chr("[0-9]"), 1).map { payload ->
+    val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
         val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
         IntValue(s.toInt())
     }
@@ -256,9 +258,7 @@ object `ref combinator`: () -> Unit {
     }
 }
 
-fun ref(f: () -> Parser) = object: Parser {
-    override fun invoke(input: Input) = f()(input)
-}
+fun ref(f: () -> Parser): Parser = { input -> f()(input) }
 
 interface Expression<out T> {
     fun eval(): T
@@ -277,7 +277,7 @@ data class IntValue(val n: Int): Expression<Int> {
 
 
 object `matching parens`: () -> Unit {
-    val expression: Parser = rep(seq(str("("), ref{ e }, str(")")), 0)
+    val expression: Parser = rep(seq(str("("), ref{ e }, str(")")))
     val e = expression
 
     override fun invoke() {
@@ -306,9 +306,9 @@ object `matching parens`: () -> Unit {
 
 @Suppress("UNCHECKED_CAST")
 object `multiplication precedence`: () -> Unit {
-    val ` ` = rep(str(" "), 0)
+    val ` ` = rep(str(" "))
 
-    val number = rep(chr("[0-9]"), 1).map { payload ->
+    val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
         val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
         IntValue(s.toInt())
     }
