@@ -34,21 +34,21 @@ class EightQueen15 {
     private data class Queen(val column: Int, val row: Int) {
         override fun toString() = "($column,$row)"
     }
-    
+
     private data class Solution(val boardSize: Int, val queens: List<Queen> = emptyList()) {
         val complete: Boolean
             get() = boardSize == queens.size
 
         fun nextSteps(): Sequence<Solution> {
-            val column = (queens.map{ it.column }.max() ?: -1) + 1
+            val column = (queens.map { it.column }.max() ?: -1) + 1
             return 0.until(boardSize).asSequence()
-                    .map{ row -> Queen(column, row) }
-                    .filter{ isValidStep(it) }
-                    .map{ Solution(boardSize, queens + it) }
+                .map { row -> Queen(column, row) }
+                .filter { isValidStep(it) }
+                .map { Solution(boardSize, queens + it) }
         }
 
         private fun isValidStep(queen: Queen): Boolean {
-            return queens.none{ it.row == queen.row || it.column == queen.column} &&
+            return queens.none { it.row == queen.row || it.column == queen.column } &&
                    queens.none { Math.abs(it.row - queen.row) == Math.abs(it.column - queen.column) }
         }
     }
@@ -65,7 +65,7 @@ class EightQueen15 {
         val queue = LinkedList<Solution>()
         queue.add(Solution(boardSize))
 
-        val iterator = object : Iterator<Solution> {
+        val iterator = object: Iterator<Solution> {
             override fun hasNext(): Boolean {
                 while (queue.isNotEmpty() && !queue.first.complete) {
                     queue.addAll(0, queue.remove().nextSteps().toList())
@@ -75,6 +75,8 @@ class EightQueen15 {
             override fun next() = queue.remove()
         }
 
-        return object : Sequence<Solution> { override fun iterator() = iterator }
+        return object: Sequence<Solution> {
+            override fun iterator() = iterator
+        }
     }
 }

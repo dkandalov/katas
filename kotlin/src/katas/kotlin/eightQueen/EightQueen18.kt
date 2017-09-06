@@ -27,13 +27,13 @@ class EightQueen18 {
     }
 
     private data class Board(val queens: List<Queen> = emptyList()) {
-        constructor(vararg queens: Queen) : this(queens.asList())
+        constructor(vararg queens: Queen): this(queens.asList())
 
         fun add(queen: Queen) = if (isValidMove(queen)) Board(queens + queen) else null
 
         fun isValidMove(queen: Queen) =
-                queens.none{ it.x == queen.x || it.y == queen.y } &&
-                queens.none{ Math.abs(it.x - queen.x) == Math.abs(it.y - queen.y) }
+            queens.none { it.x == queen.x || it.y == queen.y } &&
+            queens.none { Math.abs(it.x - queen.x) == Math.abs(it.y - queen.y) }
     }
 
     private fun generateBoards(boardSize: Int): List<Board> {

@@ -8,25 +8,26 @@ import java.lang.Math.abs
 class EightQueen10 {
     @Test fun `find all solutions for eight queen puzzle`() {
         assertThat(findAllSolutions(boardSize = 0), equalTo(listOf(
-                Board()
+            Board()
         )))
         assertThat(findAllSolutions(boardSize = 1), equalTo(listOf(
-                Board(Queen(0, 0))
+            Board(Queen(0, 0))
         )))
         assertThat(findAllSolutions(boardSize = 2), equalTo(listOf()))
         assertThat(findAllSolutions(boardSize = 3), equalTo(listOf()))
         assertThat(findAllSolutions(boardSize = 4), equalTo(listOf(
-                Board(Queen(1, 0), Queen(3, 1), Queen(0, 2), Queen(2, 3)),
-                Board(Queen(2, 0), Queen(0, 1), Queen(3, 2), Queen(1, 3))
+            Board(Queen(1, 0), Queen(3, 1), Queen(0, 2), Queen(2, 3)),
+            Board(Queen(2, 0), Queen(0, 1), Queen(3, 2), Queen(1, 3))
         )))
         assertThat(findAllSolutions(boardSize = 8).size, equalTo(92))
+        assertThat(findAllSolutions(boardSize = 10).size, equalTo(724))
     }
 
     @Test fun `converts board to string`() {
         assertThat(Board(Queen(0, 0), Queen(2, 1), Queen(1, 2)).toPrintableString(), equalTo(
-                "*--\n" +
-                "--*\n" +
-                "-*-"
+            "*--\n" +
+            "--*\n" +
+            "-*-"
         ))
     }
 
@@ -47,11 +48,11 @@ class EightQueen10 {
         constructor(vararg queens: Queen): this(maxPosition(queens), queens.toList())
 
         fun nextMoves(): List<Board> {
-            val nextColumn = (queens.map{ it.column }.max() ?: -1) + 1
+            val nextColumn = (queens.map { it.column }.max() ?: -1) + 1
             return 0.until(size)
-                .map{ Queen(it, nextColumn) }
-                .filter{ isValidMove(it) }
-                .map{ Board(size, queens + it) }
+                .map { Queen(it, nextColumn) }
+                .filter { isValidMove(it) }
+                .map { Board(size, queens + it) }
         }
 
         fun isComplete(): Boolean {
@@ -77,7 +78,7 @@ class EightQueen10 {
         companion object {
             private fun maxPosition(queens: Array<out Queen>): Int {
                 if (queens.isEmpty()) return 0
-                return Math.max(queens.map{ it.row }.max()!!, queens.map{ it.column }.max()!!) + 1
+                return Math.max(queens.map { it.row }.max()!!, queens.map { it.column }.max()!!) + 1
             }
         }
     }

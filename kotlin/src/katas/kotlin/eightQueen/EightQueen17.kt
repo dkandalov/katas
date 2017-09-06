@@ -11,15 +11,15 @@ class EightQueen17 {
         assertThat(Board(size = 2).queenPositions(), equalTo(emptyList()))
         assertThat(Board(size = 3).queenPositions(), equalTo(emptyList()))
         assertThat(Board(size = 4).queenPositions().map(Board::toPrettyString), equalTo(listOf(
-                "-Q--\n" +
-                "---Q\n" +
-                "Q---\n" +
-                "--Q-",
-                
-                "--Q-\n" +
-                "Q---\n" +
-                "---Q\n" +
-                "-Q--"
+            "-Q--\n" +
+            "---Q\n" +
+            "Q---\n" +
+            "--Q-",
+
+            "--Q-\n" +
+            "Q---\n" +
+            "---Q\n" +
+            "-Q--"
         )))
     }
 
@@ -32,9 +32,9 @@ class EightQueen17 {
             var result = listOf(Board(size))
             0.until(size).forEach { x ->
                 result = 0.until(size)
-                          .map{ y -> Queen(x, y) }
-                          .flatMap{ queen -> result.map{ it.add(queen) } }
-                          .filterNotNull()
+                    .map { y -> Queen(x, y) }
+                    .flatMap { queen -> result.map { it.add(queen) } }
+                    .filterNotNull()
             }
             return result
         }
@@ -42,8 +42,8 @@ class EightQueen17 {
         private fun add(queen: Queen) = if (isValid(queen)) copy(queens = queens + queen) else null
 
         private fun isValid(queen: Queen) =
-               queens.none { it.x == queen.x || it.y == queen.y } &&
-               queens.none { Math.abs(it.x - queen.x) == Math.abs(it.y - queen.y) }
+            queens.none { it.x == queen.x || it.y == queen.y } &&
+            queens.none { Math.abs(it.x - queen.x) == Math.abs(it.y - queen.y) }
 
         fun toPrettyString(): String {
             return 0.until(size).map { y ->

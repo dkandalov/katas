@@ -5,7 +5,7 @@ import org.junit.Test
 import kotlin.coroutines.experimental.buildSequence
 
 class EightQueen22 {
-    
+
     @Test fun `find all queen positions in which they don't attack each other`() {
         Board(size = 0).findPositions().toList() shouldEqual listOf(Board(size = 0, queens = emptyList()))
         Board(size = 1).findPositions().toList() shouldEqual listOf(Board(size = 1, queens = listOf(Queen(x = 0, y = 0))))
