@@ -38,10 +38,10 @@ class HelloNN {
         val network = NeuralNetwork(listOf(inputLayer, outputLayer))
 
         val trainingExamples = listOf(
-                Example(listOf(0.0, 0.0), listOf(0.0)),
-                Example(listOf(0.0, 1.0), listOf(0.0)),
-                Example(listOf(1.0, 0.0), listOf(0.0)),
-                Example(listOf(1.0, 1.0), listOf(1.0))
+            Example(listOf(0.0, 0.0), listOf(0.0)),
+            Example(listOf(0.0, 1.0), listOf(0.0)),
+            Example(listOf(1.0, 0.0), listOf(0.0)),
+            Example(listOf(1.0, 1.0), listOf(1.0))
         ).repeat(times = 200000).shuffle(random)
 
         val trainer = Trainer(random).train(trainingExamples, network)
@@ -57,7 +57,7 @@ class HelloNN {
 
         val inputLayer = Layer(2)
         val hiddenLayer = Layer(40, inputLayer, ::tanh, ::tanhDerivative)
-        val outputLayer = Layer(2, hiddenLayer, {it}, {1.0})
+        val outputLayer = Layer(2, hiddenLayer, { it }, { 1.0 })
         val network = NeuralNetwork(listOf(inputLayer, hiddenLayer, outputLayer))
 
         val trainingExamples = Supplier<Example?> {
@@ -133,9 +133,9 @@ class HelloNN {
             val actualOutputs = process(example.inputs.toTypedArray())
 
             val errors = example.expectedOutputs
-                    .zip(actualOutputs)
-                    .map { it.first - it.second }
-                    .toTypedArray()
+                .zip(actualOutputs)
+                .map { it.first - it.second }
+                .toTypedArray()
 
             hiddenLayers.foldRight(errors) { layer, aggErrors ->
                 layer.backPropagate(aggErrors)
@@ -144,22 +144,23 @@ class HelloNN {
         }
 
         fun prepareForLearning(random: Random = Random()) {
-            hiddenLayers.forEach{ it.prepareForLearning(random) }
+            hiddenLayers.forEach { it.prepareForLearning(random) }
         }
     }
 
 
-    private class Layer(val size: Int,
-                        val inputLayer: Layer? = null,
-                        val activation: (Double) -> Double = ::sigmoid,
-                        val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
-                        val learningRate: Double = 0.01,
-                        biasValue: Double = 1.0
+    private class Layer(
+        val size: Int,
+        val inputLayer: Layer? = null,
+        val activation: (Double) -> Double = ::sigmoid,
+        val activationDerivative: (Double) -> Double = ::sigmoidDerivative,
+        val learningRate: Double = 0.01,
+        biasValue: Double = 1.0
     ) {
         val outputs = Array(size, { 0.0 })
         private val inputs = arrayOf(biasValue) + Array(inputLayer?.size ?: 0, { 0.0 })
         private val inputThetas = Array(size, { Array(inputs.size, { 0.0 }) })
-        private val inputsSum = Array(size, {0.0})
+        private val inputsSum = Array(size, { 0.0 })
 
         fun activate() {
             if (inputLayer == null) return
@@ -282,6 +283,7 @@ private fun <T> List<T>.repeat(times: Int): List<T> {
     0.until(times).forEach { result.addAll(this) }
     return result
 }
+
 private fun <T> List<T>.shuffle(random: Random): List<T> {
     val result = mutableListOf<T>()
     result.addAll(this)
