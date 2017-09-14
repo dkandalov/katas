@@ -6,41 +6,43 @@ import kotlin.coroutines.experimental.buildSequence
 
 class EightQueen23 {
     @Test fun `find positions of queens on board in which they don't attack each other`() {
-        Board(size = 0).doFindQueenPosition() shouldEqual listOf(Board(size = 0))
-        Board(size = 1).doFindQueenPosition() shouldEqual listOf(Board(size = 1, queens = listOf(Queen(0, 0))))
-        Board(size = 2).doFindQueenPosition() shouldEqual listOf()
-        Board(size = 3).doFindQueenPosition() shouldEqual listOf()
-        Board(size = 4).doFindQueenPosition() shouldEqual listOf(
-            Board(size = 4, queens = listOf(Queen(x = 0, y = 2), Queen(x = 1, y = 0), Queen(x = 2, y = 3), Queen(x = 3, y = 1))),
-            Board(size = 4, queens = listOf(Queen(x = 0, y = 1), Queen(x = 1, y = 3), Queen(x = 2, y = 0), Queen(x = 3, y = 2)))
+        Board(size = 0).doFindQueenPositions() shouldEqual listOf()
+        Board(size = 1).doFindQueenPositions() shouldEqual listOf(Board(size = 1, queens = listOf(Queen(0, 0))))
+        Board(size = 2).doFindQueenPositions() shouldEqual listOf()
+        Board(size = 3).doFindQueenPositions() shouldEqual listOf()
+        Board(size = 4).doFindQueenPositions() shouldEqual listOf(
+            Board(size = 4, queens = listOf(Queen(x = 0, y = 1), Queen(x = 1, y = 3), Queen(x = 2, y = 0), Queen(x = 3, y = 2))),
+            Board(size = 4, queens = listOf(Queen(x = 0, y = 2), Queen(x = 1, y = 0), Queen(x = 2, y = 3), Queen(x = 3, y = 1)))
         )
-        Board(size = 8).doFindQueenPosition().size shouldEqual 92
-        Board(size = 10).doFindQueenPosition().size shouldEqual 724
+        Board(size = 8).doFindQueenPositions().size shouldEqual 92
+        Board(size = 10).doFindQueenPositions().size shouldEqual 724
 
-        // Board(size = 20).findQueenPosition().take(1).toList() shouldEqual 724
+        Board(size = 20).findQueenPositions().take(1).toList() shouldEqual listOf(
+            Board(size = 20, queens = listOf(
+                Queen(x = 0, y = 0), Queen(x = 1, y = 2), Queen(x = 2, y = 4), Queen(x = 3, y = 1), Queen(x = 4, y = 3),
+                Queen(x = 5, y = 12), Queen(x = 6, y = 14), Queen(x = 7, y = 11), Queen(x = 8, y = 17), Queen(x = 9, y = 19),
+                Queen(x = 10, y = 16), Queen(x = 11, y = 8), Queen(x = 12, y = 15), Queen(x = 13, y = 18), Queen(x = 14, y = 7),
+                Queen(x = 15, y = 9), Queen(x = 16, y = 6), Queen(x = 17, y = 13), Queen(x = 18, y = 5), Queen(x = 19, y = 10)
+            ))
+        )
     }
 
-    private fun Board.doFindQueenPosition(): List<Board> = findQueenPosition().toList()
+    private fun Board.doFindQueenPositions(): List<Board> = findQueenPositions().toList()
 
-    private fun Board.findQueenPosition(): Sequence<Board> =
-        generateBoards().filter { it.size == it.queens.size }
-
-    private fun Board.generateBoards(): Sequence<Board> =
-        if (size == 0) sequenceOf(Board(size = 0))
-        else buildSequence {
-            var boards = listOf(Board(size = size))
-            0.until(size).forEach { x ->
-                boards = 0.until(size).flatMap { y ->
-                    boards
-                        .mapNotNull { it.add(Queen(x, y)) }
-                        .filter { it.queens.size == x + 1 }
-                        .onEach { yield(it) }
-                }
-            }
+    private fun Board.findQueenPositions(): Sequence<Board> {
+        val nextMoves = buildSequence {
+            val x = (queens.map { it.x }.max() ?: -1) + 1
+            0.until(size)
+                .map { y -> Queen(x, y) }
+                .filter { isValidMove(it) }
+                .forEach { yield(it) }
         }
-
-    private fun Board.add(queen: Queen): Board? =
-        if (isValidMove(queen)) copy(queens = queens + queen) else null
+        return nextMoves.flatMap { move ->
+            val newBoard = copy(queens = queens + move)
+            if (newBoard.queens.size == size) sequenceOf(newBoard)
+            else newBoard.findQueenPositions()
+        }
+    }
 
     private fun Board.isValidMove(queen: Queen) =
         queens.size < size &&
@@ -51,5 +53,3 @@ class EightQueen23 {
 
     private data class Queen(val x: Int, val y: Int)
 }
-
-
