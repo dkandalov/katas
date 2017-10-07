@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin.iml" filepath="$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin_main.iml" group="Rosetta_Code_Kotlin" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Rosetta_Code_Kotlin_test.iml" group="Rosetta_Code_Kotlin" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-katas.iml" filepath="$PROJECT_DIR$/kotlin-katas.iml" />
     </modules>
   </component>

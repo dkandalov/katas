@@ -17,7 +17,7 @@ class QuickSort9 {
     }
 
     @Test fun `sort list of integers`() {
-        assertThat(sort(emptyList<Int>()), equalTo(emptyList<Int>()))
+        assertThat(sort(emptyList<Int>()), equalTo(emptyList()))
         assertThat(sort(listOf(1)), equalTo(listOf(1)))
         assertThat(sort(listOf(1, 2)), equalTo(listOf(1, 2)))
         assertThat(sort(listOf(2, 1)), equalTo(listOf(1, 2)))

@@ -7,7 +7,7 @@ import java.lang.Math.min
 
 class BowlingKata {
     @Test fun `parsing game score`() =
-            assertThat(parse("123-4/5678XXXXXX9"), equalTo(listOf<AFrame>(
+            assertThat(parse("123-4/5678XXXXXX9"), equalTo(listOf(
                     Frame(1, 2), Frame(3, 0), Spare(4), Frame(5, 6), Frame(7, 8),
                     Strike, Strike, Strike, Strike, Strike, Frame(10, 9)
             )))

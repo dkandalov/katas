@@ -5,7 +5,7 @@ import org.junit.Test
 
 class MergeSort1 {
     @Test fun `sort list of ints`() {
-        emptyList<Int>().mergeSort() shouldEqual emptyList<Int>()
+        emptyList<Int>().mergeSort() shouldEqual emptyList()
         listOf(1).mergeSort() shouldEqual listOf(1)
 
         listOf(1, 2).mergeSort() shouldEqual listOf(1, 2)
