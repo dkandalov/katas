@@ -17,7 +17,7 @@ class Trigram3Test : StringSpec() {
                 }
 
             val random = Random(123)
-            val initialKey = trigrams.keys[random]
+            val initialKey = trigrams.keys.get(random)
             val textGenerator = generateSequence(initialKey) { key ->
                 val nexWords = trigrams[key] ?: trigrams.entries[random].value
                 Pair(key.second, nexWords[random])
@@ -33,9 +33,7 @@ class Trigram3Test : StringSpec() {
         }
     }
 
-    private operator fun <E> Collection<E>.get(random: Random): E {
-        return skip(random.nextInt(size)).first()
-    }
+    private operator fun <E> Collection<E>.get(random: Random) = skip(random.nextInt(size)).first()
 
     private fun File.words(): List<String> {
         val nbsp = "feff".toInt(16).toChar()
