@@ -6,7 +6,7 @@ import kotlin.test.currentStackTrace
 
 class ApprovalExampleTest {
 
-    @Test fun `1 plus 2`() {
+    @Test fun `1 plus 3`() {
         assertApproved(1 + 3)
     }
 
