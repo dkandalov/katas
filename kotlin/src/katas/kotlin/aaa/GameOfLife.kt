@@ -43,11 +43,11 @@ class GameOfLife {
         Game(liveCells).evolve() shouldEqual Game(liveCells)
     }
 
-    @Test fun `amount of neighbours is zero`() {
+    @Test fun `amount of live neighbours in empty game is zero`() {
         Game().numberOfNeighbours(0, 0) shouldEqual 0
     }
 
-    @Test fun `amount of neighbours is one if one live cell`() {
+    @Test fun `amount of neighbours is one in game with one live cell`() {
         Game(listOf(Cell(0, 0))).numberOfNeighbours(1, 0) shouldEqual 1
     }
 }
