@@ -28,4 +28,14 @@ class GameOfLife {
     @Test fun `game with one cell becomes empty`() {
         Game(liveCells = listOf(Cell(0, 0))).evolve() shouldEqual Game()
     }
+
+    @Test fun `square becomes a square`() {
+        val liveCells = listOf(
+            Cell(0, 0),
+            Cell(0, 1),
+            Cell(1, 0),
+            Cell(1, 1)
+        )
+        Game(liveCells).evolve() shouldEqual Game(liveCells)
+    }
 }
