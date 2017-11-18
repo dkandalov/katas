@@ -8,7 +8,7 @@ import org.junit.Test
 data class Cell(val isAlive: Boolean)
 data class Game(val cells: List<Cell> = emptyList()) {
     fun evolve(): Game {
-        return this
+        return Game()
     }
 }
 
@@ -23,5 +23,9 @@ class GameOfLife {
 
     @Test fun `empty game evolves into an empty game`() {
         Game().evolve() shouldEqual Game()
+    }
+
+    @Test fun `game with one cell becomes empty`() {
+        Game(cells = listOf(Cell(true))).evolve() shouldEqual Game()
     }
 }
