@@ -72,4 +72,15 @@ class GameOfLife {
         game.numberOfNeighbours(2, 0) shouldEqual 1
         game.numberOfNeighbours(40, 0) shouldEqual 0
     }
+
+    @Test fun `count all neighbours in game with multiple live cells`() {
+        val game = Game(listOf(Cell(1, 1)))
+        game.numberOfNeighbours(1, 0) shouldEqual 1
+        game.numberOfNeighbours(0, 1) shouldEqual 1
+        game.numberOfNeighbours(1, 2) shouldEqual 1
+        game.numberOfNeighbours(2, 1) shouldEqual 1
+
+        game.numberOfNeighbours(1, 1) shouldEqual 0
+        game.numberOfNeighbours(40, 0) shouldEqual 0
+    }
 }
