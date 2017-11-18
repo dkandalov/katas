@@ -12,7 +12,7 @@ data class Game(val liveCells: List<Cell> = emptyList()) {
     }
 
     fun numberOfNeighbours(x: Int, y: Int): Int {
-        return liveCells.size
+        return liveCells.filter { it.x == x && (it.y + 1 == y || it.y -1 == y)}.count()
     }
 }
 
@@ -48,6 +48,13 @@ class GameOfLife {
     }
 
     @Test fun `amount of neighbours is one in game with one live cell`() {
-        Game(listOf(Cell(0, 0))).numberOfNeighbours(1, 0) shouldEqual 1
+        Game(listOf(Cell(0, 0))).numberOfNeighbours(0, 1) shouldEqual 1
+    }
+
+    @Test fun `count neighbours in game with multiple live cells`() {
+        val game = Game(listOf(Cell(0, 0), Cell(0, 1), Cell(0, 2)))
+        game.numberOfNeighbours(0, 0) shouldEqual 1
+        game.numberOfNeighbours(0, 1) shouldEqual 2
+        game.numberOfNeighbours(0, 2) shouldEqual 1
     }
 }
