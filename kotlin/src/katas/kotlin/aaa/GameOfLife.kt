@@ -8,7 +8,7 @@ import org.junit.Test
 data class Cell(val x: Int, val y: Int)
 data class Game(val liveCells: List<Cell> = emptyList()) {
     fun evolve(): Game {
-        return Game()
+        return Game(if (liveCells.size == 1) emptyList() else liveCells)
     }
 }
 
