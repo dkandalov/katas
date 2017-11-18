@@ -5,7 +5,7 @@ import org.hamcrest.core.IsEqual.equalTo
 import org.junit.Assert.assertThat
 import org.junit.Test
 
-class Cell()
+data class Cell(val x: Int, val y: Int)
 data class Game(val liveCells: List<Cell> = emptyList()) {
     fun evolve(): Game {
         return Game()
@@ -18,7 +18,7 @@ class GameOfLife {
     }
 
     @Test fun `game with one live cell has one live cell`() {
-        assertThat(Game(listOf(Cell())).liveCells.count(), equalTo(1))
+        assertThat(Game(listOf(Cell(0, 0))).liveCells.count(), equalTo(1))
     }
 
     @Test fun `empty game evolves into an empty game`() {
@@ -26,6 +26,6 @@ class GameOfLife {
     }
 
     @Test fun `game with one cell becomes empty`() {
-        Game(liveCells = listOf(Cell())).evolve() shouldEqual Game()
+        Game(liveCells = listOf(Cell(0, 0))).evolve() shouldEqual Game()
     }
 }
