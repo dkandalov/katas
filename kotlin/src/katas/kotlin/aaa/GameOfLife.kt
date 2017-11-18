@@ -10,6 +10,10 @@ data class Game(val liveCells: List<Cell> = emptyList()) {
     fun evolve(): Game {
         return Game(if (liveCells.size == 1) emptyList() else liveCells)
     }
+
+    fun numberOfNeighbours(i: Int, i1: Int): Any {
+        return 0
+    }
 }
 
 class GameOfLife {
@@ -37,5 +41,8 @@ class GameOfLife {
             Cell(1, 1)
         )
         Game(liveCells).evolve() shouldEqual Game(liveCells)
+    }
+    @Test fun `amount of neighbours is zero`() {
+        Game().numberOfNeighbours(0,0) shouldEqual 0
     }
 }
