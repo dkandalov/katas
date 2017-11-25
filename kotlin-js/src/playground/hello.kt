@@ -1,13 +1,15 @@
 package playground
 
-import org.w3c.dom.get
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.RenderingContext
 import kotlin.browser.document
-import kotlin.browser.window
 
-fun main(args: Array<String>) {
-    println(window["myCanvas"])
-    console.info("an info")
-    document.bgColor = "112233" // doesn't really set background
+fun hello(): String {
+    val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
+    val context: RenderingContext = canvas.getContext("2d")!! as RenderingContext
+    context.moveTo(0, 0)
+    context.lineTo(200, 100)
+    context.stroke()
+
+    return "Hello from Kotlin function"
 }
-
-fun hello() = "Hello from Kotlin function"
