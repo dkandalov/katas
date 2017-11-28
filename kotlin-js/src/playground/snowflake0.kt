@@ -66,8 +66,8 @@ data class Point(val x: Double, val y: Double) {
         val cos = cos(angle)
         val sin = sin(angle)
         return Point(
-            x = (x * cos - y * sin),
-            y = (x * sin + y * cos)
+            x = x * cos - y * sin,
+            y = x * sin + y * cos
         )
     }
 }
