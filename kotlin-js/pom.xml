@@ -69,6 +69,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <experimentalCoroutines>enable</experimentalCoroutines>
+                </configuration>
             </plugin>
         </plugins>
     </build>

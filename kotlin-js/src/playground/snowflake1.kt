@@ -3,6 +3,7 @@ package playground
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
+import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -14,34 +15,55 @@ fun drawSnowflake2() {
     val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
 
-    val length = 5
-    var angle = 0.0
-    var p = Point(200.0, 200.0)
-    snowflakes().forEach { c ->
-        when (c) {
-            'F' -> {
-                val p2 = Point(
-                    x = p.x + (cos(angle) * length),
-                    y = p.y + (sin(angle) * length)
-                )
-                context.moveTo(p.x, p.y)
-                context.lineTo(p2.x, p2.y)
-                context.stroke()
-                p = p2
+    KochSnowflake.generatePoints(stepLength = 5.0)
+        .shift(200.0, 200.0)
+        .zipWithNext()
+        .forEach { (p1, p2) ->
+            context.moveTo(p1.x, p1.y)
+            context.lineTo(p2.x, p2.y)
+            context.stroke()
+        }
+}
+
+object KochSnowflake{
+    val axiom = "F--F--F"
+    val rules = mapOf('F' to "F+F--F+F")
+    val angleIncrement = PI / 3
+
+    fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Point> {
+        return snowflake(axiom, depth).toPoints(stepLength)
+    }
+
+    fun snowflake(input: String, depth: Int): String {
+        if (depth == 0) return input
+        val result = input
+            .map { c -> rules[c] ?: c }
+            .joinToString("")
+        return snowflake(result, depth - 1)
+    }
+
+    private fun String.toPoints(stepLength: Double): Sequence<Point> {
+        return buildSequence {
+            val startPoint = Point(0.0, 0.0)
+            yield(startPoint)
+
+            var angle = 0.0
+            var p = startPoint
+            forEach { c ->
+                when (c) {
+                    'F' -> {
+                        p = Point(
+                            x = p.x + (cos(angle) * stepLength),
+                            y = p.y + (sin(angle) * stepLength)
+                        )
+                        yield(p)
+                    }
+                    '+' -> angle += angleIncrement
+                    '-' -> angle -= angleIncrement
+                }
             }
-            '+' -> angle += PI / 3
-            '-' -> angle -= PI / 3
+            yield(startPoint)
         }
     }
 }
-
-fun snowflakes(input: String = "F--F--F", depth: Int = 3): String {
-    if (depth == 0) return input
-    val result = input
-        .map { c -> rules[c] ?: c }
-        .joinToString("")
-    return snowflakes(result, depth - 1)
-}
-
-val rules = mapOf('F' to "F+F--F+F")
 

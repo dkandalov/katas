@@ -73,3 +73,4 @@ data class Point(val x: Double, val y: Double) {
 }
 
 fun List<Point>.shift(x: Double, y: Double) = map { it.shift(x, y) }
+fun Sequence<Point>.shift(x: Double, y: Double) = map { it.shift(x, y) }
