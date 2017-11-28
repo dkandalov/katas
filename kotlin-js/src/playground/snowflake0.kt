@@ -3,15 +3,18 @@ package playground
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
-import kotlin.js.Math
-import kotlin.js.Math.sqrt
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 @Suppress("unused")
-fun hello() {
+@JsName("drawSnowflake")
+fun drawSnowflake() {
     val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
     fun List<Point>.display(): List<Point> {
-        shift(100.0, 100.0)
+        this.shift(100.0, 100.0)
             .let { points ->
                 context.moveTo(points.first().x, points.first().y)
                 points.forEach {
@@ -40,7 +43,7 @@ fun addNested(points: List<Point>, length: Double, depth: Int = 3): List<Point> 
     if (depth == 0) return points
     val result = points.pairs()
         .flatMap { (p1, p2) ->
-            val angle = Math.atan2(p2.y - p1.y, p2.x - p1.x)
+            val angle = atan2(p2.y - p1.y, p2.x - p1.x)
             val h = (sqrt(3.0) / 2) * length
             listOf(
                 Point(0.0, 0.0),
@@ -54,14 +57,14 @@ fun addNested(points: List<Point>, length: Double, depth: Int = 3): List<Point> 
     return addNested(result, length / 3, depth - 1)
 }
 
-fun <T> List<T>.pairs(): List<Pair<T, T>> = zip(drop(1) + first())
+fun <T> List<T>.pairs(): List<Pair<T, T>> = (this + first()).zipWithNext()
 
 data class Point(val x: Double, val y: Double) {
     fun shift(x: Double, y: Double) = Point(this.x + x, this.y + y)
 
     fun rotate(angle: Double): Point {
-        val cos = Math.cos(angle)
-        val sin = Math.sin(angle)
+        val cos = cos(angle)
+        val sin = sin(angle)
         return Point(
             x = (x * cos - y * sin),
             y = (x * sin + y * cos)

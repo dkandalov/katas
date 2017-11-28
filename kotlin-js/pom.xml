@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <kotlin.version>1.1.60</kotlin.version>
+        <kotlin.version>1.2.0</kotlin.version>
     </properties>
 
     <repositories>
@@ -54,6 +54,12 @@
                         <goals>
                             <goal>js</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src</source>
+                                <source>target/generated-sources/kapt</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
