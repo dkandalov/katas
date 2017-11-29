@@ -52,9 +52,9 @@ object KochSnowflake{
             forEach { c ->
                 when (c) {
                     'F' -> {
-                        p = Point(
-                            x = p.x + (cos(angle) * stepLength),
-                            y = p.y + (sin(angle) * stepLength)
+                        p = p.shift(
+                            x = cos(angle) * stepLength,
+                            y = sin(angle) * stepLength
                         )
                         yield(p)
                     }
