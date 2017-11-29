@@ -3,10 +3,7 @@ package playground
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import kotlin.math.*
 
 @Suppress("unused")
 @JsName("drawSnowflake")
@@ -60,8 +57,6 @@ fun addNested(points: List<Point>, length: Double, depth: Int = 3): List<Point> 
 fun <T> List<T>.pairs(): List<Pair<T, T>> = (this + first()).zipWithNext()
 
 data class Point(val x: Double, val y: Double) {
-    fun shift(x: Double, y: Double) = Point(this.x + x, this.y + y)
-
     fun rotate(angle: Double): Point {
         val cos = cos(angle)
         val sin = sin(angle)
@@ -70,7 +65,22 @@ data class Point(val x: Double, val y: Double) {
             y = x * sin + y * cos
         )
     }
+
+    fun shift(x: Double, y: Double) = Point(this.x + x, this.y + y)
+
+    fun scale(value: Double) = Point(x * value, y * value)
 }
 
+fun List<Point>.scale(value: Double) = map { it.scale(value) }
 fun List<Point>.shift(x: Double, y: Double) = map { it.shift(x, y) }
 fun Sequence<Point>.shift(x: Double, y: Double) = map { it.shift(x, y) }
+
+fun List<Point>.fitInto(canvas: HTMLCanvasElement): List<Point> {
+    val minPoint = Point(minBy{ it.x }!!.x, minBy{ it.y }!!.y)
+    val maxPoint = Point(maxBy{ it.x }!!.x, maxBy{ it.y }!!.y)
+    val xScale = canvas.width / (maxPoint.x - minPoint.x)
+    val yScale = canvas.height / (maxPoint.y - minPoint.y)
+    return this
+        .shift(-minPoint.x, -minPoint.y)
+        .scale(min(xScale, yScale))
+}
