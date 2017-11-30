@@ -69,6 +69,10 @@ data class Point(val x: Double, val y: Double) {
     fun shift(x: Double, y: Double) = Point(this.x + x, this.y + y)
 
     fun scale(value: Double) = Point(x * value, y * value)
+
+    companion object {
+        val none = Point(Double.NaN, Double.NaN)
+    }
 }
 
 fun List<Point>.scale(value: Double) = map { it.scale(value) }

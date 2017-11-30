@@ -15,15 +15,18 @@ fun drawSnowflake2() {
     val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
 
-    val points = `Sierpinski triangle`
-        .generatePoints(stepLength = 10.0, depth = 6)
+    val points = `Fractal plant`
+        .generatePoints(stepLength = 10.0, depth = 9)
         .toList()
 
     context.beginPath()
     points.fitInto(canvas)
-        .zipWithNext().forEach { (p1, p2) ->
-            context.moveTo(p1.x, p1.y)
-            context.lineTo(p2.x, p2.y)
+        .zipWithNext()
+        .forEach { (p1, p2) ->
+            if (p1 != Point.none && p2 != Point.none) {
+                context.moveTo(p1.x, p1.y)
+                context.lineTo(p2.x, p2.y)
+            }
         }
     context.closePath()
     context.stroke()
@@ -36,14 +39,14 @@ private val `Koch snowflake` = LSystem(
     closedPath = true
 )
 
-private val `Cesàro fractal` = LSystem(
+private val `Cesaro fractal` = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = 85.toRadians()
 )
 
 // TODO http://mathworld.wolfram.com/CesaroFractal.html
-private val `Cesàro fractal 2` = LSystem(
+private val `Cesaro fractal 2` = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F--F+F"),
     angle = PI / 3
@@ -61,6 +64,27 @@ private val `Quadratic type 2 curve` = LSystem(
     angle = PI / 2
 )
 
+// https://en.wikipedia.org/wiki/Hilbert_curve
+private val `Hilber curve` = LSystem(
+    start = "A",
+    rules = mapOf(
+        'A' to "-BF+AFA+FB-",
+        'B' to "+AF-BFB-FA+"
+    ),
+    angle = PI / 2
+)
+
+// https://en.wikipedia.org/wiki/Gosper_curve
+private val `Gosper curve` = LSystem(
+    start = "F",
+    rules = mapOf(
+        'F' to "F-G--G+F++FF+G-",
+        'G' to "+F-GG--G-F++F+G"
+    ),
+    angle = 60.toRadians()
+)
+
+// https://en.wikipedia.org/wiki/Sierpinski_triangle
 private val `Sierpinski triangle` = LSystem(
     start = "F-G-G",
     rules = mapOf(
@@ -70,6 +94,65 @@ private val `Sierpinski triangle` = LSystem(
     angle = 120.toRadians()
 )
 
+/*private val pentaFlake = LSystem(
+    start = "F-F-F-F-F",
+    rules = mapOf(
+        'F' to "F[-F-F-F-F]"*//*,
+        'G' to "F[-F-F-F-F]"*//*
+    ),
+    angle = PI / 2.5
+)
+
+private val pentaFlake0 = LSystem(
+    start = "F-F-F-F-F",
+    rules = mapOf(
+        'F' to "F-F[-F-F-F-F]----F",
+        'G' to ""
+    ),
+    angle = PI / 2.5
+)*/
+
+// https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve
+private val `Sierpinski arrowhead curve` = LSystem(
+    start = "F",
+    rules = mapOf(
+        'F' to "G-F-G",
+        'G' to "F+G+F"
+    ),
+    angle = PI / 3,
+    initialAngle = PI
+)
+
+// https://en.wikipedia.org/wiki/Dragon_curve
+private val `Dragon curve` = LSystem(
+    start = "FX",
+    rules = mapOf(
+        'X' to "X+YF+",
+        'Y' to "-FX-Y"
+    ),
+    angle = PI / 2,
+    initialAngle = 1.5 * PI
+)
+
+private val `Fractal plant` = LSystem(
+    start = "X",
+    rules = mapOf(
+        'X' to "F[-X][X]F[-X]+FX",
+        'F' to "FF"
+    ),
+    angle = 25.toRadians(),
+    initialAngle = -PI / 2
+)
+
+// From http://www.cs.unh.edu/~charpov/programming-lsystems.html
+private val `Fractal plant 2` = LSystem(
+    start = "F",
+    rules = mapOf('F' to "FF-[-F+F+F]+[+F-F-F]"),
+    angle = 22.5.toRadians(),
+    initialAngle = -PI / 2
+)
+
+
 class LSystem(
     private val start: String,
     private val rules: Map<Char, String>,
@@ -78,15 +161,15 @@ class LSystem(
     private val closedPath: Boolean = false
 ) {
     fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Point> {
-        return snowflake(start, depth).toPoints(stepLength)
+        return generateOutput(start, depth).toPoints(stepLength)
     }
 
-    private fun snowflake(input: String, depth: Int): String {
+    private fun generateOutput(input: String, depth: Int): String {
         if (depth == 0) return input
         val result = input
             .asIterable()
-            .joinToString { c -> rules[c] ?: c.toString() }
-        return snowflake(result, depth - 1)
+            .joinToString("") { c -> rules[c] ?: c.toString() }
+        return generateOutput(result, depth - 1)
     }
 
     private fun String.toPoints(stepLength: Double): Sequence<Point> {
@@ -96,6 +179,7 @@ class LSystem(
 
             var angle = initialAngle
             var p = startPoint
+            val stack = ArrayList<Pair<Point, Double>>()
             forEach { c ->
                 when (c) {
                     'F', 'G' -> {
@@ -107,6 +191,13 @@ class LSystem(
                     }
                     '+' -> angle += this@LSystem.angle
                     '-' -> angle -= this@LSystem.angle
+                    '[' -> stack.add(0, Pair(p, angle))
+                    ']' -> {
+                        val removed = stack.removeAt(0)
+                        p = removed.first
+                        angle = removed.second
+                        yield(Point.none)
+                    }
                 }
             }
             if (closedPath) yield(startPoint)
