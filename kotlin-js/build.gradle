@@ -28,6 +28,8 @@ compileKotlin2Js {
 		moduleKind = "plain"
 		sourceMapEmbedSources = "always"
 		sourceMap = true
+		apiVersion = "1.2"
+		languageVersion = "1.2"
 	}
 }
 
