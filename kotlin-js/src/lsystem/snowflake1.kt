@@ -1,4 +1,4 @@
-package playground
+package lsystem
 
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
