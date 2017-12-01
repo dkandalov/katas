@@ -23,7 +23,13 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
 
-compileKotlin2Js.kotlinOptions.moduleKind = "plain"
+compileKotlin2Js {
+	kotlinOptions {
+		moduleKind = "plain"
+		sourceMapEmbedSources = "always"
+		sourceMap = true
+	}
+}
 
 sourceSets {
 	main {
