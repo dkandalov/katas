@@ -1,8 +1,12 @@
 package lsystem
 
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.Document
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
+import kotlin.browser.window
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.PI
 import kotlin.math.cos
@@ -10,26 +14,114 @@ import kotlin.math.sin
 
 
 @Suppress("unused")
-@JsName("drawSnowflake2")
+@JsName("main")
 fun main() {
     val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
+    document.body?.style?.apply {
+        margin = "0"
+        overflowX = "hidden"
+        overflowY = "hidden"
+    }
+    applyStyle1(context, document)
 
-    val points = `Fractal plant`
-        .generatePoints(stepLength = 10.0, depth = 9)
-        .toList()
+    val presenter = LSystemPresenter()
 
-    context.beginPath()
-    points.fitInto(canvas)
-        .zipWithNext()
-        .forEach { (p1, p2) ->
-            if (p1 != Point.none && p2 != Point.none) {
-                context.moveTo(p1.x, p1.y)
-                context.lineTo(p2.x, p2.y)
+    fun paintCanvas() {
+        val points = presenter.generatePoints()
+        context.fillRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
+        context.beginPath()
+        points
+            .toList().fitCenteredInto(window)
+            .zipWithNext()
+            .forEach { (p1, p2) ->
+                if (p1 != Point.none && p2 != Point.none) {
+                    context.moveTo(p1.x, p1.y)
+                    context.lineTo(p2.x, p2.y)
+                }
+            }
+        context.closePath()
+        context.stroke()
+    }
+
+    paintCanvas()
+
+    window.addEventListener("keypress", onKeyPress(presenter, context, ::paintCanvas))
+}
+
+private fun onKeyPress(
+    presenter: LSystemPresenter,
+    context: CanvasRenderingContext2D,
+    paintCanvas: () -> Unit
+): (Event) -> Unit {
+    val mapping = mapOf(
+        "n" to { presenter.switch(1) },
+        "N" to { presenter.switch(-1) },
+        "d" to { presenter.changeDepth(1) },
+        "D" to { presenter.changeDepth(-1) },
+        "1" to { applyStyle1(context, document) },
+        "2" to { applyStyle2(context, document) }
+    )
+    return { event ->
+        if (event is KeyboardEvent) {
+            val action = mapping[event.key]
+            if (action != null) {
+                action()
+                paintCanvas()
             }
         }
-    context.closePath()
-    context.stroke()
+    }
+}
+
+fun applyStyle1(context: CanvasRenderingContext2D, document: Document) {
+    context.fillStyle = "#ffffff"
+    context.strokeStyle = "#000000"
+    document.body?.style?.background = "#ffffff"
+}
+
+fun applyStyle2(context: CanvasRenderingContext2D, document: Document) {
+    context.fillStyle = "#000000"
+    context.strokeStyle = "#ffffff"
+    document.body?.style?.background = "#000000"
+}
+
+class LSystemPresenter {
+    val lSystems = listOf(
+        ConfigurableLSystem(kochSnowflake),
+        ConfigurableLSystem(cesaroFractal),
+        ConfigurableLSystem(quadraticType1Curve),
+        ConfigurableLSystem(hilberCurve),
+        ConfigurableLSystem(gosperCurve),
+        ConfigurableLSystem(sierpinskiTriangle),
+        ConfigurableLSystem(sierpinskiArrowheadCurve),
+        ConfigurableLSystem(dragonCurve, maxDepth = 14),
+        ConfigurableLSystem(fractalPlant)
+    )
+    var lSystem: ConfigurableLSystem = lSystems.first()
+
+    fun generatePoints(): Sequence<Point> =
+        lSystem.value.generatePoints(lSystem.stepLength, lSystem.depth)
+
+    fun switch(direction: Int) {
+        val i = lSystems.indexOfFirst { it.value == lSystem.value } + direction
+        lSystem = when {
+            i < 0 -> lSystems.last()
+            i >= lSystems.size -> lSystems.first()
+            else -> lSystems[i]
+        }
+    }
+
+    fun changeDepth(increment: Int) {
+        lSystem.depth += increment
+        if (lSystem.depth > lSystem.maxDepth) {
+            lSystem.depth = lSystem.maxDepth
+        }
+    }
+
+    class ConfigurableLSystem(val value: LSystem, val maxDepth: Int = 9) {
+        var stepLength: Double = 10.0
+        var depth: Int = 3
+    }
 }
 
 val kochSnowflake = LSystem(
@@ -39,33 +131,33 @@ val kochSnowflake = LSystem(
     closedPath = true
 )
 
-private val `Cesaro fractal` = LSystem(
+private val cesaroFractal = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = 85.toRadians()
 )
 
 // TODO http://mathworld.wolfram.com/CesaroFractal.html
-private val `Cesaro fractal 2` = LSystem(
+private val cesaroFractal2 = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F--F+F"),
     angle = PI / 3
 )
 
-private val `Quadratic type 1 curve` = LSystem(
+private val quadraticType1Curve = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = PI / 2
 )
 
-private val `Quadratic type 2 curve` = LSystem(
+private val quadraticType2Curve = LSystem(
     start = "F",
     rules = mapOf('F' to "F+F-F-FF+F+F-F"),
     angle = PI / 2
 )
 
 // https://en.wikipedia.org/wiki/Hilbert_curve
-private val `Hilber curve` = LSystem(
+private val hilberCurve = LSystem(
     start = "A",
     rules = mapOf(
         'A' to "-BF+AFA+FB-",
@@ -75,7 +167,7 @@ private val `Hilber curve` = LSystem(
 )
 
 // https://en.wikipedia.org/wiki/Gosper_curve
-private val `Gosper curve` = LSystem(
+private val gosperCurve = LSystem(
     start = "F",
     rules = mapOf(
         'F' to "F-G--G+F++FF+G-",
@@ -85,7 +177,7 @@ private val `Gosper curve` = LSystem(
 )
 
 // https://en.wikipedia.org/wiki/Sierpinski_triangle
-private val `Sierpinski triangle` = LSystem(
+private val sierpinskiTriangle = LSystem(
     start = "F-G-G",
     rules = mapOf(
         'F' to "F-G+F+G-F",
@@ -113,7 +205,7 @@ private val pentaFlake0 = LSystem(
 )*/
 
 // https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve
-private val `Sierpinski arrowhead curve` = LSystem(
+private val sierpinskiArrowheadCurve = LSystem(
     start = "F",
     rules = mapOf(
         'F' to "G-F-G",
@@ -124,7 +216,7 @@ private val `Sierpinski arrowhead curve` = LSystem(
 )
 
 // https://en.wikipedia.org/wiki/Dragon_curve
-private val `Dragon curve` = LSystem(
+private val dragonCurve = LSystem(
     start = "FX",
     rules = mapOf(
         'X' to "X+YF+",
@@ -134,7 +226,7 @@ private val `Dragon curve` = LSystem(
     initialAngle = 1.5 * PI
 )
 
-private val `Fractal plant` = LSystem(
+private val fractalPlant = LSystem(
     start = "X",
     rules = mapOf(
         'X' to "F[-X][X]F[-X]+FX",
@@ -145,7 +237,7 @@ private val `Fractal plant` = LSystem(
 )
 
 // From http://www.cs.unh.edu/~charpov/programming-lsystems.html
-private val `Fractal plant 2` = LSystem(
+private val fractalPlant2 = LSystem(
     start = "F",
     rules = mapOf('F' to "FF-[-F+F+F]+[+F-F-F]"),
     angle = 22.5.toRadians(),
@@ -153,12 +245,13 @@ private val `Fractal plant 2` = LSystem(
 )
 
 
+// https://en.wikipedia.org/wiki/L-system
 class LSystem(
-    private val start: String,
-    private val rules: Map<Char, String>,
-    private val angle: Double,
-    private val initialAngle: Double = 0.0,
-    private val closedPath: Boolean = false
+    val start: String,
+    val rules: Map<Char, String>,
+    val angle: Double,
+    val initialAngle: Double = 0.0,
+    val closedPath: Boolean = false
 ) {
     fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Point> {
         return generateOutput(start, depth).toPoints(stepLength)
