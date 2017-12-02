@@ -1,7 +1,6 @@
 package threejs
 
 import lsystem.kochSnowflake
-import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import threejs.THREE.LineBasicMaterial
@@ -41,10 +40,12 @@ fun init() {
     camera.position.z = 1000.0
 
     scene = Scene()
-    renderer = WebGLRenderer()
-    renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    container.appendChild(renderer.domElement)
+    
+    renderer = WebGLRenderer().apply {
+        setPixelRatio(window.devicePixelRatio)
+        setSize(window.innerWidth, window.innerHeight)
+        container.appendChild(this.domElement)
+    }
 
     val points = kochSnowflake
         .generatePoints(stepLength = 20.0)
@@ -114,70 +115,4 @@ fun onDocumentMouseMove(event: Event) {
         mouseX = event.clientX - windowHalfX
         mouseY = event.clientY - windowHalfY
     }
-}
-
-external object THREE {
-    class PerspectiveCamera(fov: Double, aspect: Double, near: Double, far: Double): Camera {
-        override val scale: Vector3
-        override val position: Vector3
-        var aspect: Double
-        fun updateProjectionMatrix()
-        fun lookAt(position: Vector3)
-    }
-
-    class Scene: Object3D {
-        override val scale: Vector3
-        override val position: Vector3
-        fun add(line: Object3D)
-    }
-
-    class WebGLRenderer {
-        val domElement: Node
-        fun setPixelRatio(ratio: Double)
-        fun setSize(width: Int, height: Int)
-        fun render(scene: Scene, camera: PerspectiveCamera)
-    }
-
-    class Geometry {
-        val vertices: JsArray<Vector3>
-    }
-
-    interface Camera: Object3D
-
-    interface Object3D {
-        val scale: Vector3
-        val position: Vector3
-    }
-
-    class Vector3(x: Double, y: Double, z: Double) {
-        var x: Double
-        var y: Double
-        var z: Double
-    }
-
-    class LineBasicMaterial(any: Any)
-
-    class Line(geometry: Geometry, material: LineBasicMaterial): Object3D {
-        override val scale: Vector3
-        override val position: Vector3
-    }
-
-    val NormalBlending: Int
-    val AdditiveBlending: Int
-    val SubtractiveBlending: Int
-    val MultiplyBlending: Int
-    val CustomBlending: Int
-}
-
-@JsName("Array")
-external class JsArray<T> {
-    fun push(item: T)
-    fun pop(): T
-    fun get(index: Int): T
-    fun set(index: Int, value: T)
-}
-
-fun <T> T.applyDynamic(f: dynamic.() -> Unit): T {
-    f(this.asDynamic())
-    return this
 }
