@@ -11,7 +11,7 @@ import kotlin.math.sin
 
 @Suppress("unused")
 @JsName("drawSnowflake2")
-fun drawSnowflake2() {
+fun main() {
     val canvas = document.getElementById("myCanvas") as HTMLCanvasElement
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
 
@@ -32,7 +32,7 @@ fun drawSnowflake2() {
     context.stroke()
 }
 
-private val `Koch snowflake` = LSystem(
+val kochSnowflake = LSystem(
     start = "F--F--F",
     rules = mapOf('F' to "F+F--F+F"),
     angle = PI / 3,
