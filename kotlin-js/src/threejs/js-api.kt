@@ -52,6 +52,7 @@ external object THREE {
         var y: Double
         var z: Double
         fun set(x: Number, y: Number, z: Number)
+        fun addScaledVector(vector3: Vector3, length: Double)
     }
 
     class LineBasicMaterial(any: dynamic)

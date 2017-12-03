@@ -14,6 +14,7 @@ import threejs.THREE.Vector3
 import threejs.THREE.WebGLRenderer
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Translation of https://github.com/mrdoob/three.js/blob/334ab72b4251f5dd0abc5c72a96942d438eae24a/examples/webgl_lines_cubes.html
@@ -166,4 +167,66 @@ private fun onWindowResize(event: Event) {
     camera.updateProjectionMatrix()
 
     renderer.setSize(window.innerWidth, window.innerHeight)
+}
+
+val emptyVector = Vector3(Double.NaN, Double.NaN, Double.NaN)
+
+class LSystem3d(
+    var axiom: String,
+    var rules: Map<Char, String>,
+    var angle: Double,
+    val closedPath: Boolean = false
+) {
+    fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Vector3> {
+        return generateOutput(axiom, depth).toPoints(stepLength)
+    }
+
+    private fun generateOutput(input: String, depth: Int): String {
+        if (depth == 0) return input
+        val result = input
+            .asIterable()
+            .joinToString("") { char ->
+                rules[char] ?: char.toString()
+            }
+        return generateOutput(result, depth - 1)
+    }
+
+
+    private fun String.toPoints(stepLength: Double): Sequence<Vector3> {
+        return buildSequence {
+            val startPoint = Vector3(0, 0, 0)
+            yield(startPoint)
+
+            var angles = Vector3(0, 0, 0)
+            var p = startPoint
+            val stack = ArrayList<Pair<Vector3, Vector3>>()
+            forEach { c ->
+                when (c) {
+                    'F', 'G', 'H', 'I' -> {
+                        p.addScaledVector(angles, stepLength)
+                        yield(p)
+                    }
+
+                    '+' -> angles.z += this@LSystem3d.angle
+                    '-' -> angles.z -= this@LSystem3d.angle
+
+                    '<' -> angles.x += this@LSystem3d.angle
+                    '>' -> angles.x -= this@LSystem3d.angle
+                    '|' -> angles.x -= this@LSystem3d.angle * 2
+
+                    '^' -> angles.y += this@LSystem3d.angle
+                    '&' -> angles.y -= this@LSystem3d.angle
+
+                    '[' -> stack.add(0, Pair(p, angles))
+                    ']' -> {
+                        val removed = stack.removeAt(0)
+                        p = removed.first
+                        angles = removed.second
+                        yield(emptyVector)
+                    }
+                }
+            }
+            if (closedPath) yield(startPoint)
+        }
+    }
 }
