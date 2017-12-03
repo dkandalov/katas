@@ -1,9 +1,6 @@
 package lsystem
 
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.Document
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -50,6 +47,7 @@ fun main() {
     updateConfigToolbar(presenter)
 
     window.addEventListener("keypress", onKeyPress(presenter, context, ::paintCanvas))
+    window.addEventListener("resize", { paintCanvas() }, false)
 }
 
 private fun onKeyPress(
@@ -63,7 +61,8 @@ private fun onKeyPress(
         "d" to { presenter.changeDepth(1) },
         "D" to { presenter.changeDepth(-1) },
         "q" to { applyStyle1(context, document) },
-        "w" to { applyStyle2(context, document) }
+        "w" to { applyStyle2(context, document) },
+        "h" to { toggleConfigToolbar(document) }
     )
     return { event ->
         if (event is KeyboardEvent) {
@@ -74,6 +73,15 @@ private fun onKeyPress(
                 updateConfigToolbar(presenter)
             }
         }
+    }
+}
+
+fun toggleConfigToolbar(document: Document) {
+    val element = document.getElementById("config-toolbar") as HTMLDivElement
+    if (element.style.display == "none") {
+        element.style.display = ""
+    } else {
+        element.style.display = "none"
     }
 }
 
@@ -147,7 +155,11 @@ class LSystemPresenter {
         }
     }
 
-    class ConfigurableLSystem(val value: LSystem, val maxDepth: Int = 9) {
+    class ConfigurableLSystem(
+        val value: LSystem,
+        val maxDepth: Int = 9,
+        val url: String? = null
+    ) {
         var stepLength: Double = 10.0
         var depth: Int = 1
     }

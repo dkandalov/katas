@@ -5,6 +5,16 @@
     <script type="text/javascript" src="../threejs/three.min.js"></script>
     <script type="text/javascript" src="js/kotlin-js-katas.js"></script>
     <style>
+        body {
+            font-size: 13px;
+            font-family: "Verdana",serif;
+        }
+        #config-toolbar {
+            text-align: center;
+            background: aliceblue;
+            margin: 2px;
+            border: 1px black;
+        }
         #start {
             width: 60px;
         }
@@ -15,7 +25,7 @@
     <title>🎄🎄🎄</title>
 </head>
 <body>
-<div>
+<div id="config-toolbar" style="display: none">
     <label>Start:<input type="text" id="start" value="F"/></label>&nbsp;&nbsp;
     <label>Rules:<input type="text" id="rules" value="F -> F+F--F+F"/></label>&nbsp;&nbsp;
     <label>Angle:<input type="text" id="angle" value="60"/></label>&nbsp;&nbsp;
