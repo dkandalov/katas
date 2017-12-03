@@ -3,6 +3,7 @@ package threejs
 import lsystem.*
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
+import threejs.THREE.Color
 import threejs.THREE.Geometry
 import threejs.THREE.Line
 import threejs.THREE.LineBasicMaterial
@@ -28,12 +29,20 @@ lateinit var renderer: WebGLRenderer
 var windowHalfX = window.innerWidth / 2.0
 var windowHalfY = window.innerHeight / 2.0
 
-val material = LineBasicMaterial(object {}.applyDynamic {
+val material1 = LineBasicMaterial(object {}.applyDynamic {
+    color = 0x000000
+    linewidth = 5.0
+    opacity = 1.0
+    blending = THREE.AdditiveBlending
+    transparent = false
+})
+val material2 = LineBasicMaterial(object {}.applyDynamic {
     color = 0xFFFFFF
     opacity = 1.0
     blending = THREE.AdditiveBlending
-    transparent = true
+    transparent = false
 })
+var lineMaterial = material1
 
 
 fun init() {
@@ -54,6 +63,7 @@ fun init() {
         setSize(window.innerWidth, window.innerHeight)
         container.appendChild(this.domElement)
     }
+    applyTheme1()
 
     val presenter = LSystemPresenter()
 
@@ -67,14 +77,14 @@ fun init() {
             .toList().fitCenteredInto(-100.0, -100.0, 100.0, 100.0)
             .forEach { point ->
                 if (point == Point.none) {
-                    scene.add(Line(geometry, material))
+                    scene.add(Line(geometry, lineMaterial))
                     geometry = Geometry()
                 } else {
                     geometry.vertices.push(Vector3(point.x, point.y, 0.0))
                 }
             }
         if (geometry.vertices.length > 0) {
-            scene.add(Line(geometry, material))
+            scene.add(Line(geometry, lineMaterial))
         }
 
         render()
@@ -109,9 +119,9 @@ private fun onKeyPress(
         "d" to { presenter.changeDepth(1) },
         "D" to { presenter.changeDepth(-1) },
         "t" to { toggleConfigToolbar(document) },
-        "c" to { orbitControls.reset() }
-//        "q" to { applyStyle1(context, document) },
-//        "w" to { applyStyle2(context, document) }
+        "c" to { orbitControls.reset() },
+        "q" to { applyTheme1() },
+        "w" to { applyTheme2() }
     )
     return { event ->
         if (event is KeyboardEvent) {
@@ -123,6 +133,18 @@ private fun onKeyPress(
             }
         }
     }
+}
+
+private fun applyTheme1() {
+    lineMaterial = material1
+    scene.background = Color(0xffffff)
+    document.body?.style?.background = "#ffffff"
+}
+
+private fun applyTheme2() {
+    lineMaterial = material2
+    scene.background = Color(0x000000)
+    document.body?.style?.background = "#000000"
 }
 
 @Suppress("UNUSED_PARAMETER")

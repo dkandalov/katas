@@ -22,6 +22,7 @@ external object THREE {
         override val children: JsArray<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
+        var background: Color
     }
 
     class WebGLRenderer {
@@ -34,6 +35,7 @@ external object THREE {
     class Geometry {
         val vertices: JsArray<Vector3>
     }
+    class BufferGeometry
 
     interface Camera: Object3D
 
@@ -107,6 +109,8 @@ external object THREE {
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
+
+    class Color(value: Any)
 }
 
 @JsName("Array")

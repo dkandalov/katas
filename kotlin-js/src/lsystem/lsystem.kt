@@ -21,7 +21,7 @@ fun main() {
         overflowX = "hidden"
         overflowY = "hidden"
     }
-    applyStyle1(context, document)
+    applyTheme1(context, document)
 
     val presenter = LSystemPresenter()
 
@@ -60,8 +60,8 @@ private fun onKeyPress(
         "d" to { presenter.changeDepth(1) },
         "D" to { presenter.changeDepth(-1) },
         "t" to { toggleConfigToolbar(document) },
-        "q" to { applyStyle1(context, document) },
-        "w" to { applyStyle2(context, document) }
+        "q" to { applyTheme1(context, document) },
+        "w" to { applyTheme2(context, document) }
     )
     return { event ->
         if (event is KeyboardEvent) {
@@ -106,13 +106,13 @@ fun updateConfigToolbar(presenter: LSystemPresenter) {
 
 fun inputById(id: String) = document.getElementById(id) as HTMLInputElement
 
-private fun applyStyle1(context: CanvasRenderingContext2D, document: Document) {
+private fun applyTheme1(context: CanvasRenderingContext2D, document: Document) {
     context.fillStyle = "#ffffff"
     context.strokeStyle = "#000000"
     document.body?.style?.background = "#ffffff"
 }
 
-private fun applyStyle2(context: CanvasRenderingContext2D, document: Document) {
+private fun applyTheme2(context: CanvasRenderingContext2D, document: Document) {
     context.fillStyle = "#000000"
     context.strokeStyle = "#ffffff"
     document.body?.style?.background = "#000000"
