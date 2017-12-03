@@ -62,7 +62,7 @@ private fun onKeyPress(
         "D" to { presenter.changeDepth(-1) },
         "q" to { applyStyle1(context, document) },
         "w" to { applyStyle2(context, document) },
-        "h" to { toggleConfigToolbar(document) }
+        "t" to { toggleConfigToolbar(document) }
     )
     return { event ->
         if (event is KeyboardEvent) {
