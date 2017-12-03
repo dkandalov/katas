@@ -41,9 +41,11 @@ external object THREE {
         var x: Double
         var y: Double
         var z: Double
+        fun set(x: Number, y: Number, z: Number)
     }
 
-    class LineBasicMaterial(any: Any)
+    class LineBasicMaterial(any: dynamic)
+    class MeshBasicMaterial(any: dynamic)
 
     class Line(geometry: Geometry, material: LineBasicMaterial): Object3D {
         override val scale: Vector3
@@ -55,6 +57,29 @@ external object THREE {
     val SubtractiveBlending: Int
     val MultiplyBlending: Int
     val CustomBlending: Int
+
+    class CubeGeometry(width: Double, height: Double, depth: Double)
+
+    class Mesh(cubeGeometry: CubeGeometry, meshBasicMaterial: MeshBasicMaterial): Object3D {
+        override val scale: Vector3
+        override val position: Vector3
+    }
+
+    class SpotLight(color: Int, intensity: Double): Object3D {
+        override val scale: Vector3
+        override val position: Vector3
+    }
+
+    class AmbientLight(color: Int): Object3D {
+        override val scale: Vector3
+        override val position: Vector3
+    }
+
+    class OrbitControls(camera: Camera, element: Node)
+    class AxisHelper(size: Int): Object3D {
+        override val scale: Vector3
+        override val position: Vector3
+    }
 }
 
 @JsName("Array")
