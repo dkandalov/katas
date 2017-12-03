@@ -86,7 +86,7 @@ fun toggleConfigToolbar(document: Document) {
 
 fun initConfigToolbar(presenter: LSystemPresenter, updateUI: () -> Unit) {
     inputById("apply").addEventListener("click", { _ ->
-        presenter.lSystem.value.start = inputById("start").value
+        presenter.lSystem.value.axiom = inputById("axiom").value
         presenter.lSystem.value.rules = inputById("rules").value
             .split("; ")
             .map { it.split(" => ") }
@@ -98,7 +98,7 @@ fun initConfigToolbar(presenter: LSystemPresenter, updateUI: () -> Unit) {
 }
 
 fun updateConfigToolbar(presenter: LSystemPresenter) {
-    inputById("start").value = presenter.lSystem.value.start
+    inputById("axiom").value = presenter.lSystem.value.axiom
     inputById("rules").value = presenter.lSystem.value.rules
         .entries.joinToString("; ") { it.key + " => " + it.value }
     inputById("angle").value = presenter.lSystem.value.angle.toDegrees().toString()
@@ -165,40 +165,40 @@ class LSystemPresenter {
 }
 
 val kochSnowflake = LSystem(
-    start = "F--F--F",
+    axiom = "F--F--F",
     rules = mapOf('F' to "F+F--F+F"),
     angle = PI / 3,
     closedPath = true
 )
 
 private val cesaroFractal = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = 85.toRadians()
 )
 
 // TODO http://mathworld.wolfram.com/CesaroFractal.html
 private val cesaroFractal2 = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf('F' to "F+F--F+F"),
     angle = PI / 3
 )
 
 private val quadraticType1Curve = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = PI / 2
 )
 
 private val quadraticType2Curve = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf('F' to "F+F-F-FF+F+F-F"),
     angle = PI / 2
 )
 
 // https://en.wikipedia.org/wiki/Hilbert_curve
 private val hilberCurve = LSystem(
-    start = "A",
+    axiom = "A",
     rules = mapOf(
         'A' to "-BF+AFA+FB-",
         'B' to "+AF-BFB-FA+"
@@ -208,7 +208,7 @@ private val hilberCurve = LSystem(
 
 // https://en.wikipedia.org/wiki/Gosper_curve
 private val gosperCurve = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf(
         'F' to "F-G--G+F++FF+G-",
         'G' to "+F-GG--G-F++F+G"
@@ -218,7 +218,7 @@ private val gosperCurve = LSystem(
 
 // https://en.wikipedia.org/wiki/Sierpinski_triangle
 private val sierpinskiTriangle = LSystem(
-    start = "F-G-G",
+    axiom = "F-G-G",
     rules = mapOf(
         'F' to "F-G+F+G-F",
         'G' to "GG"
@@ -227,7 +227,7 @@ private val sierpinskiTriangle = LSystem(
 )
 
 /*private val pentaFlake = LSystem(
-    start = "F-F-F-F-F",
+    axiom = "F-F-F-F-F",
     rules = mapOf(
         'F' to "F[-F-F-F-F]"*//*,
         'G' to "F[-F-F-F-F]"*//*
@@ -236,7 +236,7 @@ private val sierpinskiTriangle = LSystem(
 )
 
 private val pentaFlake0 = LSystem(
-    start = "F-F-F-F-F",
+    axiom = "F-F-F-F-F",
     rules = mapOf(
         'F' to "F-F[-F-F-F-F]----F",
         'G' to ""
@@ -246,7 +246,7 @@ private val pentaFlake0 = LSystem(
 
 // https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve
 private val sierpinskiArrowheadCurve = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf(
         'F' to "G-F-G",
         'G' to "F+G+F"
@@ -257,7 +257,7 @@ private val sierpinskiArrowheadCurve = LSystem(
 
 // https://en.wikipedia.org/wiki/Dragon_curve
 private val dragonCurve = LSystem(
-    start = "FX",
+    axiom = "FX",
     rules = mapOf(
         'X' to "X+YF+",
         'Y' to "-FX-Y"
@@ -267,7 +267,7 @@ private val dragonCurve = LSystem(
 )
 
 private val fractalPlant = LSystem(
-    start = "X",
+    axiom = "X",
     rules = mapOf(
         'X' to "F[-X][X]F[-X]+FX",
         'F' to "FF"
@@ -278,7 +278,7 @@ private val fractalPlant = LSystem(
 
 // From http://www.cs.unh.edu/~charpov/programming-lsystems.html
 private val fractalPlant2 = LSystem(
-    start = "F",
+    axiom = "F",
     rules = mapOf('F' to "FF-[-F+F+F]+[+F-F-F]"),
     angle = 22.5.toRadians(),
     initialAngle = -PI / 2
@@ -287,14 +287,14 @@ private val fractalPlant2 = LSystem(
 
 // https://en.wikipedia.org/wiki/L-system
 class LSystem(
-    var start: String,
+    var axiom: String,
     var rules: Map<Char, String>,
     var angle: Double,
     val initialAngle: Double = 0.0,
     val closedPath: Boolean = false
 ) {
     fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Point> {
-        return generateOutput(start, depth).toPoints(stepLength)
+        return generateOutput(axiom, depth).toPoints(stepLength)
     }
 
     private fun generateOutput(input: String, depth: Int): String {
