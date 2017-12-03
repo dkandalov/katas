@@ -3,6 +3,7 @@ package lsystem
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.Document
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -45,6 +46,8 @@ fun main() {
     }
 
     paintCanvas()
+    initConfigToolbar(presenter, ::paintCanvas)
+    updateConfigToolbar(presenter)
 
     window.addEventListener("keypress", onKeyPress(presenter, context, ::paintCanvas))
 }
@@ -59,8 +62,8 @@ private fun onKeyPress(
         "N" to { presenter.switch(-1) },
         "d" to { presenter.changeDepth(1) },
         "D" to { presenter.changeDepth(-1) },
-        "1" to { applyStyle1(context, document) },
-        "2" to { applyStyle2(context, document) }
+        "q" to { applyStyle1(context, document) },
+        "w" to { applyStyle2(context, document) }
     )
     return { event ->
         if (event is KeyboardEvent) {
@@ -68,18 +71,41 @@ private fun onKeyPress(
             if (action != null) {
                 action()
                 paintCanvas()
+                updateConfigToolbar(presenter)
             }
         }
     }
 }
 
-fun applyStyle1(context: CanvasRenderingContext2D, document: Document) {
+private fun initConfigToolbar(presenter: LSystemPresenter, paintCanvas: () -> Unit) {
+    inputById("apply").addEventListener("click", { _ ->
+        presenter.lSystem.value.start = inputById("start").value
+        presenter.lSystem.value.rules = inputById("rules").value
+            .split("; ")
+            .map { it.split(" => ") }
+            .associate { Pair(it[0][0], it[1]) }
+        presenter.lSystem.value.angle = inputById("angle").value.toDouble().toRadians()
+        
+        paintCanvas()
+    })
+}
+
+private fun updateConfigToolbar(presenter: LSystemPresenter) {
+    inputById("start").value = presenter.lSystem.value.start
+    inputById("rules").value = presenter.lSystem.value.rules
+        .entries.joinToString("; ") { it.key + " => " + it.value }
+    inputById("angle").value = presenter.lSystem.value.angle.toDegrees().toString()
+}
+
+private fun inputById(id: String) = document.getElementById(id) as HTMLInputElement
+
+private fun applyStyle1(context: CanvasRenderingContext2D, document: Document) {
     context.fillStyle = "#ffffff"
     context.strokeStyle = "#000000"
     document.body?.style?.background = "#ffffff"
 }
 
-fun applyStyle2(context: CanvasRenderingContext2D, document: Document) {
+private fun applyStyle2(context: CanvasRenderingContext2D, document: Document) {
     context.fillStyle = "#000000"
     context.strokeStyle = "#ffffff"
     document.body?.style?.background = "#000000"
@@ -88,8 +114,8 @@ fun applyStyle2(context: CanvasRenderingContext2D, document: Document) {
 class LSystemPresenter {
     val lSystems = listOf(
         ConfigurableLSystem(kochSnowflake),
-        ConfigurableLSystem(cesaroFractal),
         ConfigurableLSystem(quadraticType1Curve),
+        ConfigurableLSystem(quadraticType2Curve),
         ConfigurableLSystem(hilberCurve),
         ConfigurableLSystem(gosperCurve),
         ConfigurableLSystem(sierpinskiTriangle),
@@ -116,11 +142,14 @@ class LSystemPresenter {
         if (lSystem.depth > lSystem.maxDepth) {
             lSystem.depth = lSystem.maxDepth
         }
+        if (lSystem.depth <= 0) {
+            lSystem.depth = 0
+        }
     }
 
     class ConfigurableLSystem(val value: LSystem, val maxDepth: Int = 9) {
         var stepLength: Double = 10.0
-        var depth: Int = 3
+        var depth: Int = 1
     }
 }
 
@@ -247,9 +276,9 @@ private val fractalPlant2 = LSystem(
 
 // https://en.wikipedia.org/wiki/L-system
 class LSystem(
-    val start: String,
-    val rules: Map<Char, String>,
-    val angle: Double,
+    var start: String,
+    var rules: Map<Char, String>,
+    var angle: Double,
     val initialAngle: Double = 0.0,
     val closedPath: Boolean = false
 ) {
@@ -298,5 +327,6 @@ class LSystem(
     }
 }
 
-fun Double.toRadians(): Double = (this / 180.0) * PI
+fun Double.toDegrees(): Double = (this / PI) * 180
+fun Double.toRadians(): Double = (this / 180) * PI
 fun Int.toRadians(): Double = toDouble().toRadians()

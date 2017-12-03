@@ -1,0 +1,30 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="js/lib/kotlin.js"></script>
+    <script type="text/javascript" src="../threejs/three.min.js"></script>
+    <script type="text/javascript" src="js/kotlin-js-katas.js"></script>
+    <style>
+        #start {
+            width: 60px;
+        }
+        #angle {
+            width: 35px;
+        }
+    </style>
+    <title>🎄🎄🎄</title>
+</head>
+<body>
+<div>
+    <label>Start:<input type="text" id="start" value="F"/></label>&nbsp;&nbsp;
+    <label>Rules:<input type="text" id="rules" value="F -> F+F--F+F"/></label>&nbsp;&nbsp;
+    <label>Angle:<input type="text" id="angle" value="60"/></label>&nbsp;&nbsp;
+    <input id="apply" type="button" value="Apply"/>
+</div>
+
+<canvas id="myCanvas" width="1800" height="1800"></canvas>
+</body>
+<script>
+    this['kotlin-js-katas'].lsystem.main();
+</script>
+</html>
