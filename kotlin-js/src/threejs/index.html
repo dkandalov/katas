@@ -6,16 +6,39 @@
     <script type="text/javascript" src="libs/three.min.js"></script>
     <script type="text/javascript" src="libs/OrbitControls.js"></script>
     <script type="text/javascript" src="js/kotlin-js-katas.js"></script>
-    <title>⚡️⚡️⚡️</title>
+    <title>🎄🤖</title>
     <style>
         body {
             background-color: #000000;
             margin: 0;
             overflow: hidden;
+            font-size: 13px;
+            font-family: "Verdana", serif;
+        }
+
+        #config-toolbar {
+            text-align: center;
+            background: aliceblue;
+            margin: 2px;
+            border: 1px black;
+        }
+
+        #start {
+            width: 60px;
+        }
+
+        #angle {
+            width: 35px;
         }
     </style>
 </head>
 <body>
+<div id="config-toolbar" style="display: none">
+    <label>Start:<input type="text" id="start" value="F"/></label>&nbsp;&nbsp;
+    <label>Rules:<input type="text" id="rules" value="F -> F+F--F+F"/></label>&nbsp;&nbsp;
+    <label>Angle:<input type="text" id="angle" value="60"/></label>&nbsp;&nbsp;
+    <input id="apply" type="button" value="Apply"/>
+</div>
 </body>
 <script>
     this['kotlin-js-katas'].threejs.main();

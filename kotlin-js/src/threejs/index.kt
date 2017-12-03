@@ -1,8 +1,10 @@
 package threejs
 
-import lsystem.fitCenteredInto
-import lsystem.kochSnowflake
+import lsystem.*
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.KeyboardEvent
+import threejs.THREE.Geometry
+import threejs.THREE.Line
 import threejs.THREE.LineBasicMaterial
 import threejs.THREE.OrbitControls
 import threejs.THREE.PerspectiveCamera
@@ -26,17 +28,25 @@ lateinit var renderer: WebGLRenderer
 var windowHalfX = window.innerWidth / 2.0
 var windowHalfY = window.innerHeight / 2.0
 
+val material = LineBasicMaterial(object {}.applyDynamic {
+    color = 0xFFFFFF
+    opacity = 1.0
+    blending = THREE.AdditiveBlending
+    transparent = true
+})
+
+
 fun init() {
     val container = document.createElement("div")
     document.body?.appendChild(container)
 
     camera = PerspectiveCamera(
         fov = 33.0,
-        aspect = window.innerWidth / window.innerHeight.toDouble(),
+        aspect = window.innerWidth.toDouble() / window.innerHeight,
         near = 1.0,
         far = 10000.0
     )
-    camera.position.z = 200.0
+    camera.position.set(0, 0, 400)
 
     scene = Scene()
     renderer = WebGLRenderer().apply {
@@ -45,29 +55,74 @@ fun init() {
         container.appendChild(this.domElement)
     }
 
-    val geometry = THREE.Geometry()
-    kochSnowflake
-        .generatePoints()
-        .toList().fitCenteredInto(-100.0, -100.0, 100.0, 100.0)
-        .map { Vector3(it.x, it.y, 0.0) }
-        .forEach {
-            geometry.vertices.push(it)
-        }
-    val material = LineBasicMaterial(object {}.applyDynamic {
-        color = 0xFFFFFF
-        opacity = 1.0
-        blending = THREE.AdditiveBlending
-        transparent = true
-    })
-    val line = THREE.Line(geometry, material).apply {
-        scale.set(0.5, 0.5, 0.5)
-        position.set(0, 0, 0)
-    }
-    scene.add(line)
+    val presenter = LSystemPresenter()
 
-    OrbitControls(camera, renderer.domElement)
+    fun generateScene() {
+        scene.clear()
+
+        var geometry = Geometry()
+        presenter
+            .generatePoints()
+            .map { it.copy(y = -it.y) }
+            .toList().fitCenteredInto(-100.0, -100.0, 100.0, 100.0)
+            .forEach { point ->
+                if (point == Point.none) {
+                    scene.add(Line(geometry, material))
+                    geometry = Geometry()
+                } else {
+                    geometry.vertices.push(Vector3(point.x, point.y, 0.0))
+                }
+            }
+        if (geometry.vertices.length > 0) {
+            scene.add(Line(geometry, material))
+        }
+
+        render()
+    }
+    generateScene()
+
+    val orbitControls = OrbitControls(camera, renderer.domElement)
+    orbitControls.keyPanSpeed = 0.0
+
+    initConfigToolbar(presenter, ::generateScene)
+    updateConfigToolbar(presenter)
 
     window.addEventListener("resize", ::onWindowResize, false)
+    window.addEventListener("keypress", onKeyPress(presenter, orbitControls, ::generateScene))
+}
+
+private fun THREE.Object3D.clear() {
+    while (children.length > 0) {
+        val children: dynamic = children
+        remove(children[0])
+    }
+}
+
+private fun onKeyPress(
+    presenter: LSystemPresenter,
+    orbitControls: OrbitControls,
+    updateUI: () -> Unit
+): (Event) -> Unit {
+    val mapping = mapOf(
+        "n" to { presenter.switch(1) },
+        "N" to { presenter.switch(-1) },
+        "d" to { presenter.changeDepth(1) },
+        "D" to { presenter.changeDepth(-1) },
+        "t" to { toggleConfigToolbar(document) },
+        "c" to { orbitControls.reset() }
+//        "q" to { applyStyle1(context, document) },
+//        "w" to { applyStyle2(context, document) }
+    )
+    return { event ->
+        if (event is KeyboardEvent) {
+            val action = mapping[event.key]
+            if (action != null) {
+                action()
+                updateUI()
+                updateConfigToolbar(presenter)
+            }
+        }
+    }
 }
 
 @Suppress("UNUSED_PARAMETER")

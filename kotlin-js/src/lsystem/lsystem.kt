@@ -26,10 +26,9 @@ fun main() {
     val presenter = LSystemPresenter()
 
     fun paintCanvas() {
-        val points = presenter.generatePoints()
         context.fillRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
         context.beginPath()
-        points
+        presenter.generatePoints()
             .toList().fitCenteredInto(window)
             .zipWithNext()
             .forEach { (p1, p2) ->
@@ -53,23 +52,23 @@ fun main() {
 private fun onKeyPress(
     presenter: LSystemPresenter,
     context: CanvasRenderingContext2D,
-    paintCanvas: () -> Unit
+    updateUI: () -> Unit
 ): (Event) -> Unit {
     val mapping = mapOf(
         "n" to { presenter.switch(1) },
         "N" to { presenter.switch(-1) },
         "d" to { presenter.changeDepth(1) },
         "D" to { presenter.changeDepth(-1) },
+        "t" to { toggleConfigToolbar(document) },
         "q" to { applyStyle1(context, document) },
-        "w" to { applyStyle2(context, document) },
-        "t" to { toggleConfigToolbar(document) }
+        "w" to { applyStyle2(context, document) }
     )
     return { event ->
         if (event is KeyboardEvent) {
             val action = mapping[event.key]
             if (action != null) {
                 action()
-                paintCanvas()
+                updateUI()
                 updateConfigToolbar(presenter)
             }
         }
@@ -85,7 +84,7 @@ fun toggleConfigToolbar(document: Document) {
     }
 }
 
-private fun initConfigToolbar(presenter: LSystemPresenter, paintCanvas: () -> Unit) {
+fun initConfigToolbar(presenter: LSystemPresenter, updateUI: () -> Unit) {
     inputById("apply").addEventListener("click", { _ ->
         presenter.lSystem.value.start = inputById("start").value
         presenter.lSystem.value.rules = inputById("rules").value
@@ -94,18 +93,18 @@ private fun initConfigToolbar(presenter: LSystemPresenter, paintCanvas: () -> Un
             .associate { Pair(it[0][0], it[1]) }
         presenter.lSystem.value.angle = inputById("angle").value.toDouble().toRadians()
         
-        paintCanvas()
+        updateUI()
     })
 }
 
-private fun updateConfigToolbar(presenter: LSystemPresenter) {
+fun updateConfigToolbar(presenter: LSystemPresenter) {
     inputById("start").value = presenter.lSystem.value.start
     inputById("rules").value = presenter.lSystem.value.rules
         .entries.joinToString("; ") { it.key + " => " + it.value }
     inputById("angle").value = presenter.lSystem.value.angle.toDegrees().toString()
 }
 
-private fun inputById(id: String) = document.getElementById(id) as HTMLInputElement
+fun inputById(id: String) = document.getElementById(id) as HTMLInputElement
 
 private fun applyStyle1(context: CanvasRenderingContext2D, document: Document) {
     context.fillStyle = "#ffffff"

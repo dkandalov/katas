@@ -5,18 +5,23 @@ package threejs
 import org.w3c.dom.Node
 
 external object THREE {
-    class PerspectiveCamera(fov: Double, aspect: Double, near: Double, far: Double): Camera {
-        override val scale: Vector3
-        override val position: Vector3
+    class PerspectiveCamera(fov: Number, aspect: Double, near: Number, far: Number): Camera {
         var aspect: Double
         fun updateProjectionMatrix()
         fun lookAt(position: Vector3)
+        override val scale: Vector3
+        override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
     class Scene: Object3D {
         override val scale: Vector3
         override val position: Vector3
-        fun add(line: Object3D)
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
     class WebGLRenderer {
@@ -35,9 +40,12 @@ external object THREE {
     interface Object3D {
         val scale: Vector3
         val position: Vector3
+        val children: JsArray<Object3D>
+        fun add(object3D: Object3D)
+        fun remove(object3D: Object3D)
     }
 
-    class Vector3(x: Double, y: Double, z: Double) {
+    class Vector3(x: Number, y: Number, z: Number) {
         var x: Double
         var y: Double
         var z: Double
@@ -50,6 +58,9 @@ external object THREE {
     class Line(geometry: Geometry, material: LineBasicMaterial): Object3D {
         override val scale: Vector3
         override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
     val NormalBlending: Int
@@ -63,30 +74,47 @@ external object THREE {
     class Mesh(cubeGeometry: CubeGeometry, meshBasicMaterial: MeshBasicMaterial): Object3D {
         override val scale: Vector3
         override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
     class SpotLight(color: Int, intensity: Double): Object3D {
         override val scale: Vector3
         override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
     class AmbientLight(color: Int): Object3D {
         override val scale: Vector3
         override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 
-    class OrbitControls(camera: Camera, element: Node)
+    class OrbitControls(camera: Camera, element: Node) {
+        fun reset()
+        var keyPanSpeed: Double
+    }
+
     class AxisHelper(size: Int): Object3D {
         override val scale: Vector3
         override val position: Vector3
+        override val children: JsArray<Object3D>
+        override fun add(object3D: Object3D)
+        override fun remove(object3D: Object3D)
     }
 }
 
 @JsName("Array")
 external class JsArray<T> {
+    val length: Int
     fun push(item: T)
     fun pop(): T
-    fun get(index: Int): T
+    operator fun get(index: Int): T
     fun set(index: Int, value: T)
 }
 
