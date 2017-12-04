@@ -37,7 +37,7 @@ fun List<Point>.fitCenteredInto(x1: Double, y1: Double, x2: Double, y2: Double):
     val maxPoint = Point(maxBy{ it.x }!!.x, maxBy{ it.y }!!.y)
     val pointsWidth = maxPoint.x - minPoint.x
     val pointsHeight = maxPoint.y - minPoint.y
-    val minScale = kotlin.math.min(width / pointsWidth, height / pointsHeight)
+    val minScale = min(width / pointsWidth, height / pointsHeight)
 
     return this
         .scale(minScale)
@@ -48,7 +48,6 @@ fun List<Point>.fitCenteredInto(x1: Double, y1: Double, x2: Double, y2: Double):
 }
 
 fun List<Point>.fitCenteredInto(window: Window, marginPercent: Double = 0.1): List<Point> {
-    println(window.innerWidth * marginPercent)
     val margin = min(window.innerWidth * marginPercent, window.innerHeight * marginPercent)
     return fitCenteredInto(
         x1 = margin,

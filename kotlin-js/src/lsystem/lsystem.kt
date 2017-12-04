@@ -123,17 +123,17 @@ class LSystemPresenter {
         ConfigurableLSystem(kochSnowflake),
         ConfigurableLSystem(quadraticType1Curve),
         ConfigurableLSystem(quadraticType2Curve),
-        ConfigurableLSystem(hilberCurve),
+        ConfigurableLSystem(hilbertCurve),
         ConfigurableLSystem(gosperCurve),
         ConfigurableLSystem(sierpinskiTriangle),
         ConfigurableLSystem(sierpinskiArrowheadCurve),
         ConfigurableLSystem(dragonCurve, maxDepth = 14),
         ConfigurableLSystem(fractalPlant)
     )
-    var lSystem: ConfigurableLSystem = lSystems.first()
+    var lSystem = lSystems.first()
 
     fun generatePoints(): Sequence<Point> =
-        lSystem.value.generatePoints(lSystem.stepLength, lSystem.depth)
+        lSystem.value.generatePoints(lSystem.depth)
 
     fun switch(direction: Int) {
         val i = lSystems.indexOfFirst { it.value == lSystem.value } + direction
@@ -159,7 +159,6 @@ class LSystemPresenter {
         val maxDepth: Int = 9,
         val url: String? = null
     ) {
-        var stepLength: Double = 10.0
         var depth: Int = 1
     }
 }
@@ -197,7 +196,7 @@ private val quadraticType2Curve = LSystem(
 )
 
 // https://en.wikipedia.org/wiki/Hilbert_curve
-private val hilberCurve = LSystem(
+private val hilbertCurve = LSystem(
     axiom = "A",
     rules = mapOf(
         'A' to "-BF+AFA+FB-",
@@ -291,9 +290,10 @@ class LSystem(
     var rules: Map<Char, String>,
     var angle: Double,
     val initialAngle: Double = 0.0,
-    val closedPath: Boolean = false
+    val closedPath: Boolean = false,
+    val stepLength: Double = 10.0
 ) {
-    fun generatePoints(stepLength: Double = 10.0, depth: Int = 3): Sequence<Point> {
+    fun generatePoints(depth: Int = 3): Sequence<Point> {
         return generateOutput(axiom, depth).toPoints(stepLength)
     }
 
