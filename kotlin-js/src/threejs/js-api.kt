@@ -53,6 +53,10 @@ external object THREE {
         var z: Double
         fun set(x: Number, y: Number, z: Number)
         fun addScaledVector(vector3: Vector3, length: Double)
+        fun clone(): Vector3
+        fun applyEuler(euler: Euler)
+        fun add(v: Vector3)
+        fun multiplyScalar(i: Number)
     }
 
     class LineBasicMaterial(any: dynamic)
@@ -112,6 +116,7 @@ external object THREE {
     }
 
     class Color(value: Any)
+    class Euler(x: Number, y: Number, z: Number, order: String)
 }
 
 @JsName("Array")
