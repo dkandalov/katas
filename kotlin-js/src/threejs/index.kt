@@ -6,6 +6,7 @@ import lsystem.toRadians
 import lsystem.toggleConfigToolbar
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
+import threejs.LSystem3d.Companion.emptyVector
 import threejs.THREE.Color
 import threejs.THREE.Euler
 import threejs.THREE.Geometry
@@ -80,8 +81,7 @@ fun init() {
         var geometry = Geometry()
         presenter
             .generatePoints()
-            .toList().fitCenteredInto(-100.0, -100.0, -100.0, 100.0, 100.0, 100.0)
-//            .onEach { println(it.x.toString() + " " + it.y + " " + it.z) }
+//            .onEach { println(it.toXYZString()) }
             .forEach {
                 if (it === LSystem3d.emptyVector) {
                     scene.add(Line(geometry, lineMaterial))
@@ -92,6 +92,10 @@ fun init() {
             }
         if (geometry.vertices.length > 0) {
             scene.add(Line(geometry, lineMaterial))
+        }
+
+        if (presenter.debugMode) {
+            scene.add(THREE.AxesHelper(100))
         }
 
         render()
@@ -128,7 +132,14 @@ private fun onKeyPress(
         "t" to { toggleConfigToolbar(document) },
         "c" to { orbitControls.reset() },
         "q" to { applyTheme1() },
-        "w" to { applyTheme2() }
+        "w" to { applyTheme2() },
+        "a" to {
+            presenter.debugMode = !presenter.debugMode
+            Unit
+        },
+        "s" to { presenter.increaseDebugStep() },
+        "S" to { presenter.decreaseDebugStep() },
+        "u" to { window.open(presenter.lSystem.url ?: "")?.focus() }
     )
     return { event ->
         if (event is KeyboardEvent) {
@@ -156,6 +167,7 @@ private fun initConfigToolbar(presenter: LSystem3dPresenter, updateUI: () -> Uni
 }
 
 private fun updateConfigToolbar(presenter: LSystem3dPresenter) {
+    //document.getElementById("title")?.nodeValue = presenter.lSystem.title
     inputById("axiom").value = presenter.lSystem.value.axiom
     inputById("rules").value = presenter.lSystem.value.rules
         .entries.joinToString("; ") { it.key + " => " + it.value }
@@ -208,8 +220,9 @@ private fun List<Vector3>.fitCenteredInto(x1: Double, y1: Double, z1: Double, x2
     val pointsDepth = maxPoint.z - minPoint.z
     val minScale = min(min(width / pointsWidth, height / pointsHeight), depth / pointsDepth)
 
-    return this
-        .map {
+    return this.map {
+        if (it === emptyVector) it
+        else {
             it.multiplyScalar(minScale)
             it.set(
                 x = it.x + x1 - minPoint.x * minScale + (width - pointsWidth * minScale) / 2,
@@ -218,28 +231,38 @@ private fun List<Vector3>.fitCenteredInto(x1: Double, y1: Double, z1: Double, x2
             )
             it
         }
+    }
 }
 
 
 class LSystem3dPresenter {
-    val lSystems = listOf(
-//        ConfigurableLSystem(hilbertCurve3d),
-//        ConfigurableLSystem(kochCurve3d),
-        ConfigurableLSystem(kochSnowflake),
-        ConfigurableLSystem(cesaroFractal),
-        ConfigurableLSystem(quadraticType2Curve),
-        ConfigurableLSystem(quadraticType1Curve),
-        ConfigurableLSystem(hilbertCurve),
-        ConfigurableLSystem(gosperCurve),
-        ConfigurableLSystem(sierpinskiTriangle),
-        ConfigurableLSystem(sierpinskiArrowheadCurve),
-        ConfigurableLSystem(dragonCurve, maxDepth = 14),
-        ConfigurableLSystem(fractalPlant)
+    private val lSystems = listOf(
+        ConfigurableLSystem(hilbertCurve3d, title = "Hilbert Curve 3d", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
+        ConfigurableLSystem(kochCurve3d, title = "Koch curve 3d", url = "https://github.com/Hiestaa/3D-Lsystem/blob/master/lsystem/KochCurve3D.py"),
+        ConfigurableLSystem(kochSnowflake, title = "Koch snoflake", url = "https://en.wikipedia.org/wiki/Koch_snowflake"),
+        ConfigurableLSystem(cesaroFractal, title = "Cesaro fractal", url = "http://mathworld.wolfram.com/CesaroFractal.html"),
+        ConfigurableLSystem(quadraticType1Curve, title = "Quadratic type 1", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
+        ConfigurableLSystem(quadraticType2Curve, title = "Quadratic type 2", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
+        ConfigurableLSystem(hilbertCurve, title = "Hilbert curve", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
+        ConfigurableLSystem(lindenmayerCurve, title = "Lindenmayer curve"),
+        ConfigurableLSystem(gosperCurve, title = "Gosper curve", url = "https://en.wikipedia.org/wiki/Gosper_curve"),
+        ConfigurableLSystem(sierpinskiTriangle, title = "Sierpinski triangle", url = "https://en.wikipedia.org/wiki/Sierpinski_triangle"),
+        ConfigurableLSystem(sierpinskiArrowheadCurve, title = "Sierpinski arrow head triangle", url = "https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve"),
+        ConfigurableLSystem(dragonCurve, maxDepth = 14, title = "Dragon curve", url = "https://en.wikipedia.org/wiki/Dragon_curve"),
+        ConfigurableLSystem(fractalPlant, title = "Plant", url = "https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant")
     )
     var lSystem: ConfigurableLSystem = lSystems.first()
+    var debugMode = false
+    private var debugStepSize = 1
 
-    fun generatePoints(): Sequence<Vector3> =
-        lSystem.value.generatePoints(lSystem.depth)
+    fun generatePoints(): List<Vector3> {
+        val points = lSystem.value
+            .generatePoints(lSystem.depth)
+            .toList().fitCenteredInto(-100.0, -100.0, -100.0, 100.0, 100.0, 100.0)
+        return points.let {
+            if (debugMode) it.take(debugStepSize) else it
+        }
+    }
 
     fun switch(direction: Int) {
         val i = lSystems.indexOfFirst { it.value == lSystem.value } + direction
@@ -248,6 +271,8 @@ class LSystem3dPresenter {
             i >= lSystems.size -> lSystems.first()
             else -> lSystems[i]
         }
+        debugMode = false
+        debugStepSize = 0
     }
 
     fun changeDepth(increment: Int) {
@@ -263,9 +288,18 @@ class LSystem3dPresenter {
     class ConfigurableLSystem(
         val value: LSystem3d,
         val maxDepth: Int = 9,
+        val title: String = "",
         val url: String? = null
     ) {
         var depth: Int = 1
+    }
+
+    fun increaseDebugStep() {
+        if (debugMode) debugStepSize++
+    }
+
+    fun decreaseDebugStep() {
+        if (debugMode) debugStepSize--
     }
 }
 
@@ -300,6 +334,15 @@ private val hilbertCurve = LSystem3d(
     rules = mapOf(
         'A' to "-BF+AFA+FB-",
         'B' to "+AF-BFB-FA+"
+    ),
+    angle = PI / 2
+)
+
+private val lindenmayerCurve = LSystem3d(
+    axiom = "X",
+    rules = mapOf(
+        'X' to "XFYFX+F+YFXFY-F-XFYFX",
+        'Y' to "YFXFY-F-XFYFX+F+YFXFY"
     ),
     angle = PI / 2
 )
@@ -379,17 +422,17 @@ class LSystem3d(
     val stepLength: Double = 10.0
 ) {
     fun generatePoints(depth: Int = 3): Sequence<Vector3> {
-        return generateOutput(axiom, depth).toPoints(stepLength)
+        return applyRules(axiom, depth).toPoints(stepLength)
     }
 
-    private fun generateOutput(input: String, depth: Int): String {
+    private fun applyRules(input: String, depth: Int): String {
         if (depth == 0) return input
         val result = input
             .asIterable()
             .joinToString("") { char ->
                 rules[char] ?: char.toString()
             }
-        return generateOutput(result, depth - 1)
+        return applyRules(result, depth - 1)
     }
 
     private fun String.toPoints(stepLength: Double): Sequence<Vector3> {
@@ -399,7 +442,7 @@ class LSystem3d(
 
             var angles = Vector3(0, 0, 0)
             var p = startPoint.clone()
-            val stack = ArrayList<Pair<Vector3, Vector3>>()
+            val stack = JsArray<Pair<Vector3, Vector3>>()
             forEach { c ->
                 when (c) {
                     'F', 'G', 'H', 'I' -> {
@@ -419,16 +462,16 @@ class LSystem3d(
                     '^' -> angles.y += this@LSystem3d.angle
                     '&' -> angles.y -= this@LSystem3d.angle
 
-                    '[' -> stack.add(0, Pair(p.clone(), angles.clone()))
+                    '[' -> stack.push(Pair(p.clone(), angles.clone()))
                     ']' -> {
-                        val removed = stack.removeAt(0)
+                        val removed = stack.pop()
                         p = removed.first
                         angles = removed.second
                         yield(emptyVector)
                     }
                 }
             }
-            if (closedPath) yield(startPoint)
+            if (closedPath) yield(startPoint.clone())
         }
     }
 
@@ -436,3 +479,5 @@ class LSystem3d(
         val emptyVector = Vector3(Double.NaN, Double.NaN, Double.NaN)
     }
 }
+
+private fun Vector3.toXYZString() = x.toString() + " " + y + " " + z

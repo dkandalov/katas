@@ -107,7 +107,7 @@ external object THREE {
         var keyPanSpeed: Double
     }
 
-    class AxisHelper(size: Int): Object3D {
+    class AxesHelper(size: Int): Object3D {
         override val scale: Vector3
         override val position: Vector3
         override val children: JsArray<Object3D>
