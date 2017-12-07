@@ -8,6 +8,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import threejs.LSystem3d.Companion.emptyVector
 import threejs.THREE.Color
+import threejs.THREE.EffectComposer
 import threejs.THREE.Euler
 import threejs.THREE.Geometry
 import threejs.THREE.Line
@@ -25,6 +26,12 @@ import kotlin.math.min
 
 /**
  * Translation of https://github.com/mrdoob/three.js/blob/334ab72b4251f5dd0abc5c72a96942d438eae24a/examples/webgl_lines_cubes.html
+ *
+ * Misc links:
+ *  - http://www.robertdickau.com/kochsurface.html
+ *  - http://algorithmicbotany.org/papers/abop/abop-ch1.pdf
+ *  - http://www.kevs3d.co.uk/dev/lsystems
+ *  - http://www.3dfractals.com/docs/3DFractals.pdf
  */
 fun main() {
     init()
@@ -34,6 +41,7 @@ fun main() {
 lateinit var camera: PerspectiveCamera
 lateinit var scene: Scene
 lateinit var renderer: WebGLRenderer
+lateinit var composer: EffectComposer
 var windowHalfX = window.innerWidth / 2.0
 var windowHalfY = window.innerHeight / 2.0
 
@@ -72,6 +80,19 @@ fun init() {
         container.appendChild(this.domElement)
     }
     applyTheme2()
+
+    val effectFXAA = THREE.ShaderPass(THREE.FXAAShader).applyDynamic {
+        uniforms["resolution"].value.set(1.0 / window.innerWidth, 1.0 / window.innerHeight)
+    }
+    val effectBloom = THREE.BloomPass(1.3)
+    val effectCopy = THREE.ShaderPass(THREE.CopyShader).applyDynamic {
+        renderToScreen = true
+    }
+    composer = EffectComposer(renderer)
+    composer.addPass(THREE.RenderPass(scene, camera))
+//    composer.addPass(effectFXAA)
+//    composer.addPass(effectBloom)
+    composer.addPass(effectCopy)
 
     val presenter = LSystem3dPresenter()
 
@@ -193,7 +214,7 @@ private fun animate(d: Double = 0.0) {
 }
 
 private fun render() {
-    renderer.render(scene, camera)
+    composer.render()
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -237,8 +258,6 @@ private fun List<Vector3>.fitCenteredInto(x1: Double, y1: Double, z1: Double, x2
 
 class LSystem3dPresenter {
     private val lSystems = listOf(
-        ConfigurableLSystem(hilbertCurve3d, title = "Hilbert Curve 3d", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
-        ConfigurableLSystem(kochCurve3d, title = "Koch curve 3d", url = "https://github.com/Hiestaa/3D-Lsystem/blob/master/lsystem/KochCurve3D.py"),
         ConfigurableLSystem(kochSnowflake, title = "Koch snoflake", url = "https://en.wikipedia.org/wiki/Koch_snowflake"),
         ConfigurableLSystem(cesaroFractal, title = "Cesaro fractal", url = "http://mathworld.wolfram.com/CesaroFractal.html"),
         ConfigurableLSystem(quadraticType1Curve, title = "Quadratic type 1", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
@@ -249,7 +268,9 @@ class LSystem3dPresenter {
         ConfigurableLSystem(sierpinskiTriangle, title = "Sierpinski triangle", url = "https://en.wikipedia.org/wiki/Sierpinski_triangle"),
         ConfigurableLSystem(sierpinskiArrowheadCurve, title = "Sierpinski arrow head triangle", url = "https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve"),
         ConfigurableLSystem(dragonCurve, maxDepth = 14, title = "Dragon curve", url = "https://en.wikipedia.org/wiki/Dragon_curve"),
-        ConfigurableLSystem(fractalPlant, title = "Plant", url = "https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant")
+        ConfigurableLSystem(fractalPlant, title = "Plant", url = "https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant"),
+        ConfigurableLSystem(kochCurve3d, title = "Koch curve 3d", url = "https://github.com/Hiestaa/3D-Lsystem/blob/master/lsystem/KochCurve3D.py")
+//        ConfigurableLSystem(hilbertCurve3d, title = "Hilbert Curve 3d", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
     )
     var lSystem: ConfigurableLSystem = lSystems.first()
     var debugMode = false

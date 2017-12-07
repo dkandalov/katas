@@ -30,6 +30,7 @@ external object THREE {
         fun setPixelRatio(ratio: Double)
         fun setSize(width: Int, height: Int)
         fun render(scene: Scene, camera: PerspectiveCamera)
+        fun clear()
     }
 
     class Geometry {
@@ -117,6 +118,22 @@ external object THREE {
 
     class Color(value: Any)
     class Euler(x: Number, y: Number, z: Number, order: String)
+
+
+    open class RenderPass(scene: Scene, camera: Camera)
+
+    class ShaderPass(fxaaShader: dynamic): RenderPass
+
+    class BloomPass(d: Double): RenderPass
+
+    class EffectComposer(renderer: WebGLRenderer) {
+        fun addPass(renderPass: RenderPass)
+        fun render()
+
+    }
+    val CopyShader: dynamic
+
+    val FXAAShader: dynamic
 }
 
 @JsName("Array")
