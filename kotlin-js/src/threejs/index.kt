@@ -142,19 +142,19 @@ private fun onKeyPress(
     updateUI: () -> Unit
 ): (Event) -> Unit {
     val mapping = mapOf(
+        "t" to { toggleConfigToolbar(document) },
         "n" to { presenter.switch(1) },
         "N" to { presenter.switch(-1) },
         "i" to { presenter.changeIterationCount(1) },
         "I" to { presenter.changeIterationCount(-1) },
         "a" to { presenter.changeAngle(5.toRadians()) },
         "A" to { presenter.changeAngle((-5).toRadians()) },
-        "t" to { toggleConfigToolbar(document) },
         "c" to { orbitControls.reset() },
         "q" to { applyTheme1() },
         "w" to { applyTheme2() },
-        "d" to { presenter.debugMode = !presenter.debugMode },
-        "s" to { presenter.increaseDebugStep() },
-        "S" to { presenter.decreaseDebugStep() },
+//        "d" to { presenter.debugMode = !presenter.debugMode },
+//        "s" to { presenter.increaseDebugStep() },
+//        "S" to { presenter.decreaseDebugStep() },
         "u" to { window.open(presenter.lSystem.url ?: "")?.focus() }
     )
     return { event ->
@@ -257,7 +257,7 @@ private fun List<Vector3>.fitCenteredInto(x1: Double, y1: Double, z1: Double, x2
 
 class LSystem3dPresenter {
     private val lSystems = listOf(
-        ConfigurableLSystem(kochSnowflake, title = "Koch snoflake", url = "https://en.wikipedia.org/wiki/Koch_snowflake"),
+        ConfigurableLSystem(kochSnowflake, title = "Koch snowflake", url = "https://en.wikipedia.org/wiki/Koch_snowflake"),
         ConfigurableLSystem(cesaroFractal, title = "Cesaro fractal", url = "http://mathworld.wolfram.com/CesaroFractal.html"),
         ConfigurableLSystem(quadraticType1Curve, title = "Quadratic type 1", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
         ConfigurableLSystem(quadraticType2Curve, title = "Quadratic type 2", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
