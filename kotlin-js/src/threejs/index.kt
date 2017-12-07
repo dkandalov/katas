@@ -148,8 +148,8 @@ private fun onKeyPress(
     val mapping = mapOf(
         "n" to { presenter.switch(1) },
         "N" to { presenter.switch(-1) },
-        "d" to { presenter.changeDepth(1) },
-        "D" to { presenter.changeDepth(-1) },
+        "i" to { presenter.changeIterationCount(1) },
+        "I" to { presenter.changeIterationCount(-1) },
         "t" to { toggleConfigToolbar(document) },
         "c" to { orbitControls.reset() },
         "q" to { applyTheme1() },
@@ -188,11 +188,12 @@ private fun initConfigToolbar(presenter: LSystem3dPresenter, updateUI: () -> Uni
 }
 
 private fun updateConfigToolbar(presenter: LSystem3dPresenter) {
-    //document.getElementById("title")?.nodeValue = presenter.lSystem.title
+    inputById("title").value = presenter.lSystem.title
     inputById("axiom").value = presenter.lSystem.value.axiom
     inputById("rules").value = presenter.lSystem.value.rules
         .entries.joinToString("; ") { it.key + " => " + it.value }
     inputById("angle").value = presenter.lSystem.value.angle.toDegrees().toString()
+    document.getElementById("iterations")?.textContent = presenter.lSystem.iterations.toString()
 }
 
 private fun applyTheme1() {
@@ -267,7 +268,7 @@ class LSystem3dPresenter {
         ConfigurableLSystem(gosperCurve, title = "Gosper curve", url = "https://en.wikipedia.org/wiki/Gosper_curve"),
         ConfigurableLSystem(sierpinskiTriangle, title = "Sierpinski triangle", url = "https://en.wikipedia.org/wiki/Sierpinski_triangle"),
         ConfigurableLSystem(sierpinskiArrowheadCurve, title = "Sierpinski arrow head triangle", url = "https://en.wikipedia.org/wiki/Sierpi%C5%84ski_arrowhead_curve"),
-        ConfigurableLSystem(dragonCurve, maxDepth = 14, title = "Dragon curve", url = "https://en.wikipedia.org/wiki/Dragon_curve"),
+        ConfigurableLSystem(dragonCurve, maxIterations = 14, title = "Dragon curve", url = "https://en.wikipedia.org/wiki/Dragon_curve"),
         ConfigurableLSystem(fractalPlant, title = "Plant", url = "https://en.wikipedia.org/wiki/L-system#Example_7:_Fractal_plant"),
         ConfigurableLSystem(kochCurve3d, title = "Koch curve 3d", url = "https://github.com/Hiestaa/3D-Lsystem/blob/master/lsystem/KochCurve3D.py")
 //        ConfigurableLSystem(hilbertCurve3d, title = "Hilbert Curve 3d", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
@@ -278,7 +279,7 @@ class LSystem3dPresenter {
 
     fun generatePoints(): List<Vector3> {
         val points = lSystem.value
-            .generatePoints(lSystem.depth)
+            .generatePoints(lSystem.iterations)
             .toList().fitCenteredInto(-100.0, -100.0, -100.0, 100.0, 100.0, 100.0)
         return points.let {
             if (debugMode) it.take(debugStepSize) else it
@@ -296,23 +297,23 @@ class LSystem3dPresenter {
         debugStepSize = 0
     }
 
-    fun changeDepth(increment: Int) {
-        lSystem.depth += increment
-        if (lSystem.depth > lSystem.maxDepth) {
-            lSystem.depth = lSystem.maxDepth
+    fun changeIterationCount(increment: Int) {
+        lSystem.iterations += increment
+        if (lSystem.iterations > lSystem.maxIterations) {
+            lSystem.iterations = lSystem.maxIterations
         }
-        if (lSystem.depth <= 0) {
-            lSystem.depth = 0
+        if (lSystem.iterations <= 0) {
+            lSystem.iterations = 0
         }
     }
 
     class ConfigurableLSystem(
         val value: LSystem3d,
-        val maxDepth: Int = 9,
+        val maxIterations: Int = 9,
         val title: String = "",
         val url: String? = null
     ) {
-        var depth: Int = 1
+        var iterations: Int = 1
     }
 
     fun increaseDebugStep() {
@@ -442,18 +443,18 @@ class LSystem3d(
     val closedPath: Boolean = false,
     val stepLength: Double = 10.0
 ) {
-    fun generatePoints(depth: Int = 3): Sequence<Vector3> {
-        return applyRules(axiom, depth).toPoints(stepLength)
+    fun generatePoints(iterations: Int = 3): Sequence<Vector3> {
+        return applyRules(axiom, iterations).toPoints(stepLength)
     }
 
-    private fun applyRules(input: String, depth: Int): String {
-        if (depth == 0) return input
+    private fun applyRules(input: String, iterations: Int): String {
+        if (iterations == 0) return input
         val result = input
             .asIterable()
             .joinToString("") { char ->
                 rules[char] ?: char.toString()
             }
-        return applyRules(result, depth - 1)
+        return applyRules(result, iterations - 1)
     }
 
     private fun String.toPoints(stepLength: Double): Sequence<Vector3> {
