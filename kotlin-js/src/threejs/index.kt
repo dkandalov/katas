@@ -115,10 +115,6 @@ fun init() {
             scene.add(Line(geometry, lineMaterial))
         }
 
-        if (presenter.debugMode) {
-            scene.add(THREE.AxesHelper(100))
-        }
-
         render()
     }
     generateScene()
@@ -150,14 +146,13 @@ private fun onKeyPress(
         "N" to { presenter.switch(-1) },
         "i" to { presenter.changeIterationCount(1) },
         "I" to { presenter.changeIterationCount(-1) },
+        "a" to { presenter.changeAngle(5.toRadians()) },
+        "A" to { presenter.changeAngle((-5).toRadians()) },
         "t" to { toggleConfigToolbar(document) },
         "c" to { orbitControls.reset() },
         "q" to { applyTheme1() },
         "w" to { applyTheme2() },
-        "a" to {
-            presenter.debugMode = !presenter.debugMode
-            Unit
-        },
+        "d" to { presenter.debugMode = !presenter.debugMode },
         "s" to { presenter.increaseDebugStep() },
         "S" to { presenter.decreaseDebugStep() },
         "u" to { window.open(presenter.lSystem.url ?: "")?.focus() }
@@ -175,7 +170,7 @@ private fun onKeyPress(
 }
 
 private fun initConfigToolbar(presenter: LSystem3dPresenter, updateUI: () -> Unit) {
-    inputById("apply").addEventListener("click", { _ ->
+    fun applyChanges() {
         presenter.lSystem.value.axiom = inputById("axiom").value
         presenter.lSystem.value.rules = inputById("rules").value
             .split("; ")
@@ -184,7 +179,10 @@ private fun initConfigToolbar(presenter: LSystem3dPresenter, updateUI: () -> Uni
         presenter.lSystem.value.angle = inputById("angle").value.toDouble().toRadians()
 
         updateUI()
-    })
+    }
+    listOf(inputById("axiom"), inputById("rules"), inputById("angle"), inputById("iterations")).forEach {
+        it.addEventListener("change", { _ -> applyChanges() })
+    }
 }
 
 private fun updateConfigToolbar(presenter: LSystem3dPresenter) {
@@ -193,7 +191,7 @@ private fun updateConfigToolbar(presenter: LSystem3dPresenter) {
     inputById("rules").value = presenter.lSystem.value.rules
         .entries.joinToString("; ") { it.key + " => " + it.value }
     inputById("angle").value = presenter.lSystem.value.angle.toDegrees().toString()
-    document.getElementById("iterations")?.textContent = presenter.lSystem.iterations.toString()
+    inputById("iterations").value = presenter.lSystem.iterations.toString()
 }
 
 private fun applyTheme1() {
@@ -307,6 +305,18 @@ class LSystem3dPresenter {
         }
     }
 
+    fun increaseDebugStep() {
+        if (debugMode) debugStepSize++
+    }
+
+    fun decreaseDebugStep() {
+        if (debugMode) debugStepSize--
+    }
+
+    fun changeAngle(value: Double) {
+        lSystem.value.angle += value
+    }
+
     class ConfigurableLSystem(
         val value: LSystem3d,
         val maxIterations: Int = 9,
@@ -314,14 +324,6 @@ class LSystem3dPresenter {
         val url: String? = null
     ) {
         var iterations: Int = 1
-    }
-
-    fun increaseDebugStep() {
-        if (debugMode) debugStepSize++
-    }
-
-    fun decreaseDebugStep() {
-        if (debugMode) debugStepSize--
     }
 }
 
