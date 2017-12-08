@@ -26,6 +26,7 @@ import kotlin.browser.window
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.PI
 import kotlin.math.min
+import kotlin.math.round
 
 /**
  * Translation of https://github.com/mrdoob/three.js/blob/334ab72b4251f5dd0abc5c72a96942d438eae24a/examples/webgl_lines_cubes.html
@@ -322,7 +323,11 @@ class LSystem3dPresenter {
     }
 
     fun changeAngle(value: Double) {
-        lSystem.value.angle += value
+        lSystem.value.apply {
+            angle = round((angle + value).toDegrees()).toRadians()
+            if (angle < 0) angle += 2 * PI
+            if (angle > 2 * PI) angle -= 2 * PI
+        }
     }
 
     class ConfigurableLSystem(
