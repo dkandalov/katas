@@ -24,10 +24,12 @@
         }
 
         #config-toolbar {
+            position: absolute;
             text-align: center;
             background: aliceblue;
-            margin: 2px;
+            margin: 2px 2px 2px 0.5%;
             border: 1px black;
+            width: 99%
         }
 
         #axiom {
@@ -49,11 +51,11 @@
 </head>
 <body>
 <!--
-Shortcuts:
-t - toggle toolbar (to change one of the input values, modify it in the textbox and press enter)
-n - next l-system
-N - previous l-system
-u - open URL associated with the current l-system
+Shortcuts (work when focus is outside of text inputs):
+` - toggle toolbar (to change one of the L-System inputs, modify it in the textbox and press enter)
+n - next L-System
+N - previous L-System
+u - open URL associated with the current L-System
 i - increase amount of iterations
 I - decrease amount of iterations
 a - increase angle by 5 degrees
@@ -66,7 +68,7 @@ ctrl+cmd drag mouse - move object in space
 mouse scroll - zoom in/out
 
 Interpretation of L-System output:
-FGHI - draw a line in current direction
+FGHI - draw a line in current direction (note that the path will be closed by connecting the first and last point)
 other letters - no action; only used for substitution rules
 [ - push current position and angle on stack
 ] - pop current position and angle from stack

@@ -82,7 +82,9 @@ fun init() {
         setSize(window.innerWidth, window.innerHeight)
         val child = container.appendChild(this.domElement) as HTMLElement
         child.setAttribute("tabindex", "0")
-        child.addEventListener("click", { _ -> child.focus() }) // Need this to make canvas take focus on mouse click.
+        child.addEventListener("click", { _ ->
+            child.focus() // Need this to make canvas take focus on mouse click.
+        })
     }
     applyTheme2()
 
@@ -163,7 +165,7 @@ private fun onKeyPress(
     )
     return { event ->
         if (event is KeyboardEvent) {
-            if (event.key == "Escape") {
+            if (event.key == "`") {
                 toggleConfigToolbar(document)
             }
             if (event.target !is HTMLInputElement) {
@@ -186,6 +188,7 @@ private fun initConfigToolbar(presenter: LSystem3dPresenter, updateUI: () -> Uni
             .map { it.split(" => ") }
             .associate { Pair(it[0][0], it[1]) }
         presenter.lSystem.value.angle = inputById("angle").value.toDouble().toRadians()
+        presenter.lSystem.iterations = inputById("iterations").value.toInt()
 
         updateUI()
     }
