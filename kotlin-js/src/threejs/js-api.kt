@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "NOTHING_TO_INLINE")
 
 package threejs
 
@@ -11,7 +11,7 @@ external object THREE {
         fun lookAt(position: Vector3)
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -19,7 +19,7 @@ external object THREE {
     class Scene: Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
         var background: Color
@@ -34,7 +34,7 @@ external object THREE {
     }
 
     class Geometry {
-        val vertices: JsArray<Vector3>
+        val vertices: Array<Vector3>
     }
     class BufferGeometry
 
@@ -43,7 +43,7 @@ external object THREE {
     interface Object3D {
         val scale: Vector3
         val position: Vector3
-        val children: JsArray<Object3D>
+        val children: Array<Object3D>
         fun add(object3D: Object3D)
         fun remove(object3D: Object3D)
     }
@@ -66,7 +66,7 @@ external object THREE {
     class Line(geometry: Geometry, material: LineBasicMaterial): Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -82,7 +82,7 @@ external object THREE {
     class Mesh(cubeGeometry: CubeGeometry, meshBasicMaterial: MeshBasicMaterial): Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -90,7 +90,7 @@ external object THREE {
     class SpotLight(color: Int, intensity: Double): Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -98,7 +98,7 @@ external object THREE {
     class AmbientLight(color: Int): Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -111,7 +111,7 @@ external object THREE {
     class AxesHelper(size: Int): Object3D {
         override val scale: Vector3
         override val position: Vector3
-        override val children: JsArray<Object3D>
+        override val children: Array<Object3D>
         override fun add(object3D: Object3D)
         override fun remove(object3D: Object3D)
     }
@@ -136,14 +136,9 @@ external object THREE {
     val FXAAShader: dynamic
 }
 
-@JsName("Array")
-external class JsArray<T> {
-    val length: Int
-    fun push(item: T)
-    fun pop(): T
-    operator fun get(index: Int): T
-    fun set(index: Int, value: T)
-}
+inline fun <T> Array<T>.push(e: T): Int = asDynamic().push(e)
+inline fun <T> Array<T>.pop(): T = asDynamic().pop()
+inline val Array<*>.length get() = size
 
 fun <T> T.applyDynamic(f: dynamic.() -> Unit): T {
     f(this.asDynamic())

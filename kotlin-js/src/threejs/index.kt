@@ -111,7 +111,7 @@ fun init() {
                     geometry.vertices.push(it)
                 }
             }
-        if (geometry.vertices.length > 0) {
+        if (geometry.vertices.isNotEmpty()) {
             scene.add(Line(geometry, lineMaterial))
         }
 
@@ -466,7 +466,7 @@ class LSystem3d(
 
             var angles = Vector3(0, 0, 0)
             var p = startPoint.clone()
-            val stack = JsArray<Pair<Vector3, Vector3>>()
+            val stack = emptyArray<Pair<Vector3, Vector3>>()
             forEach { c ->
                 when (c) {
                     'F', 'G', 'H', 'I' -> {
