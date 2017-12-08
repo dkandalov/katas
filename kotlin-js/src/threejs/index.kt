@@ -268,7 +268,6 @@ class LSystem3dPresenter {
     private val lSystems = listOf(
         ConfigurableLSystem(kochSnowflake, title = "Koch snowflake", url = "https://en.wikipedia.org/wiki/Koch_snowflake"),
         ConfigurableLSystem(cesaroFractal, title = "Cesaro fractal", url = "http://mathworld.wolfram.com/CesaroFractal.html"),
-        ConfigurableLSystem(quadraticType1Curve, title = "Quadratic type 1", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
         ConfigurableLSystem(quadraticType2Curve, title = "Quadratic type 2", url = "https://en.wikipedia.org/wiki/Koch_snowflake#Variants_of_the_Koch_curve"),
         ConfigurableLSystem(hilbertCurve, title = "Hilbert curve", url = "https://en.wikipedia.org/wiki/Hilbert_curve"),
         ConfigurableLSystem(lindenmayerCurve, title = "Lindenmayer curve"),
@@ -351,12 +350,6 @@ private val cesaroFractal = LSystem3d(
     axiom = "F",
     rules = mapOf('F' to "F+F-F-F+F"),
     angle = 85.toRadians()
-)
-
-private val quadraticType1Curve = LSystem3d(
-    axiom = "F",
-    rules = mapOf('F' to "F+F-F-F+F"),
-    angle = PI / 2
 )
 
 private val quadraticType2Curve = LSystem3d(

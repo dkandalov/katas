@@ -74,11 +74,14 @@ other letters - no action; only used for substitution rules
 ^& - rotate around Y axis
 <> - rotate around X axis
 
+L-System rules syntax:
+<rules> ::= <rule> ["; " <rule>]*
+<rule> ::= <char> " => " <string>
 -->
 <div id="config-toolbar" style="display: none">
     <label>Title:<input type="text" id="title" readonly/></label>&nbsp;&nbsp;
     <label>Axiom:<input type="text" id="axiom" value="F"/></label>&nbsp;&nbsp;
-    <label>Rules:<input type="text" id="rules" value="F -> F+F--F+F"/></label>&nbsp;&nbsp;
+    <label>Rules:<input type="text" id="rules" value="F => F+F--F+F"/></label>&nbsp;&nbsp;
     <label>Angle:<input type="text" id="angle" value="60"/></label>&nbsp;&nbsp;
     <label>Iterations:<input type="text" id="iterations" value="2"/></label>&nbsp;&nbsp;
 </div>
