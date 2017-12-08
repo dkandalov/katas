@@ -4,6 +4,9 @@ import lsystem.inputById
 import lsystem.toDegrees
 import lsystem.toRadians
 import lsystem.toggleConfigToolbar
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import threejs.LSystem3d.Companion.emptyVector
@@ -62,8 +65,7 @@ var lineMaterial = material1
 
 
 fun init() {
-    val container = document.createElement("div")
-    document.body?.appendChild(container)
+    val container = document.getElementById("content") as Node
 
     camera = PerspectiveCamera(
         fov = 33.0,
@@ -77,7 +79,9 @@ fun init() {
     renderer = WebGLRenderer().apply {
         setPixelRatio(window.devicePixelRatio)
         setSize(window.innerWidth, window.innerHeight)
-        container.appendChild(this.domElement)
+        val child = container.appendChild(this.domElement) as HTMLElement
+        child.setAttribute("tabindex", "0")
+        child.addEventListener("click", { _ -> child.focus() }) // Need this to make canvas take focus on mouse click.
     }
     applyTheme2()
 
@@ -142,7 +146,6 @@ private fun onKeyPress(
     updateUI: () -> Unit
 ): (Event) -> Unit {
     val mapping = mapOf(
-        "t" to { toggleConfigToolbar(document) },
         "n" to { presenter.switch(1) },
         "N" to { presenter.switch(-1) },
         "i" to { presenter.changeIterationCount(1) },
@@ -159,11 +162,16 @@ private fun onKeyPress(
     )
     return { event ->
         if (event is KeyboardEvent) {
-            val action = mapping[event.key]
-            if (action != null) {
-                action()
-                updateUI()
-                updateConfigToolbar(presenter)
+            if (event.key == "Escape") {
+                toggleConfigToolbar(document)
+            }
+            if (event.target !is HTMLInputElement) {
+                val action = mapping[event.key]
+                if (action != null) {
+                    action()
+                    updateUI()
+                    updateConfigToolbar(presenter)
+                }
             }
         }
     }
