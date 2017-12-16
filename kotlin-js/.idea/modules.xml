@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/kotlin-js-katas.iml" filepath="$PROJECT_DIR$/kotlin-js-katas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-js-katas_main.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-js-katas_main.iml" group="kotlin-js-katas" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-js-katas_test.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-js-katas_test.iml" group="kotlin-js-katas" />
+    </modules>
+  </component>
+</project>
