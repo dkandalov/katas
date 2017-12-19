@@ -61,7 +61,7 @@ class ContactsTests {
 
     private fun Random.nextString(length: Int): String {
         fun safeChar(): Char {
-            val surrogateStart: Int = 0xD800
+            val surrogateStart = 0xD800
             val res = nextInt(surrogateStart - 1) + 1
             return res.toChar()
         }
