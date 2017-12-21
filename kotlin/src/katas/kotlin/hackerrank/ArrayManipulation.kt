@@ -40,10 +40,6 @@ class ArrayManipulation(size: Int) {
     }
 }
 
-//fun main(args: Array<String>) {
-//    main(System.`in`, System.out)
-//}
-
 fun main(input: InputStream, output: OutputStream) {
     val scanner = Scanner(input).useDelimiter("[\n\\s]+")
     val n = scanner.nextInt()
@@ -61,3 +57,6 @@ fun main(input: InputStream, output: OutputStream) {
     }
 }
 
+//fun main(args: Array<String>) {
+//    main(System.`in`, System.out)
+//}
