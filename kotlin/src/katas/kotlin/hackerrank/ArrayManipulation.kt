@@ -43,32 +43,22 @@ fun String.toInputStream(): InputStream = ByteArrayInputStream(this.toByteArray(
 
 class ArrayManipulation(size: Int) {
     private val array = Array(size, { 0L })
-    private val updates = ArrayList<Update>()
 
     fun update(from: Int, to: Int, value: Int) {
-        updates.add(Update(from - 1, -value))
-        updates.add(Update(to - 1, value))
+        if (from > 0) array[from - 1] = array[from - 1] - value
+        if (to > 0) array[to - 1] = array[to - 1] + value
     }
 
     fun max(): Long {
-        updates.sortBy { -it.i }
-
         var i = array.size - 1
-        var ui = 0
         var sum = 0L
         while (i >= 0) {
-            while (ui < updates.size && updates[ui].i >= i) {
-                sum += updates[ui].value
-                ui++
-            }
+            sum += array[i]
             array[i] = sum
             i--
         }
-
         return array.max()!!
     }
-
-    data class Update(val i: Int, val value: Int)
 }
 
 fun main(input: InputStream, output: OutputStream) {
