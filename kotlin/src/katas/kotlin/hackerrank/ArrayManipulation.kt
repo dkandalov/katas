@@ -42,7 +42,7 @@ class ArrayManipulationTests {
 fun String.toInputStream(): InputStream = ByteArrayInputStream(this.toByteArray())
 
 class ArrayManipulation(size: Int) {
-    private val array = Array(size, { 0L })
+    private val array = LongArray(size)
 
     fun update(from: Int, to: Int, value: Int) {
         if (from > 0) array[from - 1] = array[from - 1] - value
