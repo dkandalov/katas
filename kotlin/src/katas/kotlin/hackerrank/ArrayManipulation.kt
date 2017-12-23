@@ -50,14 +50,16 @@ class ArrayManipulation(size: Int) {
     }
 
     fun max(): Long {
+        var max = Long.MIN_VALUE
         var i = array.size - 1
         var sum = 0L
         while (i >= 0) {
             sum += array[i]
             array[i] = sum
+            if (sum > max) max = sum
             i--
         }
-        return array.max()!!
+        return max
     }
 }
 
