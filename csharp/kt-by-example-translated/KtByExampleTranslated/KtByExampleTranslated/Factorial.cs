@@ -28,10 +28,9 @@ namespace KtByExampleTranslated
         
         private static BigInteger Factorial(BigInteger n) => Factorial(n, 1);
 
-        // is there TCO?
-        private static BigInteger Factorial(BigInteger n, BigInteger result)
+        static BigInteger Factorial(BigInteger n, BigInteger result)
         {
-            return n <= 1 ? result : n * Factorial(n - 1, result);
+            return n <= 1 ? result : Factorial(n - 1, result * n);
         }
     
         [Test]
@@ -43,9 +42,9 @@ namespace KtByExampleTranslated
             Assert.AreEqual(new BigInteger(6), Factorial(3));
             Assert.AreEqual(new BigInteger(24), Factorial(4));
             Assert.AreEqual(new BigInteger(120), Factorial(5));
-            // Assert.AreEqual(new BigInteger(355687428096000), Factorial(17)); // too slow for test? why?
+            Assert.AreEqual(new BigInteger(355687428096000), Factorial(17));
 
-            // Console.WriteLine(Factorial(new BigInteger(20000), 1)); // never finishes :(
+            // Console.WriteLine(Factorial(new BigInteger(20000), 1)); // too slow when running in NUnit
         }
 
         [Test]

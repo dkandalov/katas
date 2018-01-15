@@ -53,7 +53,6 @@ namespace KtByExampleTranslated
         private static Entry FindMinEntry(string filePath, Func<string[], Entry> createEntry)
         {
             return File.ReadAllLines(filePath)
-                .Skip(5).Take(25)
                 .Select(it => Regex.Split(it.Replace("*", ""), " +"))
                 .Select(it =>
                 {
@@ -66,8 +65,9 @@ namespace KtByExampleTranslated
                         return Entry.None;
                     }
                 })
-                .Where(it => !Equals(it, Entry.None)) // is it worth override == operator?
-                .OrderBy(it => Math.Abs(it.Max - it.Min)).First(); // no MinBy? :(
+                .Where(it => !Equals(it, Entry.None))
+                .OrderBy(it => Math.Abs(it.Max - it.Min))
+                .First();
         }
 
         public struct Entry
