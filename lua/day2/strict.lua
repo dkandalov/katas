@@ -1,3 +1,6 @@
+package.path = package.path .. ";../?.lua"
+require("common")
+
 local _private = {}
 
 function strict_read(table, key)
@@ -23,3 +26,14 @@ local mt = {
 
 treasure = {}
 setmetatable(treasure, mt)
+
+treasure.gold = 50
+expect_to_be_equal(treasure.gold, 50)
+
+expect_error("Invalid key: silver", function()
+  print(treasure.silver)
+end)
+
+expect_error("Duplicate key: gold", function()
+  treasure.gold = 100
+end)

@@ -44,6 +44,21 @@ end
 
 function expect_to_be_equal(actual, expected)
   if not equals(actual, expected) then
-    error("Expected: " .. to_s(expected).. "\nbut was: " .. to_s(actual))
+    error("\nExpected: " .. to_s(expected).. "\nbut was: " .. to_s(actual))
   end
+end
+
+function expect_to_contain_equal(actual, expected)
+  if not string.find(actual, expected) then
+    error("\nExpected: '" .. to_s(actual).. "'\nto contain: '" .. to_s(expected) .. "'")
+  end
+end
+
+function expect_error(expected, f)
+  local actual = nil
+  function error_handler(err)
+    actual = err
+  end
+  xpcall(f, error_handler)
+  expect_to_contain_equal(actual, expected)
 end

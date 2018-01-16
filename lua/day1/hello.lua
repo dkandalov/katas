@@ -1,4 +1,5 @@
-require "common"
+package.path = package.path .. ";../?.lua"
+require("common")
 
 function ends_in_three(n)
   return n % 10 == 3
