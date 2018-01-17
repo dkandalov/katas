@@ -60,5 +60,9 @@ function expect_error(expected, f)
     actual = err
   end
   xpcall(f, error_handler)
-  expect_to_contain_equal(actual, expected)
+  if actual == nil then
+    error("Expected error '" .. expected .. "' but there were no errors")
+  else
+    expect_to_contain_equal(actual, expected)
+  end
 end
