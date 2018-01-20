@@ -1,8 +1,8 @@
 package katas.kotlin.diamond
 
 import katas.kotlin.shouldEqual
-import katas.kotlin.tail
-import katas.kotlin.times
+import kotlincommon.tail
+import kotlincommon.times
 import org.junit.Test
 
 class Diamond4 {

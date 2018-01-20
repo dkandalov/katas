@@ -2,8 +2,8 @@ package katas.kotlin.trigram
 
 import io.kotlintest.specs.StringSpec
 import katas.kotlin.printed
-import katas.kotlin.skip
 import katas.kotlin.sliding
+import kotlincommon.skip
 import java.io.File
 import java.util.*
 

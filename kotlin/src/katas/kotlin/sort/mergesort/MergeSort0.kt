@@ -2,8 +2,8 @@ package katas.kotlin.sort.mergesort
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.permutations
 import katas.kotlin.shouldEqual
+import kotlincommon.permutations
 import org.junit.Test
 
 class MergeSort0Test {

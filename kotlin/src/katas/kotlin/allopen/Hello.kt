@@ -6,6 +6,6 @@ annotation class MyOpen
     fun foo() = 42
 }
 
-class B : A() {
-    override fun foo() = 43
-}
+//class B : A() {
+//    override fun foo() = 43
+//}
