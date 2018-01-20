@@ -2,7 +2,7 @@
 
 package katas.kotlin.parser
 
-import katas.kotlin.printed
+import kotlincommon.printed
 import katas.kotlin.shouldEqual
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

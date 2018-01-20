@@ -2,7 +2,8 @@ package katas.kotlin.burrows_wheeler
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.*
+import kotlincommon.printed
+import kotlincommon.join
 import org.junit.Test
 
 class BWT3 {

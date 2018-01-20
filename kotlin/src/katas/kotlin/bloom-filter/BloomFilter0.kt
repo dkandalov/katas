@@ -1,6 +1,6 @@
 package katas.kotlin.`bloom-filter`
 
-import katas.kotlin.printed
+import kotlincommon.printed
 import katas.kotlin.shouldEqual
 import kotlincommon.byteArray
 import kotlincommon.byteList

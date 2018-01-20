@@ -1,8 +1,7 @@
 package katas.kotlin.trigram
 
 import io.kotlintest.specs.StringSpec
-import katas.kotlin.printed
-import katas.kotlin.sliding
+import kotlincommon.printed
 import kotlincommon.skip
 import java.io.File
 import java.util.*
@@ -11,7 +10,7 @@ class Trigram3Test : StringSpec() {
     init {
         "build trigrams from book text and generate delirious text" {
             val words = File("src/katas/kotlin/trigram/18440-0.txt").words()
-            val trigrams = words.sliding(3).groupingBy { Pair(it[0], it[1]) }
+            val trigrams = words.windowed(3).groupingBy { Pair(it[0], it[1]) }
                 .aggregate { _, list: List<String>?, element, _ ->
                     (list ?: emptyList()) + element.last()
                 }

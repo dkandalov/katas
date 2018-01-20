@@ -1,5 +1,4 @@
 
-import katas.kotlin.sliding
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -17,7 +16,7 @@ class TrigramTest {
                 .filter { it.isNotEmpty() }
                 .flatMap { it.split(Regex("\\s+")) }
 
-        val data = words.sliding(3).fold(HashMap<Pair<String, String>, MutableList<String>>()) { map, trigram ->
+        val data = words.windowed(3).fold(HashMap<Pair<String, String>, MutableList<String>>()) { map, trigram ->
             val key = Pair(trigram[0], trigram[1])
             map.putIfAbsent(key, ArrayList())
             map[key]!!.add(trigram[2])

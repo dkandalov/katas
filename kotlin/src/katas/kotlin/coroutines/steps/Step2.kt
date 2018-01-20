@@ -1,6 +1,6 @@
 package katas.kotlin.coroutines.steps
 
-import katas.kotlin.printed
+import kotlincommon.printed
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.EmptyCoroutineContext

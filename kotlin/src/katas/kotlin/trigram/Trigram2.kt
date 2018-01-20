@@ -2,17 +2,16 @@ package katas.kotlin.trigram
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.startsWith
-import katas.kotlin.sliding
 import org.junit.Test
 import java.io.File
-import java.util.Random
+import java.util.*
 
 class Trigram2Test {
     private val basePath = "src/katas/kotlin/trigram"
 
     @Test fun `read books and generate delirious text based on trigrams`() {
         val words = File("$basePath/18440-0.txt").readLines().flatMap{ it.splitIntoWords() }.map{ it.trim() }.filter{ it.isNotBlank() }
-        val trigrams = words.sliding(3).groupingBy{ Pair(it[0], it[1]) }
+        val trigrams = words.windowed(3).groupingBy{ Pair(it[0], it[1]) }
                 .fold(emptyList<String>()) { acc, it -> acc + it[2] }
 
         val random = Random(123)

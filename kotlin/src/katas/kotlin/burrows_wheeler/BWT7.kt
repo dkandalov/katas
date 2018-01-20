@@ -1,7 +1,7 @@
 package katas.kotlin.burrows_wheeler
 
-import katas.kotlin.join
 import katas.kotlin.shouldEqual
+import kotlincommon.join
 import org.junit.Test
 
 class BWT7 {

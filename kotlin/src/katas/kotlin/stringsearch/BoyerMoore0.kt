@@ -67,7 +67,7 @@ class BoyerMoore0 {
         println("text = $text")
 
         1.until(text.length).map { patternSize ->
-            val patterns = text.sliding(patternSize)
+            val patterns = text.windowed(patternSize)
             patterns.forEach { pattern ->
                 println("pattern = $pattern")
                 assertThat(text.findIndexOf(pattern), equalTo(text.indexOf(pattern)))
@@ -495,27 +495,27 @@ class BoyerMoore0 {
     }
 
     @Test fun `sliding list`() {
-        assertThat(listOf(1).sliding(1), equalTo(listOf(listOf(1))))
+        assertThat(listOf(1).windowed(1), equalTo(listOf(listOf(1))))
 
-        assertThat(listOf(1, 2, 3).sliding(1), equalTo(listOf(
+        assertThat(listOf(1, 2, 3).windowed(1), equalTo(listOf(
                 listOf(1), listOf(2), listOf(3)
         )))
-        assertThat(listOf(1, 2, 3).sliding(2), equalTo(listOf(
+        assertThat(listOf(1, 2, 3).windowed(2), equalTo(listOf(
                 listOf(1, 2), listOf(2, 3)
         )))
-        assertThat(listOf(1, 2, 3).sliding(1), equalTo(listOf(
+        assertThat(listOf(1, 2, 3).windowed(1), equalTo(listOf(
                 listOf(1), listOf(2), listOf(3)
         )))
-        assertThat(listOf(1, 2, 3).sliding(3), equalTo(listOf(
+        assertThat(listOf(1, 2, 3).windowed(3), equalTo(listOf(
                 listOf(1, 2, 3)
         )))
     }
 
-    private fun String.sliding(n: Int): List<String> {
-        return this.asSequence().toList().sliding(n).map{ it.joinToString("") }
+    private fun String.windowed(n: Int): List<String> {
+        return this.asSequence().toList().windowed(n).map{ it.joinToString("") }
     }
 
-    private fun <T> List<T>.sliding(n: Int): List<List<T>> {
+    private fun <T> List<T>.windowed(n: Int): List<List<T>> {
         if (n > size) throw IllegalArgumentException()
         var i = 0
         return object : Iterator<List<T>> {

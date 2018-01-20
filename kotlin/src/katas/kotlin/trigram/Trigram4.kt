@@ -1,6 +1,5 @@
 package katas.kotlin.trigram
 
-import katas.kotlin.sliding
 import org.junit.Test
 import java.io.File
 import java.util.*
@@ -13,7 +12,7 @@ class Trigram4 {
             File("src/katas/kotlin/trigram/39702-0.txt"),
             File("src/katas/kotlin/trigram/53970-0.txt")
         ).flatMap{ it.readWords() }
-        val trigramMap = words.sliding(windowSize = 3)
+        val trigramMap = words.windowed(size = 3)
             .map { Trigram(it[0], it[1], it[2]) }
             .groupBy { Pair(it.first.normalise(), it.second.normalise()) }
 

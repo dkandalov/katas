@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank
 
-import katas.kotlin.printed
+import kotlincommon.printed
 import katas.kotlin.shouldEqual
 import org.junit.Test
 import java.util.*

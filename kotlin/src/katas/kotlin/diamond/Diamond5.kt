@@ -1,7 +1,7 @@
 package katas.kotlin.diamond
 
-import katas.kotlin.join
 import katas.kotlin.shouldEqual
+import kotlincommon.join
 import org.junit.Test
 
 class Diamond5 {

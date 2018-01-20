@@ -1,6 +1,7 @@
 package katas.kotlin.shuntingYard
 
-import katas.kotlin.*
+import katas.kotlin.shouldEqual
+import kotlincommon.join
 import org.junit.Test
 
 class ShuntingYard3 {
