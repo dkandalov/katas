@@ -1,0 +1,63 @@
+buildscript {
+	ext.kotlin_version = "1.2.10"
+
+	repositories {
+		maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
+		maven { url "http://jcenter.bintray.com" }
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+		classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+	}
+}
+
+repositories {
+	maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
+	maven { url "http://jcenter.bintray.com" }
+	mavenCentral()
+}
+group "katas"
+version "0.0"
+apply plugin:"kotlin"
+apply plugin: "kotlin-allopen"
+
+repositories {
+	maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
+	mavenCentral()
+}
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+	compile "io.kotlintest:kotlintest:1.3.5"
+	compile "junit:junit:4.12"
+	compile "com.natpryce:hamkrest:1.4.0.0"
+}
+
+sourceSets {
+	main {
+		kotlin { srcDir "src" }
+	}
+}
+
+compileKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+	kotlinOptions.jvmTarget = "1.8"
+}
+
+task sourcesJar(type:Jar, dependsOn:classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
+artifacts {
+	archives sourcesJar
+}
+
+allOpen {
+	annotation("katas.kotlin.allopen.MyOpen")
+}
