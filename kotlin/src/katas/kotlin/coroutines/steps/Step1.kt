@@ -15,9 +15,9 @@ object Step1 {
     fun run() {
         val continuation = cc {
             println(1)
-            yeeld()
+            yield()
             println(2)
-            yeeld()
+            yield()
             println(3)
         }
         continuation.resume(Unit)
@@ -33,7 +33,7 @@ object Step1 {
         return block.createCoroutineUnchecked(continuation)
     }
 
-    suspend fun yeeld() {
+    suspend fun yield() {
         suspendCoroutineOrReturn { it: Continuation<Unit> ->
             c = it
             COROUTINE_SUSPENDED
