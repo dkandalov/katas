@@ -60,10 +60,13 @@ setmetatable(_G, {
   __newindex =
   function(table, key, value)
     rawset(table, key, value)
-    setmetatable(table[key], mt)
+    if type(value) == "table" then
+      setmetatable(table[key], mt)
+    end
   end
 })
 
+n = 1 -- make sure metatable works with non-table value
 a1 = {1, 2}
 a2 = {3}
 expect_to_be_equal(a1 + a2, {1, 2, 3})
