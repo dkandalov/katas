@@ -1,5 +1,8 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package katas.kotlin.coroutines.steps
 
+import katas.kotlin.coroutines.steps.Step2.YieldingFunction.Companion.create
 import kotlincommon.printed
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
@@ -9,52 +12,52 @@ import kotlin.coroutines.experimental.intrinsics.createCoroutineUnchecked
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 fun main(args: Array<String>) {
-    Step2.run()
+    val f = create<String> {
+        "coroutine: begin".printed()
+
+        val y1 = yield("1")
+        println("coroutine: $y1")
+        val y2 = yield("2")
+        println("coroutine: $y2")
+
+        "coroutine: end".printed()
+    }
+    println("main: ${f.resume("a")}")
+    println("main: ${f.resume("b")}")
+    println("main: ${f.resume("c")}")
+    println("main: ${f.resume("d")}")
 }
 
 object Step2 {
-    fun run() {
-        create {
-            "c begin".printed()
+    class YieldingFunction<T> {
+        private var c: Continuation<Unit>? = null
+        private var coInput: T? = null
+        private var coOutput: T? = null
 
-            var y = yield(1)
-            println("c $y")
-
-            y = yield(2)
-            println("c $y")
-
-            "c end".printed()
+        suspend fun yield(value: T): T? {
+            suspendCoroutineOrReturn { it: Continuation<Unit> ->
+                c = it
+                coOutput = value
+                COROUTINE_SUSPENDED
+            }
+            return coInput
         }
-        resume(-1).printed{ "m $it" }
-        resume(-2).printed{ "m $it" }
-        resume(-3).printed{ "m $it" }
-        resume(-4).printed{ "m $it" } // continues from "println(3)" again 😱
-    }
 
-    var c: Continuation<Unit>? = null
-    var coInput: Int? = null
-    var coOutput: Int? = null
-
-    fun create(block: suspend () -> Unit): Continuation<Unit> {
-        val continuation = MyContinuation()
-        c = block.createCoroutineUnchecked(continuation)
-        return c!!
-    }
-
-    suspend fun yield(value: Int): Int? {
-        suspendCoroutineOrReturn { it: Continuation<Unit> ->
-            c = it
-            coOutput = value
-            COROUTINE_SUSPENDED
+        fun resume(value: T? = null): T? {
+            val notNullContinuation = c ?: return coOutput
+            coInput = value
+            notNullContinuation.resume(Unit)
+            return coOutput
         }
-        return coInput
-    }
 
-    fun resume(value: Int? = null): Int? {
-        val cNN = c ?: return coOutput
-        coInput = value
-        cNN.resume(Unit)
-        return coOutput
+        companion object {
+            fun <T> create(block: suspend YieldingFunction<T>.() -> Unit): YieldingFunction<T> {
+                val continuation = MyContinuation()
+                return YieldingFunction<T>().apply {
+                    c = block.createCoroutineUnchecked(this, continuation)
+                }
+            }
+        }
     }
 
     class MyContinuation: Continuation<Unit> {
