@@ -1,8 +1,8 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING", "PackageDirectoryMismatch")
 
-package katas.kotlin.coroutines.steps
+package katas.kotlin.coroutines.steps.step2
 
-import katas.kotlin.coroutines.steps.Step2.YieldingFunction.Companion.create
+import katas.kotlin.coroutines.steps.step2.YieldingFunction.Companion.create
 import kotlincommon.printed
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
@@ -28,41 +28,39 @@ fun main(args: Array<String>) {
     println("main: ${f.resume("d")}")
 }
 
-object Step2 {
-    class YieldingFunction<T> {
-        private var c: Continuation<Unit>? = null
-        private var coInput: T? = null
-        private var coOutput: T? = null
+class YieldingFunction<T> {
+    private var c: Continuation<Unit>? = null
+    private var coInput: T? = null
+    private var coOutput: T? = null
 
-        suspend fun yield(value: T): T? {
-            suspendCoroutineOrReturn { it: Continuation<Unit> ->
-                c = it
-                coOutput = value
-                COROUTINE_SUSPENDED
-            }
-            return coInput
+    suspend fun yield(value: T): T? {
+        suspendCoroutineOrReturn { it: Continuation<Unit> ->
+            c = it
+            coOutput = value
+            COROUTINE_SUSPENDED
         }
+        return coInput
+    }
 
-        fun resume(value: T? = null): T? {
-            val notNullContinuation = c ?: return coOutput
-            coInput = value
-            notNullContinuation.resume(Unit)
-            return coOutput
-        }
+    fun resume(value: T? = null): T? {
+        val notNullContinuation = c ?: return coOutput
+        coInput = value
+        notNullContinuation.resume(Unit)
+        return coOutput
+    }
 
-        companion object {
-            fun <T> create(block: suspend YieldingFunction<T>.() -> Unit): YieldingFunction<T> {
-                val continuation = MyContinuation()
-                return YieldingFunction<T>().apply {
-                    c = block.createCoroutineUnchecked(this, continuation)
-                }
+    companion object {
+        fun <T> create(block: suspend YieldingFunction<T>.() -> Unit): YieldingFunction<T> {
+            val continuation = MyContinuation()
+            return YieldingFunction<T>().apply {
+                c = block.createCoroutineUnchecked(this, continuation)
             }
         }
     }
+}
 
-    class MyContinuation: Continuation<Unit> {
-        override val context: CoroutineContext = EmptyCoroutineContext
-        override fun resume(value: Unit) {}
-        override fun resumeWithException(exception: Throwable) = throw exception
-    }
+class MyContinuation: Continuation<Unit> {
+    override val context: CoroutineContext = EmptyCoroutineContext
+    override fun resume(value: Unit) {}
+    override fun resumeWithException(exception: Throwable) = throw exception
 }
