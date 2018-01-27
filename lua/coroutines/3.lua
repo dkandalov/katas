@@ -10,6 +10,7 @@ end
 
 function subfunction()
   log("subfunction started")
+  log(debug.traceback())
   coroutine.yield(42)
   log("subfunction finished")
 end
@@ -32,9 +33,12 @@ expect_to_be_equal(events, {
   [1] = "main started",
   [2] = "coroutine started",
   [3] = "subfunction started",
-  [4] = "main received: 42",
-  [5] = "subfunction finished",
-  [6] = "coroutine finished",
-  [7] = "main received: nil",
-  [8] = "main finished",
+  [4] = "stack traceback:\n" ..
+        "	3.lua:13: in function 'subfunction'\n" ..
+        "	3.lua:20: in function <3.lua:18>",
+  [5] = "main received: 42",
+  [6] = "subfunction finished",
+  [7] = "coroutine finished",
+  [8] = "main received: nil",
+  [9] = "main finished",
 })
