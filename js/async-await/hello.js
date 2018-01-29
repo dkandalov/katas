@@ -5,7 +5,7 @@
 console.log("before 1");
 new Promise((resolve, reject) => {
     console.log("Initial");
-    resolve();
+//    resolve();
   }).then(() => {
     throw new Error("Something failed");
     console.log("Do this");
