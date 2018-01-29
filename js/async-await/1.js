@@ -1,4 +1,7 @@
+require("./common")();
+
 let events = [];
+
 function log(event) {
   events.push(event);
 }
@@ -18,4 +21,9 @@ c.next();
 c.next();
 log("main finished");
 
-console.log(events);
+expectToEqual(events, [
+  'main started',
+  'c started',
+  'c finished',
+  'main finished'
+]);

@@ -1,4 +1,7 @@
+require("./common")();
+
 let events = [];
+
 function log(event) {
   events.push(event);
 }
@@ -13,10 +16,17 @@ function* cc(n) {
 
 log("main started");
 let c = cc();
-var n = c.next(1).value;
-log(`main received: ${n}`)
-n = c.next(3).value;
-log(`main received: ${n}`)
+var n = c.next(1);
+log("main received: " + JSON.stringify(n))
+n = c.next(3);
+log("main received: " + JSON.stringify(n))
 log("main finished");
 
-console.log(events);
+expectToEqual(events, [
+  'main started',
+  'c received: undefined',
+  'main received: {"value":2,"done":false}',
+  'c received: 3',
+  'main received: {"done":true}',
+  'main finished'
+]);
