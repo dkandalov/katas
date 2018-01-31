@@ -1,3 +1,5 @@
+from asyncio import coroutine
+
 from common import expect_to_be_equal
 
 events = []

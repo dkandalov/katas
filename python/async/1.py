@@ -1,3 +1,5 @@
+import asyncio
+
 from common import expect_to_be_equal
 
 events = []
@@ -21,6 +23,8 @@ try:
     next(generator)
 except StopIteration:
     log("main StopIteration")
+finally:
+    generator.close() # can be caught as GeneratorExit
 
 log("main finished")
 
