@@ -32,11 +32,11 @@ log("received: " + JSON.stringify(c.next()));
 log("received: " + JSON.stringify(c.next()));
 
 expectToEqual(events, [
-  "coroutine started",
-  "subfunction started",
-  "received: {"value":42,"done":false}",
-  "subfunction finished",
-  "received: {"done":false}",
-  "coroutine finished",
-  "received: {"done":true}"
+  'coroutine started',
+  'subfunction started',
+  'received: {"value":42,"done":false}',
+  'subfunction finished',
+  'received: {"done":false}',
+  'coroutine finished',
+  'received: {"done":true}',
 ]);

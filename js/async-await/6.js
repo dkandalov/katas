@@ -11,19 +11,19 @@ function f() {
 }
 
 async function a() {
+  log("a 1");
+  await f();
   log("a 2");
   await f();
   log("a 3");
-  await f();
-  log("a 4");
 }
 
 async function b() {
+  log("b 1");
+  await f();
   log("b 2");
   await f();
   log("b 3");
-  await f();
-  log("b 4");
 }
 
 log("main start");
@@ -36,14 +36,14 @@ log("main end");
 setTimeout(() => {
   expectToEqual(events, [
     'main start',
-    'a 2',
-    'b 2',
+    'a 1',
+    'b 1',
     'main [object Promise]',
     'main [object Promise]',
     'main end',
+    'a 2',
+    'b 2',
     'a 3',
-    'b 3',
-    'a 4',
-    'b 4'
+    'b 3'
   ]);
 }, 0);
