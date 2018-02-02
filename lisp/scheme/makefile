@@ -1,2 +1,5 @@
+csi=/usr/local/Cellar/chicken/4.13.0/bin/csi
+
 run:
-	/usr/local/Cellar/chicken/4.13.0/bin/csi -ss hello.scm
+	 $(csi) -ss hello.scm
+	 $(csi) -ss 1.scm

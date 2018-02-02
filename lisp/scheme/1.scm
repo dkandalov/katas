@@ -1,0 +1,27 @@
+(define (expect-to-be-equal actual expected)
+  (cond ((not (equal? actual expected))
+    (error "not-equal")))
+)
+
+(define events (list))
+(define (log event)
+  (set! events (append events (list event)))
+)
+
+(define (f k)
+  (log 2)
+  (set! k (call/cc (lambda (mk) (k mk))))
+  (log 4)
+  (k #f)
+)
+
+(define (main args)
+  (log 1)
+  (define fk #t)
+  (set! fk (call/cc (lambda (k) (f k))))
+  (log 3)
+  (call/cc (lambda (k) (fk k)))
+  (log 5)
+
+  (expect-to-be-equal events (list 1 2 3 4 5))
+)
