@@ -1,6 +1,13 @@
 (define (expect-to-be-equal actual expected)
-  (cond ((not (equal? actual expected))
-    (error "not-equal")))
+  (cond ((not (equal? actual expected)) (
+    (display "Expected: ")
+    (display expected)
+    (newline)
+    (display "But was: ")
+    (display actual)
+    (newline)
+    (error "not-equal")
+  )))
 )
 
 (define events (list))
@@ -8,20 +15,21 @@
   (set! events (append events (list event)))
 )
 
-(define (f k)
+(define (f arg k)
   (log 2)
   (set! k (call/cc (lambda (mk) (k mk))))
   (log 4)
+  (log arg) ;; "arg" keeps its value after continuation
   (k #f)
 )
 
 (define (main args)
   (log 1)
   (define fk #t)
-  (set! fk (call/cc (lambda (k) (f k))))
+  (set! fk (call/cc (lambda (k) (f "f-arg" k))))
   (log 3)
   (call/cc (lambda (k) (fk k)))
   (log 5)
 
-  (expect-to-be-equal events (list 1 2 3 4 5))
+  (expect-to-be-equal events (list 1 2 3 4 "f-arg" 5))
 )
