@@ -1,0 +1,11 @@
+(define (expect-to-be-equal actual expected)
+  (cond ((not (equal? actual expected)) (
+    (display "Expected: ")
+    (display expected)
+    (newline)
+    (display "But was: ")
+    (display actual)
+    (newline)
+    (error "not-equal")
+  )))
+)
