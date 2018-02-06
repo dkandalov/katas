@@ -1,0 +1,35 @@
+(define (make-generator procedure)
+  (define last-return values)
+  (define last-value #f)
+  (define (last-continuation)
+    ((lambda (result) (last-return result)) (procedure yield))
+  )
+
+  (define (yield value)
+    (call/cc (lambda (continuation)
+      (set! last-continuation (lambda () (continuation #f)))
+      (set! last-value value)
+      (last-return value)
+  )))
+
+  (lambda ()
+    (call/cc (lambda (return)
+      (set! last-return return)
+      (last-continuation)
+    ))))
+
+(define test
+  (make-generator (lambda (yield)
+    (yield 1)
+    (yield 2)
+    (yield 3)
+)))
+
+
+(define (main args)
+  (display (test))
+  (display (test))
+  (display (test))
+  (display (test))
+  (display (test))
+)
