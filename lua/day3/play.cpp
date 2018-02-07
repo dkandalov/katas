@@ -41,7 +41,21 @@ int main(int argc, const char* argv[])
   lua_setglobal(L, "midi_send");
 
   // luaL_dostring(L, "print('Hello world!')");
-  int error = luaL_dofile(L, argv[1]);
+  int error = 0;
+
+  error = luaL_dostring(L, "song = require 'notation'");
+  if (error != 0) {
+    printf("Error executing Lua code:\n%s\n", lua_tostring(L, -1));
+    return 1;
+  }
+
+  error = luaL_dofile(L, argv[1]);
+  if (error != 0) {
+    printf("Error executing Lua code:\n%s\n", lua_tostring(L, -1));
+    return 1;
+  }
+
+  error = luaL_dostring(L, "song.go()");
   if (error != 0) {
     printf("Error executing Lua code:\n%s\n", lua_tostring(L, -1));
     return 1;

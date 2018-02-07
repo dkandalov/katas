@@ -1,4 +1,3 @@
-song = require "notation"
 song.set_tempo(50)
 
 song.part {
@@ -22,5 +21,3 @@ song.part {
   D5s,  C5s, B4s,  C5s,
   A4q
 }
-
-song.go()
