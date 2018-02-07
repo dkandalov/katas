@@ -4,7 +4,6 @@ local function note(letter, octave)
     Fs = 6, G = 7, Gs = 8, A = 9, As = 10, B = 11
   }
   local notes_per_octave = 12
-
   return (octave + 1) * notes_per_octave + notes[letter]
 end
 
@@ -39,7 +38,7 @@ local function parse_note(s)
   }
 end
 
-local scheduler = require 'scheduler'
+local scheduler = require "scheduler"
 local NOTE_DOWN = 0x90
 local NOTE_UP = 0x80
 local VELOCITY = 0x7f
@@ -47,16 +46,15 @@ local VELOCITY = 0x7f
 local function play(note, duration)
   midi_send(NOTE_DOWN, note, VELOCITY)
   scheduler.wait(duration)
-midi_send(NOTE_UP, note, VELOCITY)
+  midi_send(NOTE_UP, note, VELOCITY)
 end
 
 local function part(t)
-  local function play_part(t)
+  scheduler.schedule(0.0, coroutine.create(function()
     for i = 1, #t do
       play(t[i].note, t[i].duration)
     end
-  end
-  scheduler.schedule(0.0, coroutine.create(play_part))
+  end))
 end
 
 local mt = {

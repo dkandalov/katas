@@ -27,8 +27,11 @@ int main(int argc, const char* argv[])
 {
   if (argc < 1) return -1;
 
-  unsigned int ports = midi.getPortCount();
-  if (ports < 1) return -1;
+  int ports = midi.getPortCount();
+  if (ports < 1) {
+    printf("No available midi ports\n");
+    return -1;
+  }
   midi.openPort(0);
 
   lua_State* L = luaL_newstate();
@@ -38,7 +41,11 @@ int main(int argc, const char* argv[])
   lua_setglobal(L, "midi_send");
 
   // luaL_dostring(L, "print('Hello world!')");
-  luaL_dofile(L, argv[1]);
+  int error = luaL_dofile(L, argv[1]);
+  if (error != 0) {
+    printf("Error executing Lua code:\n%s\n", lua_tostring(L, -1));
+    return 1;
+  }
 
   lua_close(L);
   return 0;

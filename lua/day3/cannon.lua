@@ -1,4 +1,4 @@
-song = require 'notation'
+song = require "notation"
 song.set_tempo(50)
 
 song.part {
