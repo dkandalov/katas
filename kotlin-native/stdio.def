@@ -1,0 +1,2 @@
+headers = /usr/include/stdio.h
+compilerOpts = -std=c99
