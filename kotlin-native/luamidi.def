@@ -1,2 +1,2 @@
-headers = /usr/local/Cellar/lua/5.3.4_2/include/lua.h /usr/local/Cellar/lua/5.3.4_2/include/lauxlib.h /usr/local/Cellar/lua/5.3.4_2/include/lualib.h
-linkerOpts.osx = -llua -L/usr/local/Cellar/lua/5.3.4_2/lib
+headers = /usr/local/Cellar/lua/5.3.4_2/include/lua.h /usr/local/Cellar/lua/5.3.4_2/include/lauxlib.h /usr/local/Cellar/lua/5.3.4_2/include/lualib.h /usr/local/Cellar/rtmidi/3.0.0/include/RtMidi_c.h
+linkerOpts.osx = -llua -L/usr/local/Cellar/lua/5.3.4_2/lib -lRtMidi -L/usr/local/Cellar/rtmidi/3.0.0/lib/
