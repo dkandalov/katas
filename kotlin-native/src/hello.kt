@@ -1,6 +1,6 @@
-import stdio.*
+//import stdio.*
 
-fun main(args: Array<String>) {
-    println("hello!!!")
-    println("char: " + getchar())
-}
+//fun main(args: Array<String>) {
+//    println("hello!!!")
+//    println("char: " + getchar())
+//}

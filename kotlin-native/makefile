@@ -1,4 +1,7 @@
 build-and-run:
-	cinterop -def stdio.def -o build/c_interop/stdio && \
-	konanc src/* -library build/c_interop/stdio && \
+	cinterop -def luamidi.def -o build/c_interop/luamidi && \
+	konanc src/* -library build/c_interop/luamidi && \
 	./program.kexe
+
+clean:
+	rm -rf build
