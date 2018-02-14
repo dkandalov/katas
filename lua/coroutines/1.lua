@@ -6,7 +6,7 @@ function log(event)
   events[#events + 1] = event
 end
 
--- Yield from coroutine
+-- Yield coroutine execution
 
 local c = coroutine.create(function()
   log(2)

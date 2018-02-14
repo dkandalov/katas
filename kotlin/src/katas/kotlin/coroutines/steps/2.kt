@@ -1,6 +1,6 @@
 @file:Suppress("EXPERIMENTAL_FEATURE_WARNING", "PackageDirectoryMismatch")
 
-package katas.kotlin.coroutines.steps.step1
+package katas.kotlin.coroutines.steps.step2
 
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
