@@ -10,12 +10,15 @@ void log(int n) {
 
 void f(push_type &yield) {
     log(1);
-    yield(2);
-    log(3);
+    yield(3);
+    log(5);
 }
 
 int main() {
     log(0);
     pull_type source(f);
+    log(2);
     log(source.get());
+    log(4);
+    source();
 }
