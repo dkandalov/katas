@@ -12,8 +12,10 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(callcc-factorial.cpp callcc-factorial.cpp)
 add_executable(pull-push.cpp pull-push.cpp)
+add_executable(callcc.cpp callcc.cpp)
 target_link_libraries(callcc-factorial.cpp ${Boost_LIBRARIES})
 target_link_libraries(pull-push.cpp ${Boost_LIBRARIES})
+target_link_libraries(callcc.cpp ${Boost_LIBRARIES})
 
 MESSAGE(STATUS "!!!!! Boost_LIBRARIES: ${Boost_LIBRARIES}")
 MESSAGE(STATUS "!!!!! Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIRS}")
