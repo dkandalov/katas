@@ -1,7 +1,7 @@
-#include "1.h"
-#include "2.h"
+//#include "1.h"
+//#include "2.h"
 
-int main() {
-    one::main();
-    two::main();
-}
+//int main() {
+//    one::main();
+//    two::main();
+//}

@@ -1,18 +1,20 @@
 cmake_minimum_required(VERSION 3.9)
 
+project(CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 set(GHSMULTI 1)
 set(Boost_USE_STATIC_LIBS 1)
 set(CMAKE_FIND_LIBRARY_PREFIXES "")
 set(CMAKE_FIND_LIBRARY_SUFFIXES "")
-set(BOOST_ROOT /usr/local/Cellar/boost@1.60/1.60.0)
-set(Boost_INCLUDE_DIRS /usr/local/Cellar/boost@1.60/1.60.0/include)
-set(BOOST_LIBRARYDIR /usr/local/Cellar/boost@1.60/1.60.0/lib)
-find_package(Boost 1.60.0 COMPONENTS coroutine context thread-mt REQUIRED)
+find_package(Boost COMPONENTS thread context coroutine chrono system date_time atomic REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-project(cpp)
+add_executable(1.cpp 1.cpp)
+add_executable(2.cpp 2.cpp)
+target_link_libraries(1.cpp ${Boost_LIBRARIES})
+target_link_libraries(2.cpp ${Boost_LIBRARIES})
 
-add_executable(cpp main.cpp 1.h 2.h)
-target_link_libraries(cpp ${Boost_LIBRARIES})
+MESSAGE(STATUS "!!!!! Boost_LIBRARIES: ${Boost_LIBRARIES}")
+MESSAGE(STATUS "!!!!! Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIRS}")
+MESSAGE(STATUS "!!!!! Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")
