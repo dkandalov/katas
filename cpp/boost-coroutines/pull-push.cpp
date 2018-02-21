@@ -4,8 +4,12 @@
 typedef boost::coroutines2::coroutine<int>::pull_type pull_type;
 typedef boost::coroutines2::coroutine<int>::push_type push_type;
 
+void log(const std::string &s) {
+    std::cout << "n = " << s << std::endl;
+}
+
 void log(int n) {
-    std::cout << "n = " << n << std::endl;
+    log(std::to_string(n));
 }
 
 void f(push_type &yield) {

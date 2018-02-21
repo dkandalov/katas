@@ -9,7 +9,7 @@
 )
 
 (define (example1)
-  ;;; Return the first element in LST for which WANTED? returns a true value.
+  ;;; Return the first element in "lst" for which "wanted?" returns a true value.
   (define (search wanted? lst)
     (call/cc
       (lambda (return)
@@ -25,7 +25,7 @@
 )
 
 (define (example2)
-  ;;; Call TREAT with every element in the LIST and a procedure to call when TREAT likes this element.
+  ;;; Call TREAT with every element in the "lst" and a procedure to call when "treat" likes this element.
   (define (search2 treat lst)
     (call/cc
       (lambda (return)
