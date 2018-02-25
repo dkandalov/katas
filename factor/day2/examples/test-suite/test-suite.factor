@@ -1,5 +1,6 @@
 USING: tools.test io io.streams.null kernel namespaces sequences ;
 USE: examples.greeter
+USE: examples.strings
 IN: examples.test-suite
 
 : test-all-examples ( -- )
