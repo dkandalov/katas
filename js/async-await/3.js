@@ -11,7 +11,7 @@ function log(event) {
 function* subfunction() {
   let f = () => {
     // yield 42; // fails to run even though the outer function is generator
-  }
+  };
   log("subfunction started");
   // log(stackTrace());
   yield 42; // can't yield without marking function as generator

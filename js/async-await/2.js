@@ -9,17 +9,17 @@ function log(event) {
 // Send/receive values from coroutine
 
 function* cc(n) {
-  log(`c received: ${n}`)
+  log(`c received: ${n}`);
   n = yield 2;
   log(`c received: ${n}`)
 }
 
 log("main started");
 let c = cc();
-var n = c.next(1);
-log("main received: " + JSON.stringify(n))
+let n = c.next(1);
+log("main received: " + JSON.stringify(n));
 n = c.next(3);
-log("main received: " + JSON.stringify(n))
+log("main received: " + JSON.stringify(n));
 log("main finished");
 
 expectToEqual(events, [

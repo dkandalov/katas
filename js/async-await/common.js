@@ -1,7 +1,7 @@
 module.exports = function() {
   expectToEqual = function(actual, expected) {
-    if (JSON.stringify(actual) != JSON.stringify(expected)) {
-      console.log("Expected")
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      console.log("Expected";
       console.log(expected);
       console.log("but was:");
       console.log(actual);
@@ -10,7 +10,7 @@ module.exports = function() {
     }
   };
   stackTrace = function() {
-    var err = new Error();
+    const err = new Error();
     return err.stack;
   };
-}
+};
