@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/java/java.iml" filepath="$PROJECT_DIR$/java/java.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-js/kotlin-js.iml" filepath="$PROJECT_DIR$/kotlin-js/kotlin-js.iml" />
       <module fileurl="file://$PROJECT_DIR$/java/root.iml" filepath="$PROJECT_DIR$/java/root.iml" />
       <module fileurl="file://$PROJECT_DIR$/ruby/ruby.iml" filepath="$PROJECT_DIR$/ruby/ruby.iml" />
       <module fileurl="file://$PROJECT_DIR$/scala/scala.iml" filepath="$PROJECT_DIR$/scala/scala.iml" />
