@@ -18,7 +18,7 @@ class WordChain4 extends Matchers {
 //		findMinChain("cat", "dog", dictionary) should equal(Seq("cat", "dog"))
 	}
 
-	var minSize = Int.MaxValue
+	private var minSize = Int.MaxValue
 
 	def findMinChain(fromWord: String, toWord: String, dictionary: Seq[String]): Seq[String] = {
 		if (fromWord.length() != toWord.length()) return Seq()

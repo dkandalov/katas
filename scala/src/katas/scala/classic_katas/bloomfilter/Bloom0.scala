@@ -30,7 +30,7 @@ class Bloom0 extends Matchers {
 
 		val words = Source.fromFile("/usr/share/dict/words").getLines().toSeq
 
-		words.foreach{ bloomFilter.add(_) }
+		words.foreach{ bloomFilter.add }
 		bloomFilter.data.count{ _ == true } should equal(592227)
 		bloomFilter.contains("aaa") should equal(false)
 		bloomFilter.contains("bbb") should equal(false)

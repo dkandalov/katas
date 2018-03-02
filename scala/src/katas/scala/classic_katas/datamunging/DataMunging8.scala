@@ -41,6 +41,6 @@ class DataMunging8 extends Matchers {
 	private def toInt(s: String): Int = s.replace("*", "").toInt
 
 	case class Entry(key: String, value1: Int, value2: Int) {
-		def valueDifference = math.abs(value1 - value2)
+		def valueDifference: Int = math.abs(value1 - value2)
 	}
 }

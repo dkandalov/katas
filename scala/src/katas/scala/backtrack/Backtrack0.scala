@@ -23,7 +23,7 @@ class Backtrack0 extends Matchers {
   class Permutations extends Backtrack {
     val nMax = 10
 
-    override def isASolution(a: Array[Int], k: Int, input: Any) = k == input.asInstanceOf[Int]
+    override def isASolution(a: Array[Int], k: Int, input: Any): Boolean = k == input.asInstanceOf[Int]
 
     override def processSolution(a: Array[Int], k: Int, input: Any) {
       output.append(a.mkString(",")).append("\n")
@@ -45,7 +45,7 @@ class Backtrack0 extends Matchers {
 
   class Subsets extends Backtrack {
 
-    override def isASolution(a: Array[Int], k: Int, n: Any) = k == n
+    override def isASolution(a: Array[Int], k: Int, n: Any): Boolean = k == n
 
     override def constructCandidates(a: Array[Int], k: Int, input: Any): Array[Int] = {
       val c = new Array[Int](2)
@@ -70,7 +70,7 @@ class Backtrack0 extends Matchers {
       } else {
         val newK = k + 1
         val c = constructCandidates(a, k, input) // in the book it uses "k+1" what doesn't seem to be correct
-        for (i <- 0 until c.size) {
+        for (i <- c.indices) {
           a(k) = c(i)
           makeMove(a, newK, input)
           backtrack(a, newK, input)

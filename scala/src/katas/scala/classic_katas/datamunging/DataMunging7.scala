@@ -36,7 +36,7 @@ class DataMunging7 extends Matchers { // TODO try streaming implementation
 	}
 
 	case class Entry(key: String, value1: Int, value2: Int) {
-		def valueDifference = math.abs(value1 - value2)
+		def valueDifference: Int = math.abs(value1 - value2)
 	}
 
 	private def toInt(s: String) = s.replace("*", "").toInt

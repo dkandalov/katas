@@ -12,10 +12,10 @@ import scala.io.Source
  */
 
 class WordChain3 extends Matchers {
-	val dict = Source.fromFile("/usr/share/dict/words").getLines().toList
-	var words = List[String]()
-	var minChain = List[String]()
-	var minChainSize = Int.MaxValue
+	private val dict = Source.fromFile("/usr/share/dict/words").getLines().toList
+	private var words = List[String]()
+	private var minChain = List[String]()
+	private var minChainSize = Int.MaxValue
 	
 	@Test def aaaa() {
 		val wordChain = findShortestChain("cat", "dog")

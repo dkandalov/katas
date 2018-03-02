@@ -1,5 +1,7 @@
 package katas.scala.cake
 
+import java.util
+
 
 class Cake {
 
@@ -48,7 +50,7 @@ trait DefaultUserServiceComponent extends UserServiceComponent {
 	def userService = new DefaultUserService
 
 	class DefaultUserService extends UserService {
-		def findAll = userLocator.findAll
+		def findAll: util.List[User] = userLocator.findAll
 
 		def save(user: User) {
 			userUpdater.save(user)

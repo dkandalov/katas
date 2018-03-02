@@ -18,22 +18,22 @@ class DataMunging1 extends Matchers {
 
 	@Test def extractDataReturnsLinesContainingOnlyNumericalData() {
 		val data = readFile(path)
-		Assert.assertThat(extractData(data)(0), startsWith("   1"))
+		Assert.assertThat(extractData(data).head, startsWith("   1"))
 		Assert.assertThat(extractData(data)(29), startsWith("  30"))
 
 		val data2 = readFile(path2)
-		Assert.assertThat(extractData(data2)(0), startsWith("    1."))
+		Assert.assertThat(extractData(data2).head, startsWith("    1."))
 		Assert.assertThat(extractData(data2)(19), startsWith("   20."))
 	}
 
 	@Test def shouldExtractFirstThreeColumns() {
 		val lines = extractData(readFile(path))
-		extractColumns(lines, 0, 1, 2)(0) should equal(Seq("1", "88", "59"))
+		extractColumns(lines, 0, 1, 2).head should equal(Seq("1", "88", "59"))
 		extractColumns(lines, 0, 1, 2)(25) should equal(Seq("26", "97*", "64"))
 		extractColumns(lines, 0, 1, 2)(29) should equal(Seq("30", "90", "45"))
 
 		val lines2 = extractData(readFile(path2))
-		extractColumns(lines2, 1, 6, 8)(0) should equal(Seq("Arsenal", "79", "36"))
+		extractColumns(lines2, 1, 6, 8).head should equal(Seq("Arsenal", "79", "36"))
 		extractColumns(lines2, 1, 6, 8)(19) should equal(Seq("Leicester", "30", "64"))
 	}
 
@@ -43,20 +43,20 @@ class DataMunging1 extends Matchers {
 
 	@Test def shouldConvertDataIntoRowObjects() {
 		val rows = extractColumns(extractData(readFile(path)), 0, 1, 2)
-		convertIntoWeatherRows(rows)(0) should equal(WeatherRow(1, 88, 59))
+		convertIntoWeatherRows(rows).head should equal(WeatherRow(1, 88, 59))
 		convertIntoWeatherRows(rows)(25) should equal(WeatherRow(26, 97, 64))
 
 		val rows2 = extractColumns(extractData(readFile(path2)), 1, 6, 8)
-		convertIntoFootballRows(rows2)(0) should equal(FootballRow("Arsenal", 79, 36))
+		convertIntoFootballRows(rows2).head should equal(FootballRow("Arsenal", 79, 36))
 	}
 
 	@Test def shouldCalculateSpreads() {
 		val rows = convertIntoWeatherRows(extractColumns(extractData(readFile(path)), 0, 1, 2))
-		calcSpread(rows)(0)._2 should equal(29)
+		calcSpread(rows).head._2 should equal(29)
 		calcSpread(rows)(29)._2 should equal(45)
 
 		val rows2 = convertIntoFootballRows(extractColumns(extractData(readFile(path2)), 1, 6, 8))
-		calcSpread(rows2)(0)._2 should equal(43)
+		calcSpread(rows2).head._2 should equal(43)
 		calcSpread(rows2)(19)._2 should equal(34)
 	}
 
@@ -76,13 +76,13 @@ class DataMunging1 extends Matchers {
 
 	def convertIntoNumber(rows: Seq[Seq[String]], columnIndexes: Int*) = rows.map{ row => row.map{_.replaceAll("[*.]", "").toInt }}
 	def convertIntoWeatherRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow[Any]] = rows.map{ row =>
-			val day = row(0).replaceAll("[*.]", "").toInt
+			val day = row.head.replaceAll("[*.]", "").toInt
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
 			WeatherRow(day, min, max)
 	}
 	def convertIntoFootballRows(rows: Seq[Seq[String]], columnIndexes: Int*): Seq[ARow[Any]] = rows.map{ row =>
-			val team = row(0)
+			val team = row.head
 			val min = row(1).replaceAll("[*.]", "").toInt
 			val max = row(2).replaceAll("[*.]", "").toInt
 			FootballRow(team, min, max)

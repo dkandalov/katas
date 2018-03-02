@@ -38,14 +38,14 @@ class DataMunging0 extends Matchers {
 
     val scores = lines.map{ line =>
       val row = line.split("\\s+")
-      (row(2), new MaxMin(row(7).toInt, row(9).toInt))
+      (row(2), MaxMin(row(7).toInt, row(9).toInt))
     }
     println(scores.minBy { x => (x._2.max - x._2.min).abs}   )
   }
 
   def trimFile(file: String, top: Int, bottom: Int): List[String] = {
     val source = Source.fromFile(file)
-    var lines = source.getLines().toList
-    lines.take(lines.length - bottom).drop(top)
+	  val lines = source.getLines().toList
+    lines.slice(top, lines.length - bottom)
   }
 }

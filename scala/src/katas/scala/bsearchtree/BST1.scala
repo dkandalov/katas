@@ -25,11 +25,11 @@ class BST1 extends AssertionsForJUnit {
   }
 
   @Test def shouldTraverseTreeInOrder() {
-    val tree = new Node(2,
-      new Node(1), // used "Node" instead of "new Node"
-      new Node(3,
-        EmptyNode,
-        new Node(4)) // forgot emptynode arguments
+    val tree = Node(2,
+	    new Node(1), // used "Node" instead of "new Node"
+	    Node(3,
+		    EmptyNode,
+		    new Node(4)) // forgot emptynode arguments
     )
     assert(traverseTreeInOrder(tree) === List(1, 2, 3, 4))
   }
@@ -38,9 +38,9 @@ class BST1 extends AssertionsForJUnit {
     case EmptyNode => new Node(newValue)
     case Node(value, left, right) =>
       if (value > newValue)
-        new Node(value, add(left, newValue), right)
+        Node(value, add(left, newValue), right)
       else
-        new Node(value, left, add(right, newValue))
+        Node(value, left, add(right, newValue))
   }
 
   def traverseTreeInOrder(node: ANode): List[Int] = node match {

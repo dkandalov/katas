@@ -63,9 +63,9 @@ class BSearch13 extends Matchers {
 			else this.withValues(values.slice(midPos + 1, values.size)).withShift(shift + midPos + 1)
 		}
 		
-		private def withResult(newResult: Option[Option[Int]]) = new State(n, values, shift, newResult)
-		private def withValues(newValues: Seq[Int]) = new State(n, newValues, shift, result)
-		private def withShift(newShift: Int) = new State(n, values, newShift, result)
+		private def withResult(newResult: Option[Option[Int]]) = State(n, values, shift, newResult)
+		private def withValues(newValues: Seq[Int]) = State(n, newValues, shift, result)
+		private def withShift(newShift: Int) = State(n, values, newShift, result)
 	}
 
 	def bsearch(n: Int, values: Seq[Int]): Option[Int] = {
@@ -73,7 +73,7 @@ class BSearch13 extends Matchers {
 	}
 
 	@tailrec private def doSearch(state: State): Option[Int] = {
-		if (state.result == None) doSearch(state.next()) 
+		if (state.result.isEmpty) doSearch(state.next())
 		else state.result.get
 	}
 }

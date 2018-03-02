@@ -35,7 +35,7 @@ class BSearch17 extends Matchers {
 		binarySearch(List(1, 2, 3, 4), 5) should equal(notFound)
 	}
 
-	val notFound = -1
+	private val notFound = -1
 
 	@tailrec private def binarySearch(values: Seq[Int], n: Int, shift: Int = 0): Int = {
 		if (values.isEmpty) return -1

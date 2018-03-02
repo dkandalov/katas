@@ -37,7 +37,7 @@ class BSearch7 extends AssertionsForJUnit {
   }
 
   def search(value: Int, list: List[Int]): Option[Int] = {
-    if (list.size == 0) return None
+    if (list.isEmpty) return None
 
     val midPos: Int = list.size / 2
     if (list(midPos) == value) {

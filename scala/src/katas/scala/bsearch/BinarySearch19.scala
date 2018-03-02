@@ -18,7 +18,7 @@ class BinarySearch19 extends Matchers {
 		Seq('a', 'b', 'd', 'e').map{ search(_, Seq('b', 'd')) } should equal(Seq(notFound, 0, 1, notFound))
 	}
 
-	val notFound = -1
+	private val notFound = -1
 
 	@tailrec private def search[T](value: T, sequence: Seq[T], shift: Int = 0)(implicit order: T => Ordered[T]): Int = {
 		if (sequence.isEmpty) return notFound

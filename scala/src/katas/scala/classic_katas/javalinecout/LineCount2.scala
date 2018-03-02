@@ -16,7 +16,7 @@ class LineCount2 extends Matchers {
   }
 
   @Test def file3() {
-    var s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/java/ru/db/StringUtil.java").mkString
+	  val s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/java/ru/db/StringUtil.java").mkString
     val lines = extractLinesWithCode(s)
 
     println("Lines of code: " + lines.size)
@@ -26,7 +26,7 @@ class LineCount2 extends Matchers {
   }
 
   @Test def file2() {
-    var s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n13/java_source2.txt").mkString
+	  val s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n13/java_source2.txt").mkString
     val lines = extractLinesWithCode(s)
 
     println("Lines of code: " + lines.size)
@@ -36,7 +36,7 @@ class LineCount2 extends Matchers {
   }
 
   @Test def file1() {
-    var s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n13/java_source1.txt").mkString
+	  val s = Source.fromFile("/Users/dima/IdeaProjects/katas/src/main/scala/ru/katas/n13/java_source1.txt").mkString
     val lines = extractLinesWithCode(s)
 
     println("Lines of code: " + lines.size)

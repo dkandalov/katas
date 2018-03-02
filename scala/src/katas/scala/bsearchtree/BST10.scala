@@ -71,12 +71,12 @@ class BST10 extends Matchers {
 			1 + left.size() + right.size
 		}
 
-		override def insert(value: String) = {
+		override def insert(value: String): Node = {
 			if (value < this.value) Node(this.value, left.insert(value), right)
 			else Node(this.value, left, right.insert(value))
 		}
 
-		override def rootInsert(value: String) = {
+		override def rootInsert(value: String): Node = {
 			if (value < this.value) {
 				Node(this.value, left.rootInsert(value), right).rotateRight()
 			} else {
@@ -84,7 +84,7 @@ class BST10 extends Matchers {
 			}
 		}
 
-		override def splayInsert(value: String) = {
+		override def splayInsert(value: String): Node = {
 			if (value < this.value) {
 				left match {
 					case EmptyNode() =>
@@ -126,7 +126,7 @@ class BST10 extends Matchers {
 				Node(rightNode.value, Node(value, left, rightNode.left), rightNode.right)
 		}
 
-		override def toString = (left, right) match {
+		override def toString: String = (left, right) match {
 			case (EmptyNode(), EmptyNode()) => "(" + value + ")"
 			case _ => "(" + value + ", " + left + ", " + right + ")"
 		}
@@ -137,8 +137,8 @@ class BST10 extends Matchers {
 		override def insert(value: String) = Node(value)
 		override def rootInsert(value: String) = Node(value)
 		override def splayInsert(value: String) = Node(value)
-		override def rotateLeft() = this
-		override def rotateRight() = this
+		override def rotateLeft(): EmptyNode = this
+		override def rotateRight(): EmptyNode = this
 		override def toString = "-"
 	}
 }
