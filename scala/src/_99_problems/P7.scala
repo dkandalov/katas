@@ -208,24 +208,24 @@ object P7 {
 		def fromLabelString(s: String): Graph[Char, Int] = {
 			if (s.isEmpty) return new Graph[Char, Int]
 
-			val withoutBraces = s.substring(1, s.size - 1)
+			val withoutBraces = s.substring(1, s.length - 1)
 			if (withoutBraces.isEmpty) return new Graph[Char, Int]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("[-\\/]") }
 			val nodeValues = tokens.flatMap(token => token.take(2)).distinct.map(_.head)
-			val connections = tokens.distinct.filter(_.size == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
+			val connections = tokens.distinct.filter(_.length == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
 
 			Graph.termLabel(nodeValues, connections)
 		}
 
 		def fromString(s: String): Graph[Char, Unit] = {
 			if (s.isEmpty) return new Graph[Char, Unit]
-			val withoutBraces = s.substring(1, s.size - 1)
+			val withoutBraces = s.substring(1, s.length - 1)
 			if (withoutBraces.isEmpty) return new Graph[Char, Unit]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("-") }
 			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
-			val connections = tokens.distinct.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
+			val connections = tokens.distinct.filter(_.length == 2).map{ token => (token(0).head, token(1).head) }
 
 			Graph.term(nodeValues, connections)
 		}
@@ -393,24 +393,24 @@ object P7 {
 	object Digraph {
 		def fromLabelString(s: String): Digraph[Char, Int] = {
 			if (s.isEmpty) return new Digraph[Char, Int]
-			val withoutBraces = s.substring(1, s.size - 1)
+			val withoutBraces = s.substring(1, s.length - 1)
 			if (withoutBraces.isEmpty) return new Digraph[Char, Int]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split("[>/]") }
 			val nodeValues = tokens.flatMap(_.take(2).toSeq).distinct.map(_.head)
-			val connections = tokens.distinct.filter(_.size == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
+			val connections = tokens.distinct.filter(_.length == 3).map{ token => (token(0).head, token(1).head, token(2).toInt) }
 
 			Digraph.termLabel(nodeValues, connections)
 		}
 
 		def fromString(s: String): Digraph[Char, Unit] = {
 			if (s.isEmpty) return new Digraph[Char, Unit]
-			val withoutBraces = s.substring(1, s.size - 1)
+			val withoutBraces = s.substring(1, s.length - 1)
 			if (withoutBraces.isEmpty) return new Digraph[Char, Unit]
 
 			val tokens: Seq[Array[String]] = withoutBraces.split(", ").map{ _.split(">") }
 			val nodeValues = tokens.flatMap(_.toSeq).distinct.map(_.head)
-			val connections = tokens.distinct.filter(_.size == 2).map{ token => (token(0).head, token(1).head) }
+			val connections = tokens.distinct.filter(_.length == 2).map{ token => (token(0).head, token(1).head) }
 
 			Digraph.term(nodeValues, connections)
 		}
@@ -467,9 +467,9 @@ object P7 {
 			if (!hasChildren) {
 				(MTree(s.head), s.tail)
 			} else {
-				s = s.drop("(".size)
+				s = s.drop("(".length)
 				val value = s.head
-				s = s.drop((value + " ").size)
+				s = s.drop((value + " ").length)
 
 				var children = List[MTree[Char]]()
 				while (!s.startsWith(")")) {
@@ -478,12 +478,12 @@ object P7 {
 					children = children :+ child
 
 					if (restOfString.startsWith(" ")) {
-						s = restOfString.drop(" ".size)
+						s = restOfString.drop(" ".length)
 					} else {
 						s = restOfString
 					}
 				}
-				s = s.drop(")".size)
+				s = s.drop(")".length)
 
 				(MTree(value, children), s)
 			}

@@ -1,9 +1,9 @@
 package katas.scala.sort.heap
 
-import org.scalatest.Matchers
 import org.junit.Test
-import collection.Seq
-import java.lang.IllegalStateException
+import org.scalatest.Matchers
+
+import scala.collection.Seq
 
 /**
  * User: dima
@@ -73,11 +73,11 @@ class HeapSort7 extends Matchers {
       }
     }
 
-    def leftChildOf(i: Int) = i * 2 + 1
+	  private def leftChildOf(i: Int) = i * 2 + 1
 
-    def rightChildOf(i: Int) = i * 2 + 2
+	  private def rightChildOf(i: Int) = i * 2 + 2
 
-    def parentOf(i: Int) = (i - 1) / 2
+	  private def parentOf(i: Int) = (i - 1) / 2
 
     private def swap(i1: Int, i2: Int) {
       val tmp = data(i2)

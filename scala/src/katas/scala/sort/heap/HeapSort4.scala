@@ -3,8 +3,6 @@ package katas.scala.sort.heap
 import katas.scala.permutation.Perm3_
 import org.junit.Test
 import org.scalatest.Matchers
-import org.scalatest.Matchers._
-import org.scalatest.Matchers
 
 /**
  * User: dima
@@ -29,7 +27,7 @@ class HeapSort4 extends Matchers {
 
   private def collectMaxValuesFrom(heap: AHeap): List[Int] = heap match {
     case EmptyHeap() => List()
-    case default =>
+    case _ =>
       val result = heap.removeMax()
       val maxValue = result._1
       val newHeap = result._2
@@ -72,7 +70,7 @@ class HeapSort4 extends Matchers {
   case class EmptyHeap() extends AHeap {
     override def add(newValue: Int) = Heap(newValue)
     override def removeMax() = throw new UnsupportedOperationException
-    override def value() = Int.MinValue
+    override def value(): Int = Int.MinValue
     override def sink(): EmptyHeap = this
   }
 

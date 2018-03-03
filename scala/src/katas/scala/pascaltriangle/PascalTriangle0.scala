@@ -22,7 +22,7 @@ class PascalTriangle0 extends AssertionsForJUnit {
   def triangle(depth: Int, input: List[Int] = List(0, 1, 0)): List[List[Int]] = { // couldn't understand whether I need to pass input as a parameter
     def newInput(input: List[Int]): List[Int] = {
       input match { // couldn't match two elements from list correctly (had to resort to println())
-        case List(x) => List(0)
+        case List(_) => List(0)
         case x1 :: xs => (x1 + xs.head) :: newInput(xs)
       }
     }

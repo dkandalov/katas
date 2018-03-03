@@ -31,9 +31,9 @@ class MergeSort10 extends Matchers {
   def merge[T](list1: List[T], list2: List[T])(implicit o: T => Ordered[T]): List[T] = {
     if (list1.isEmpty) return list2
     if (list2.isEmpty) return list1
-    if (list1(0) < list2(0))
-      list1(0) :: merge(list1.tail, list2)
+    if (list1.head < list2.head)
+      list1.head :: merge(list1.tail, list2)
     else
-      list2(0) :: merge(list1, list2.tail)
+      list2.head :: merge(list1, list2.tail)
   }
 }

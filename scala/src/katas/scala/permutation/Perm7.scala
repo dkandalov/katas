@@ -24,7 +24,7 @@ class Perm7 extends AssertionsForJUnit {
     if (list.isEmpty) return List(List())
     if (list.size == 1) return List(list)
 
-    0.until(list.size).foldRight(List[List[Int]]()) { (i,a) =>
+    list.indices.foldRight(List[List[Int]]()) { (i, a) =>
         val splitted = list.splitAt(i)
 //        println(i)
 //        println(splitted)

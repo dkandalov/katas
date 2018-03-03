@@ -1,16 +1,16 @@
 package katas.scala.fractal
 
-import swing.{Panel, MainFrame, SimpleSwingApplication}
-import java.awt.{Color, Dimension}
 import java.awt.image.BufferedImage
-import scala.None
-import annotation.tailrec
-import org.junit.Test
-import org.junit.Assert._
+import java.awt.{Color, Dimension}
+import java.io.{BufferedWriter, File, FileOutputStream, OutputStreamWriter}
+
 import org.hamcrest.CoreMatchers._
-import scala.Some
-import java.io.{FileOutputStream, OutputStreamWriter, BufferedWriter, File}
+import org.junit.Assert._
+import org.junit.Test
+
+import scala.annotation.tailrec
 import scala.io.Source
+import scala.swing.{Frame, MainFrame, Panel, SimpleSwingApplication}
 
 /**
  * User: dima
@@ -18,14 +18,14 @@ import scala.io.Source
  */
 
 object Mandelbrot0 extends SimpleSwingApplication {
-  def top = new MainFrame {
+  def top: Frame = new MainFrame {
     title = "Hello, Mandelbrot0!"
 
-    val mandelbrot = new Mandelbrot0
-    val settings = FractalSettings()
-    val fractal = mandelbrot.calculateFractal(settings)
+    private val mandelbrot = new Mandelbrot0
+    private val settings = FractalSettings()
+    private val fractal = mandelbrot.calculateFractal(settings)
 
-    val panel = new Panel {
+    private val panel = new Panel {
       override protected def paintComponent(g: scala.swing.Graphics2D) {
         val image: BufferedImage = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB)
         for (x <- 0 until 800; y <- 0 until 600) {
@@ -56,8 +56,8 @@ object Mandelbrot0 extends SimpleSwingApplication {
 	case class Complex(a: Double, b: Double) {
 		def +(that: Complex) =  Complex(a + that.a, b + that.b)
 		def square = Complex(a * a - b * b, 2 * a * b)
-		def squareOfAbs = a * a + b * b
-		def abs = math.sqrt(a * a + b * b)
+		def squareOfAbs: Double = a * a + b * b
+		def abs: Double = math.sqrt(a * a + b * b)
 	}
 
 	class Mandelbrot0 {
@@ -85,7 +85,7 @@ object Mandelbrot0 extends SimpleSwingApplication {
 			new Color(color, color, color).getRGB
 		}
 
-		val zm = math.sqrt(3 * 3 + 2 * 2) // this is based on approximate max x, y values but does it really have to be?
+		private val zm = math.sqrt(3 * 3 + 2 * 2) // this is based on approximate max x, y values but does it really have to be?
 
 		private def grayScaleColorByMagnitude(value: Complex, maxIterations: Int): Int = {
 			val colorScale = math.min(1, value.abs / zm)
@@ -96,7 +96,7 @@ object Mandelbrot0 extends SimpleSwingApplication {
 		private def redColorByMagnitude(value: Complex, maxIterations: Int): Int = {
 			val colorScale = math.min(1, value.a.abs / zm)
 			val color1 = math.min(255, 255 * 2 * colorScale).toInt
-			val color2 = math.max(0, (255 * colorScale - 1)).toInt
+			val color2 = math.max(0, 255 * colorScale - 1).toInt
 			new Color(color1, color2, color2).getRGB
 		}
 
@@ -129,10 +129,9 @@ object Mandelbrot0 extends SimpleSwingApplication {
 				assertThat(actual, equalTo(expected))
 			}
 			catch {
-				case error: AssertionError => {
+				case error: AssertionError =>
 					writeToFile(ActualOutputFile, actual)
 					throw error
-				}
 			}
 		}
 

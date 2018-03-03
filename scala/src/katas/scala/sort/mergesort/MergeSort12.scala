@@ -27,7 +27,7 @@ class MergeSort12 extends Matchers {
 	def merge[T](part1: Seq[T], part2: Seq[T])(implicit ordered: T => Ordered[T]): Seq[T] = {
 		if (part1.isEmpty) part2
 		else if (part2.isEmpty) part1
-		else if (part1(0) < part2(0)) part1(0) +: merge(part1.tail, part2)
-		else part2(0) +: merge(part1, part2.tail)
+		else if (part1.head < part2.head) part1.head +: merge(part1.tail, part2)
+		else part2.head +: merge(part1, part2.tail)
 	}
 }

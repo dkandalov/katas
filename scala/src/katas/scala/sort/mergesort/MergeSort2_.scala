@@ -20,11 +20,10 @@ class MergeSort2_ extends AssertionsForJUnit
 
   def sort(list: List[Int]): List[Int] = list match {
     case List() => list
-    case List(x) => list
-    case _ => {
-      val parts = list.splitAt(list.size / 2)
-      merge(sort(parts._1), sort(parts._2))
-    }
+    case List(_) => list
+    case _ =>
+	    val parts = list.splitAt(list.size / 2)
+	    merge(sort(parts._1), sort(parts._2))
   }
 
   def merge(list1: List[Int], list2: List[Int]): List[Int] = (list1, list2) match {

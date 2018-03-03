@@ -20,7 +20,7 @@ class InsertSort extends AssertionsForJUnit {
 		def ssort(sorted: List[Int], inputList: List[Int]): List[Int] = {
 			inputList match {
 				case List() => sorted // returned inputList instead of sorted :(
-				case List(x, _*) => ssort(insert(sorted, inputList.head), inputList.tail)
+				case List(_, _*) => ssort(insert(sorted, inputList.head), inputList.tail)
 			}
 		}
 

@@ -21,7 +21,7 @@ class Fibonacci4_ extends Matchers {
     List[Long](20, 30, 40, 50, 60, 70, 80, 90).map(fib) should equal(Seq(10946, 1346269, 165580141, 20365011074L, 2504730781961L, 308061521170130L, 37889062373144008L, 4660046610375544832L))
   }
 
-  val fi = (1 + sqrt(5)) / 2
+  private val fi = (1 + sqrt(5)) / 2
 
   def fib_(n: Long): Long = {
     floor((pow(fi, n + 1) / sqrt(5)) + 0.5).toLong

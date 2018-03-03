@@ -18,7 +18,7 @@ class CountChange1 extends Matchers {
     countChangeVariants(amount - denominationOf(coinType), coinType) + countChangeVariants(amount, coinType - 1) // decreased amount in the seconds addend too
   }
 
-  def denominationOf(coinType: Int) = coinType match {
+  def denominationOf(coinType: Int): Int = coinType match {
     case 0 => 1
     //case 1 => 2 had this... which is real but screws up numbers
     case 1 => 5

@@ -1,9 +1,8 @@
 package katas.scala.sort.quicksort
 
-import org.scalatest.Matchers
 import katas.scala.sort.SeqSortTest
+import org.scalatest.Matchers
 
-import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
 class QuickSort1 extends SeqSortTest with Matchers {

@@ -63,31 +63,31 @@ class Sudoku4 extends Matchers {
 	}
 
 
-	val digits = "123456789"
-	val rows = "ABCDEFGHI".toList
-	val cols = digits.toList
-	val squares = cross(rows, cols)
+	private val digits = "123456789"
+	private val rows = "ABCDEFGHI".toList
+	private val cols = digits.toList
+	private val squares = cross(rows, cols)
 
-	val unitlist =
+	private val unitlist =
 		(for (col <- cols) yield cross(rows, Seq(col))) ++
 			(for (row <- rows) yield cross(Seq(row), cols)) ++
 			(for (letter <- Seq("ABC", "DEF", "GHI").map{_.toList}; digit <- Seq("123", "456", "789").map{_.toList})
 			yield cross(letter, digit))
 
-	val units = (for (square <- squares) yield (square -> unitlist.filter{_.contains(square)})).toMap
-	val peers = (for (square <- squares) yield (square -> units(square).flatten.filter{_ != square}.toSet)).toMap
+	private val units = (for (square <- squares) yield square -> unitlist.filter{_.contains(square)}).toMap
+	private val peers = (for (square <- squares) yield square -> units(square).flatten.filter{_ != square}.toSet).toMap
 
 	def parseGrid(grid: String): Option[mutable.Map[String, String]] = {
-		val values = mutable.Map[String, String]((for (s <- squares) yield (s -> digits)) : _*)
+		val values = mutable.Map[String, String]((for (s <- squares) yield s -> digits) : _*)
 		for ((s, d) <- gridValues(grid)) {
-			if (digits.contains(d) && assign(values, s, d) == None)
+			if (digits.contains(d) && assign(values, s, d).isEmpty)
 				return None
 		}
 		Some(values)
 	}
 
 	def gridValues(grid: String): Map[String, Char] = {
-		val chars = (for (c <- grid; if (digits.contains(c) || "0.".contains(c)))  yield c)
+		val chars = for (c <- grid; if digits.contains(c) || "0.".contains(c)) yield c
 		squares.zip(chars).toMap
 	}
 
@@ -114,12 +114,12 @@ class Sudoku4 extends Matchers {
 
 		// (2) If a unit u is reduced to only one place for a value d, then put it there.
 		for (u <- units(s)) {
-			val dplaces = (for (s <- u; if (values(s).contains(d))) yield s)
+			val dplaces = for (s <- u; if (values(s).contains(d))) yield s
 			if (dplaces.isEmpty)
 				return None // Contradiction: no place for this value
 			else if (dplaces.size == 1) {
 				// d can only be in one place in unit; assign it there
-				if (assign(values, dplaces(0), d) == None)
+				if (assign(values, dplaces.head, d).isEmpty)
 					return None
 			}
 		}
@@ -128,7 +128,7 @@ class Sudoku4 extends Matchers {
 	}
 
 	def display(values: mutable.Map[String, String]) {
-		val width = 1 + (for (s <- squares) yield values(s).size).max
+		val width = 1 + (for (s <- squares) yield values(s).length).max
 		val line = Seq.fill(3){ Seq.fill(width * 3){'-'}.mkString("") }.mkString("+")
 		for (r <- rows) {
 			println((for (c <- cols) yield values(r.toString + c).formatted("%" + width + "s") + (if ("36".contains(c)) "|" else "")).mkString(""))
@@ -141,15 +141,15 @@ class Sudoku4 extends Matchers {
 	}
 
 	def search(values: Option[mutable.Map[String, String]]): Option[mutable.Map[String, String]] = {
-		if (values == None)
+		if (values.isEmpty)
 			return None // Failed earlier
-		if ((for (s <- squares) yield values.get(s)).forall{_.size == 1})
+		if ((for (s <- squares) yield values.get(s)).forall{_.length == 1})
 			return values // Solved!
 
 		// Chose the unfilled square s with the fewest possibilities
-		val (n, s) = (for (s <- squares; if (values.get(s).size > 1)) yield (values.get(s).size, s)).minBy{_._1}
+		val (_, s) = (for (s <- squares; if values.get(s).length > 1) yield (values.get(s).length, s)).minBy{_._1}
 		val result = (for (d <- values.get(s)) yield search(assign(values.get.clone(), s, d))).find{_ != None}
-		if (result == None) None else result.get
+		if (result.isEmpty) None else result.get
 	}
 
 }

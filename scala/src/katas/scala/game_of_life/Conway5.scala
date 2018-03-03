@@ -85,14 +85,14 @@ class Conway5 extends Matchers {
 			this(s.trim.stripMargin.split("\n").toBuffer[String].map{_.toBuffer[Char]})
 		}
 
-		def cellAt(row: Int, col: Int) = {
+		def cellAt(row: Int, col: Int): Char = {
 			def wrap = { n: Int => (n + data.size) % data.size }
 			data(wrap(row))(wrap(col)) // needed access with two "apply()"
 		}
 
 		def next(): Field = {
 			val newData = mutable.Buffer.fill(data.size, data.size){' '} // should've been mutable.Buffer
-			for (row <- 0 until data.size; col <- 0 until data.size) {
+			for (row <- data.indices; col <- data.indices) {
 				def liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val cellState =
 					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
@@ -108,10 +108,10 @@ class Conway5 extends Matchers {
 			}
 		}
 
-		override def toString = "\n" + data.map{_.mkString}.mkString("\n")
+		override def toString: String = "\n" + data.map{_.mkString}.mkString("\n")
 
-		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
+		override def equals(that: Any): Boolean = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
 
-		override def hashCode() = data.hashCode()
+		override def hashCode(): Int = data.hashCode()
 	}
 }

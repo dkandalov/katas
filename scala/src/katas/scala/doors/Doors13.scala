@@ -8,7 +8,7 @@ class Doors13 extends Matchers {
 	@Test def `walking doors`() {
 		val amount = 10
 		val steps = Range.inclusive(1, amount).flatMap { stepSize =>
-			Range(stepSize - 1, amount, stepSize).toSeq
+			Range(stepSize - 1, amount, stepSize)
 		}
 		val doors = steps.groupBy{ it => it }.toList.sortBy(_._1).map{ case (_, seq) => seq.size % 2 == 1}
 

@@ -12,8 +12,8 @@ import org.scalatest.junit.AssertionsForJUnit
 
 class Roman extends AssertionsForJUnit {
   @Test def shouldConvertArabNumbersToRoman() {
-    assert(Range(1, 10).toList.map(asRoman(_)) === List("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"))
-    assert(List(10, 11, 12).map(asRoman(_)) === List("X", "XI", "XII"))
+    assert(Range(1, 10).toList.map(asRoman) === List("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"))
+    assert(List(10, 11, 12).map(asRoman) === List("X", "XI", "XII"))
     assert(asRoman(49) === "XLIX")
     assert(asRoman(51) === "LI")
     assert(asRoman(81) === "LXXXI")

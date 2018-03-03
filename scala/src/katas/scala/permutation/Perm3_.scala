@@ -37,7 +37,7 @@ class Perm3_ extends Matchers {
     if (list.size == 1) return List(list)
 
     var result = List[List[Int]]()
-    0.until(list.size).foreach { (i: Int) =>
+    list.indices.foreach { (i: Int) =>
       val subList = list.take(i) ::: list.drop(i + 1)
       perm(subList).foreach { (subResult: List[Int]) =>
         result = result ::: List(list(i) :: subResult)

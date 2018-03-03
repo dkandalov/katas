@@ -51,7 +51,7 @@ class Fibonacci6 extends Matchers {
 	}
 
 	case class State(i: Int = -1, last: BigDecimal = 0, current: BigDecimal = 0) {
-		def next() = {
+		def next(): State = {
 			if (i == -1) State(0, 0, 0)
 			else if (i == 0) State(1, 0, 1)
 			else State(i + 1, current, last + current)

@@ -26,7 +26,7 @@ class InsertionSort4 extends AssertionsForJUnit {
   def sort(sortedValues: List[Int], values: List[Int]): List[Int] = {
     values match {
       case List() => sortedValues // returned empty list instead of sortedValues
-      case List(x, _*) => sort(insert(sortedValues, values.head), values.tail) // didn't pass sorted list into sort() call
+      case List(_, _*) => sort(insert(sortedValues, values.head), values.tail) // didn't pass sorted list into sort() call
     }
   }
 

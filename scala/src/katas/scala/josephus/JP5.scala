@@ -29,13 +29,13 @@ class JP5 extends AssertionsForJUnit {
 
   def findLeader(amountOfPeople: Int, stepSize: Int): Int = {
     def doFindLeader(people: List[Int]): Int = {
-      if (people.size == 1) return people(0)
+      if (people.size == 1) return people.head
 
       val tmp = people.splitAt((stepSize - 1) % people.size)
       doFindLeader(tmp._2.tail ::: tmp._1)
     }
 
-    var people = 1.to(amountOfPeople).toList
+	  val people = 1.to(amountOfPeople).toList
     doFindLeader(people)
   }
 }

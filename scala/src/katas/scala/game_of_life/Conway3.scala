@@ -79,7 +79,7 @@ class Conway3 extends Matchers {
 	}
 
 	case class Cell(c: Char) {
-		override def toString = c.toString
+		override def toString: String = c.toString
 	}
 	object LivingCell extends Cell('0')
 	object DeadCell extends Cell('-')
@@ -88,12 +88,12 @@ class Conway3 extends Matchers {
 	class Field(private val data: List[List[Cell]]) {
 
 		def this(s: String) {
-			this(s.stripMargin.trim.split("\n").map{_.toList.map{ Cell(_) }}.toList)
+			this(s.stripMargin.trim.split("\n").map{_.toList.map{ Cell }}.toList)
 		}
 
 		def next(): Field = {
 			var newData: List[List[Cell]] = List.fill(data.size){ List.fill(data.size){ UndefinedCell } }
-			for (row <- 0 until data.size; col <- 0 until data.size) {
+			for (row <- data.indices; col <- data.indices) {
 				val liveCellsAround = cellsAround(row, col).count{_ == LivingCell}
 				val newCellState =
 					if (liveCellsAround < 2 || liveCellsAround > 3) DeadCell
@@ -114,8 +114,8 @@ class Conway3 extends Matchers {
 			}
 		}
 
-		override def toString = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
+		override def toString: String = "\n" + data.map{_.mkString}.mkString("\n") + "\n"
 
-		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
+		override def equals(that: Any): Boolean = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
 	}
 }

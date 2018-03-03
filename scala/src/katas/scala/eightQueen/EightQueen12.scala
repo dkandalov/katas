@@ -59,7 +59,7 @@ class EightQueen12 extends Matchers {
 		def isCompletedWith(positions: PositionSet): Boolean = {
 			positions.size == size
 		}
-		def next(position: Position) = {
+		def next(position: Position): Position = {
 			if (isLast(position.column)) Position(position.row.next, Column.zero)
 			else Position(position.row, position.column.next)
 		}

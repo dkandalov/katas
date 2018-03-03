@@ -10,9 +10,9 @@ import org.scalatest.Matchers
 
 class EightQueen4 extends Matchers {
 	case class Queen(row: Int, col: Int) {
-		def isBefore(queen: Queen) = queen.row > row || (queen.row == row && queen.col >= col)
-		def notOnTheSameRowOrColumnAs(queen: Queen) = queen.row != row && queen.col != col
-		def notOnTheSameDiagonalAs(queen: Queen) = (queen.row - row).abs != (queen.col - col).abs
+		def isBefore(queen: Queen): Boolean = queen.row > row || (queen.row == row && queen.col >= col)
+		def notOnTheSameRowOrColumnAs(queen: Queen): Boolean = queen.row != row && queen.col != col
+		def notOnTheSameDiagonalAs(queen: Queen): Boolean = (queen.row - row).abs != (queen.col - col).abs
 	}
 
 	type Solution = Seq[Queen]

@@ -50,7 +50,7 @@ class FizzBuzz extends Matchers {
 	}
 
 	abstract class Multiple(n: Int, val name: String) {
-		def matches(n: Int) = n % this.n == 0
+		def matches(n: Int): Boolean = n % this.n == 0
 	}
 	case class Fizz() extends Multiple(3, "Fizz")
 	case class Buzz() extends Multiple(5, "Buzz")

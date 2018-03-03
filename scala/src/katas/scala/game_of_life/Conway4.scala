@@ -107,7 +107,7 @@ class Conway4 extends Matchers {
 		def next(): Field = {
 			val newData = mutable.Buffer.fill(data.size, data.size){ ' ' }
 
-			for (row <- 0 until data.size; col <- 0 until data.size) {
+			for (row <- data.indices; col <- data.indices) {
 				val liveCellsAround = cellsAround(row, col).count{_ == '0'}
 				val cellState =
 					if (liveCellsAround < 2 || liveCellsAround > 3) '-'
@@ -121,10 +121,10 @@ class Conway4 extends Matchers {
 			Seq((-1, 0), (0, 1), (0, 1), (0, -1), (-1, -1), (1, -1), (1, 1), (-1, 1)).map{point => cellAt(row + point._1, col + point._2)}
 		}
 
-		override def toString = data.mkString
+		override def toString: String = data.mkString
 
-		override def equals(that: Any) = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
+		override def equals(that: Any): Boolean = that.isInstanceOf[Field] && that.asInstanceOf[Field].data == data
 
-		override def hashCode() = data.hashCode()
+		override def hashCode(): Int = data.hashCode()
 	}
 }

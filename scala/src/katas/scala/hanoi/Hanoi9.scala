@@ -18,7 +18,7 @@ class Hanoi9 extends Matchers {
 
 	case class Move(towerIndex: Int, shift: Int)
 
-	private implicit def streamAsList[T](s: Stream[T]) = s.toList
+	private implicit def streamAsList[T](s: Stream[T]): List[T] = s.toList
 
 	def findMoves(sizeOfTower: Int, shift: Int = -1): Seq[Move] = {
 		if (sizeOfTower == 0) Seq()

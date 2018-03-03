@@ -27,7 +27,7 @@ class JP4 extends AssertionsForJUnit {
 
   def findLeader(amountOfPeople: Int, stepSize: Int): Int = {
     def doFindLeader(people: List[Int]): Int = {
-      if (people.size == 1) return people(0)
+      if (people.size == 1) return people.head
 
       val actualStepSize = ((stepSize - 1) % people.size) + 1
       val tmp = people.splitAt(actualStepSize)
@@ -36,8 +36,8 @@ class JP4 extends AssertionsForJUnit {
 
     var i: Int = 0
     val people = List.fill(amountOfPeople) {
-      i = i + 1;
-      i
+      i = i + 1
+	    i
     }
     doFindLeader(people)
   }

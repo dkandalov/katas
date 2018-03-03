@@ -36,6 +36,6 @@ class Doors4 extends Matchers {
     if (stepSize < doorsSize) merge(doors, walkDoors(doorsSize, stepSize + 1)) else doors
   }
 
-  def merge(doors1: List[Boolean], doors2: List[Boolean]) =
-    doors1.zip(doors2).map{ v => v._1 ^ v._2 }.toList
+  private def merge(doors1: List[Boolean], doors2: List[Boolean]) =
+    doors1.zip(doors2).map { v => v._1 ^ v._2 }
 }

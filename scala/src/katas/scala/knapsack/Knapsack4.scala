@@ -42,7 +42,7 @@ class Knapsack4 extends AssertionsForJUnit { // took > 2 pomodoros
   private def permutations(knapsackSize: Int, itemList: List[Item]): List[List[Item]] = {
     var result = List[List[Item]](List()) // didn't add empty List inside List. This is required to have results when items become empty
 
-    0.until(itemList.size).foreach { i =>
+    itemList.indices.foreach { i =>
         val item = itemList(i)
         if (item.size <= knapsackSize) {
           val split = itemList.splitAt(i)

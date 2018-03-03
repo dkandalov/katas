@@ -31,7 +31,7 @@ class DynamicArray extends Matchers {
 		process(Source.stdin.getLines, { println(_) })
 	}
 
-	private def process(input: Iterator[String], callback: (Int) => Unit) = {
+	private def process(input: Iterator[String], callback: (Int) => Unit): Unit = {
 		val header = input.next().split(" ").map(_.toInt)
 		val n = header(0)
 		val q = header(1)

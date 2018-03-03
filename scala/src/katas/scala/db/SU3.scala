@@ -6,7 +6,6 @@ import java.util
 import org.junit.Test
 import org.scalatest.Matchers
 import org.scalatest.matchers.Matcher
-import org.specs2.matcher.BeEqualTo
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable

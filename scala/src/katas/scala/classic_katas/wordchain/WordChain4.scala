@@ -44,6 +44,6 @@ class WordChain4 extends Matchers {
 	}
 
 	def canBeNext(word: String, toWord: String): Boolean = {
-		word.diff(toWord).size == 1
+		word.diff(toWord).length == 1
 	}
 }

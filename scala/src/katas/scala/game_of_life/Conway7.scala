@@ -6,26 +6,26 @@ import org.scalatest.Matchers
 
 class Conway7 extends Matchers {
 	@Test def emptyUniverse_Evolves_IntoEmptyUniverse() {
-		val universe = new Universe()
+		val universe = Universe()
 		val evolvedUniverse = universe.evolve()
 
 		evolvedUniverse should equal(emptyUniverse)
 	}
 
 	@Test def universeWithOneCell_Evolves_IntoEmptyUniverse() {
-		val universe = new Universe().withCell()
+		val universe = Universe().withCell()
 		val evolvedUniverse = universe.evolve()
 
 		evolvedUniverse should equal(emptyUniverse)
 	}
 
 	@Test def universeWithThreeNeighbouringCells_Evolves_IntoThreeCellsUniverse(){
-		val middleCell = new Cell()
-		val leftCell = new Cell()
-		val rightCell = new Cell()
+		val middleCell = Cell()
+		val leftCell = Cell()
+		val rightCell = Cell()
 		middleCell.addNeighbour(leftCell, Left())
 		middleCell.addNeighbour(rightCell, Right())
-		val universe = new Universe().withCells(leftCell, middleCell, rightCell)
+		val universe = Universe().withCells(leftCell, middleCell, rightCell)
 
 		val evolvedUniverse = universe.evolve()
 
@@ -33,12 +33,12 @@ class Conway7 extends Matchers {
 	}
 
 	@Test def newUniverse_Has_NoCells() {
-		val universe = new Universe()
+		val universe = Universe()
 
 		universe.cellsCount() should equal(0)
 	}
 
-	val emptyUniverse: Universe = new Universe()
+	val emptyUniverse: Universe = Universe()
 
 
 	sealed abstract class Location()
@@ -49,14 +49,14 @@ class Conway7 extends Matchers {
 
 
 	case class Cell(){
-		def addNeighbour(cell : Cell, location: Location) = {
+		def addNeighbour(cell : Cell, location: Location): Unit = {
 
 		}
 	}
 
 	case class Universe() {
 		def evolve(): Universe = {
-			new Universe()
+			Universe()
 		}
 
 		def withCell(): Universe = {

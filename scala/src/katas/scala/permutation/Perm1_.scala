@@ -1,7 +1,7 @@
 package katas.scala.permutation
 
 import org.junit.Test
-import org.scalatest.junit.{JUnitSuite}
+import org.scalatest.junit.JUnitSuite
 
 import scala.collection.mutable.ListBuffer
 
@@ -25,11 +25,11 @@ class Perm1_ extends JUnitSuite {
   }
 
   def permutation(list: ListBuffer[Int]): ListBuffer[ListBuffer[Int]] = {
-    if (list.size == 0) return ListBuffer()
+    if (list.isEmpty) return ListBuffer()
     if (list.size == 1) return ListBuffer(list)
 
     val result = ListBuffer[ListBuffer[Int]]()
-    0.until(list.size).foreach { i =>
+    list.indices.foreach { i =>
       val subList = list.clone()
       subList.remove(i)
       permutation(subList).foreach { subResult =>

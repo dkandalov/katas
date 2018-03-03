@@ -12,8 +12,8 @@ import org.scalatest.Matchers
 class Doors extends Matchers {
 	@Test def aaa() {
 		val doors = Array.fill(10){ false }
-		1.to(doors.size).foreach { stepSize =>
-			(stepSize - 1).until(doors.size, stepSize).foreach { i => doors(i) = !doors(i)}
+		1.to(doors.length).foreach { stepSize =>
+			(stepSize - 1).until(doors.length, stepSize).foreach { i => doors(i) = !doors(i)}
 		}
 		doors should equal(Array(true, false, false, true, false, false, false, false, true, false))
 	}

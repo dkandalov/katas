@@ -78,7 +78,7 @@ class Sums extends Matchers {
 	private def findFibonacciRepresentationsOf(n: Int): Seq[NumberAsFibs] = {
 		for (
 			length <- 1 to fibonacciSize;
-			combination <- fibonacci.combinations(length) if (combination.sum == n)
+			combination <- fibonacci.combinations(length) if combination.sum == n
 		) yield combination
 	}
 
@@ -90,11 +90,10 @@ class Sums extends Matchers {
 	private def calculateFibonacciSequence(count: Int): Seq[Int] = {
 		def f(count: Int, current: Int, previous: Int): List[Int] = count match {
 			case 0 => List()
-			case _ => {
+			case _ =>
 				val newCurrent = current + previous
 				val newLast = current
 				current :: f(count - 1, newCurrent, newLast)
-			}
 		}
 		f(count, 1, 1)
 	}

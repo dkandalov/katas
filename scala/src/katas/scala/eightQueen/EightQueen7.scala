@@ -72,10 +72,10 @@ class EightQueen7 extends Matchers {
 		result.flatten
 	}
 
-	def noQueensOnSameRowOrColumn(solution: Seq[(Int, Int)], queen: (Int, Int)) =
+	private def noQueensOnSameRowOrColumn(solution: Seq[(Int, Int)], queen: (Int, Int)) =
 		solution.forall{ otherQueen => otherQueen._1 != queen._1 && otherQueen._2 != queen._2 }
 
-	def noQueensOnSameDiagonal(solution: Seq[(Int, Int)], queen: (Int, Int)) =
+	private def noQueensOnSameDiagonal(solution: Seq[(Int, Int)], queen: (Int, Int)) =
 		solution.forall{ otherQueen => (otherQueen._1 - queen._1).abs != (otherQueen._2 - queen._2).abs }
 
 	@Test def shouldConvertSolutionToAPrintableBoard() {

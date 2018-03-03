@@ -17,7 +17,7 @@ class EightQueen1 extends AssertionsForJUnit {
     }
   }
 
-  type Solution = List[Tuple2[Int, Int]]
+  type Solution = List[(Int, Int)]
 
   def solve(n: Int, row: Int = 0): List[Solution] = {
     if (row >= n) return List(List()) // forgot this condition; was List() instead of List(List())
@@ -25,7 +25,7 @@ class EightQueen1 extends AssertionsForJUnit {
     var solutions: List[Solution] = List() // added List(List()) here
     0.until(n).foreach { column =>
         solve(n, row + 1).foreach { solution => // was "row" instead of "row + 1"
-          val newSolution = ((row, column) :: solution)
+          val newSolution = (row, column) :: solution
           if (isValid(newSolution)) { // didn't check newSolution for validness, only returned solution
             solutions = newSolution :: solutions
           }

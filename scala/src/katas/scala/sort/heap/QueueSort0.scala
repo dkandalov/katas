@@ -26,7 +26,7 @@ class QueueSort0 extends AssertionsForJUnit {
   def sort(list: List[Int]): List[Int] = {
     val queue = new Queue()
     list.foreach {
-      queue.add(_)
+      queue.add
     }
 
     var result = List[Int]()
@@ -102,7 +102,7 @@ class QueueSort0 extends AssertionsForJUnit {
       }
     }
 
-    def isEmpty() = size == 0
+    def isEmpty(): Boolean = size == 0
   }
 
 }

@@ -33,7 +33,7 @@ object Fibonacci4 {
   }
 
   def fibonacci(v: Int): Int = v match {
-    case (-1 | 0 | 1) => return v
+    case (-1 | 0 | 1) => v
     case n => fibonacci(n - 2) + fibonacci(n - 1)
   }
 }

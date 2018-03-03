@@ -43,10 +43,10 @@ class MergeSort6 extends Matchers {
     if (seq1.isEmpty) return seq2
     if (seq2.isEmpty) return seq1
 
-    if (seq1(0) < seq2(0)) {
-      seq1(0) +: merge(seq1.tail, seq2)
+    if (seq1.head < seq2.head) {
+      seq1.head +: merge(seq1.tail, seq2)
     } else {
-      seq2(0) +: merge(seq1, seq2.tail)
+      seq2.head +: merge(seq1, seq2.tail)
     }
   }
 }

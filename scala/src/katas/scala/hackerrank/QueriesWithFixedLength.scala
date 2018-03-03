@@ -21,7 +21,7 @@ class QueriesWithFixedLength extends Matchers {
 			seq.sliding(d).map{ _.max }.min
 		}
 
-		0.until(1000).foreach { it =>
+		0.until(1000).foreach { _ =>
 			val seed = new Random().nextInt()
 			val random = new Random(seed)
 			val n = random.nextInt(10) + 1
@@ -223,7 +223,7 @@ class QueriesWithFixedLength extends Matchers {
 			}
 		}
 
-		private def swap(data: Array[Int], i1: Int, i2: Int) = {
+		private def swap(data: Array[Int], i1: Int, i2: Int): Unit = {
 			val tmp = data(i1)
 			data(i1) = data(i2)
 			data(i2) = tmp

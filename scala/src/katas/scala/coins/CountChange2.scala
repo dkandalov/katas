@@ -30,7 +30,7 @@ class CountChange2 extends Matchers {
     combinations(10) should equal(Seq(times(1, 10), times(1, 5) ++ Seq(5), Seq(5, 5), Seq(10)))
   }
 
-  def times(value: Int, timesToRepeat: Int) = Range(value, timesToRepeat + 1).map { _ => value}.toList
+  private def times(value: Int, timesToRepeat: Int) = Range(value, timesToRepeat + 1).map { _ => value}.toList
 
   def combinations(sum: Int, coinType: Int = 4): Seq[Seq[Int]] = {
     if (coinType < 0 || sum < 0) Seq()
@@ -39,7 +39,7 @@ class CountChange2 extends Matchers {
       combinations(sum - coinValue(coinType), coinType).map { seq => seq.:+(coinValue(coinType))}
   }
 
-  def coinValue(coinType: Int) = coinType match {
+	private def coinValue(coinType: Int) = coinType match {
     case 0 => 1
     case 1 => 5
     case 2 => 10
