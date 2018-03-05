@@ -1,0 +1,18 @@
+(define (log message)
+  (display message)
+  (newline)
+)
+
+(define (f return)
+  (log 2)
+  (return 3)
+  ("💥")
+)
+
+(define (main args)
+  (log 1)
+  (log (call/cc (lambda (return)
+    (f return)
+  )))
+  (log 4)
+)
