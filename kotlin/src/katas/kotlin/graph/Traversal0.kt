@@ -32,25 +32,25 @@ class Traversal0 {
             node("e").bft().join("") shouldEqual "ecbda"
         }
     }
-}
 
-private fun <T, U> Node<T, U>.bft(): List<T> {
-    val result = ArrayList<T>()
-    val queue = LinkedList(listOf(this))
-    while (queue.isNotEmpty()) {
-        val node = queue.removeFirst()
-        if (result.contains(node.value)) continue
-        result.add(node.value)
-        queue.addAll(node.neighbors())
+
+    private fun <T, U> Node<T, U>.bft(): List<T> {
+        val result = ArrayList<T>()
+        val queue = LinkedList(listOf(this))
+        while (queue.isNotEmpty()) {
+            val node = queue.removeFirst()
+            if (result.contains(node.value)) continue
+            result.add(node.value)
+            queue.addAll(node.neighbors())
+        }
+        return result
     }
-    return result
-}
 
-fun <T, U> Node<T, U>.dft(visited: HashSet<Node<T, U>> = HashSet()): List<T> {
-    return if (visited.contains(this)) emptyList()
-    else {
-        visited.add(this)
-        listOf(value) + neighbors().flatMap { it.dft(visited) }
+    private fun <T, U> Node<T, U>.dft(visited: HashSet<Node<T, U>> = HashSet()): List<T> {
+        return if (visited.contains(this)) emptyList()
+        else {
+            visited.add(this)
+            listOf(value) + neighbors().flatMap { it.dft(visited) }
+        }
     }
 }
-
