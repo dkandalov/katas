@@ -22,14 +22,18 @@ fun main(args: Array<String>) {
         log(1)
         yield()
         log(3)
+        yield()
+        log(5)
     }
     log(0)
     f.resume()
     log(2)
     f.resume()
     log(4)
+    f.resume()
+    log(6)
 
-    assertThat(events, equalTo(listOf("0", "1", "2", "3", "4")))
+    assertThat(events, equalTo(listOf("0", "1", "2", "3", "4", "5", "6")))
 }
 
 private class ResumableFunction {
