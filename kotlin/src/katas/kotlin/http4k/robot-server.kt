@@ -10,15 +10,37 @@ import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import java.awt.Robot
+import java.awt.event.KeyEvent.*
 
 fun main(args: Array<String>) {
     val robot = Robot()
     val app = routes(
         "/" bind Method.GET to { request: Request ->
-            val keyCode = request.query("key")?.toInt()
+            val keyCode = request.query("keyCode")?.toInt()
+            val delay = request.query("delay")?.toInt() ?: 0
+            val shift = request.query("shift")?.toBoolean() ?: false
+            val alt = request.query("alt")?.toBoolean() ?: false
+            val ctrl = request.query("ctrl")?.toBoolean() ?: false
+            val meta = request.query("meta")?.toBoolean() ?: false
+
             if (keyCode == null) Response(BAD_REQUEST)
             else {
-                robot.keyPress(keyCode)
+                Thread {
+                    if (delay > 0) robot.delay(delay)
+                    
+                    if (shift) robot.keyPress(VK_SHIFT)
+                    if (alt) robot.keyPress(VK_ALT)
+                    if (ctrl) robot.keyPress(VK_CONTROL)
+                    if (meta) robot.keyPress(VK_META)
+
+                    robot.keyPress(keyCode)
+                    robot.keyRelease(keyCode)
+
+                    if (meta) robot.keyRelease(VK_META)
+                    if (ctrl) robot.keyRelease(VK_CONTROL)
+                    if (alt) robot.keyRelease(VK_ALT)
+                    if (shift) robot.keyRelease(VK_SHIFT)
+                }.start()
                 Response(OK)
             }
         }

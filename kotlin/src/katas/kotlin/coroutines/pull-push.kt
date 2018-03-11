@@ -1,7 +1,52 @@
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+
 package katas.kotlin.coroutines
 
+import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlincommon.printed
 import org.junit.Test
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.createCoroutine
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+
+class PP {
+    @Test fun `aaa`() {
+        val listener = object : Listener {
+            override fun onRead(n: Int) {
+                TODO("not implemented")
+            }
+        }
+        build(listener) {
+            "start".printed()
+            read().printed()
+            read().printed()
+            "end".printed()
+        }
+
+        listener.onRead(1)
+        listener.onRead(2)
+        listener.onRead(3)
+    }
+
+    private var start: Continuation<Unit>? = null
+    private var c: Continuation<Int>? = null
+
+    fun build(listener: Listener, callback: suspend Listener.() -> Unit) {
+        start = callback.createCoroutine(listener, EmptyContinuation)
+    }
+
+    suspend fun read(): Int {
+        return suspendCoroutineOrReturn { it: Continuation<Int> ->
+
+            COROUTINE_SUSPENDED
+        }
+    }
+
+    interface Listener {
+        fun onRead(n: Int)
+    }
+}
 
 class PullPushPlayground {
     @Test fun `pulled reader`() {

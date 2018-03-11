@@ -61,7 +61,7 @@ private class ResumableFunction {
     }
 }
 
-private object EmptyContinuation: Continuation<Unit> {
+object EmptyContinuation: Continuation<Unit> {
     override val context: CoroutineContext = EmptyCoroutineContext
     override fun resume(value: Unit) {}
     override fun resumeWithException(exception: Throwable) = throw exception
