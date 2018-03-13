@@ -33,6 +33,7 @@ fun main(args: Array<String>) {
                     if (ctrl) robot.keyPress(VK_CONTROL)
                     if (meta) robot.keyPress(VK_META)
 
+                    println("Sending $keyCode")
                     robot.keyPress(keyCode)
                     robot.keyRelease(keyCode)
 

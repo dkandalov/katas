@@ -2,6 +2,7 @@
 
 package katas.kotlin.coroutines
 
+import katas.kotlin.coroutines.PP.CoDataSource.Companion.build
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlincommon.printed
 import org.junit.Test
@@ -11,40 +12,89 @@ import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class PP {
-    @Test fun `aaa`() {
-        val listener = object : Listener {
-            override fun onRead(n: Int) {
-                TODO("not implemented")
+    private interface DataSource {
+        fun blockingRead(): Int
+        fun onRead(listener: (Int) -> Unit)
+    }
+
+    private val dataSource = object: DataSource {
+        val data = listOf(1, 2, 3).toMutableList()
+
+        override fun blockingRead(): Int {
+            return data.removeAt(0)
+        }
+
+        override fun onRead(listener: (Int) -> Unit) {
+            if (data.isNotEmpty()) {
+                listener(blockingRead())
             }
         }
-        build(listener) {
+    }
+
+    @Test fun `pulled read (blocking)`() {
+        dataSource.blockingRead().printed()
+        dataSource.blockingRead().printed()
+        dataSource.blockingRead().printed()
+    }
+
+    @Test fun `pushed read`() {
+        "start".printed()
+        dataSource.onRead { it.printed() }
+        dataSource.onRead { it.printed() }
+        dataSource.onRead { it.printed() }
+        dataSource.onRead { error("this is never called") }
+        "end".printed()
+    }
+
+    @Test fun `pushed read (as "pull" with coroutines)`() {
+        build(dataSource) {
             "start".printed()
             read().printed()
             read().printed()
+            read().printed()
+            // read().printed() // if uncommented "end" will never be printed
             "end".printed()
         }
-
-        listener.onRead(1)
-        listener.onRead(2)
-        listener.onRead(3)
     }
 
-    private var start: Continuation<Unit>? = null
-    private var c: Continuation<Int>? = null
-
-    fun build(listener: Listener, callback: suspend Listener.() -> Unit) {
-        start = callback.createCoroutine(listener, EmptyContinuation)
+    @Test fun `pushed summed read`() {
+        "start".printed()
+        dataSource.onRead {
+            val n1 = it
+            dataSource.onRead {
+                val n2 = it
+                dataSource.onRead {
+                    val n3 = it
+                    println("sum : ${n1 + n2 + n3}")
+                }
+            }
+        }
+        dataSource.onRead { error("this is never called") }
+        "end".printed()
     }
 
-    suspend fun read(): Int {
-        return suspendCoroutineOrReturn { it: Continuation<Int> ->
-
-            COROUTINE_SUSPENDED
+    @Test fun `pushed summed read (as "pull" with coroutines)`() {
+        build(dataSource) {
+            "start".printed()
+            println("sum : ${read() + read() + read()}")
+            "end".printed()
         }
     }
 
-    interface Listener {
-        fun onRead(n: Int)
+    private class CoDataSource(private val dataSource: DataSource) {
+        suspend fun read(): Int {
+            return suspendCoroutineOrReturn { continuation: Continuation<Int> ->
+                dataSource.onRead { continuation.resume(it) }
+                COROUTINE_SUSPENDED
+            }
+        }
+
+        companion object {
+            fun build(dataSource: DataSource, callback: suspend CoDataSource.() -> Unit) {
+                val result = CoDataSource(dataSource)
+                callback.createCoroutine(result, completion = EmptyContinuation).resume(Unit)
+            }
+        }
     }
 }
 
@@ -119,13 +169,16 @@ class DualityPlayground {
                     observer.onNext(i)
                 }
                 observer.onCompleted()
-                return object : IDisposable {
+                return object: IDisposable {
                     override fun dispose() {}
                 }
             }
         }
         observable.subscribe(object: IObserver {
-            override fun onNext(n: Int) { n.printed() }
+            override fun onNext(n: Int) {
+                n.printed()
+            }
+
             override fun onCompleted() {}
             override fun onError(e: Exception) {}
         })
