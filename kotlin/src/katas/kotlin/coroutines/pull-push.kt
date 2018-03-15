@@ -6,6 +6,8 @@ import katas.kotlin.coroutines.PP.CoDataSource.Companion.build
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlincommon.printed
 import org.junit.Test
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Future
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.createCoroutine
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
@@ -13,41 +15,61 @@ import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class PP {
     private interface DataSource {
+        // Blocking here means waiting for an "IO thread" to finish reading data
         fun blockingRead(): Int
-        fun onRead(listener: (Int) -> Unit)
+        // Listener will be called from "IO thread" as soon as it has read the data
+        fun asyncRead(listener: (Int) -> Unit)
+        fun asyncRead(): Future<Int>
     }
 
-    private val dataSource = object: DataSource {
-        val data = listOf(1, 2, 3).toMutableList()
-
+    private class DataSourceList(val data: MutableList<Int>): DataSource {
         override fun blockingRead(): Int {
             return data.removeAt(0)
         }
-
-        override fun onRead(listener: (Int) -> Unit) {
+        override fun asyncRead(listener: (Int) -> Unit) {
             if (data.isNotEmpty()) {
                 listener(blockingRead())
             }
         }
+        override fun asyncRead(): Future<Int> {
+            return CompletableFuture.completedFuture(blockingRead())
+        }
     }
 
-    @Test fun `pulled read (blocking)`() {
-        dataSource.blockingRead().printed()
-        dataSource.blockingRead().printed()
-        dataSource.blockingRead().printed()
+    private val source = DataSourceList(listOf(1, 2, 3).toMutableList())
+
+    @Test fun `pull read (sequential)`() {
+        // Client thread (which also becomes "IO-thread") waits for each read.
+        source.blockingRead().printed()
+        source.blockingRead().printed()
+        source.blockingRead().printed()
     }
 
-    @Test fun `pushed read`() {
-        "start".printed()
-        dataSource.onRead { it.printed() }
-        dataSource.onRead { it.printed() }
-        dataSource.onRead { it.printed() }
-        dataSource.onRead { error("this is never called") }
-        "end".printed()
+    @Test fun `pull read (sequential with futures)`() {
+        // Client thread only sets up future. Another "IO-thread" waits for each read.
+        val future = CompletableFuture
+            .runAsync { source.blockingRead().printed() }
+            .thenRun { source.blockingRead().printed() }
+            .thenRun { source.blockingRead().printed() }
+        // ...
+        future.join()
     }
 
-    @Test fun `pushed read (as "pull" with coroutines)`() {
-        build(dataSource) {
+    @Test fun `push read (sequential)`() {
+        source.asyncRead {
+            it.printed()
+            source.asyncRead {
+                it.printed()
+                source.asyncRead {
+                    it.printed()
+                    source.asyncRead { error("this is never called") }
+                }
+            }
+        }
+    }
+
+    @Test fun `push read (sequential, as "pull" with coroutines)`() {
+        build(source) {
             "start".printed()
             read().printed()
             read().printed()
@@ -57,24 +79,24 @@ class PP {
         }
     }
 
-    @Test fun `pushed summed read`() {
+    @Test fun `push read summed`() {
         "start".printed()
-        dataSource.onRead {
+        source.asyncRead {
             val n1 = it
-            dataSource.onRead {
+            source.asyncRead {
                 val n2 = it
-                dataSource.onRead {
+                source.asyncRead {
                     val n3 = it
                     println("sum : ${n1 + n2 + n3}")
                 }
             }
         }
-        dataSource.onRead { error("this is never called") }
+        source.asyncRead { error("this is never called") }
         "end".printed()
     }
 
     @Test fun `pushed summed read (as "pull" with coroutines)`() {
-        build(dataSource) {
+        build(source) {
             "start".printed()
             println("sum : ${read() + read() + read()}")
             "end".printed()
@@ -84,7 +106,7 @@ class PP {
     private class CoDataSource(private val dataSource: DataSource) {
         suspend fun read(): Int {
             return suspendCoroutineOrReturn { continuation: Continuation<Int> ->
-                dataSource.onRead { continuation.resume(it) }
+                dataSource.asyncRead { continuation.resume(it) }
                 COROUTINE_SUSPENDED
             }
         }
