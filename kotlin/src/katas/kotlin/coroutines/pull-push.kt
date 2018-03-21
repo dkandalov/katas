@@ -2,57 +2,39 @@
 
 package katas.kotlin.coroutines
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import katas.kotlin.coroutines.PP.CoDataSource.Companion.build
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlincommon.printed
 import org.junit.Test
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executors.newCachedThreadPool
 import java.util.concurrent.Future
+import java.util.function.Supplier
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.createCoroutine
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class PP {
-    private interface DataSource {
-        // Blocking here means waiting for an "IO thread" to finish reading data
-        fun blockingRead(): Int
-        // Listener will be called from "IO thread" as soon as it has read the data
-        fun asyncRead(listener: (Int) -> Unit)
-        fun asyncRead(): Future<Int>
-    }
-
-    private class DataSourceList(val data: MutableList<Int>): DataSource {
-        override fun blockingRead(): Int {
-            return data.removeAt(0)
-        }
-        override fun asyncRead(listener: (Int) -> Unit) {
-            if (data.isNotEmpty()) {
-                listener(blockingRead())
-            }
-        }
-        override fun asyncRead(): Future<Int> {
-            return CompletableFuture.completedFuture(blockingRead())
-        }
-    }
-
-    private val source = DataSourceList(listOf(1, 2, 3).toMutableList())
 
     @Test fun `pull read (sequential)`() {
-        // Client thread (which also becomes "IO-thread") waits for each read.
+        // Current thread (which becomes "IO thread") waits for each read.
         source.blockingRead().printed()
         source.blockingRead().printed()
         source.blockingRead().printed()
+        expectOutput("1", "2", "3")
     }
 
-    @Test fun `pull read (sequential with futures)`() {
-        // Client thread only sets up future. Another "IO-thread" waits for each read.
-        val future = CompletableFuture
-            .runAsync { source.blockingRead().printed() }
-            .thenRun { source.blockingRead().printed() }
-            .thenRun { source.blockingRead().printed() }
-        // ...
-        future.join()
+    @Test fun `pull read and sum (sequential)`() {
+        val n1 = source.blockingRead()
+        val n2 = source.blockingRead()
+        val n3 = source.blockingRead()
+        (n1 + n2 + n3).printed()
+
+        expectOutput("6")
     }
 
     @Test fun `push read (sequential)`() {
@@ -66,20 +48,12 @@ class PP {
                 }
             }
         }
+        source.waitToBeEmpty()
+
+        expectOutput("1", "2", "3")
     }
 
-    @Test fun `push read (sequential, as "pull" with coroutines)`() {
-        build(source) {
-            "start".printed()
-            read().printed()
-            read().printed()
-            read().printed()
-            // read().printed() // if uncommented "end" will never be printed
-            "end".printed()
-        }
-    }
-
-    @Test fun `push read summed`() {
+    @Test fun `push read and sum (sequential)`() {
         "start".printed()
         source.asyncRead {
             val n1 = it
@@ -87,21 +61,112 @@ class PP {
                 val n2 = it
                 source.asyncRead {
                     val n3 = it
-                    println("sum : ${n1 + n2 + n3}")
+                    (n1 + n2 + n3).printed()
                 }
             }
         }
-        source.asyncRead { error("this is never called") }
+        source.waitToBeEmpty()
         "end".printed()
+
+        expectOutput("start", "6", "end")
     }
 
-    @Test fun `pushed summed read (as "pull" with coroutines)`() {
+    @Test fun `pull future read (sequential)`() {
+        // Current thread only wires up execution. Another "IO-thread" waits for each read.
+        val future = runAsyncFuture { source.blockingRead().printed() }
+            .thenRun { source.blockingRead().printed() }
+            .thenRun { source.blockingRead().printed() }
+        future.join()
+
+        expectOutput("1", "2", "3")
+    }
+
+    @Test fun `pull future read and sum (sequential)`() {
+        // Current thread only wires up execution. Another "IO-thread" waits for each read.
+        val future = supplyAsyncFuture { source.blockingRead() }
+            .thenCompose { supplyAsyncFuture { source.blockingRead() + it } }
+            .thenCompose { supplyAsyncFuture { source.blockingRead() + it } }
+            .thenApply { it.printed() }
+        future.join()
+
+        expectOutput("6")
+    }
+
+    @Test fun `push read (as "pull" with coroutines, sequential)`() {
         build(source) {
-            "start".printed()
-            println("sum : ${read() + read() + read()}")
-            "end".printed()
+            read().printed()
+            read().printed()
+            read().printed()
+            // read().printed() // if uncommented "end" will never be printed
+        }
+        source.waitToBeEmpty()
+
+        expectOutput("1", "2", "3")
+    }
+
+    @Test fun `push read and sum (as "pull" with coroutines, sequential)`() {
+        build(source) {
+            val n1 = read()
+            val n2 = read()
+            val n3 = read()
+            (n1 + n2 + n3).printed()
+        }
+        source.waitToBeEmpty()
+
+        expectOutput("6")
+    }
+
+
+    private interface DataSource {
+        // "blocking" here means request data and wait for it to arrive
+        fun blockingRead(): Int
+        // "async" here means request data and call the listener as soon as the data has arrived
+        fun asyncRead(listener: (Int) -> Unit)
+        fun asyncRead(): Future<Int>
+    }
+
+    companion object {
+        private val executor = newCachedThreadPool { runnable -> Thread(runnable).apply { name = "IO" } }
+    }
+
+    private class DataSourceList(data: List<Int>): DataSource {
+        private val data = ArrayList(data)
+
+        override fun blockingRead(): Int {
+            return synchronized(data) {
+                data.removeAt(0)
+            }
+        }
+
+        override fun asyncRead(listener: (Int) -> Unit) {
+            executor.submit {
+                val value = synchronized(data) {
+                    if (data.isNotEmpty()) blockingRead() else null
+                }
+                if (value != null) listener(value)
+            }
+        }
+
+        override fun asyncRead(): Future<Int> {
+            return CompletableFuture.supplyAsync(Supplier { blockingRead() }, executor)
+        }
+
+        fun waitToBeEmpty() {
+            while (synchronized(data) { data.isNotEmpty() }) {
+                Thread.sleep(20)
+            }
         }
     }
+
+    private val source = DataSourceList(listOf(1, 2, 3))
+
+
+    private fun runAsyncFuture(f: () -> Unit): CompletableFuture<Void> =
+        CompletableFuture.runAsync(Runnable { f() }, executor)
+
+    private fun <T> supplyAsyncFuture(f: () -> T): CompletableFuture<T> =
+        CompletableFuture.supplyAsync(Supplier { f() }, executor)
+
 
     private class CoDataSource(private val dataSource: DataSource) {
         suspend fun read(): Int {
@@ -117,6 +182,17 @@ class PP {
                 callback.createCoroutine(result, completion = EmptyContinuation).resume(Unit)
             }
         }
+    }
+
+    private val printedOutput = CopyOnWriteArrayList<String>()
+
+    private fun Any?.printed() {
+        println(this.toString())
+        printedOutput.add(this.toString())
+    }
+
+    private fun expectOutput(vararg expected: String) {
+        assertThat(printedOutput, equalTo(expected.toList()))
     }
 }
 
