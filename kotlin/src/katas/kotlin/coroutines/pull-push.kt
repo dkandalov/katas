@@ -10,6 +10,7 @@ import kotlincommon.printed
 import org.junit.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors.newCachedThreadPool
 import java.util.concurrent.Future
 import java.util.function.Supplier
@@ -71,6 +72,20 @@ class PP {
         expectOutput("start", "6", "end")
     }
 
+    @Test fun `push read and sum (parallel)`() {
+        "start".printed()
+        val values = CopyOnWriteArrayList<Int>()
+        val latch = CountDownLatch(3)
+        source.asyncRead { values.add(it); latch.countDown() }
+        source.asyncRead { values.add(it); latch.countDown() }
+        source.asyncRead { values.add(it); latch.countDown() }
+        latch.await()
+        values.sum().printed()
+        "end".printed()
+
+        expectOutput("start", "6", "end")
+    }
+
     @Test fun `pull future read (sequential)`() {
         // Current thread only wires up execution. Another "IO-thread" waits for each read.
         val future = runAsyncFuture { source.blockingRead().printed() }
@@ -86,6 +101,16 @@ class PP {
         val future = supplyAsyncFuture { source.blockingRead() }
             .thenCompose { supplyAsyncFuture { source.blockingRead() + it } }
             .thenCompose { supplyAsyncFuture { source.blockingRead() + it } }
+            .thenApply { it.printed() }
+        future.join()
+
+        expectOutput("6")
+    }
+
+    @Test fun `pull future read and sum (parallel)`() {
+        val future = supplyAsyncFuture { source.blockingRead() }
+            .thenCombineAsync(supplyAsyncFuture { source.blockingRead() }, { sum, n -> sum + n })
+            .thenCombineAsync(supplyAsyncFuture { source.blockingRead() }, { sum, n -> sum + n })
             .thenApply { it.printed() }
         future.join()
 
@@ -110,6 +135,16 @@ class PP {
             val n2 = read()
             val n3 = read()
             (n1 + n2 + n3).printed()
+        }
+        source.waitToBeEmpty()
+
+        expectOutput("6")
+    }
+
+    @Test fun `push read and sum (as "pull" with coroutines, parallel)`() {
+        build(source) {
+            val values = parallelRead(count = 3)
+            values.sum().printed()
         }
         source.waitToBeEmpty()
 
@@ -176,6 +211,21 @@ class PP {
             }
         }
 
+        suspend fun parallelRead(count: Int): List<Int> {
+            return suspendCoroutineOrReturn { continuation: Continuation<List<Int>> ->
+                val values = CopyOnWriteArrayList<Int>()
+                0.until(count).forEach {
+                    dataSource.asyncRead {
+                        values.add(it)
+                        if (values.size == count) {
+                            continuation.resume(values)
+                        }
+                    }
+                }
+                COROUTINE_SUSPENDED
+            }
+        }
+
         companion object {
             fun build(dataSource: DataSource, callback: suspend CoDataSource.() -> Unit) {
                 val result = CoDataSource(dataSource)
@@ -186,9 +236,10 @@ class PP {
 
     private val printedOutput = CopyOnWriteArrayList<String>()
 
-    private fun Any?.printed() {
+    private fun <T : Any?> T.printed(): T {
         println(this.toString())
         printedOutput.add(this.toString())
+        return this
     }
 
     private fun expectOutput(vararg expected: String) {
