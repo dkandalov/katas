@@ -53,6 +53,10 @@ fun main(args: Array<String>) {
     )))
 }
 
+private suspend fun sf(yf: YieldingFunction<String>) {
+    println("f=" + yf.yield("xxx"))
+}
+
 private class YieldingFunction<T> {
     private var start: Continuation<Unit>? = null
     private var c: Continuation<T>? = null

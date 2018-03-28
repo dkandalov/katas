@@ -81,23 +81,30 @@ class CPS {
         events.add(it)
     }
 
-    private inner class ResumableFunction(var state: Int = 0) : () -> Unit {
-        override fun invoke() = when (state) {
-            0 -> log(1)
-            1 -> log(3)
-            2 -> log(5)
-            else -> error("")
-        }
-    }
-
     @Test fun `🙈🙈`() {
+        class ResumableFunction(var state: Int = 0) {
+            fun invoke() {
+                if (state == 0) {
+                    log(1)
+                    state++
+                } else if (state == 1) {
+                    log(3)
+                    state++
+                } else if (state == 2) {
+                    log(5)
+                    state++
+                }
+                else error("")
+            }
+        }
+
         val f = ResumableFunction()
         log(0)
-        f()
+        f.invoke()
         log(2)
-        f()
+        f.invoke()
         log(4)
-        f()
+        f.invoke()
 
         events.printed() shouldEqual listOf(0, 1, 2, 3, 4, 5)
     }
