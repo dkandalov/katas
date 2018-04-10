@@ -1,6 +1,5 @@
 package katas.kotlin.coroutines
 
-import kotlin.coroutines.*
 import kotlin.coroutines.experimental.*
 
 object Hello {

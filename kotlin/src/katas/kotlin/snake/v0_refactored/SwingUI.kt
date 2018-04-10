@@ -1,13 +1,19 @@
 package katas.kotlin.snake.v0_refactored
 
-import java.awt.*
-import java.awt.event.*
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.Font
+import java.awt.Graphics
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.KeyEvent.*
+import java.awt.event.WindowEvent
 import javax.swing.*
 
 
 fun main(args: Array<String>) {
     val gameUI = GameSwingUI()
-    gameUI.init(object : GameUI.Listener {
+    gameUI.init(object: GameUI.Observer {
         lateinit var game: Game
 
         override fun onGameStart() {
@@ -31,10 +37,10 @@ fun main(args: Array<String>) {
 
 
 interface GameUI {
-    fun init(listener: Listener)
+    fun init(observer: Observer)
     fun paint(game: Game)
 
-    interface Listener {
+    interface Observer {
         fun onGameStart()
         fun onTimer()
         fun onUserInput(direction: Direction)
@@ -42,39 +48,39 @@ interface GameUI {
 }
 
 
-class GameSwingUI : GameUI {
+class GameSwingUI: GameUI {
     private lateinit var gamePanel: GamePanel
     private lateinit var jFrame: JFrame
     private lateinit var timer: GameTimer
 
-    override fun init(listener: GameUI.Listener) {
+    override fun init(observer: GameUI.Observer) {
         gamePanel = GamePanel()
         timer = GameTimer {
             SwingUtilities.invokeLater {
-                listener.onTimer()
+                observer.onTimer()
             }
         }.init()
 
         jFrame = JFrame("Snake")
         jFrame.apply {
             defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-            addKeyListener(object : KeyAdapter() {
+            addKeyListener(object: KeyAdapter() {
                 override fun keyPressed(event: KeyEvent) {
                     val direction = when (event.keyCode) {
-                        KeyEvent.VK_UP -> Direction.Up
-                        KeyEvent.VK_RIGHT -> Direction.Right
-                        KeyEvent.VK_DOWN -> Direction.Down
-                        KeyEvent.VK_LEFT -> Direction.Left
+                        VK_UP, VK_I -> Direction.Up
+                        VK_RIGHT, VK_L -> Direction.Right
+                        VK_DOWN, VK_K -> Direction.Down
+                        VK_LEFT, VK_J -> Direction.Left
                         else -> null
                     }
                     if (direction != null) {
-                        listener.onUserInput(direction)
+                        observer.onUserInput(direction)
                     }
-                    if (event.keyCode == KeyEvent.VK_Q) {
+                    if (event.keyCode == VK_Q) {
                         dispatchEvent(WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING))
                     }
-                    if (event.keyCode == KeyEvent.VK_S) {
-                        listener.onGameStart()
+                    if (event.keyCode == VK_S) {
+                        observer.onGameStart()
                     }
                 }
             })
@@ -85,7 +91,7 @@ class GameSwingUI : GameUI {
         }
 
         SwingUtilities.invokeLater {
-            listener.onGameStart()
+            observer.onGameStart()
         }
     }
 
@@ -103,7 +109,7 @@ private class GameTimer(delay: Int = 500, callback: () -> Unit) {
     }
 }
 
-private class GamePanel : JPanel() {
+private class GamePanel: JPanel() {
     private var game: Game? = null
     private val messageFont = Font("DejaVu Sans", Font.BOLD, 35)
 
