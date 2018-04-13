@@ -22,6 +22,9 @@ fun main(args: Array<String>) {
             println("🚀 $count")
             count += 1
             savedC?.resume(Unit)
+            // need to return here, otherwise the rest of the function will run after continuation
+            return@create
         }
+        println("done")
     }
 }
