@@ -14,7 +14,7 @@ function remove()
   return result
 end
 
-local consumer = nil
+local consumer
 local producer = coroutine.create(function()
   local i = 0
   while i < 2 do

@@ -1,6 +1,6 @@
 
 function callcc(f, cc) {
-  f(function(x) { return cc(x) }, cc)
+  f(function(x) { return cc(x) })
 }
 
 console.log(1);

@@ -3,7 +3,7 @@
   (newline)
 )
 
-(define (make-generator f)
+(define (make-generator callback)
   (define (yield)
     (call/cc (lambda (continuation)
       (set! yield-point continuation)
@@ -16,7 +16,7 @@
   )))
   (define yield-point #f)
   (set! yield-point (lambda (_)
-    (f yield)
+    (callback yield)
     (jump-out #f)
   ))
   resume

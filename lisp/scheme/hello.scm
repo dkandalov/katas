@@ -11,13 +11,11 @@
 (define (example1)
   ;;; Return the first element in "lst" for which "wanted?" returns a true value.
   (define (search wanted? lst)
-    (call/cc
-      (lambda (return)
-        (for-each (lambda (element)
-                    (if (wanted? element)
-                        (return element)))
-                  lst)
-        #f)))
+    (call/cc (lambda (return)
+      (for-each
+        (lambda (element) (if (wanted? element) (return element)))
+        lst)
+    #f)))
 
   (display "example 1:\n")
   (display (search odd? (list 10 2 3 4)))
