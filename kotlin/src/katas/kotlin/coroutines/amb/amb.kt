@@ -1,52 +1,63 @@
 package katas.kotlin.coroutines.amb
 
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
+import java.util.*
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.createCoroutine
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 fun main(args: Array<String>) {
-    var savedC: Continuation<Unit>? = null
     ResumableFunction.create {
+        val value = amb(mutableListOf(1, 2, 3), "value")
+        val value2 = amb(mutableListOf(1, 2, 3), "value2")
 
-        suspendCoroutineOrReturn { c: Continuation<Unit> ->
-            println("")
-        }
+//        println("value = $value; value2 = $value2")
+        assertCondition { value + value2 == 5 }
+
+        println("! " + value + " " + value2)
     }
-/*
-    ResumableFunction.create {
-        val value = amb(mutableListOf(1, 2, 3))
-        println("value = $value")
-        assertCondition { value == 2 }
-        println("! " + value)
-    }
-*/
 }
 
 private class ResumableFunction {
-    var c: Continuation<Unit>? = null
+    val continuations: LinkedList<Continuation<Unit>> = LinkedList()
 
-    fun assertCondition(f: () -> Boolean) {
+    inline fun assertCondition(f: () -> Boolean) {
         if (!f()) fail()
     }
 
     fun fail() {
-        c?.resume(Unit)
+        continuations.removeLast().resume(Unit)
+        throw Exit()
     }
 
-    suspend fun amb(choices: MutableList<Int>): Int {
-        suspendCoroutineOrReturn { it: Continuation<Unit> ->
-            c = it
-            Unit
+    suspend fun amb(choices: MutableList<Int>, name: String = ""): Int {
+        lateinit var c: Continuation<Unit>
+        suspendCoroutineOrReturn { it: Continuation<Unit> -> c = it; Unit }
+        continuations.addLast(c)
+
+        if (choices.isEmpty()) {
+            continuations.removeLast()
+            if (continuations.isNotEmpty()) {
+                fail()
+            } else {
+                throw ExhaustedAllChoices()
+            }
         }
+        println("$name = ${choices.first()}")
         return choices.removeAt(0)
     }
 
     companion object {
         fun create(block: suspend ResumableFunction.() -> Unit): ResumableFunction {
             val f = ResumableFunction()
-            block.createCoroutine(f, completion = EmptyContinuation).resume(Unit)
+            try {
+                block.createCoroutine(f, completion = EmptyContinuation).resume(Unit)
+            } catch (ignored: Exit) {
+            }
             return f
         }
     }
+
+    class ExhaustedAllChoices: Throwable()
+    private class Exit: Throwable()
 }
