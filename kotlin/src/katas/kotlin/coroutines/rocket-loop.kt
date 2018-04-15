@@ -2,6 +2,7 @@
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.createCoroutine
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 fun create(block: suspend Unit.() -> Unit) {
@@ -15,16 +16,20 @@ fun main(args: Array<String>) {
         println("init")
         suspendCoroutineOrReturn { c: Continuation<Unit> ->
             savedC = c
-            null
+            COROUTINE_SUSPENDED
         }
         println("foo")
         if (count < 5) {
             println("🚀 $count")
             count += 1
-            savedC?.resume(Unit)
-            // need to return here, otherwise the rest of the function will run after continuation
-            return@create
+            suspendCoroutineOrReturn { _: Continuation<Unit> ->
+                COROUTINE_SUSPENDED
+            }
         }
         println("done")
     }
+    savedC?.resume(Unit)
+    savedC?.resume(Unit)
+    savedC?.resume(Unit)
+    savedC?.resume(Unit)
 }
