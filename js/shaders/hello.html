@@ -5,7 +5,6 @@
   // an attribute will receive data from a buffer
   attribute vec4 a_position;
 
-  // all shaders have a main function
   void main() {
     // gl_Position is a special variable a vertex shader is responsible for setting
     gl_Position = a_position;
@@ -34,10 +33,10 @@
         var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
         if (success) {
             return shader;
+        } else {
+            console.log(gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
         }
-
-        console.log(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
     }
 
     function createProgram(gl, vertexShader, fragmentShader) {
@@ -82,12 +81,12 @@
         // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        var positions = [
+        var positions = new Float32Array([
             0, 0,
             0, 0.5,
             0.7, 0
-        ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+        ]);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
         // code above this line is initialization code.
         // ----------------------------------------------------
@@ -101,11 +100,7 @@
 
         gl.useProgram(program);
 
-        // Turn on the attribute
         gl.enableVertexAttribArray(positionAttributeLocation);
-
-        // Bind the position buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = 2;          // 2 components per iteration
