@@ -2,7 +2,7 @@
     <meta charset="utf-8">
 </head>
 
-<canvas id="c"></canvas>
+<canvas id="c" width="800" height="400"></canvas>
 
 <!-- you can and should delete this script. it is only used on the site to help with errors -->
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
@@ -24,14 +24,13 @@
   }
 </script>
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
-  // fragment shaders don't have a default precision so we need
-  // to pick one. mediump is a good default
+  // fragment shaders don't have a default precision so we need to pick one. mediump is a good default
   precision mediump float;
+  uniform vec4 u_color;
 
   void main() {
-    // gl_FragColor is a special variable a fragment shader
-    // is responsible for setting
-    gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+    // gl_FragColor is a special variable a fragment shader is responsible for setting
+    gl_FragColor = u_color;
   }
 </script>
 <script>
@@ -66,6 +65,31 @@
         }
     }
 
+    function randomInt(range) {
+        return Math.floor(Math.random() * range);
+    }
+
+    function setRectangle(gl, x, y, width, height) {
+        var x1 = x;
+        var x2 = x + width;
+        var y1 = y;
+        var y2 = y + height;
+
+        // NOTE: gl.bufferData(gl.ARRAY_BUFFER, ...) will affect
+        // whatever buffer is bound to the `ARRAY_BUFFER` bind point
+        // but so far we only have one buffer. If we had more than one
+        // buffer we'd want to bind that buffer to `ARRAY_BUFFER` first.
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            x1, y1,
+            x2, y1,
+            x1, y2,
+            x1, y2,
+            x2, y1,
+            x2, y2]
+        ), gl.STATIC_DRAW);
+    }
+
     function main() {
         var canvas = document.getElementById("c");
         var gl = canvas.getContext("webgl");
@@ -86,25 +110,18 @@
         var program = createProgram(gl, vertexShader, fragmentShader);
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
         var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-
+        var colorUniformLocation = gl.getUniformLocation(program, "u_color");
+        
         // (think of it as ARRAY_BUFFER = positionBuffer)
         var positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        var positions = new Float32Array([
-            10, 20,
-            80, 20,
-            10, 30,
-            10, 30,
-            80, 20,
-            80, 30
-        ]);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
         // code above this line is initialization code.
         // ----------------------------------------------------
         // code below this line is rendering code.
 
+        
         // Tell WebGL how to convert from clip space to pixels
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         gl.clearColor(0, 0, 0, 0);
@@ -121,14 +138,15 @@
         var offset = 0;        // start at the beginning of the buffer
         gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
 
-        // set the resolution
         gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-        // draw
-        var primitiveType = gl.TRIANGLES;
-        var offset = 0;
-        var count = 6;
-        gl.drawArrays(primitiveType, offset, count);
+        // draw 50 random rectangles in random colors
+        for (var i = 0; i < 50; ++i) {
+            // This will write to positionBuffer because its the last thing we bound on the ARRAY_BUFFER bind point
+            setRectangle(gl, randomInt(gl.canvas.width), randomInt(gl.canvas.height), randomInt(gl.canvas.width), randomInt(gl.canvas.height));
+            gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
     }
 
     main();
