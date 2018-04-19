@@ -58,10 +58,6 @@
         }
     }
 
-    function randomInt(range) {
-        return Math.floor(Math.random() * range);
-    }
-
     function setRectangle(gl, x, y, width, height) {
         var x1 = x;
         var x2 = x + width;
@@ -81,6 +77,40 @@
             x2, y1,
             x2, y2]
         ), gl.STATIC_DRAW);
+    }
+
+    function setGeometry(gl, x, y) {
+        var width = 100;
+        var height = 150;
+        var thickness = 30;
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                // left column
+                x, y,
+                x + thickness, y,
+                x, y + height,
+                x, y + height,
+                x + thickness, y,
+                x + thickness, y + height,
+
+                // top rung
+                x + thickness, y,
+                x + width, y,
+                x + thickness, y + thickness,
+                x + thickness, y + thickness,
+                x + width, y,
+                x + width, y + thickness,
+
+                // middle rung
+                x + thickness, y + thickness * 2,
+                x + width * 2 / 3, y + thickness * 2,
+                x + thickness, y + thickness * 3,
+                x + thickness, y + thickness * 3,
+                x + width * 2 / 3, y + thickness * 2,
+                x + width * 2 / 3, y + thickness * 3
+            ]),
+            gl.STATIC_DRAW);
     }
 
     function main() {
@@ -123,8 +153,7 @@
 
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-            // Setup a rectangle
-            setRectangle(gl, translation[0], translation[1], width, height);
+            setGeometry(gl, translation[0], translation[1]);
 
             var size = 2;          // 2 components per iteration
             var type = gl.FLOAT;   // the data is 32bit floats
@@ -133,16 +162,12 @@
             var offset = 0;        // start at the beginning of the buffer
             gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-            // set the resolution
             gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
-
-            // set the color
             gl.uniform4fv(colorLocation, color);
 
-            // Draw the rectangle.
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
-            var count = 6;
+            var count = 18;
             gl.drawArrays(primitiveType, offset, count);
         }
 
