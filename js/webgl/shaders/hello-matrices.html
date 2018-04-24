@@ -2,33 +2,24 @@
     <meta charset="utf-8">
 </head>
 
-<canvas id="c" width="800" height="400"></canvas>
+<canvas id="c" width="800" height="600"></canvas>
 
 <!-- you can and should delete this script. it is only used on the site to help with errors -->
 <script id="2d-vertex-shader" type="x-shader/x-vertex">
   attribute vec2 a_position;
-  uniform vec2 u_resolution;
   uniform mat3 u_matrix;
   
   void main() {
-    vec2 position = (u_matrix * vec3(a_position, 1)).xy;
-  
-    // convert position to -1->+1 (clipspace)
-    vec2 clipSpace = (position / u_resolution) * 2.0 - 1.0;
-    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-  }
-
+    gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+  } 
 </script>
 <script id="2d-fragment-shader" type="x-shader/x-fragment">
-  // fragment shaders don't have a default precision so we need to pick one. mediump is a good default
   precision mediump float;
   uniform vec4 u_color;
 
   void main() {
-    // gl_FragColor is a special variable a fragment shader is responsible for setting
     gl_FragColor = u_color;
   }
-
 </script>
 <script>
     // from https://webglfundamentals.org/webgl/webgl-fundamentals.html
@@ -131,6 +122,13 @@
             document.getElementById("2d-fragment-shader").text
         );
         var m3 = {
+            identity: function() {
+                return [
+                    1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1
+                ];
+            },
             translation: function(tx, ty) {
                 return [
                     1, 0, 0,
@@ -138,7 +136,6 @@
                     tx, ty, 1
                 ];
             },
-
             rotation: function(angleInRadians) {
                 var c = Math.cos(angleInRadians);
                 var s = Math.sin(angleInRadians);
@@ -148,12 +145,28 @@
                     0, 0, 1
                 ];
             },
-
             scaling: function(sx, sy) {
                 return [
                     sx, 0, 0,
                     0, sy, 0,
                     0, 0, 1
+                ];
+            },
+            translate: function(m, tx, ty) {
+                return m3.multiply(m, m3.translation(tx, ty));
+            },
+            rotate: function(m, angleInRadians) {
+                return m3.multiply(m, m3.rotation(angleInRadians));
+            },
+            scale: function(m, sx, sy) {
+                return m3.multiply(m, m3.scaling(sx, sy));
+            },
+            projection: function(width, height) {
+                // flip the Y axis so that 0 is at the top
+                return [
+                    2 / width, 0, 0,
+                    0, -2 / height, 0,
+                    -1, 1, 1
                 ];
             },
 
@@ -192,9 +205,8 @@
 
         var program = createProgram(gl, vertexShader, fragmentShader);
         var positionLocation = gl.getAttribLocation(program, "a_position");
-        var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
-        var colorLocation = gl.getUniformLocation(program, "u_color");
         var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+        var colorLocation = gl.getUniformLocation(program, "u_color");
 
         var translation = [0, 0];
         var scale = [1, 1];
@@ -222,26 +234,27 @@
             var offset = 0;        // start at the beginning of the buffer
             gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
-            gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
             gl.uniform4fv(colorLocation, color);
 
             var angleInRadians = angleInDegrees * Math.PI / 180;
+            var matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
 
-            var translationMatrix = m3.translation(translation[0], translation[1]);
-            var rotationMatrix = m3.rotation(angleInRadians);
-            var scaleMatrix = m3.scaling(scale[0], scale[1]);
+            for (var i = 0; i < 10; i++) {
+                matrix = m3.translate(matrix, translation[0], translation[1]);
+                matrix = m3.rotate(matrix, angleInRadians);
+                matrix = m3.scale(matrix, scale[0], scale[1]);
+                
+                gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-            var matrix = m3.multiply(translationMatrix, rotationMatrix);
-            matrix = m3.multiply(matrix, scaleMatrix);
-
-            gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
-            gl.drawArrays(gl.TRIANGLES, 0, 18);
+                gl.drawArrays(gl.TRIANGLES, 0, 18);
+            }
         }
 
         window.addEventListener("keydown", function(event) {
             if (event.key === "l") translation[0] += 10;
             if (event.key === "j") translation[0] -= 10;
+            if (event.key === "i") translation[1] -= 10;
+            if (event.key === "k") translation[1] += 10;
             if (event.key === "o") angleInDegrees += 10;
             if (event.key === "u") angleInDegrees -= 10;
             if (event.key === "]") scale[0] += 0.1;
