@@ -274,11 +274,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.10</source>
+                    <target>1.10</target>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
-                    <!--<executable>/Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/</executable>-->
+                    <executable>/Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/</executable>
                     <fork>true</fork>
                 </configuration>
             </plugin>
