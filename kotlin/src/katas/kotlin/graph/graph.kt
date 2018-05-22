@@ -5,7 +5,7 @@ import katas.kotlin.graph.Graph.TermForm.Term
 import java.util.*
 import java.util.regex.Pattern
 
-@Suppress("unused") // Copied from 99 problems in Kotlin.
+@Suppress("unused") // Copied from https://github.com/dkandalov/kotlin-99
 class Graph<T, U>(nodes: Collection<Node<T, U>> = emptyList(), edges: Collection<Edge<T, U>> = emptyList()) {
     val nodes: MutableMap<T, Node<T, U>> = nodes
         .map { Pair(it.value, it) }
@@ -14,7 +14,7 @@ class Graph<T, U>(nodes: Collection<Node<T, U>> = emptyList(), edges: Collection
 
     private fun addNode(value: T): Node<T, U> {
         val node = Node<T, U>(value)
-        nodes.put(value, node)
+        nodes[value] = node
         return node
     }
 
