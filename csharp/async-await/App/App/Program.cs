@@ -63,26 +63,34 @@ namespace App
 
     internal class Two
     {
+        private static readonly TaskCompletionSource<int> CompletionSource1 = new TaskCompletionSource<int>();
+        private static readonly TaskCompletionSource<int> CompletionSource2 = new TaskCompletionSource<int>();
+
         public static void Run()
         {
-            WriteLine("main 1: " + CurrentThreadInfo());
-            WriteLine(A().Result);
-            WriteLine("main 5: " + CurrentThreadInfo());
-            
-            Thread.Sleep(1000);
-        }
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(500);
+                CompletionSource1.SetResult(1);
+                Thread.Sleep(500);
+                CompletionSource2.SetResult(2);
+            });
 
-        static Task<int> Task1 = Task.FromResult(1);
-        static Task<int> Task2 = Task.FromResult(2);
+            WriteLine("main 1: thread=" + CurrentThreadInfo());
+            A().ContinueWith(task => WriteLine("main 6: thread=" + CurrentThreadInfo() + "; result=" + task.Result));
+            WriteLine("main 3: thread=" + CurrentThreadInfo());
+            
+            Thread.Sleep(2000);
+        }
 
         private static async Task<int> A()
         {
-            WriteLine("a 2: " + CurrentThreadInfo());
-            await Task1;
-            WriteLine("a 3: " + CurrentThreadInfo());
-            await Task2;
-            WriteLine("a 4: " + CurrentThreadInfo());
-            return 42;
+            WriteLine("a 2: thread=" + CurrentThreadInfo());
+            var n1 = await CompletionSource1.Task;
+            WriteLine("a 4: thread=" + CurrentThreadInfo());
+            var n2 = await CompletionSource2.Task;
+            WriteLine("a 5: thread=" + CurrentThreadInfo());
+            return n1 + n2;
         }
 
         private static async void B()
@@ -101,7 +109,9 @@ namespace App
 
         private static string CurrentThreadInfo()
         {
-            return Thread.CurrentThread.Name + "-" + Thread.CurrentThread.ManagedThreadId;
+            var name = Thread.CurrentThread.Name;
+            if (string.IsNullOrEmpty(name)) name = "main";
+            return "'" + name + "-" + Thread.CurrentThread.ManagedThreadId + "'";
         }
     }
     
