@@ -35,8 +35,8 @@ class Traversal3 {
             it.toGraph().bft("c").join("-") shouldEqual "c-b-a"
         }
 
-        // a -- b1 -- c
-        //   -- b2 --
+        // a──b1──c
+        // └──b2──┘
         "[a-b1, a-b2, b1-c, b2-c]".let {
             it.toGraph().bft("a").join("-") shouldEqual "a-b1-b2-c"
             it.toGraph().bft("b1").join("-") shouldEqual "b1-a-c-b2"
