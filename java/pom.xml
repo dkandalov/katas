@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>katas</groupId>
-    <artifactId>java-katas</artifactId>
+    <artifactId>katas-java</artifactId>
     <name>Java katas</name>
     <version>0.0-SNAPSHOT</version>
 
