@@ -1,88 +1,102 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER", "unused", "RemoveExplicitTypeArguments", "UNCHECKED_CAST", "UNUSED_LAMBDA_EXPRESSION")
+
 package katas.kotlin.generics
 
-import org.junit.Test
+class Inheritance {
+    interface Super
+    interface Base: Super
+    interface Base2: Super
 
-@Suppress("UNUSED_PARAMETER", "unused", "RemoveExplicitTypeArguments")
-class Tests {
-    open class Super
-    open class Base: Super()
-    open class Sub: Base()
-
-    @Test fun covariantContainer() {
-        class Container<out T> {
-            fun get(): T = doThings()
-//            fun add(t: T): Unit = doThings()
-        }
-
-        val superList = Container<Super>()
-        val baseList = Container<Base>()
-        val subList = Container<Sub>()
-
-        fun <T> foo(container: Container<T>): Unit = doThings()
-
-        foo<Super>(superList)
-        foo<Super>(baseList)
-        foo<Super>(subList)
-
-//        foo<Base>(superList)
-        foo<Base>(baseList)
-        foo<Base>(subList)
-
-//        foo<Sub>(superList)
-//        foo<Sub>(baseList)
-        foo<Sub>(subList)
+    interface ContainerSuper {
+        fun get(): Super = doThings()
+        fun add(it: Super): Unit = doThings()
+    }
+    
+    interface ContainerBase: ContainerSuper {
+        override fun get(): Base = doThings()
+        override fun add(it: Super/*Any*/) = doThings()
     }
 
-    @Test fun contravariantContainer() {
-        class Container<in T> {
-//            fun get(): T = doThings()
-            fun add(t: T): Unit = doThings()
-        }
-
-        val superList = Container<Super>()
-        val baseList = Container<Base>()
-        val subList = Container<Sub>()
-
-        fun <T> foo(list: Container<T>): Unit = doThings()
-
-        foo<Super>(superList)
-//        foo<Super>(baseList)
-//        foo<Super>(subList)
-
-        foo<Base>(superList)
-        foo<Base>(baseList)
-//        foo<Base>(subList)
-
-        foo<Sub>(superList)
-        foo<Sub>(baseList)
-        foo<Sub>(subList)
+    interface ContainerBase2: ContainerSuper {
+        override fun get(): Base2 = doThings()
+        override fun add(it: Super/*Any*/) = doThings()
     }
 
-    @Test fun invariantContainer() {
-        class Container<T> {
-            fun get(): T = doThings()
-            fun add(t: T): Unit = doThings()
-        }
-
-        val superList = Container<Super>()
-        val baseList = Container<Base>()
-        val subList = Container<Sub>()
-
-        fun <T> foo(list: Container<T>): Unit = doThings()
-
-        foo<Super>(superList)
-//        foo<Super>(baseList)
-//        foo<Super>(subList)
-
-//        foo<Base>(superList)
-        foo<Base>(baseList)
-//        foo<Base>(subList)
-
-//        foo<Sub>(superList)
-//        foo<Sub>(baseList)
-        foo<Sub>(subList)
+    fun fail() {
+        val container: ContainerSuper = object: ContainerBase {}
+        container.add(object: Base2 {})
     }
-
-    private fun doThings(): Nothing = throw NotImplementedError()
 }
 
+class TypeArguments {
+    interface Super
+    interface Base: Super
+    interface Sub: Base
+
+    class Container<T> {
+        fun get(): T = doThings()
+        fun add(t: T): Unit = doThings()
+    }
+
+    fun covariantContainer() {
+
+        fun <T> f(c: Container<out T>) {
+            val t: T = c.get()
+//            c.add(t)
+        }
+
+        f<Super>(Container<Super>())
+        f<Super>(Container<Base>())
+        f<Super>(Container<Sub>())
+
+//      f<Base>(Container<Super>())
+        f<Base>(Container<Base>())
+        f<Base>(Container<Sub>())
+
+//      f<Sub>(Container<Super>())
+//      f<Sub>(Container<Base>())
+        f<Sub>(Container<Sub>())
+    }
+
+    fun contravariantContainer() {
+
+        fun <T> f(c: Container<in T>) {
+//            val t: T = c.get()
+            c.add(null as T)
+        }
+
+        f<Super>(Container<Super>())
+//      f<Super>(Container<Base>())
+//      f<Super>(Container<Sub>())
+
+        f<Base>(Container<Super>())
+        f<Base>(Container<Base>())
+//      f<Base>(Container<Sub>())
+
+        f<Sub>(Container<Super>())
+        f<Sub>(Container<Base>())
+        f<Sub>(Container<Sub>())
+    }
+
+    fun invariantContainer() {
+
+        fun <T> f(c: Container<T>) {
+            val t: T = c.get()
+            c.add(t)
+        }
+
+        f<Super>(Container<Super>())
+//      f<Super>(Container<Base>())
+//      f<Super>(Container<Sub>())
+
+//      f<Base>(Container<Super>())
+        f<Base>(Container<Base>())
+//      f<Base>(Container<Sub>())
+
+//      f<Sub>(Container<Super>())
+//      f<Sub>(Container<Base>())
+        f<Sub>(Container<Sub>())
+    }
+}
+
+private fun doThings(): Nothing = throw NotImplementedError()

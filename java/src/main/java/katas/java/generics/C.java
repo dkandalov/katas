@@ -16,17 +16,17 @@ public class C {
 
 	static <T> void f(T t) {}
 
-	static <T> void covF(Container<? extends T> container) {
+	static <T> void covariantF(Container<? extends T> container) {
 		T t = container.get();
 //		container.add(t);
 	}
 
-	static <T> void contF(Container<? super T> container) {
+	static <T> void contravariantF(Container<? super T> container) {
 //		T t = container.get();
 		container.add((T) null);
 	}
 
-	static <T> void invF(Container<T> container) {
+	static <T> void invariantF(Container<T> container) {
 		T t = container.get();
 		container.add(t);
 	}
@@ -46,44 +46,44 @@ public class C {
 	}
 
 	@Test public void covariantContainer() {
-		C.<Super>covF(new Container<Super>());
-		C.<Super>covF(new Container<Base>());
-		C.<Super>covF(new Container<Sub>());
+		C.<Super>covariantF(new Container<Super>());
+		C.<Super>covariantF(new Container<Base>());
+		C.<Super>covariantF(new Container<Sub>());
 
-//		C.<Base>covF(new Container<Super>());
-		C.<Base>covF(new Container<Base>());
-		C.<Base>covF(new Container<Sub>());
+//		C.<Base>covariantF(new Container<Super>());
+		C.<Base>covariantF(new Container<Base>());
+		C.<Base>covariantF(new Container<Sub>());
 
-//		C.<Sub>covF(new Container<Super>());
-//		C.<Sub>covF(new Container<Base>());
-		C.<Sub>covF(new Container<Sub>());
+//		C.<Sub>covariantF(new Container<Super>());
+//		C.<Sub>covariantF(new Container<Base>());
+		C.<Sub>covariantF(new Container<Sub>());
 	}
 
 	@Test public void contravariantContainer() {
-		C.<Super>contF(new Container<Super>());
-//		C.<Super>contF(new Container<Base>());
-//		C.<Super>contF(new Container<Sub>());
+		C.<Super>contravariantF(new Container<Super>());
+//		C.<Super>contravariantF(new Container<Base>());
+//		C.<Super>contravariantF(new Container<Sub>());
 
-		C.<Base>contF(new Container<Super>());
-		C.<Base>contF(new Container<Base>());
-//		C.<Base>contF(new Container<Sub>());
+		C.<Base>contravariantF(new Container<Super>());
+		C.<Base>contravariantF(new Container<Base>());
+//		C.<Base>contravariantF(new Container<Sub>());
 
-		C.<Sub>contF(new Container<Super>());
-		C.<Sub>contF(new Container<Base>());
-		C.<Sub>contF(new Container<Sub>());
+		C.<Sub>contravariantF(new Container<Super>());
+		C.<Sub>contravariantF(new Container<Base>());
+		C.<Sub>contravariantF(new Container<Sub>());
 	}
 
 	@Test public void invariantContainer() {
-		C.<Super>invF(new Container<Super>());
-//		C.<Super>invF(new Container<Base>());
-//		C.<Super>invF(new Container<Sub>());
+		C.<Super>invariantF(new Container<Super>());
+//		C.<Super>invariantF(new Container<Base>());
+//		C.<Super>invariantF(new Container<Sub>());
 
-//		C.<Base>invF(new Container<Super>());
-		C.<Base>invF(new Container<Base>());
-//		C.<Base>invF(new Container<Sub>());
+//		C.<Base>invariantF(new Container<Super>());
+		C.<Base>invariantF(new Container<Base>());
+//		C.<Base>invariantF(new Container<Sub>());
 
-//		C.<Sub>invF(new Container<Super>());
-//		C.<Sub>invF(new Container<Base>());
-		C.<Sub>invF(new Container<Sub>());
+//		C.<Sub>invariantF(new Container<Super>());
+//		C.<Sub>invariantF(new Container<Base>());
+		C.<Sub>invariantF(new Container<Sub>());
 	}
 }
