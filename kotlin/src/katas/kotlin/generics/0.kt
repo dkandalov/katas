@@ -23,8 +23,10 @@ class Inheritance {
     }
 
     fun fail() {
-        val container: ContainerSuper = object: ContainerBase {}
+        val containerBase: ContainerBase = object: ContainerBase {}
+        val container: ContainerSuper = containerBase
         container.add(object: Base2 {})
+        val base: Base = containerBase.get()
     }
 }
 
