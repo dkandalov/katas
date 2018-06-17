@@ -1,0 +1,27 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+		}
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
+	}
+}
+
+apply plugin: 'konan'
+
+konan.targets = ['macbook']
+
+konanArtifacts {
+	interop('stdio') {
+		defFile 'src/c_interop/stdio.def'
+	}
+	program('hello') {
+		srcDir('src')
+		libraries {
+			artifact 'stdio'
+		}
+	}
+}
