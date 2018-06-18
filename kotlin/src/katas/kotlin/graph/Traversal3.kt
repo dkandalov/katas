@@ -11,17 +11,19 @@ class Traversal3 {
         "[a]".toGraph().dft("a").join("-") shouldEqual "a"
         "[a-b]".toGraph().dft("a").join("-") shouldEqual "a-b"
 
-        "[a-b, b-c]".let {
-            it.toGraph().dft("a").join("-") shouldEqual "a-b-c"
-            it.toGraph().dft("b").join("-") shouldEqual "b-a-c"
-            it.toGraph().dft("c").join("-") shouldEqual "c-b-a"
+        "[a-b, b-c]".toGraph().let {
+            it.dft("a").join("-") shouldEqual "a-b-c"
+            it.dft("b").join("-") shouldEqual "b-a-c"
+            it.dft("c").join("-") shouldEqual "c-b-a"
         }
 
-        "[a-b1, a-b2, b1-c, b2-c]".let {
-            it.toGraph().dft("a").join("-") shouldEqual "a-b1-c-b2"
-            it.toGraph().dft("b1").join("-") shouldEqual "b1-a-b2-c"
-            it.toGraph().dft("b2").join("-") shouldEqual "b2-a-b1-c"
-            it.toGraph().dft("c").join("-") shouldEqual "c-b1-a-b2"
+        // a──b1──c
+        // └──b2──┘
+        "[a-b1, a-b2, b1-c, b2-c]".toGraph().let {
+            it.dft("a").join("-") shouldEqual "a-b1-c-b2"
+            it.dft("b1").join("-") shouldEqual "b1-a-b2-c"
+            it.dft("b2").join("-") shouldEqual "b2-a-b1-c"
+            it.dft("c").join("-") shouldEqual "c-b1-a-b2"
         }
     }
 
@@ -29,19 +31,19 @@ class Traversal3 {
         "[a]".toGraph().bft("a").join("-") shouldEqual "a"
         "[a-b]".toGraph().bft("a").join("-") shouldEqual "a-b"
 
-        "[a-b, b-c]".let {
-            it.toGraph().bft("a").join("-") shouldEqual "a-b-c"
-            it.toGraph().bft("b").join("-") shouldEqual "b-a-c"
-            it.toGraph().bft("c").join("-") shouldEqual "c-b-a"
+        "[a-b, b-c]".toGraph().let {
+            it.bft("a").join("-") shouldEqual "a-b-c"
+            it.bft("b").join("-") shouldEqual "b-a-c"
+            it.bft("c").join("-") shouldEqual "c-b-a"
         }
 
         // a──b1──c
         // └──b2──┘
-        "[a-b1, a-b2, b1-c, b2-c]".let {
-            it.toGraph().bft("a").join("-") shouldEqual "a-b1-b2-c"
-            it.toGraph().bft("b1").join("-") shouldEqual "b1-a-c-b2"
-            it.toGraph().bft("b2").join("-") shouldEqual "b2-a-c-b1"
-            it.toGraph().bft("c").join("-") shouldEqual "c-b1-b2-a"
+        "[a-b1, a-b2, b1-c, b2-c]".toGraph().let {
+            it.bft("a").join("-") shouldEqual "a-b1-b2-c"
+            it.bft("b1").join("-") shouldEqual "b1-a-c-b2"
+            it.bft("b2").join("-") shouldEqual "b2-a-c-b1"
+            it.bft("c").join("-") shouldEqual "c-b1-b2-a"
         }
     }
 

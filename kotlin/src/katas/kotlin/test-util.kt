@@ -7,6 +7,8 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Assert
 import org.junit.Test
 
+fun <T> Collection<T>.doesNotContain(t: T) = !contains(t)
+
 infix fun <T> T.shouldEqual(that: T) {
     assertThat(this, equalTo(that))
 }

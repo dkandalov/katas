@@ -6,19 +6,19 @@ import java.util.*
 import java.util.regex.Pattern
 
 @Suppress("unused") // Copied from https://github.com/dkandalov/kotlin-99
-class Graph<T, U>(nodes: Collection<Node<T, U>> = emptyList(), edges: Collection<Edge<T, U>> = emptyList()) {
-    val nodes: MutableMap<T, Node<T, U>> = nodes
+class Graph<Value, Label>(nodes: Collection<Node<Value, Label>> = emptyList(), edges: Collection<Edge<Value, Label>> = emptyList()) {
+    val nodes: MutableMap<Value, Node<Value, Label>> = nodes
         .map { Pair(it.value, it) }
         .toMap(LinkedHashMap()) // Use linked map to make operations on graph more deterministic.
-    val edges: MutableList<Edge<T, U>> = edges.toMutableList()
+    val edges: MutableList<Edge<Value, Label>> = edges.toMutableList()
 
-    private fun addNode(value: T): Node<T, U> {
-        val node = Node<T, U>(value)
+    private fun addNode(value: Value): Node<Value, Label> {
+        val node = Node<Value, Label>(value)
         nodes[value] = node
         return node
     }
 
-    private fun addUndirectedEdge(n1: T, n2: T, label: U?) {
+    private fun addUndirectedEdge(n1: Value, n2: Value, label: Label?) {
         if (!nodes.contains(n1) || !nodes.contains(n2)) {
             throw IllegalStateException("Expected '$n1' and '$n2' nodes to exist in graph")
         }
@@ -30,7 +30,7 @@ class Graph<T, U>(nodes: Collection<Node<T, U>> = emptyList(), edges: Collection
         }
     }
 
-    private fun addDirectedEdge(source: T, dest: T, label: U?) {
+    private fun addDirectedEdge(source: Value, dest: Value, label: Label?) {
         val edge = DirectedEdge(nodes[source]!!, nodes[dest]!!, label)
         if (!edges.contains(edge)) {
             edges.add(edge)
@@ -53,7 +53,7 @@ class Graph<T, U>(nodes: Collection<Node<T, U>> = emptyList(), edges: Collection
 
     override fun hashCode() = 31 * nodes.hashCode() + edges.hashCode()
 
-    fun equivalentTo(other: Graph<T, U>): Boolean {
+    fun equivalentTo(other: Graph<Value, Label>): Boolean {
         return nodes == other.nodes && edges.all { edge -> other.edges.any { it.equivalentTo(edge) } }
     }
 
