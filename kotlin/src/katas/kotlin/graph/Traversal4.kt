@@ -76,6 +76,11 @@ private fun <Value, Label> Graph<Value, Label>.bft(value: Value, separator: Stri
     return node.bft().traversal.join(separator)
 }
 
+private fun <Value, Label> Graph<Value, Label>.dft(value: Value, separator: String = "-"): String {
+    val node = nodes[value] ?: return ""
+    return node.dft().traversal.join(separator)
+}
+
 private fun <Value, Label> Node<Value, Label>.bft(): Result<Value> {
     var result = Result.empty<Value>()
     val queue = LinkedList<Node<Value, Label>>()
@@ -90,11 +95,16 @@ private fun <Value, Label> Node<Value, Label>.bft(): Result<Value> {
     return result
 }
 
-private fun <Value, Label> Graph<Value, Label>.dft(value: Value, separator: String = "-"): String {
-    val node = nodes[value] ?: return ""
-    return node.dft(Result.empty()).traversal.join(separator)
+private fun <Value, Label> Node<Value, Label>.dft(): Result<Value> {
+    var result = Result.empty<Value>()
+    val stack = LinkedList<Node<Value, Label>>()
+    stack.addLast(this)
+    while (stack.isNotEmpty()) {
+        val node = stack.removeLast()
+        if (!result.contains(node.value)) {
+            result += node.value
+            stack.addAll(node.neighbors().reversed())
+        }
+    }
+    return result
 }
-
-private fun <Value, Label> Node<Value, Label>.dft(result: Result<Value>): Result<Value> =
-    if (result.contains(value)) result
-    else neighbors().fold(result + value) { r, node -> node.dft(r) }
