@@ -61,49 +61,59 @@ class Traversal4 {
     }
 }
 
-private data class Result<T>(val traversal: LinkedHashSet<T>) {
-    operator fun plus(value: T) = Result(LinkedHashSet(traversal + value))
+private data class Result<T>(val path: LinkedHashSet<T>) {
+    operator fun plus(value: T) = Result(LinkedHashSet(path + value))
 
-    fun contains(value: T) = traversal.contains(value)
+    fun contains(value: T) = path.contains(value)
 
     companion object {
         fun <T> empty(): Result<T> = Result(LinkedHashSet())
     }
 }
 
+private interface Container<T> {
+    fun add(value: T)
+    fun add(values: Collection<T>)
+    fun remove(): T
+    fun isNotEmpty(): Boolean
+
+    companion object {
+        fun <T> queue() = object: Container<T> {
+            val list = LinkedList<T>()
+            override fun add(value: T) = list.addFirst(value)
+            override fun add(values: Collection<T>) { list.addAll(values) }
+            override fun remove() = list.removeFirst()
+            override fun isNotEmpty() = list.isNotEmpty()
+        }
+        fun <T> stack() = object: Container<T> {
+            val list = LinkedList<T>()
+            override fun add(value: T) = list.addLast(value)
+            override fun add(values: Collection<T>) { list.addAll(values.reversed()) }
+            override fun remove() = list.removeLast()
+            override fun isNotEmpty() = list.isNotEmpty()
+        }
+    }
+}
+
+
 private fun <Value, Label> Graph<Value, Label>.bft(value: Value, separator: String = "-"): String {
     val node = nodes[value] ?: return ""
-    return node.bft().traversal.join(separator)
+    return node.traverse(Container.queue()).path.join(separator)
 }
 
 private fun <Value, Label> Graph<Value, Label>.dft(value: Value, separator: String = "-"): String {
     val node = nodes[value] ?: return ""
-    return node.dft().traversal.join(separator)
+    return node.traverse(Container.stack()).path.join(separator)
 }
 
-private fun <Value, Label> Node<Value, Label>.bft(): Result<Value> {
+private fun <Value, Label> Node<Value, Label>.traverse(container: Container<Node<Value, Label>>): Result<Value> {
     var result = Result.empty<Value>()
-    val queue = LinkedList<Node<Value, Label>>()
-    queue.add(this)
-    while (queue.isNotEmpty()) {
-        val node = queue.removeFirst()
+    container.add(this)
+    while (container.isNotEmpty()) {
+        val node = container.remove()
         if (!result.contains(node.value)) {
             result += node.value
-            queue.addAll(node.neighbors())
-        }
-    }
-    return result
-}
-
-private fun <Value, Label> Node<Value, Label>.dft(): Result<Value> {
-    var result = Result.empty<Value>()
-    val stack = LinkedList<Node<Value, Label>>()
-    stack.addLast(this)
-    while (stack.isNotEmpty()) {
-        val node = stack.removeLast()
-        if (!result.contains(node.value)) {
-            result += node.value
-            stack.addAll(node.neighbors().reversed())
+            container.add(node.neighbors())
         }
     }
     return result
