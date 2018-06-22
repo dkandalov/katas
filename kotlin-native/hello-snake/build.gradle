@@ -18,4 +18,14 @@ konanArtifacts {
 	program('hello-snake') {
 	    srcDir 'src'
 	}
+
+//    program("hello-snake-test") {
+//        srcDir("test")
+//        commonSourceSets("test")
+//        extraOpts("-tr")
+//    }
 }
+
+//tasks.create("test") {
+//    dependsOn("hello-snake-test")
+//}

@@ -34,6 +34,13 @@ data class Board(val width: Int, val height: Int, val snake: Snake) {
     fun update(): Board {
         return copy(snake = snake.update().wrap(width, height))
     }
+
+    override fun toString() =
+        0.until(width).joinToString("\n") { y ->
+            0.until(height).joinToString("") { x ->
+                if (snake.points.contains(Point(x, y))) "x" else " "
+            }
+        }
 }
 
 data class Snake(val points: List<Point>, val direction: Direction) {
@@ -50,17 +57,11 @@ data class Snake(val points: List<Point>, val direction: Direction) {
 
 fun drawGame(board: Board) {
     memScoped {
-        val s = 0.until(board.width).joinToString("\n") { y ->
-            0.until(board.height).joinToString("") { x ->
-                if (board.snake.points.contains(Point(x, y))) "x" else " "
-            }
-        }
-
         val time = alloc<timespec>()
         clock_gettime(CLOCK_REALTIME, time.ptr)
 
         println("----- time: ${time.tv_sec}")
-        println(s)
+        println(board.toString())
         println("-----")
 
         sleep(1)
