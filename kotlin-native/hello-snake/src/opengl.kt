@@ -5,8 +5,17 @@ import platform.OpenGLCommon.GLfloat
 
 // Ported from http://openglsamples.sourceforge.net/projects/index.php/blog/index/
 class OpenGLWindow {
+    private val width = 1280
+    private val height = 960
+    var rotation: GLfloat = 0.0f
+    val rotationSpeed: GLfloat = 0.0f
+    var x: GLfloat = 0.0f
+    var y: GLfloat = 0.0f
+    var points = ArrayList<Point>()
 
-    fun init() {
+    fun init(f: () -> Unit) {
+        window = this
+
         memScoped {
             val argc = alloc<IntVar>().apply { value = 0 }
             glutInit(argc.ptr, null)
@@ -14,9 +23,12 @@ class OpenGLWindow {
 
         glutInitDisplayMode(GLUT_RGB or GLUT_DOUBLE or GLUT_DEPTH)
 
-        glutInitWindowSize(windowWidth, windowHeight)
+        glutInitWindowSize(this.width, this.height)
         glutCreateWindow("The GLUT Teapot")
-        glutDisplayFunc(staticCFunction(::display))
+        glutDisplayFunc(staticCFunction { ->
+//            f()
+            display()
+        })
         glutIdleFunc(staticCFunction(::display))
         glutKeyboardFunc(staticCFunction(::onKeyPress))
 //      glutFullScreen()
@@ -27,18 +39,13 @@ class OpenGLWindow {
     }
 
     private fun initializeView() {
-        // select projection matrix
         glMatrixMode(GL_PROJECTION)
-
-        // set the viewport
-        glViewport(0, 0, windowWidth, windowHeight)
-
-        // set matrix mode
+        glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
 
         // reset projection matrix
         glLoadIdentity()
-        val aspect = windowWidth.toDouble() / windowHeight
+        val aspect = width.toDouble() / height
 
         // set up a perspective projection matrix
         gluPerspective(45.0, aspect, 1.0, 500.0)
@@ -70,19 +77,18 @@ class OpenGLWindow {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }
 
+    fun cube(x: Int, y: Int) {
+        points.add(Point(x, y))
+    }
+
+    fun clear(x: Int, y: Int) {
+        points.remove(Point(x, y))
+    }
 }
 
-private var rotation: GLfloat = 0.0f
-private val rotationSpeed: GLfloat = 0.2f
-private var x: GLfloat = 0.0f
-private var y: GLfloat = 0.0f
+private lateinit var window: OpenGLWindow
 
-private val windowWidth = 1280
-private val windowHeight = 960
-
-
-fun display() {
-    // Clear Screen and Depth Buffer
+private fun display() {
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
@@ -94,26 +100,31 @@ fun display() {
 
     glPushMatrix()
     glColor3f(1.0f, 0.0f, 0.0f)
-    glTranslatef(x, y, 0.0f)
-    glRotatef(rotation, 0.0f, 1.0f, 0.0f)
+    glTranslatef(window.x, window.y, 0.0f)
+    glRotatef(window.rotation, 0.0f, 1.0f, 0.0f)
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
-//    glutSolidTeapot(1.0)
-    glutSolidCube(1.0)
+//    window.points.forEach { point ->
+//        glPushMatrix()
+//        glTranslatef(point.x.toFloat(), point.y.toFloat(), 0.0f)
+//        glutSolidCube(0.1)
+//        glPopMatrix()
+//    }
+    glutSolidCube(0.1)
+
     glPopMatrix()
 
-
-    rotation += rotationSpeed
+    window.rotation += window.rotationSpeed
     glutSwapBuffers()
 }
 
 
 @Suppress("UNUSED_PARAMETER")
-fun onKeyPress(char: Byte, _x: Int, _y: Int) {
+private fun onKeyPress(char: Byte, _x: Int, _y: Int) {
     when (char.toChar()) {
-        'd' -> x += 0.2f
-        'a' -> x -= 0.2f
-        'w' -> y += 0.2f
-        's' -> y -= 0.2f
+        'd' -> window.x += 0.2f
+        'a' -> window.x -= 0.2f
+        'w' -> window.y += 0.2f
+        's' -> window.y -= 0.2f
     }
 }
