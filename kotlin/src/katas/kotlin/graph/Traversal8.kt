@@ -1,6 +1,8 @@
 package katas.kotlin.graph
 
 import katas.kotlin.graph.Graph.Node
+import katas.kotlin.graph.Traversal8.Frame.Args
+import katas.kotlin.graph.Traversal8.Frame.Result
 import katas.kotlin.shouldEqual
 import kotlincommon.join
 import org.junit.Test
@@ -68,18 +70,25 @@ class Traversal8 {
         return (this.nodes[value] ?: return "").bft().join("-")
     }
 
-    data class Frame<Value, Label>(val node: Node<Value, Label>, val path: LinkedHashSet<Node<Value, Label>>)
+    private sealed class Frame<Value, Label> {
+        data class Result<Value, Label>(val path: LinkedHashSet<Node<Value, Label>>): Frame<Value, Label>()
+        data class Args<Value, Label>(val node: Node<Value, Label>, val result: Result<Value, Label>): Frame<Value, Label>()
+    }
 
     private fun <Value, Label> Node<Value, Label>.dft(): LinkedHashSet<Node<Value, Label>> {
         val stack = LinkedList<Frame<Value, Label>>()
-        stack.add(Frame(this, LinkedHashSet()))
+        stack.add(Args(this, Result(LinkedHashSet())))
         while (stack.isNotEmpty()) {
-            val frame = stack.removeLast()
-            if (!frame.path.contains(frame.node)) {
-//                stack.add(Frame())
+            val args = stack.removeLast() as Args
+            args.result.path.add(args.node)
+            if (!args.result.path.contains(args.node)) {
+//                frame.node.neighbors().forEach { node ->
+//                    stack.add(Frame(node, frame.path))
+//                }
+//            }
             }
         }
-        return stack.remove().path
+        return (stack.removeLast() as Result).path
     }
 
     private fun <Value, Label> Node<Value, Label>.bft(): LinkedHashSet<Node<Value, Label>> {
