@@ -1,8 +1,7 @@
 package katas.kotlin.graph
 
+import katas.kotlin.doesNotContain
 import katas.kotlin.graph.Graph.Node
-import katas.kotlin.graph.Traversal8.Frame.Args
-import katas.kotlin.graph.Traversal8.Frame.Result
 import katas.kotlin.shouldEqual
 import kotlincommon.join
 import org.junit.Test
@@ -70,28 +69,31 @@ class Traversal8 {
         return (this.nodes[value] ?: return "").bft().join("-")
     }
 
-    private sealed class Frame<Value, Label> {
-        data class Result<Value, Label>(val path: LinkedHashSet<Node<Value, Label>>): Frame<Value, Label>()
-        data class Args<Value, Label>(val node: Node<Value, Label>, val result: Result<Value, Label>): Frame<Value, Label>()
-    }
-
-    private fun <Value, Label> Node<Value, Label>.dft(): LinkedHashSet<Node<Value, Label>> {
-        val stack = LinkedList<Frame<Value, Label>>()
-        stack.add(Args(this, Result(LinkedHashSet())))
+    private fun <Value, Label> Node<Value, Label>.dft(): LinkedHashSet<Value> {
+        val result = LinkedHashSet<Value>()
+        val stack = LinkedList<Node<Value, Label>>()
+        stack.add(this)
         while (stack.isNotEmpty()) {
-            val args = stack.removeLast() as Args
-            args.result.path.add(args.node)
-            if (!args.result.path.contains(args.node)) {
-//                frame.node.neighbors().forEach { node ->
-//                    stack.add(Frame(node, frame.path))
-//                }
-//            }
+            val node = stack.removeLast()
+            if (result.doesNotContain(node.value)) {
+                result.add(node.value)
+                node.neighbors().reversed().forEach { stack.addLast(it) }
             }
         }
-        return (stack.removeLast() as Result).path
+        return result
     }
 
-    private fun <Value, Label> Node<Value, Label>.bft(): LinkedHashSet<Node<Value, Label>> {
-        TODO("not implemented")
+    private fun <Value, Label> Node<Value, Label>.bft(): LinkedHashSet<Value> {
+        val result = LinkedHashSet<Value>()
+        val stack = LinkedList<Node<Value, Label>>()
+        stack.add(this)
+        while (stack.isNotEmpty()) {
+            val node = stack.removeLast()
+            if (result.doesNotContain(node.value)) {
+                result.add(node.value)
+                node.neighbors().forEach { stack.addFirst(it) }
+            }
+        }
+        return result
     }
 }
