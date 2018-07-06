@@ -10,22 +10,27 @@ buildscript {
 	}
 }
 
-apply plugin: 'konan'
-
-konan.targets = ['macbook']
+apply plugin: "konan"
 
 konanArtifacts {
-	program('hello-snake') {
-	    srcDir 'src'
+	library("snake-lib") {
+	    srcDir "src"
 	}
-
-//    program("hello-snake-test") {
-//        srcDir("test")
-//        commonSourceSets("test")
-//        extraOpts("-tr")
-//    }
+	program("snake-main") {
+		srcDir "main"
+		libraries {
+		    artifact "snake-lib"
+		}
+	}
+    program("snake-test") {
+        srcDir("test")
+        extraOpts("-tr")
+	    libraries {
+		    artifact "snake-lib"
+	    }
+    }
 }
 
-//tasks.create("test") {
-//    dependsOn("hello-snake-test")
-//}
+tasks.create("test") {
+    dependsOn("runSnake-test")
+}

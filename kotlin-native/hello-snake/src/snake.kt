@@ -1,4 +1,3 @@
-import Direction.right
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
@@ -7,12 +6,12 @@ import platform.posix.clock_gettime
 import platform.posix.sleep
 import platform.posix.timespec
 
-fun main(args: Array<String>) {
+fun snakeMain() {
     var board = Board(
         width = 5, height = 5,
         snake = Snake(
             points = listOf(Point(2, 1), Point(1, 1), Point(0, 1)),
-            direction = right
+            direction = Direction.right
         )
     )
     val openGLWindow = OpenGLWindow()
