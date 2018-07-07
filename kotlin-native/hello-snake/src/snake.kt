@@ -16,18 +16,16 @@ fun snakeMain() {
     )
     val openGLWindow = OpenGLWindow()
     openGLWindow.init {
-        0.until(10).forEach {
-            drawGame(board)
-            board = board.update()
-            openGLWindow.display(board)
-        }
+        board = board.update()
+        drawGame(board)
+        openGLWindow.display(board)
     }
 }
 
 private fun OpenGLWindow.display(board: Board) {
     0.until(board.height).forEach { x ->
         0.until(board.width).forEach { y ->
-            if (board.snake.points.contains(Point(x, y))) this.cube(x, y) else this.clear(x, y)
+            if (board.snake.points.contains(Point(x, y))) cube(x, y) else clear(x, y)
         }
     }
 }
@@ -73,7 +71,5 @@ fun drawGame(board: Board) {
         println("----- time: ${time.tv_sec}")
         println(board.toString())
         println("-----")
-
-        sleep(1)
     }
 }

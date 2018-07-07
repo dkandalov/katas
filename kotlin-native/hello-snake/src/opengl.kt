@@ -5,16 +5,17 @@ import platform.OpenGLCommon.GLfloat
 
 // Ported from http://openglsamples.sourceforge.net/projects/index.php/blog/index/
 class OpenGLWindow {
-    private val width = 1280
-    private val height = 960
+    private val width = 800
+    private val height = 600
     var rotation: GLfloat = 0.0f
     val rotationSpeed: GLfloat = 0.0f
     var x: GLfloat = 0.0f
     var y: GLfloat = 0.0f
     var points = ArrayList<Point>()
 
-    fun init(f: () -> Unit) {
+    fun init(ff: () -> Unit) {
         window = this
+        f = ff
 
         memScoped {
             val argc = alloc<IntVar>().apply { value = 0 }
@@ -23,12 +24,9 @@ class OpenGLWindow {
 
         glutInitDisplayMode(GLUT_RGB or GLUT_DOUBLE or GLUT_DEPTH)
 
-        glutInitWindowSize(this.width, this.height)
-        glutCreateWindow("The GLUT Teapot")
-        glutDisplayFunc(staticCFunction { ->
-//            f()
-            display()
-        })
+        glutInitWindowSize(width, height)
+        glutCreateWindow("Snake 22")
+        glutDisplayFunc(staticCFunction(::display))
         glutIdleFunc(staticCFunction(::display))
         glutKeyboardFunc(staticCFunction(::onKeyPress))
 //      glutFullScreen()
@@ -87,6 +85,7 @@ class OpenGLWindow {
 }
 
 private lateinit var window: OpenGLWindow
+private lateinit var f: () -> Unit
 
 private fun display() {
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -104,12 +103,13 @@ private fun display() {
     glRotatef(window.rotation, 0.0f, 1.0f, 0.0f)
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
-//    window.points.forEach { point ->
-//        glPushMatrix()
-//        glTranslatef(point.x.toFloat(), point.y.toFloat(), 0.0f)
-//        glutSolidCube(0.1)
-//        glPopMatrix()
-//    }
+    f()
+    window.points.forEach { point ->
+        glPushMatrix()
+        glTranslatef(point.x.toFloat(), point.y.toFloat(), 0.0f)
+        glutSolidCube(0.1)
+        glPopMatrix()
+    }
     glutSolidCube(0.1)
 
     glPopMatrix()
