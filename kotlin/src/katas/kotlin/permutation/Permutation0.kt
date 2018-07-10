@@ -4,10 +4,8 @@ import katas.kotlin.shouldHaveSameElementsAs
 import org.junit.Test
 
 class Permutation0 {
-    // TODO try https://en.wikipedia.org/wiki/Steinhaus%E2%80%93Johnson%E2%80%93Trotter_algorithm
-
     @Test fun `list permutations`() {
-        validatePermutationsFunction({ it.permutations() })
+        validatePermutationsFunction { it.permutations() }
     }
 
     private fun List<Int>.permutations(): List<List<Int>> {

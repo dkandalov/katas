@@ -15,7 +15,7 @@ import kotlin.coroutines.experimental.buildSequence
  */
 class Permutation1 {
     @Test fun `permutations of a list`() {
-        validatePermutationsFunction({ it.permutations().toList() })
+        validatePermutationsFunction { it.permutations().toList() }
 
         listOf(1, 2).permutations().toList().printed()
         listOf(1, 2, 3).permutations().toList().printed()
@@ -30,10 +30,10 @@ class Permutation1 {
 
     private fun <E> List<E>.permutations(): Sequence<List<E>> {
         val list = this
-        val values = list.indices.map { DirectedInt(it, left) }.toMutableList()
-        var permutationsCount = list.size.factorial()
-
         return buildSequence {
+            val values = list.indices.map { DirectedInt(it, left) }.toMutableList()
+            var permutationsCount = list.size.factorial()
+
             yield(values.map { list[it.value] })
             permutationsCount -= ONE
 

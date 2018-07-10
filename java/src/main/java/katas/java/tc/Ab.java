@@ -2,9 +2,13 @@ package katas.java.tc;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
+import static com.google.common.math.BigIntegerMath.factorial;
+import static java.math.BigInteger.ONE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -65,20 +69,19 @@ public class Ab {
 	}
 
 	public static String ab(int n, int k) {
-		for (String s : generate(n)) {
-			if (countPairs(s) == k) return s;
-		}
-		return "";
+		return generate(n)
+			.filter(it -> countPairs(it) == k)
+			.findFirst().orElse("");
 	}
 
-	private static List<String> generate(int n) {
-		if (n == 0) return List.of("");
-		List<String> result = new ArrayList<>();
-		generate(n - 1).forEach(it -> {
-			result.add("A" + it);
-			result.add("B" + it);
+	private static Stream<String> generate(int n) {
+		if (n == 0) return Stream.of("");
+		AtomicReference<BigInteger> permutationsCount = new AtomicReference<>(factorial(n));
+		return Stream.generate(() -> {
+			BigInteger count = permutationsCount.updateAndGet(it -> it.subtract(ONE));
+
+			return "";
 		});
-		return result;
 	}
 
 	private static long countPairs(String s) {
