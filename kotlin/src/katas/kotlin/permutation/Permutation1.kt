@@ -26,35 +26,35 @@ class Permutation1 {
     private val left = -1
     private val right = 1
 
-    private data class DirectedInt(val value: Int, var direction: Int)
+    private data class Index(val value: Int, var direction: Int)
 
     private fun <E> List<E>.permutations(): Sequence<List<E>> {
         val list = this
         return buildSequence {
-            val values = list.indices.map { DirectedInt(it, left) }.toMutableList()
-            var permutationsCount = list.size.factorial()
+            var count = list.size.factorial()
+            val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }
 
-            yield(values.map { list[it.value] })
-            permutationsCount -= ONE
+            yield(indices.map { list[it.value] })
+            count -= ONE
 
-            while (permutationsCount > ZERO) {
-                val maxItem = values.filterIndexed { index, _ -> values.isMobile(index) }.maxBy { it.value }!!
-                val i = values.indexOf(maxItem)
+            while (count > ZERO) {
+                val maxIndex = indices.filterIndexed { index, _ -> indices.isMobile(index) }.maxBy { it.value }!!
+                val i = indices.indexOf(maxIndex)
+                indices.swap(i, i + maxIndex.direction)
 
-                values.swap(i, i + maxItem.direction)
-                yield(values.map { list[it.value] })
+                yield(indices.map { list[it.value] })
+                count -= ONE
 
-                values.filter { it.value > maxItem.value }
+                indices.filter { it.value > maxIndex.value }
                     .forEach { it.direction = if (it.direction == left) right else left }
-                permutationsCount -= ONE
             }
         }
     }
 
-    private fun List<DirectedInt>.isMobile(i: Int): Boolean {
+    private fun List<Index>.isMobile(i: Int): Boolean {
         val j = i + this[i].direction
-        if (j < 0 || j >= size) return false
-        return this[i].value > this[j].value
+        return if (j < 0 || j >= size) false
+        else this[i].value > this[j].value
     }
 }
 
