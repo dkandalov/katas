@@ -1,13 +1,10 @@
 @file:Suppress("FunctionName")
 
+package knapsack
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
-fun main(args: Array<String>) {
-    println("hello")
-    konan.test.main(args)
-}
 
 class KnapsackTests {
     private fun firstFit(values: Collection<Int>, target: Int): List<Int> {

@@ -6,5 +6,5 @@ project(katas Kotlin)
 
 konanc_executable(
     NAME katas
-    SOURCES src/hello.kt)
+    SOURCES src/knapsack/hello.kt src/graph/graph.kt src/main.kt)
 
