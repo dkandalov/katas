@@ -1,12 +1,9 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+@file:Suppress("EXPERIMENTAL_FEATURE_WARNING", "ConvertTwoComparisonsToRangeCheck")
 
 package katas.kotlin.permutation
 
 import kotlincommon.printed
 import org.junit.Test
-import java.math.BigInteger
-import java.math.BigInteger.ONE
-import java.math.BigInteger.ZERO
 import kotlin.coroutines.experimental.buildSequence
 
 /**
@@ -23,55 +20,43 @@ class Permutation1 {
         0.until(10_000).toList().permutations().take(10).toList().printed()
     }
 
-    private val left = -1
-    private val right = 1
+    companion object {
+        private const val left = -1
+        private const val right = 1
 
-    private data class Index(val value: Int, var direction: Int)
+        private data class Index(val value: Int, var direction: Int) {
+            override fun toString() = (if (direction == left) "<" else ">") + value
+        }
 
-    private fun <E> List<E>.permutations(): Sequence<List<E>> {
-        val list = this
-        return buildSequence {
-            var count = list.size.factorial()
-            val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }
+        private fun <E> List<E>.permutations(): Sequence<List<E>> {
+            val list = this
+            return buildSequence {
+                val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }
+                var maxIndex: Index? = Index(-1, left)
 
-            yield(indices.map { list[it.value] })
-            count -= ONE
+                while (maxIndex != null) {
+                    yield(indices.map { list[it.value] })
 
-            while (count > ZERO) {
-                val maxIndex = indices.filterIndexed { index, _ -> indices.isMobile(index) }.maxBy { it.value }!!
-                val i = indices.indexOf(maxIndex)
-                indices.swap(i, i + maxIndex.direction)
-
-                yield(indices.map { list[it.value] })
-                count -= ONE
-
-                indices.filter { it.value > maxIndex.value }
-                    .forEach { it.direction = if (it.direction == left) right else left }
+                    maxIndex = indices.filterIndexed { i, _ -> indices.isMobile(i) }.maxBy { it.value }
+                    if (maxIndex != null) {
+                        val i = indices.indexOf(maxIndex)
+                        indices.swap(i, i + maxIndex.direction)
+                        indices.filter { it.value > maxIndex.value }
+                            .forEach { it.direction = if (it.direction == left) right else left }
+                    }
+                }
             }
         }
+
+        private fun List<Index>.isMobile(i: Int): Boolean {
+            val j = i + this[i].direction
+            return (j >= 0 && j < size) && this[i].value > this[j].value
+        }
+        
+        private fun <E> MutableList<E>.swap(i1: Int, i2: Int) {
+            val tmp = this[i1]
+            this[i1] = this[i2]
+            this[i2] = tmp
+        }
     }
-
-    private fun List<Index>.isMobile(i: Int): Boolean {
-        val j = i + this[i].direction
-        return if (j < 0 || j >= size) false
-        else this[i].value > this[j].value
-    }
-}
-
-private fun Int.factorial(): BigInteger = toBigInteger().factorial()
-
-private fun BigInteger.factorial(): BigInteger {
-    var result = ONE
-    var n = this
-    while (n > ONE) {
-        result *= n
-        n -= ONE
-    }
-    return result
-}
-
-private fun <E> MutableList<E>.swap(i1: Int, i2: Int) {
-    val tmp = this[i1]
-    this[i1] = this[i2]
-    this[i2] = tmp
 }
