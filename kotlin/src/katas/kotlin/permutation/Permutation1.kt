@@ -2,6 +2,7 @@
 
 package katas.kotlin.permutation
 
+import kotlincommon.join
 import kotlincommon.printed
 import org.junit.Test
 import kotlin.coroutines.experimental.buildSequence
@@ -14,8 +15,8 @@ class Permutation1 {
     @Test fun `permutations of a list`() {
         validatePermutationsFunction { it.permutations().toList() }
 
-        listOf(1, 2).permutations().toList().printed()
-        listOf(1, 2, 3).permutations().toList().printed()
+        listOf(0, 1).permutations().toList().printed()
+        listOf(0, 1, 2).permutations().toList().printed()
         "abcd".toCharArray().toList().permutations().toList().printed()
         0.until(10_000).toList().permutations().take(10).toList().printed()
     }
@@ -25,6 +26,9 @@ class Permutation1 {
         private const val right = 1
 
         private data class Index(val value: Int, var direction: Int) {
+            fun inverseDirection() {
+                direction = if (direction == left) right else left
+            }
             override fun toString() = (if (direction == left) "<" else ">") + value
         }
 
@@ -35,6 +39,7 @@ class Permutation1 {
                 var maxIndex: Index? = Index(-1, left)
 
                 while (maxIndex != null) {
+                    indices.join().printed()
                     yield(indices.map { list[it.value] })
 
                     maxIndex = indices.filterIndexed { i, _ -> indices.isMobile(i) }.maxBy { it.value }
@@ -42,7 +47,7 @@ class Permutation1 {
                         val i = indices.indexOf(maxIndex)
                         indices.swap(i, i + maxIndex.direction)
                         indices.filter { it.value > maxIndex.value }
-                            .forEach { it.direction = if (it.direction == left) right else left }
+                            .forEach { it.inverseDirection() }
                     }
                 }
             }
