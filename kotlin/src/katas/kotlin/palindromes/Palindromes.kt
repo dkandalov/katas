@@ -23,21 +23,38 @@ class Palindromes {
         )
     }
 
-    private data class Palindrome(val value: String, val range: IntRange) {
+    @Test fun `determine if string is a palindrome`() {
+        "".isPalindrome() shouldEqual true
+        "a".isPalindrome() shouldEqual true
+        "aa".isPalindrome() shouldEqual true
+
+        "ab".isPalindrome() shouldEqual false
+        "ba".isPalindrome() shouldEqual false
+
+        "aba".isPalindrome() shouldEqual true
+        "abba".isPalindrome() shouldEqual true
+        "aabba".isPalindrome() shouldEqual false
+    }
+
+    data class Palindrome(val value: String, val range: IntRange) {
         override fun toString() = "Text: $value, Index: ${range.first}, Length: ${value.length}"
     }
 
-    private fun findLongestPalindromes(s: String, maxAmount: Int = 3): List<Palindrome> {
+    fun findLongestPalindromes(s: String, maxAmount: Int = 3, minPalindromeSize: Int = 2): List<Palindrome> {
         val result = ArrayList<Palindrome>()
-        s.allSubstrings().forEach { (substring, range) ->
-            if (substring.isPalindrome() && result.none { it.range.contains(range) }) {
-                result.add(Palindrome(substring, range))
+        s.allSubstrings()
+            .filter { (substring, _) ->
+                substring.length >= minPalindromeSize && substring.isPalindrome()
             }
-        }
+            .forEach { (substring, range) ->
+                if (result.none { it.range.contains(range) }) {
+                    result.add(Palindrome(substring, range))
+                }
+            }
         return result.sortedBy { -it.value.length }.distinct().take(maxAmount)
     }
 
-    private fun String.allSubstrings(): Sequence<Pair<String, IntRange>> = buildSequence {
+    fun String.allSubstrings(): Sequence<Pair<String, IntRange>> = buildSequence {
         val s = this@allSubstrings
         0.until(s.length).forEach { from ->
             s.length.downTo(from + 1).forEach { to ->
@@ -48,10 +65,10 @@ class Palindromes {
         }
     }
 
-    private fun IntRange.contains(range: IntRange) = contains(range.first) && contains(range.last)
-
-    private tailrec fun String.isPalindrome(): Boolean =
+    tailrec fun String.isPalindrome(): Boolean =
         if (length < 2) true
         else if (first() != last()) false
         else substring(1, length - 1).isPalindrome()
+
+    private fun IntRange.contains(range: IntRange) = contains(range.first) && contains(range.last)
 }

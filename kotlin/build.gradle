@@ -26,10 +26,6 @@ version "0.0"
 apply plugin:"kotlin"
 apply plugin:"kotlin-allopen"
 
-repositories {
-	maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
-	mavenCentral()
-}
 
 dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -46,9 +42,7 @@ dependencies {
 }
 
 sourceSets {
-	main {
-		kotlin { srcDir "src" }
-	}
+	main.kotlin.srcDir "src"
 }
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
