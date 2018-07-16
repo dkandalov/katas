@@ -2,8 +2,8 @@
 
 package graph
 
-import graph.BfsState.*
 import kotlin.coroutines.experimental.buildSequence
+import kotlin.math.max
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,18 +16,17 @@ data class EdgeNode(
     var y: Int,
     var weight: Int?,
     var next: EdgeNode?
-) {
-    fun iterate(): Iterable<EdgeNode> {
-        return buildSequence {
-            var edgeNode: EdgeNode? = this@EdgeNode
-            while (edgeNode != null) {
-                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-                yield(edgeNode!!)
-                edgeNode = edgeNode.next
-            }
-        }.asIterable()
+)
+
+fun EdgeNode?.asIterable(): Iterable<EdgeNode> = buildSequence {
+    var edgeNode: EdgeNode? = this@asIterable
+    while (edgeNode != null) {
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+        yield(edgeNode!!)
+        edgeNode = edgeNode.next
     }
-}
+}.asIterable()
+
 
 class Graph(
     var edges: ArrayList<EdgeNode?>,
@@ -43,31 +42,29 @@ class Graph(
     )
 
     private fun insertEdge(x: Int, y: Int) {
-        edges.ensureSize(x + 1, defaultValue = null)
-        degree.ensureSize(x + 1, defaultValue = 0)
+        val max = max(x, y) + 1
+        if (max > numberOfVertices) numberOfVertices = max
+        edges.ensureSize(max, defaultValue = null)
+        degree.ensureSize(max, defaultValue = 0)
 
         edges[x] = EdgeNode(y = y, weight = null, next = edges[x])
         degree[x]++
     }
 
     override fun toString(): String {
-        return edges.indices.map { x ->
-            edges[x]?.iterate()?.joinToString(",") { edge ->
+        return edges.indices.flatMap { x ->
+            edges[x].asIterable().map { edge ->
                 x.toString() + "-" + edge.y
-            } ?: ""
-        }.filter { it.isNotEmpty() }.joinToString(",")
+            }
+        }.join(",")
     }
 
     companion object {
         fun read(s: String): Graph {
             val graph = Graph(directed = false)
-            val vertices = HashMap<Int, Unit>() // use map because clion can't process HashSet at the moment :(
             s.split(",").forEach {
-                val (x, y) = it.split("-").let { Pair(it[0].toInt(), it[1].toInt()) }
-                graph.insertEdge(x, y)
-                vertices[x] = Unit
-                vertices[y] = Unit
-                graph.numberOfVertices = vertices.size
+                val split = it.split("-")
+                graph.insertEdge(split[0].toInt(), split[1].toInt())
             }
             return graph
         }
@@ -75,8 +72,7 @@ class Graph(
 }
 
 class GraphTest {
-    @Test
-    fun `create graph from string`() {
+    @Test fun `create graph from string`() {
         Graph.read("1-2").toString() shouldEqual "1-2"
         Graph.read("2-1").toString() shouldEqual "2-1"
 
@@ -86,13 +82,6 @@ class GraphTest {
         // └──3──┘
         Graph.read("1-2,1-3,2-4,3-4").toString() shouldEqual "1-3,1-2,2-4,3-4"
     }
-
-    @Test
-    fun `breadth-first search`() {
-        // 1──2──4
-        // └──3──┘
-        // TODO Graph.read("1-2,1-3,2-4,3-4").bfs(1).joinToString() shouldEqual "1,2,3,4"
-    }
 }
 
 
@@ -100,39 +89,55 @@ class GraphTest {
 // 5.6 Breadth-First Search
 // ------------------------
 
-private enum class BfsState {
-    undiscovered, discovered, processed
-}
-
-fun Graph.bfs(s: Int): List<Int> {
-    val state = Array(numberOfVertices) { undiscovered }
+fun Graph.bfs(
+    startVertex: Int,
+    processVertexEarly: (Int) -> Unit = {},
+    processVertexLate: (Int) -> Unit = {},
+    processEdge: (Int, Int) -> Unit = { _, _ -> }
+) {
+    val discovered = Array(numberOfVertices) { false }
+    val processed = Array(numberOfVertices) { false }
     val parents = Array(numberOfVertices) { -1 }
 
-    state[s] = discovered
-    parents[s] = -1
+    discovered[startVertex] = true
+    parents[startVertex] = -1
 
     val queue = ArrayList<Int>()
-    queue.add(s)
+    queue.add(startVertex)
 
-//    while (queue.isNotEmpty()) {
-//        val head = queue.removeAt(0)
-//        println(head) // TODO
-//        //edges[head]
-//        queue.add(123)
-//    }
-    return emptyList()
-}
+    while (queue.isNotEmpty()) {
+        val vertex = queue.removeAt(0)
+        processVertexEarly(vertex)
+        processed[vertex] = true
 
-class BFSTest {
-    @Test
-    fun foo() {
-        // TODO
+        edges[vertex].asIterable().forEach { edge ->
+            val y = edge.y
+            if (!processed[y] || this.directed) {
+                processEdge(vertex, y)
+            }
+            if (!discovered[y]) {
+                queue.add(y)
+                discovered[y] = true
+                parents[y] = vertex
+            }
+        }
+        processVertexLate(vertex)
     }
 }
 
-fun <T> ArrayList<T>.fillWith(value: T, size: Int): ArrayList<T> {
-    0.until(size).forEach { add(value) }
-    return this
+fun Graph.bfsToList(startVertex: Int): List<Int> {
+    val result = ArrayList<Int>()
+    bfs(startVertex, processVertexEarly = { result.add(it) })
+    return result
+}
+
+class BFSTest {
+    @Test fun `breadth-first search`() {
+        Graph.read("1-2,2-3").bfsToList(1).join(",") shouldEqual "1,2,3"
+        // 1──2──4
+        // └──3──┘
+        Graph.read("1-3,1-2,3-4,2-4").bfsToList(1).join(",") shouldEqual "1,2,3,4"
+    }
 }
 
 fun <T> ArrayList<T>.ensureSize(minSize: Int, defaultValue: T): ArrayList<T> {
@@ -144,4 +149,20 @@ fun <T> ArrayList<T>.ensureSize(minSize: Int, defaultValue: T): ArrayList<T> {
 
 infix fun <T> T.shouldEqual(that: T) {
     assertEquals(that, this)
+}
+
+fun <T> T.printed(f: (T) -> String = { it.toString() }): T {
+    println(f(this))
+    return this
+}
+
+fun <T> Iterable<T>.join(
+    separator: CharSequence = ", ",
+    prefix: CharSequence = "",
+    postfix: CharSequence = "",
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    transform: ((T) -> CharSequence)? = null
+): String {
+    return this.joinToString(separator, prefix, postfix, limit, truncated, transform)
 }
