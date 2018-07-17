@@ -52,10 +52,16 @@ class Graph(
     }
 
     override fun toString(): String {
+        val processedEdgeFrom = Array(numberOfVertices) { false }
+        val processedEdgeTo = Array(numberOfVertices) { false }
         return edges.indices.flatMap { x ->
-            edges[x].asIterable().map { edge ->
-                x.toString() + "-" + edge.y
-            }
+            edges[x].asIterable()
+                .filterNot { edge -> processedEdgeFrom[edge.y] && processedEdgeTo[x] }
+                .map { edge ->
+                    processedEdgeFrom[x] = true
+                    processedEdgeTo[edge.y] = true
+                    x.toString() + "-" + edge.y
+                }
         }.join(",")
     }
 
@@ -64,7 +70,10 @@ class Graph(
             val graph = Graph(directed = false)
             s.split(",").forEach {
                 val split = it.split("-")
-                graph.insertEdge(split[0].toInt(), split[1].toInt())
+                val x = split[0].toInt()
+                val y = split[1].toInt()
+                graph.insertEdge(x, y)
+                if (!graph.directed) graph.insertEdge(y, x)
             }
             return graph
         }
@@ -74,7 +83,7 @@ class Graph(
 class GraphTest {
     @Test fun `create graph from string`() {
         Graph.read("1-2").toString() shouldEqual "1-2"
-        Graph.read("2-1").toString() shouldEqual "2-1"
+        Graph.read("2-1").toString() shouldEqual "1-2"
 
         Graph.read("1-2,2-3").toString() shouldEqual "1-2,2-3"
 
@@ -89,12 +98,19 @@ class GraphTest {
 // 5.6 Breadth-First Search
 // ------------------------
 
+// 1──2──3
+// |  |  |
+// ├──5──4
+// └──6
+// From Figure 5.9
+val exampleGraph = Graph.read("1-2,2-3,3-4,4-5,2-5,1-5,1-6")
+
 fun Graph.bfs(
     startVertex: Int,
     processVertexEarly: (Int) -> Unit = {},
     processVertexLate: (Int) -> Unit = {},
     processEdge: (Int, Int) -> Unit = { _, _ -> }
-) {
+): Array<Int> {
     val discovered = Array(numberOfVertices) { false }
     val processed = Array(numberOfVertices) { false }
     val parents = Array(numberOfVertices) { -1 }
@@ -102,8 +118,7 @@ fun Graph.bfs(
     discovered[startVertex] = true
     parents[startVertex] = -1
 
-    val queue = ArrayList<Int>()
-    queue.add(startVertex)
+    val queue = ArrayList<Int>().apply { add(startVertex) }
 
     while (queue.isNotEmpty()) {
         val vertex = queue.removeAt(0)
@@ -123,6 +138,8 @@ fun Graph.bfs(
         }
         processVertexLate(vertex)
     }
+
+    return parents
 }
 
 fun Graph.bfsToList(startVertex: Int): List<Int> {
@@ -134,11 +151,30 @@ fun Graph.bfsToList(startVertex: Int): List<Int> {
 class BFSTest {
     @Test fun `breadth-first search`() {
         Graph.read("1-2,2-3").bfsToList(1).join(",") shouldEqual "1,2,3"
+
         // 1──2──4
         // └──3──┘
         Graph.read("1-3,1-2,3-4,2-4").bfsToList(1).join(",") shouldEqual "1,2,3,4"
+
+        exampleGraph.bfsToList(1).join(",") shouldEqual "1,6,5,2,4,3"
     }
 }
+
+// -------------------
+// 5.6.2 Finding Paths
+// -------------------
+fun findPath(start: Int, end: Int, parents: Array<Int>, result: List<Int> = ArrayList()): List<Int> {
+    return if (start == end || end == -1) result + start
+    else findPath(start, parents[end], parents) + end
+}
+
+class FindingPathsTest {
+    @Test fun `find path`() {
+        val parents = exampleGraph.bfs(1)
+        findPath(1, 4, parents).join() shouldEqual "1, 5, 4"
+    }
+}
+
 
 fun <T> ArrayList<T>.ensureSize(minSize: Int, defaultValue: T): ArrayList<T> {
     if (size < minSize) {

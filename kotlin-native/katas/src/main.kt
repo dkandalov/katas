@@ -1,4 +1,5 @@
 import graph.BFSTest
+import graph.FindingPathsTest
 import graph.GraphTest
 
 fun main(args: Array<String>) {
@@ -7,4 +8,5 @@ fun main(args: Array<String>) {
 
     GraphTest().`create graph from string`()
     BFSTest().`breadth-first search`()
+    FindingPathsTest().`find path`()
 }
