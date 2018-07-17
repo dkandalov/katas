@@ -3,7 +3,6 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.CLOCK_REALTIME
 import platform.posix.clock_gettime
-import platform.posix.sleep
 import platform.posix.timespec
 
 fun snakeMain() {
