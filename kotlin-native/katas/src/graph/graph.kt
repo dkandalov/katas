@@ -105,12 +105,17 @@ class GraphTest {
 // From Figure 5.9
 val exampleGraph = Graph.read("1-2,2-3,3-4,4-5,2-5,1-5,1-6")
 
+class BfsResult(
+    val parents: Array<Int>,
+    val discovered: Array<Boolean>
+)
+
 fun Graph.bfs(
     startVertex: Int,
     processVertexEarly: (Int) -> Unit = {},
     processVertexLate: (Int) -> Unit = {},
     processEdge: (Int, Int) -> Unit = { _, _ -> }
-): Array<Int> {
+): BfsResult {
     val discovered = Array(numberOfVertices) { false }
     val processed = Array(numberOfVertices) { false }
     val parents = Array(numberOfVertices) { -1 }
@@ -139,7 +144,7 @@ fun Graph.bfs(
         processVertexLate(vertex)
     }
 
-    return parents
+    return BfsResult(parents, discovered)
 }
 
 fun Graph.bfsToList(startVertex: Int): List<Int> {
@@ -170,11 +175,40 @@ fun findPath(start: Int, end: Int, parents: Array<Int>, result: List<Int> = Arra
 
 class FindingPathsTest {
     @Test fun `find path`() {
-        val parents = exampleGraph.bfs(1)
+        val parents = exampleGraph.bfs(1).parents
         findPath(1, 4, parents).join() shouldEqual "1, 5, 4"
     }
 }
 
+// --------------------------
+// 5.7.1 Connected Components
+// --------------------------
+
+typealias Component = List<Int>
+
+fun Graph.connectedComponents(): List<Component> {
+    val result = ArrayList<Component>()
+    var discovered = Array(numberOfVertices) { false }
+    0.until(numberOfVertices).forEach { i ->
+        if (!discovered[i]) {
+            val component = ArrayList<Int>()
+            discovered = bfs(i, processVertexEarly = { component.add(it) }).discovered
+            result.add(component)
+        }
+    }
+    return result
+}
+
+class ConnectedComponentsTest {
+    @Test fun `find connected components in a graph`() {
+        Graph.read("0-1,1-2").connectedComponents() shouldEqual listOf(listOf(0, 1, 2))
+        Graph.read("0-1,2-3").connectedComponents() shouldEqual listOf(listOf(0, 1), listOf(2, 3))
+    }
+}
+
+// -------------------
+// Util
+// -------------------
 
 fun <T> ArrayList<T>.ensureSize(minSize: Int, defaultValue: T): ArrayList<T> {
     if (size < minSize) {
