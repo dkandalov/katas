@@ -1,7 +1,4 @@
-import graph.BFSTest
-import graph.ConnectedComponentsTest
-import graph.FindingPathsTest
-import graph.GraphTest
+import graph.*
 
 fun main(args: Array<String>) {
     // This function exists to make CLion compilation happy and
@@ -11,4 +8,5 @@ fun main(args: Array<String>) {
     BFSTest().`breadth-first search`()
     FindingPathsTest().`find path`()
     ConnectedComponentsTest().`find connected components in a graph`()
+    TwoColourTest().`assign two colours to graph vertexes`()
 }

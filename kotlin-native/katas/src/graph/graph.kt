@@ -2,6 +2,7 @@
 
 package graph
 
+import graph.Colour.*
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.math.max
 import kotlin.test.Test
@@ -205,6 +206,49 @@ class ConnectedComponentsTest {
         Graph.read("0-1,2-3").connectedComponents() shouldEqual listOf(listOf(0, 1), listOf(2, 3))
     }
 }
+
+// -------------------------
+// 5.7.2 Two-Coloring Graphs
+// -------------------------
+
+enum class Colour {
+    uncolored, white, black;
+
+    fun complement() = when (this) {
+        white -> black
+        black -> white
+        else -> uncolored
+    }
+}
+
+fun Graph.twoColour(): Array<Colour>? {
+    val colour = Array(numberOfVertices) { uncolored }
+    var discovered = Array(numberOfVertices) { false }
+    var bipartite = true
+
+    val edgeHandler = { x: Int, y: Int ->
+        if (colour[x] == colour[y]) {
+            bipartite = false
+        }
+        colour[y] = colour[x].complement()
+    }
+
+    0.until(numberOfVertices).forEach { i ->
+        if (!discovered[i]) {
+            colour[i] = white
+            discovered = bfs(i, processEdge = edgeHandler).discovered
+        }
+    }
+    return if (bipartite) colour else null
+}
+
+class TwoColourTest {
+    @Test fun `assign two colours to graph vertexes`() {
+        Graph.read("0-1,1-2").twoColour()?.toList() shouldEqual listOf(white, black, white)
+        Graph.read("0-1,1-2,0-2").twoColour() shouldEqual null
+    }
+}
+
 
 // -------------------
 // Util
