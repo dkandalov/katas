@@ -154,8 +154,8 @@ fun Graph.bfsToList(startVertex: Int): List<Int> {
     return result
 }
 
-class BFSTest {
-    @Test fun `breadth-first search`() {
+class BfsTest {
+    @Test fun `breadth-first graph traversal`() {
         Graph.read("1-2,2-3").bfsToList(1).join(",") shouldEqual "1,2,3"
 
         // 1──2──4
@@ -222,24 +222,24 @@ enum class Colour {
 }
 
 fun Graph.twoColour(): Array<Colour>? {
-    val colour = Array(numberOfVertices) { uncolored }
+    val colours = Array(numberOfVertices) { uncolored }
     var discovered = Array(numberOfVertices) { false }
     var bipartite = true
 
     val edgeHandler = { x: Int, y: Int ->
-        if (colour[x] == colour[y]) {
+        if (colours[x] == colours[y]) {
             bipartite = false
         }
-        colour[y] = colour[x].complement()
+        colours[y] = colours[x].complement()
     }
 
     0.until(numberOfVertices).forEach { i ->
         if (!discovered[i]) {
-            colour[i] = white
+            colours[i] = white
             discovered = bfs(i, processEdge = edgeHandler).discovered
         }
     }
-    return if (bipartite) colour else null
+    return if (bipartite) colours else null
 }
 
 class TwoColourTest {
@@ -249,6 +249,73 @@ class TwoColourTest {
     }
 }
 
+
+// ----------------------
+// 5.8 Depth-First Search
+// ----------------------
+
+class DfsState(
+    val discovered: Array<Boolean>,
+    val processed: Array<Boolean>,
+    val parents: Array<Int>,
+    val entryTime: Array<Int>,
+    val exitTime: Array<Int>
+) {
+    constructor(numberOfVertices: Int) : this(
+        Array(numberOfVertices) { false },
+        Array(numberOfVertices) { false },
+        Array(numberOfVertices) { -1 },
+        Array(numberOfVertices) { 0 },
+        Array(numberOfVertices) { 0 }
+    )
+}
+
+fun Graph.dfs(
+    vertex: Int,
+    state: DfsState = DfsState(numberOfVertices),
+    processVertexEarly: (Int) -> Unit = {},
+    processVertexLate: (Int) -> Unit = {},
+    processEdge: (Int, Int) -> Unit = { _, _ -> }
+): DfsState = state.run {
+    var time = 0
+
+    discovered[vertex] = true
+    entryTime[vertex] = ++time
+
+    processVertexEarly(vertex)
+
+    edges[vertex].asIterable().forEach { edge ->
+        val y = edge.y
+        if (!discovered[y]) {
+            parents[y] = vertex
+            processEdge(vertex, y)
+            dfs(y, state, processVertexEarly, processVertexLate, processEdge)
+        } else if (!processed[vertex] || directed) {
+            processEdge(vertex, y)
+        }
+    }
+
+    processVertexLate(vertex)
+
+    exitTime[vertex] = ++time
+    processed[vertex] = true
+
+    return state
+}
+
+fun Graph.dfsToList(startVertex: Int): List<Int> {
+    val result = ArrayList<Int>()
+    dfs(startVertex, processVertexEarly = { result.add(it) })
+    return result
+}
+
+class DfsTest {
+    @Test fun `depth-first graph traversal`() {
+        Graph.read("0-1,1-2").dfsToList(0) shouldEqual listOf(0, 1, 2)
+        Graph.read("0-1,1-2").dfsToList(2) shouldEqual listOf(2, 1, 0)
+        Graph.read("0-3,0-1,1-2").dfsToList(0) shouldEqual listOf(0, 1, 2, 3)
+    }
+}
 
 // -------------------
 // Util
