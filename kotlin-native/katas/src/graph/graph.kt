@@ -259,14 +259,16 @@ class DfsState(
     val processed: Array<Boolean>,
     val parents: Array<Int>,
     val entryTime: Array<Int>,
-    val exitTime: Array<Int>
+    val exitTime: Array<Int>,
+    var time: Int = 0,
+    var finished: Boolean = false
 ) {
     constructor(numberOfVertices: Int) : this(
-        Array(numberOfVertices) { false },
-        Array(numberOfVertices) { false },
-        Array(numberOfVertices) { -1 },
-        Array(numberOfVertices) { 0 },
-        Array(numberOfVertices) { 0 }
+        discovered = Array(numberOfVertices) { false },
+        processed = Array(numberOfVertices) { false },
+        parents = Array(numberOfVertices) { -1 },
+        entryTime = Array(numberOfVertices) { 0 },
+        exitTime = Array(numberOfVertices) { 0 }
     )
 }
 
@@ -275,9 +277,9 @@ fun Graph.dfs(
     state: DfsState = DfsState(numberOfVertices),
     processVertexEarly: (Int) -> Unit = {},
     processVertexLate: (Int) -> Unit = {},
-    processEdge: (Int, Int) -> Unit = { _, _ -> }
+    processEdge: (Int, Int, DfsState) -> Unit = { _, _, _ -> }
 ): DfsState = state.run {
-    var time = 0
+    if (finished) return state
 
     discovered[vertex] = true
     entryTime[vertex] = ++time
@@ -288,11 +290,12 @@ fun Graph.dfs(
         val y = edge.y
         if (!discovered[y]) {
             parents[y] = vertex
-            processEdge(vertex, y)
+            processEdge(vertex, y, state)
             dfs(y, state, processVertexEarly, processVertexLate, processEdge)
-        } else if (!processed[vertex] || directed) {
-            processEdge(vertex, y)
+        } else if ((!processed[y] && parents[vertex] != y) || directed) {
+            processEdge(vertex, y, state)
         }
+        if (finished) return state
     }
 
     processVertexLate(vertex)
@@ -316,6 +319,35 @@ class DfsTest {
         Graph.read("0-3,0-1,1-2").dfsToList(0) shouldEqual listOf(0, 1, 2, 3)
     }
 }
+
+
+// --------------------
+// 5.9.1 Finding Cycles
+// --------------------
+
+fun Graph.findCycle(startVertex: Int = 0): Pair<Int, Int>? {
+    var result: Pair<Int, Int>? = null
+    dfs(startVertex, processEdge = { x, y, state ->
+        if (state.discovered[y] && state.parents[x] != y) {
+            result = Pair(y, x)
+            state.finished = true
+        }
+    })
+    return result
+}
+
+class FindCyclesTest {
+    @Test fun `find cycle in a graph`() {
+        Graph.read("0-1,1-2").findCycle() shouldEqual null
+        Graph.read("0-1,1-0").findCycle() shouldEqual null
+        Graph.read("0-1,1-2,2-0").findCycle() shouldEqual Pair(0, 1)
+
+        // 1──2──4
+        // └──3──┘
+        Graph.read("1-3,1-2,3-4,2-4").findCycle(1) shouldEqual Pair(1, 3)
+    }
+}
+
 
 // -------------------
 // Util

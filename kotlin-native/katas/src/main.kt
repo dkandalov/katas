@@ -10,4 +10,5 @@ fun main(args: Array<String>) {
     ConnectedComponentsTest().`find connected components in a graph`()
     TwoColourTest().`assign two colours to graph vertexes`()
     DfsTest().`depth-first graph traversal`()
+    FindCyclesTest().`find cycle in a graph`()
 }
