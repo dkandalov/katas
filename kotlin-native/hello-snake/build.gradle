@@ -13,24 +13,12 @@ buildscript {
 apply plugin: "konan"
 
 konanArtifacts {
-	library("snake-lib") {
+dd	program("snake") {
 	    srcDir "src"
 	}
-	program("snake-main") {
-		srcDir "main"
-		libraries {
-		    artifact "snake-lib"
-		}
-	}
-    program("snake-test") {
+    program("snakeTest") {
+        srcDir "src"
         srcDir("test")
         extraOpts("-tr")
-	    libraries {
-		    artifact "snake-lib"
-	    }
     }
-}
-
-tasks.create("test") {
-    dependsOn("runSnake-test")
 }

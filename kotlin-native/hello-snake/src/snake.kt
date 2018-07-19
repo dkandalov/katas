@@ -32,7 +32,7 @@ private fun OpenGLWindow.display(board: Board) {
 enum class Direction(private val dx: Int, private val dy: Int) {
     up(0, -1), down(0, 1), left(-1, 0), right(1, 0);
 
-    fun update(point: Point) = point.copy(point.x + dx, point.y + dy)
+    fun update(point: Point) = point.copy(x = point.x + dx, y = point.y + dy)
 }
 
 data class Point(val x: Int, val y: Int)
