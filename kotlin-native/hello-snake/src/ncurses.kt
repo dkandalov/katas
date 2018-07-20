@@ -8,7 +8,7 @@ class NCursesUI {
         cbreak()
         noecho()
         curs_set(0)
-        halfdelay(1)
+        halfdelay(2)
 
         var game = initialGame
         val window = newwin(game.height, game.width, 0, 0)!! // TODO check for null?
@@ -39,7 +39,12 @@ class NCursesUI {
     private fun show(game: Game, window: CPointer<WINDOW>) {
         0.until(game.width).forEach { x ->
             0.until(game.height).forEach { y ->
-                val char = if (game.snake.cells.contains(Cell(x, y))) 'x' else ' '
+                val char = when {
+                    game.snake.cells.first() == Cell(x, y) -> 'X'
+                    game.snake.cells.contains(Cell(x, y)) -> 'x'
+                    game.apples.cells.contains(Cell(x, y)) -> '.'
+                    else -> ' '
+                }
                 mvwaddch(window, y, x, char.toInt())
             }
         }
