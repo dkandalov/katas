@@ -6,9 +6,9 @@ project(hello-snake Kotlin)
 
 konanc_executable(
     NAME snake
-    SOURCES src/opengl.kt src/main.kt src/snake.kt)
+    SOURCES src/opengl.kt src/main.kt src/snake.kt src/ncurses.kt)
 
 konanc_executable(
     NAME snakeTest
-    SOURCES src/opengl.kt src/main.kt src/snake.kt test/test.kt)
+    SOURCES src/opengl.kt src/main.kt src/snake.kt src/ncurses.kt test/tests.kt)
 

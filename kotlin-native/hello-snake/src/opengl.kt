@@ -3,6 +3,14 @@ import platform.GLUT.*
 import platform.OpenGL.*
 import platform.OpenGLCommon.GLfloat
 
+fun OpenGLWindow.displayBoard(board: Board) {
+    0.until(board.height).forEach { x ->
+        0.until(board.width).forEach { y ->
+            if (board.snake.cells.contains(Cell(x, y))) cube(x, y) else clear(x, y)
+        }
+    }
+}
+
 // Ported from http://openglsamples.sourceforge.net/projects/index.php/blog/index/
 class OpenGLWindow {
     private val width = 800
@@ -11,7 +19,7 @@ class OpenGLWindow {
     val rotationSpeed: GLfloat = 0.0f
     var x: GLfloat = 0.0f
     var y: GLfloat = 0.0f
-    var points = ArrayList<Point>()
+    var cells = ArrayList<Cell>()
 
     fun init(ff: () -> Unit) {
         window = this
@@ -76,11 +84,11 @@ class OpenGLWindow {
     }
 
     fun cube(x: Int, y: Int) {
-        points.add(Point(x, y))
+        cells.add(Cell(x, y))
     }
 
     fun clear(x: Int, y: Int) {
-        points.remove(Point(x, y))
+        cells.remove(Cell(x, y))
     }
 }
 
@@ -104,9 +112,9 @@ private fun display() {
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
     f()
-    window.points.forEach { point ->
+    window.cells.forEach { cell ->
         glPushMatrix()
-        glTranslatef(point.x.toFloat(), point.y.toFloat(), 0.0f)
+        glTranslatef(cell.x.toFloat(), cell.y.toFloat(), 0.0f)
         glutSolidCube(0.1)
         glPopMatrix()
     }
@@ -122,9 +130,9 @@ private fun display() {
 @Suppress("UNUSED_PARAMETER")
 private fun onKeyPress(char: Byte, _x: Int, _y: Int) {
     when (char.toChar()) {
-        'd' -> window.x += 0.2f
-        'a' -> window.x -= 0.2f
         'w' -> window.y += 0.2f
+        'a' -> window.x -= 0.2f
         's' -> window.y -= 0.2f
+        'd' -> window.x += 0.2f
     }
 }
