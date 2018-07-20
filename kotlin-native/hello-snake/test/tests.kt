@@ -18,20 +18,43 @@ class SnakeTests {
     }
 }
 
-class BoardTests {
-    @Test fun `print snake`() {
-        val board = Board(
+class GameTests {
+    @Test fun `game presentation as a grid`() {
+        val game = Game(
             Snake(cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)), direction = right),
             width = 5,
             height = 5
         )
-        board.toString() shouldEqual """
+        game.toString() shouldEqual """
             |xxx--
             |-----
             |-----
             |-----
             |-----
         """.trimMargin("|")
+    }
+
+    @Test fun `game is over when snakes hits border`() {
+        val game = Game(
+            Snake(cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)), direction = right),
+            width = 5,
+            height = 5
+        )
+        game.update().isOver shouldEqual false
+        game.update().update().isOver shouldEqual false
+        game.update().update().update().isOver shouldEqual true
+    }
+
+    @Test fun `game is over when bites itself`() {
+        val game = Game(
+            // -xX--
+            // -xxx-
+            Snake(cells = listOf(Cell(2, 0), Cell(1, 0), Cell(1, 1), Cell(2, 1), Cell(3, 1)), direction = right),
+            width = 5,
+            height = 5
+        )
+        game.update().isOver shouldEqual false
+        game.update(down).isOver shouldEqual true
     }
 }
 

@@ -3,10 +3,10 @@ import platform.GLUT.*
 import platform.OpenGL.*
 import platform.OpenGLCommon.GLfloat
 
-fun OpenGLWindow.displayBoard(board: Board) {
-    0.until(board.height).forEach { x ->
-        0.until(board.width).forEach { y ->
-            if (board.snake.cells.contains(Cell(x, y))) cube(x, y) else clear(x, y)
+fun OpenGLWindow.displayGame(game: Game) {
+    0.until(game.height).forEach { x ->
+        0.until(game.width).forEach { y ->
+            if (game.snake.cells.contains(Cell(x, y))) cube(x, y) else clear(x, y)
         }
     }
 }

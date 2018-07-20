@@ -1,10 +1,3 @@
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import platform.posix.CLOCK_REALTIME
-import platform.posix.clock_gettime
-import platform.posix.timespec
-
 enum class Direction(private val dx: Int, private val dy: Int) {
     up(0, -1), down(0, 1), left(-1, 0), right(1, 0);
 
@@ -17,13 +10,16 @@ data class Cell(val x: Int, val y: Int) {
     override fun toString() = "($x,$y)"
 }
 
-data class Board(val snake: Snake, val width: Int, val height: Int) {
-    fun update(snakeDirection: Direction? = null): Board {
-        return copy(snake = snake
-            .turn(snakeDirection ?: snake.direction)
-            .move()
-            .wrap(width, height)
-        )
+data class Game(val snake: Snake, val width: Int, val height: Int, val isOver: Boolean = false) {
+    private val widthRange = 0..(width - 1)
+    private val heightRange = 0..(height - 1)
+
+    fun update(snakeDirection: Direction? = null): Game {
+        if (isOver) return this
+        val movedSnake = snake.turn(snakeDirection ?: snake.direction).move()
+        val snakeIsOutsideBoard = movedSnake.cells.any { cell -> cell.x !in widthRange || cell.y !in heightRange }
+        val snakeCrossedItself = movedSnake.cells.any { cell -> movedSnake.cells.count { it == cell } > 1 }
+        return copy(snake = movedSnake, isOver = snakeIsOutsideBoard || snakeCrossedItself)
     }
 
     override fun toString() =
@@ -44,20 +40,4 @@ data class Snake(val cells: List<Cell>, val direction: Direction) {
         cells = if (newDirection.oppositeTo(direction)) cells.reversed() else cells,
         direction = newDirection
     )
-
-    fun wrap(width: Int, height: Int) = Snake(
-        cells.map { Cell((it.x + width) % width, (it.y + height) % height) },
-        direction
-    )
-}
-
-fun drawGame(board: Board) {
-    memScoped {
-        val time = alloc<timespec>()
-        clock_gettime(CLOCK_REALTIME, time.ptr)
-
-        println("----- time: ${time.tv_sec}")
-        println(board.toString())
-        println("-----")
-    }
 }

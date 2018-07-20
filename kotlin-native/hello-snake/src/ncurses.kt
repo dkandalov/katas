@@ -3,29 +3,32 @@ import kotlinx.cinterop.CPointer
 import platform.osx.*
 
 class NCursesUI {
-    fun start(initialBoard: Board) {
+    fun start(initialGame: Game) {
         initscr()
         cbreak()
         noecho()
         curs_set(0)
         halfdelay(1)
 
-        var board = initialBoard
-        val window = newwin(board.height, board.width, 0, 0)!! // TODO check for null?
+        var game = initialGame
+        val window = newwin(game.height, game.width, 0, 0)!! // TODO check for null?
         wclear(window)
 
         var c = 0
         while (c != 'q'.toInt()) {
-            c = getch()
-            board = when (c) {
-                -1 -> board.update()
-                'i'.toInt() -> board.update(up)
-                'j'.toInt() -> board.update(left)
-                'k'.toInt() -> board.update(down)
-                'l'.toInt() -> board.update(right)
-                else -> board
+            c = wgetch(window)
+
+            if (!game.isOver) {
+                game = when (c) {
+                    -1 -> game.update()
+                    'i'.toInt() -> game.update(up)
+                    'j'.toInt() -> game.update(left)
+                    'k'.toInt() -> game.update(down)
+                    'l'.toInt() -> game.update(right)
+                    else -> game
+                }
             }
-            show(board, window)
+            show(game, window)
         }
 
         delwin(window)
@@ -33,14 +36,17 @@ class NCursesUI {
         // TODO delscreen()
     }
 
-    private fun show(board: Board, window: CPointer<WINDOW>) {
-        0.until(board.width).forEach { x ->
-            0.until(board.height).forEach { y ->
-                val char = if (board.snake.cells.contains(Cell(x, y))) 'x' else ' '
+    private fun show(game: Game, window: CPointer<WINDOW>) {
+        0.until(game.width).forEach { x ->
+            0.until(game.height).forEach { y ->
+                val char = if (game.snake.cells.contains(Cell(x, y))) 'x' else ' '
                 mvwaddch(window, y, x, char.toInt())
             }
         }
-
+        if (game.isOver) {
+            wmove(window, 0, 0)
+            wprintw(window, "Game is Over")
+        }
         wrefresh(window)
     }
 }
