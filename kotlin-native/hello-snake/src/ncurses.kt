@@ -1,10 +1,13 @@
 import Direction.*
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.cstr
 import platform.osx.*
-import platform.posix.exit
+import platform.posix.*
 
 class NCursesUI {
     fun start(initialGame: Game) {
+        val fd = open("snake.log", O_APPEND.or(O_CREAT))
+        println("fd = $fd")
         try {
             initscr()
             cbreak()
@@ -30,15 +33,16 @@ class NCursesUI {
                         else -> game
                     }
                 }
-                show(game, window)
+                show(game, window, fd)
             }
             delwin(window)
         } finally {
+            close(fd)
             endwin()
         }
     }
 
-    private fun show(game: Game, window: CPointer<WINDOW>) {
+    private fun show(game: Game, window: CPointer<WINDOW>, fd: Int) {
         0.until(game.width).forEach { x ->
             0.until(game.height).forEach { y ->
                 val char = when {
@@ -47,9 +51,12 @@ class NCursesUI {
                     game.apples.cells.contains(Cell(x, y)) -> '.'
                     else -> ' '
                 }
-                val r = mvwaddch(window, y, x, char.toInt())//.throwOnError("mvwaddch")
+                val r = mvwaddch(window, y, x, char.toInt())
                 wmove(window, 0, 0)
-                wprintw(window, "$x - $y = $r")
+                "$x - $y = ${r == ERR}\n".let {
+                    val n = write(fd, it.cstr, it.length.toLong())
+                    wprintw(window, n.toString())
+                }
             }
         }
         if (game.isOver) {
