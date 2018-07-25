@@ -1,21 +1,16 @@
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.cstr
-import kotlinx.cinterop.staticCFunction
 import platform.osx.ERR
-import platform.posix.*
+import platform.posix.FILE
+import platform.posix.fopen
+import platform.posix.fwrite
 
-val fd: CPointer<FILE> = fopen("snake.log", "a+")!!.also {
-    atexit(staticCFunction(::handleExit))
-}
-private fun handleExit() {
-    fclose(fd)
-    println("bye!")
-}
+val fd: CPointer<FILE> = fopen("snake.log", "w+")!!
 
-
-fun <T> T.logOnError(message: String = ""): T {
-    if (this != ERR) return this
-    fwrite(message.cstr, 1, message.length.toLong(), fd)
-    IllegalStateException().printStackTrace()
-    TODO()
+fun Int.logOnError(message: String = ""): Int {
+    if (this == ERR) {
+        val logMessage = ERR.toString() + ": " + message + "\n"
+        fwrite(logMessage.cstr, 1, logMessage.length.toLong(), fd)
+    }
+    return this
 }

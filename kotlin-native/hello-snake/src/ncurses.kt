@@ -12,7 +12,7 @@ class NCursesUI {
             halfdelay(2)
 
             var game = initialGame
-            val window = newwin(game.height, game.width, 0, 0)!!
+            val window = newwin(game.height + 2, game.width + 2, 0, 0)!!
             wclear(window)
 
             var c = 0
@@ -38,6 +38,7 @@ class NCursesUI {
     }
 
     private fun show(game: Game, window: CPointer<WINDOW>) {
+        box(window, 0, 0)
         0.until(game.width).forEach { x ->
             0.until(game.height).forEach { y ->
                 val char = when {
@@ -46,13 +47,12 @@ class NCursesUI {
                     game.apples.cells.contains(Cell(x, y)) -> '.'
                     else -> ' '
                 }
-                mvwaddch(window, y, x, char.toInt()).logOnError()
-                wmove(window, 0, 0)
+                mvwaddch(window, y + 1, x + 1, char.toInt()).logOnError("mvwaddch")
             }
         }
         if (game.isOver) {
-            wmove(window, 0, 0)
-            wprintw(window, "Game Over")
+            val message = "Game Over"
+            mvwprintw(window, 0, (game.width + 2) / 2 - message.length / 2, message)
         }
         wrefresh(window).logOnError()
     }
