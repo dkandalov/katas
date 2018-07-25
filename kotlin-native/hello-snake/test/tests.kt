@@ -92,7 +92,7 @@ class RandomTests {
 class ApplesTests {
     @Test fun `randomly generate apples with exclusions`() {
         val apples = Apples.generateRandomly(10, 10, appleAmount = 3, exclusions = listOf(Cell(2, 0)), seed = 123)
-        apples.cells shouldEqual listOf(Cell(6, 9), Cell(5, 7), Cell(4, 7))
+        apples.cells shouldEqual listOf(Cell(1, 8), Cell(0, 4), Cell(0, 5))
     }
 }
 
