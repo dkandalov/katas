@@ -8,7 +8,7 @@ konanc_executable(
     NAME snake
     SOURCES src/opengl.kt src/main.kt src/snake.kt src/ncurses.kt src/tools.kt)
 
-konanc_executable(
+konanc_test(
     NAME snakeTest
     SOURCES src/opengl.kt src/main.kt src/snake.kt src/ncurses.kt src/tools.kt test/tests.kt)
 

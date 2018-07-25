@@ -60,7 +60,7 @@ class GameTests {
         game.update().update().update().isOver shouldEqual true
     }
 
-    @Test fun `game is over when bites itself`() {
+    @Test fun `game is over when snake bites itself`() {
         val game = Game(
             // -xX--
             // -xxx-
