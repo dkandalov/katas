@@ -1,12 +1,29 @@
 import kotlinx.cinterop.*
+import kotlinx.cinterop.nativeHeap.alloc
 import platform.GLUT.*
 import platform.OpenGL.*
 import platform.OpenGLCommon.GLfloat
+import platform.posix.CLOCK_REALTIME
+import platform.posix.clock_gettime
+import platform.posix.sleep
+import platform.posix.timespec
 
-fun OpenGLWindow.displayGame(game: Game) {
-    0.until(game.height).forEach { x ->
-        0.until(game.width).forEach { y ->
-            if (game.snake.cells.contains(Cell(x, y))) cube(x, y) else clear(x, y)
+class OpenGLUI {
+    fun start(initialGame: Game) {
+        val time = nativeHeap.alloc<timespec>()
+        try {
+            var game = initialGame
+            val window = OpenGLWindow()
+            window.init {
+                0.until(game.height).forEach { x ->
+                    0.until(game.width).forEach { y ->
+                        if (game.snake.cells.contains(Cell(x, y))) window.cube(x, y) else window.clear(x, y)
+                    }
+                }
+            }
+            clock_gettime(CLOCK_REALTIME, time.ptr) // TODO update game on time diff > threshold
+        } finally {
+            nativeHeap.free(time)
         }
     }
 }
@@ -23,7 +40,7 @@ class OpenGLWindow {
 
     fun init(ff: () -> Unit) {
         window = this
-        f = ff
+        onDisplay = ff
 
         memScoped {
             val argc = alloc<IntVar>().apply { value = 0 }
@@ -33,7 +50,7 @@ class OpenGLWindow {
         glutInitDisplayMode(GLUT_RGB or GLUT_DOUBLE or GLUT_DEPTH)
 
         glutInitWindowSize(width, height)
-        glutCreateWindow("Snake 22")
+        glutCreateWindow("Snake")
         glutDisplayFunc(staticCFunction(::display))
         glutIdleFunc(staticCFunction(::display))
         glutKeyboardFunc(staticCFunction(::onKeyPress))
@@ -93,7 +110,7 @@ class OpenGLWindow {
 }
 
 private lateinit var window: OpenGLWindow
-private lateinit var f: () -> Unit
+private lateinit var onDisplay: () -> Unit
 
 private fun display() {
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -111,7 +128,8 @@ private fun display() {
     glRotatef(window.rotation, 0.0f, 1.0f, 0.0f)
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
-    f()
+    onDisplay()
+
     window.cells.forEach { cell ->
         glPushMatrix()
         glTranslatef(cell.x.toFloat(), cell.y.toFloat(), 0.0f)
