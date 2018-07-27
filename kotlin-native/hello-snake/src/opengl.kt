@@ -1,27 +1,39 @@
 import kotlinx.cinterop.*
-import kotlinx.cinterop.nativeHeap.alloc
 import platform.GLUT.*
 import platform.OpenGL.*
 import platform.OpenGLCommon.GLfloat
 import platform.posix.CLOCK_REALTIME
 import platform.posix.clock_gettime
-import platform.posix.sleep
 import platform.posix.timespec
+import kotlin.math.abs
 
 class OpenGLUI {
+    private fun timespec.millis() = (tv_sec * 1000) + (tv_nsec / 1_000_000)
+
     fun start(initialGame: Game) {
         val time = nativeHeap.alloc<timespec>()
+        clock_gettime(CLOCK_REALTIME, time.ptr)
+        var timeMillis = time.millis()
+
         try {
             var game = initialGame
             val window = OpenGLWindow()
-            window.init {
+            window.init(onDisplay = {
                 0.until(game.height).forEach { x ->
                     0.until(game.width).forEach { y ->
                         if (game.snake.cells.contains(Cell(x, y))) window.cube(x, y) else window.clear(x, y)
                     }
                 }
-            }
-            clock_gettime(CLOCK_REALTIME, time.ptr) // TODO update game on time diff > threshold
+                clock_gettime(CLOCK_REALTIME, time.ptr)
+                if (abs(time.millis() - timeMillis) > 500) {
+                    game = game.update()
+                    println(game.snake)
+                    timeMillis = time.millis()
+                } else {
+//                    println(time.millis())
+                }
+            })
+
         } finally {
             nativeHeap.free(time)
         }
@@ -38,9 +50,9 @@ class OpenGLWindow {
     var y: GLfloat = 0.0f
     var cells = ArrayList<Cell>()
 
-    fun init(ff: () -> Unit) {
-        window = this
-        onDisplay = ff
+    fun init(onDisplay: () -> Unit) {
+        _window = this
+        _onDisplay = onDisplay
 
         memScoped {
             val argc = alloc<IntVar>().apply { value = 0 }
@@ -109,8 +121,8 @@ class OpenGLWindow {
     }
 }
 
-private lateinit var window: OpenGLWindow
-private lateinit var onDisplay: () -> Unit
+private lateinit var _window: OpenGLWindow
+private lateinit var _onDisplay: () -> Unit
 
 private fun display() {
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -124,13 +136,13 @@ private fun display() {
 
     glPushMatrix()
     glColor3f(1.0f, 0.0f, 0.0f)
-    glTranslatef(window.x, window.y, 0.0f)
-    glRotatef(window.rotation, 0.0f, 1.0f, 0.0f)
+    glTranslatef(_window.x, _window.y, 0.0f)
+    glRotatef(_window.rotation, 0.0f, 1.0f, 0.0f)
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
-    onDisplay()
+    _onDisplay()
 
-    window.cells.forEach { cell ->
+    _window.cells.forEach { cell ->
         glPushMatrix()
         glTranslatef(cell.x.toFloat(), cell.y.toFloat(), 0.0f)
         glutSolidCube(0.1)
@@ -140,7 +152,7 @@ private fun display() {
 
     glPopMatrix()
 
-    window.rotation += window.rotationSpeed
+    _window.rotation += _window.rotationSpeed
     glutSwapBuffers()
 }
 
@@ -148,9 +160,9 @@ private fun display() {
 @Suppress("UNUSED_PARAMETER")
 private fun onKeyPress(char: Byte, _x: Int, _y: Int) {
     when (char.toChar()) {
-        'w' -> window.y += 0.2f
-        'a' -> window.x -= 0.2f
-        's' -> window.y -= 0.2f
-        'd' -> window.x += 0.2f
+        'w' -> _window.y += 0.2f
+        'a' -> _window.x -= 0.2f
+        's' -> _window.y -= 0.2f
+        'd' -> _window.x += 0.2f
     }
 }
