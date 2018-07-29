@@ -1,3 +1,4 @@
+import Direction.*
 import kotlinx.cinterop.*
 import platform.GLUT.*
 import platform.OpenGL.*
@@ -18,19 +19,27 @@ class OpenGLUI {
         try {
             var game = initialGame
             val window = OpenGLWindow()
-            window.init(onDisplay = {
+            window.init(onDisplay = { key ->
+                window.clear()
                 0.until(game.height).forEach { x ->
                     0.until(game.width).forEach { y ->
-                        if (game.snake.cells.contains(Cell(x, y))) window.cube(x, y) else window.clear(x, y)
+                        if (game.snake.cells.contains(Cell(x, y))) window.cube(x, y)
                     }
                 }
                 clock_gettime(CLOCK_REALTIME, time.ptr)
                 if (abs(time.millis() - timeMillis) > 500) {
-                    game = game.update()
+                    game = when (key) {
+                        null -> game.update()
+                        'i' -> game.update(up)
+                        'j' -> game.update(left)
+                        'k' -> game.update(down)
+                        'l' -> game.update(right)
+                        'r' -> initialGame
+                        else -> game
+                    }
+                    println(key.toString() + " " + window.x + " " + window.y + " " + window.z)
                     println(game.snake)
                     timeMillis = time.millis()
-                } else {
-//                    println(time.millis())
                 }
             })
 
@@ -46,11 +55,12 @@ class OpenGLWindow {
     private val height = 600
     var rotation: GLfloat = 0.0f
     val rotationSpeed: GLfloat = 0.0f
-    var x: GLfloat = 0.0f
-    var y: GLfloat = 0.0f
+    var x: GLfloat = -3.2f
+    var y: GLfloat = -2.8f
+    var z: GLfloat = 3.6f
     var cells = ArrayList<Cell>()
 
-    fun init(onDisplay: () -> Unit) {
+    fun init(onDisplay: (Char?) -> Unit) {
         _window = this
         _onDisplay = onDisplay
 
@@ -116,39 +126,38 @@ class OpenGLWindow {
         cells.add(Cell(x, y))
     }
 
-    fun clear(x: Int, y: Int) {
-        cells.remove(Cell(x, y))
+    fun clear() {
+        cells.clear()
     }
 }
 
 private lateinit var _window: OpenGLWindow
-private lateinit var _onDisplay: () -> Unit
+private lateinit var _onDisplay: (Char?) -> Unit
+private var _lastKey: Char? = null
 
 private fun display() {
     glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    // Define a viewing transformation
     gluLookAt(4.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
     // Push and pop the current matrix stack.
     // This causes that translations and rotations on this matrix wont influence others.
 
     glPushMatrix()
-    glColor3f(1.0f, 0.0f, 0.0f)
-    glTranslatef(_window.x, _window.y, 0.0f)
+    glColor3f(0.7f, 0.7f, 0.7f)
+    glTranslatef(_window.x, _window.y, _window.z)
     glRotatef(_window.rotation, 0.0f, 1.0f, 0.0f)
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f)
 
-    _onDisplay()
+    _onDisplay(_lastKey)
 
     _window.cells.forEach { cell ->
         glPushMatrix()
         glTranslatef(cell.x.toFloat(), cell.y.toFloat(), 0.0f)
-        glutSolidCube(0.1)
+        glutSolidCube(0.2)
         glPopMatrix()
     }
-    glutSolidCube(0.1)
 
     glPopMatrix()
 
@@ -156,13 +165,15 @@ private fun display() {
     glutSwapBuffers()
 }
 
-
 @Suppress("UNUSED_PARAMETER")
 private fun onKeyPress(char: Byte, _x: Int, _y: Int) {
-    when (char.toChar()) {
+    _lastKey = char.toChar()
+    when (_lastKey) {
+        'q' -> _window.x -= 0.2f
+        'e' -> _window.x += 0.2f
         'w' -> _window.y += 0.2f
-        'a' -> _window.x -= 0.2f
         's' -> _window.y -= 0.2f
-        'd' -> _window.x += 0.2f
+        'a' -> _window.z += 0.2f
+        'd' -> _window.z -= 0.2f
     }
 }
