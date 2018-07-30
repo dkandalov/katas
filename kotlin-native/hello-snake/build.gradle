@@ -10,12 +10,12 @@ buildscript {
 	}
 }
 
-apply plugin: "konan"
+apply plugin: 'konan'
 
 konanArtifacts {
     program("snake") {
-	    srcDir "src"
-	}
+        srcDir "src"
+    }
     program("snakeTest") {
         srcDir "src"
         srcDir "test"
