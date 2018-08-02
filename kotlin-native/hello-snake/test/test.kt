@@ -14,8 +14,8 @@ class SnakeTests {
     @Test fun `snake changes direction`() {
         val snake = Snake(cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)), direction = right)
         assertEquals(
-            actual = snake.turn(left),
-            expected = Snake(cells = listOf(Cell(0, 0), Cell(1, 0), Cell(2, 0)), direction = left)
+            actual = snake.turn(left).move(),
+            expected = Snake(cells = listOf(Cell(3, 0), Cell(2, 0), Cell(1, 0)), direction = right)
         )
         assertEquals(
             actual = snake.turn(down).move(),
