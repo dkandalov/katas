@@ -5,19 +5,6 @@ extern "C" {
 fn main() {
     let pid = unsafe { getpid() };
     println!("Hello from {}", pid);
-
-    let snake = Snake {
-        cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-        direction: Direction::Right,
-    };
-
-    assert_eq!(
-        snake.slide(),
-        Snake {
-            cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
-            direction: Direction::Right,
-        }
-    )
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -28,14 +15,13 @@ struct Snake {
 
 impl Snake {
     fn slide(&self) -> Snake {
+        let mut vec: Vec<Cell> = vec![self.cells.first().unwrap().move_in(&self.direction)];
+
         let mut new_cells = self.cells.clone();
         new_cells.pop();
-        let mut vec: Vec<Cell> = vec![self.cells.first().unwrap().move_in(&self.direction)];
         vec.append(&mut new_cells);
 
-        let mut new_snake = self.clone();
-        new_snake.cells = vec;
-        new_snake
+        Snake { cells: vec, direction: self.direction }
     }
 }
 
@@ -63,10 +49,31 @@ impl Cell {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum Direction {
     Up,
     Down,
     Left,
     Right,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn it_works() {
+        let snake = Snake {
+            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            direction: Direction::Right,
+        };
+
+        assert_eq!(
+            snake.slide(),
+            Snake {
+                cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                direction: Direction::Right,
+            }
+        )
+    }
 }
