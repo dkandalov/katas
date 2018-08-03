@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter, Result};
 use std::mem;
 
-#[allow(dead_code,unused_variables,unused_mut)]
+#[allow(dead_code, unused_variables, unused_mut)]
 fn main() {
     let an_integer0 = 5i8;
     let an_integer1 = 5i16;
@@ -22,8 +22,8 @@ fn main() {
     // mutable = true; // type of variable can't be changed
     let logical: bool = true;
     let unit: () = ();
-    let array = [1, 2, 3];
-    let tuple = (1, true);
+    let array: [i32; 3] = [1, 2, 3];
+    let tuple: (i32, bool) = (1, true);
 
     // 2.1
     println!("0011 AND 0101 is {:04b}", 0b0011u32 & 0b0101);
@@ -44,14 +44,14 @@ fn main() {
     println!("tuple of tuples {:?}", tuple_of_tuples);
     println!("tuple 1: {:?}", tuple_of_tuples.0);
 
-    let tuple = (1, "hello", 4.5, true);
-    let (a,b,c,d) = tuple;
+    let tuple: (i32, &str, f64, bool) = (1, "hello", 4.5, true);
+    let (a, b, c, d) = tuple;
     println!("{:?} {:?} {:?} {:?}", a, b, c, d);
 
     let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
     println!("{:?}", matrix);
     impl Display for Matrix {
-        fn fmt(&self, f: &mut  Formatter) -> Result {
+        fn fmt(&self, f: &mut Formatter) -> Result {
             write!(f, "( {} {} )\n( {} {} )", self.0, self.1, self.2, self.3)
         }
     }
@@ -63,7 +63,7 @@ fn main() {
     println!("Transpose:\n{}", transpose(matrix));
 
     // 2.3
-    let xs: [i32; 5] = [1,2,3,4,5];
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
     let ys: [i32; 500] = [0; 500]; // init all elements to 0
     println!("first element of the array: {}", xs[1]);
     println!("second element of the array: {}", xs[2]);

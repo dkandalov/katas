@@ -1,4 +1,5 @@
-#![allow(dead_code,unused_variables)]
+#![allow(dead_code, unused_variables)]
+
 fn main() {
     // 7.1
     let n = 5;
@@ -23,7 +24,7 @@ fn main() {
     }
 
     // 7.2.1
-    'outer: loop  {
+    'outer: loop {
         println!("outer loop");
         'inner: loop {
             println!("inner loop");
@@ -63,14 +64,17 @@ fn main() {
 
     // 7.5.1.2
     enum Color {
-        Red, Blue, Green, RGB(u32, u32, u32)
+        Red,
+        Blue,
+        Green,
+        RGB(u32, u32, u32),
     }
     let color = Color::Blue;
     match color {
         Color::Red => println!("Red"),
         Color::Green => println!("Green"),
         Color::Blue => println!("Blue"),
-        Color::RGB(r,g,b) => println!("RGB"),
+        Color::RGB(r, g, b) => println!("RGB"),
     }
 
     // 7.5.1.3
@@ -91,10 +95,10 @@ fn main() {
         ref mut m => {
             *m += 10;
             println!("mut_value: {}", m);
-        },
+        }
     }
     struct Foo { x: (u32, u32), y: u32 }
-    let foo = Foo { x: (1,2), y: 3 };
+    let foo = Foo { x: (1, 2), y: 3 };
     let Foo { y, .. } = foo; // some destructed values can be ignored
     println!("foo y: {:?}", y);
 
@@ -119,7 +123,7 @@ fn main() {
     let mut optional: Option<i32> = Some(7);
     match optional {
         Some(i) => println!("i: {:?}", i),
-        _ => {},
+        _ => {}
     }
     if let Some(i) = optional {
         println!("Matched number: {}", i);

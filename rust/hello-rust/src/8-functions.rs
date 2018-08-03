@@ -1,8 +1,9 @@
-#![allow(dead_code,unused_variables)]
+#![allow(dead_code, unused_variables)]
+
 fn main() {
     // 8
     // (http://rustbyexample.com/fn.html)
-    fn is_divisable_by(lhs: u32, rhs: u32) -> bool {
+    fn is_divisible_by(lhs: u32, rhs: u32) -> bool {
         if rhs == 0 {
             return false;
         }
@@ -20,10 +21,10 @@ fn main() {
     }
     impl Point {
         fn origin() -> Point { // static method
-            Point{ x: 0.0, y: 0.0 }
+            Point { x: 0.0, y: 0.0 }
         }
         fn new(x: f64, y: f64) -> Point { // static method
-            Point{ x: x, y: y }
+            Point { x: x, y: y }
         }
     }
     struct Rectangle {
@@ -34,9 +35,9 @@ fn main() {
         // `&self` is sugar for `self: &Self`, where `Self` is the type of the
         // caller object. In this case `Self` = `Rectangle`
         fn area(&self) -> f64 {
-            let Point{ x: x1, y: y1 } = self.p1;
-            let Point{ x: x2, y: y2 } = self.p2;
-            2.0 * ((x1- x2).abs() + (y1 - y2).abs())
+            let Point { x: x1, y: y1 } = self.p1;
+            let Point { x: x2, y: y2 } = self.p2;
+            2.0 * ((x1 - x2).abs() + (y1 - y2).abs())
         }
         fn translate(&mut self, x: f64, y: f64) {
             self.p1.x += x;
@@ -133,10 +134,10 @@ fn main() {
     let vec2 = vec![4, 5, 6];
     let mut iter = vec1.iter();
     let mut into_iter = vec2.into_iter();
-    println!("any in vec1: {}", iter.any(|&x| x == 2 ));
-    println!("find in vec1: {:?}", iter.find(|&&x| x == 2 ));
-    println!("any in vec2: {}", into_iter.any(|x| x == 2 ));
-    println!("find in vec2: {:?}", into_iter.find(|&x| x == 2 ));
+    println!("any in vec1: {}", iter.any(|&x| x == 2));
+    println!("find in vec1: {:?}", iter.find(|&&x| x == 2));
+    println!("any in vec2: {}", into_iter.any(|x| x == 2));
+    println!("find in vec2: {:?}", into_iter.find(|&x| x == 2));
 
 
     // 8.3
@@ -145,9 +146,9 @@ fn main() {
     }
     let upper_limit = 1000;
     let sum_of_squared_odd_numbers: u32 =
-        (0..).map(|n| n * n )
-             .take_while(|&n| n < upper_limit )
-             .filter(|n| is_odd(*n) )
-             .fold(0, |sum, n| sum + n );
-     println!("sum_of_squared_odd_numbers: {}", sum_of_squared_odd_numbers);
+        (0..).map(|n| n * n)
+            .take_while(|&n| n < upper_limit)
+            .filter(|n| is_odd(*n))
+            .fold(0, |sum, n| sum + n);
+    println!("sum_of_squared_odd_numbers: {}", sum_of_squared_odd_numbers);
 }

@@ -1,4 +1,5 @@
-#![allow(unused_variables,overflowing_literals)]
+#![allow(unused_variables, overflowing_literals)]
+
 fn main() {
     // 5
     let decimal = 65.4321_f32;

@@ -1,18 +1,17 @@
-
-#[allow(dead_code,unused_variables,non_upper_case_globals)]
+#[allow(dead_code, unused_variables, non_upper_case_globals)]
 fn main() {
     // 3.1
     struct Nil; // a unit struct
     struct Pair(i32, f64);
     struct Point {
-      x: f64,
-      y: f64,
+        x: f64,
+        y: f64,
     }
     struct Rectangle {
         p1: Point,
         p2: Point,
     }
-    let point = Point{x: 0.3, y: 0.4};
+    let point = Point { x: 0.3, y: 0.4 };
     println!("point coordinates: ({}, {})", point.x, point.y);
     let Point { x: my_x, y: my_y } = point; // destructure point
     let rectangle = Rectangle {
@@ -27,11 +26,11 @@ fn main() {
     // 3.2
     fn inspect(p: Person) {
         match p {
-            Person::Skinny  => println!("Is skinny!"),
-            Person::Fat     => println!("Is fat!"),
+            Person::Skinny => println!("Is skinny!"),
+            Person::Fat => println!("Is fat!"),
             Person::Height(i) => println!("Has height of {}.", i),
             Person::Weight(i) => println!("Has weight of {}.", i),
-            Person::Info{ name, height } => {
+            Person::Info { name, height } => {
                 println!("{} is {} tall!", name, height);
             }
         }
@@ -43,12 +42,14 @@ fn main() {
     {
         // "use" has to be first statement, Person must be defined outside this function
         use Person::*;
-        inspect(Info{ name: "Dave".to_owned(), height: 72 });
+        inspect(Info { name: "Dave".to_owned(), height: 72 });
     }
 
     // 3.2.2
     enum Number {
-        Zero, One, Two
+        Zero,
+        One,
+        Two,
     }
     enum Color {
         Red = 0xff0000,
@@ -61,7 +62,7 @@ fn main() {
     {
         enum List {
             Cons(u32, Box<List>),
-            Nil
+            Nil,
         }
         impl List {
             fn new() -> List {
@@ -80,7 +81,7 @@ fn main() {
                 match *self {
                     List::Cons(head, ref tail) => {
                         format!("{}, {}", head, tail.stringify())
-                    },
+                    }
                     List::Nil => {
                         format!("Nil")
                     }
@@ -101,11 +102,11 @@ fn main() {
     static language: &'static str = "Rust";
 }
 
-#[allow(dead_code,unused_variables)]
+#[allow(dead_code, unused_variables)]
 enum Person {
     Skinny,
     Fat,
     Height(i32),
     Weight(i32),
-    Info { name: String, height: i32 }
+    Info { name: String, height: i32 },
 }

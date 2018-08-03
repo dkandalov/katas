@@ -11,12 +11,12 @@ fn main() {
 
     println!("{0}, this is {1}. {1}, this is {0}", "Alice", "Bob");
     println!("{subject} {verb} {predicate}",
-             predicate="over the lazy dog",
-             subject="the quick brown fox",
-             verb="jumps");
+             predicate = "over the lazy dog",
+             subject = "the quick brown fox",
+             verb = "jumps");
     println!("{} of {:b} people know binary", 1, 2);
-    println!("{number:>width$}", number=1, width=6);
-    println!("{number:>0width$}", number=1, width=6);
+    println!("{number:>width$}", number = 1, width = 6);
+    println!("{number:>0width$}", number = 1, width = 6);
 
     // println!("My name is {0}, {1} {0}", "Bond");
     // <std macros>:3:11: 3:36 error: invalid reference to argument `1` (there is 1 argument)
@@ -35,7 +35,7 @@ fn main() {
     // 1.2.1
     println!("{:?} months in a year.", 12);
     println!("{1:?} {0:?} is the {actor:?} name",
-             "Slater", "Christian", actor="actor's");
+             "Slater", "Christian", actor = "actor's");
     println!("Now {:?} will print!", Structure(3));
     println!("Now {:?} will print!", Deep(Structure(7)));
 
@@ -96,7 +96,7 @@ fn main() {
             write!(f, "]")
         }
     }
-    let v = List(vec![1,2,3]);
+    let v = List(vec![1, 2, 3]);
     println!("{}", v);
 
     // 1.2.3
