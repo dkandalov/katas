@@ -1,10 +1,43 @@
+extern crate libc;
+
+use std::ffi::{CString, CStr};
+
+#[link(name = "ncurses")]
 extern "C" {
     fn getpid() -> i32;
+    fn initscr() -> *mut i8;
+    fn noecho() -> i32;
+    fn curs_set(c: i8) -> i32;
+    #[link_name = "box"]
+    fn box_(window: *mut i8, verch: i8, horch: i8);
+    fn mvprintw(y: i8, x: i8, s: *const libc::c_char);
+    fn getch() -> *mut i8;
+    fn endwin() -> libc::c_int;
+}
+
+trait ToCStr {
+    fn to_c_str(&self) -> CString;
+}
+
+impl<'a> ToCStr for &'a str {
+    fn to_c_str(&self) -> CString {
+        CString::new(*self).unwrap()
+    }
 }
 
 fn main() {
-    let pid = unsafe { getpid() };
-    println!("Hello from {}", pid);
+    unsafe {
+        let window = initscr();
+        noecho();
+        curs_set(0);
+
+        let mut c = 0;
+        mvprintw(3, 2, "hello 22".to_c_str().as_ptr());
+        box_(window, 0, 0);
+        getch();
+
+        endwin();
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -60,7 +93,7 @@ enum Direction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn it_works() {
         let snake = Snake {
