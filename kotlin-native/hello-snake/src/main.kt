@@ -1,14 +1,22 @@
 import Direction.*
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
 import platform.osx.*
+import platform.posix.nanosleep
+import platform.posix.timespec
 import kotlin.math.max
 import kotlin.random.Random
 
-fun main(args: Array<String>) {
-    initscr()
+
+fun main(args: Array<String>) = memScoped {
+    initscr().also {
+        defer { endwin() }
+    }
     noecho()
     curs_set(0)
-    halfdelay(3)
+//    halfdelay(1)
 
     var game = Game(
         width = 20,
@@ -18,11 +26,17 @@ fun main(args: Array<String>) {
             direction = right
         )
     )
+    val window = newwin(game.height + 2, game.width + 2, 0, 0)!!.also {
+        defer { delwin(it) }
+    }
+    nodelay(window, true)
 
-    val window = newwin(game.height + 2, game.width + 2, 0, 0)!!
+    val timespec = alloc<timespec>()
+    timespec.tv_nsec = 50 * 1_000_000
 
     var c = 0
     while (c.toChar() != 'q') {
+        nanosleep(timespec.ptr, null)
 
         game.draw(window)
 
@@ -36,8 +50,6 @@ fun main(args: Array<String>) {
         }
         game = game.update(direction)
     }
-    delwin(window)
-    endwin()
 }
 
 fun Game.draw(window: CPointer<WINDOW>) {
