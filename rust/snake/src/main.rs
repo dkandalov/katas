@@ -1,5 +1,8 @@
 extern crate libc;
-
+extern crate rand;
+use rand::Rng;
+use rand::StdRng;
+use rand::SeedableRng;
 use std::ffi::{CString};
 
 #[link(name = "ncurses")]
@@ -154,6 +157,22 @@ impl Snake {
     }
 }
 
+#[derive(Debug, PartialEq, Clone)]
+struct Apples {
+    field_width: i16,
+    field_height: i16,
+    cells: Vec<Cell>,
+    growth_speed: i16,
+    rng: StdRng
+}
+
+impl Apples {
+    fn grow(&self) -> Apples {
+
+        return self.clone()
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct Cell {
     x: i16,
@@ -270,5 +289,26 @@ mod tests {
         let game = Game { width: 100, height: 100, snake };
 
         assert_eq!(game.is_over(), true);
+    }
+
+    #[test]
+    fn apples_grow_at_random_locations() {
+        let seed = [
+            1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
+            1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2
+        ];
+        let rng: StdRng = StdRng::from_seed(seed);
+        let apples = Apples {
+            field_width: 20,
+            field_height: 10,
+            cells: vec![],
+            growth_speed: 3,
+            rng
+        };
+
+        assert_eq!(
+            apples.grow().grow().grow().cells,
+            vec![]
+        );
     }
 }

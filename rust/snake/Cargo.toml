@@ -5,3 +5,4 @@ authors = ["Dmitry Kandalov <dmitry.kandalov@gmail.com>"]
 
 [dependencies]
 libc = "0.2.0"
+rand = "0.5.5"
