@@ -3,6 +3,7 @@ extern crate libc;
 use std::ffi::{CString};
 
 #[link(name = "ncurses")]
+#[allow(dead_code)]
 extern "C" {
     fn getpid() -> i32;
     fn initscr() -> *mut i8;
@@ -23,10 +24,6 @@ extern "C" {
     fn delwin(window: *mut i8) -> i8;
 }
 
-trait ToCStr {
-    fn to_c_str(&self) -> CString;
-}
-
 fn main() {
     unsafe {
         initscr();
@@ -34,21 +31,23 @@ fn main() {
         curs_set(0);
         halfdelay(3);
 
-        let width = 20;
-        let height = 10;
-        let window = newwin(height + 2, width + 2, 0, 0);
-
-        let mut snake = Snake {
-            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-            direction: Direction::Right,
+        let mut game = Game {
+            width: 20,
+            height: 10,
+            snake: Snake {
+                cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+                direction: Direction::Right,
+            }
         };
+        let window = newwin(game.height + 2, game.width + 2, 0, 0);
 
         let mut c = 0;
         while char::from(c as u8) != 'q' {
             wclear(window);
             box_(window, 0, 0);
-            mvwprintw(window, snake.head().y + 1, snake.head().x + 1, "Q".to_c_str().as_ptr());
-            snake.tail().iter().for_each(|cell|
+
+            mvwprintw(window, game.snake.head().y + 1, game.snake.head().x + 1, "Q".to_c_str().as_ptr());
+            game.snake.tail().iter().for_each(|cell|
                 mvwprintw(window, cell.y + 1, cell.x + 1, "o".to_c_str().as_ptr())
             );
 
@@ -63,10 +62,7 @@ fn main() {
                 _ => Option::None
             };
 
-            if direction.is_some() {
-                snake = snake.turn_in(direction.unwrap())
-            }
-            snake = snake.slide();
+            game = game.update(direction);
         }
 
         delwin(window);
@@ -74,9 +70,26 @@ fn main() {
     }
 }
 
-impl<'a> ToCStr for &'a str {
-    fn to_c_str(&self) -> CString {
-        CString::new(*self).unwrap()
+#[derive(Debug, PartialEq, Clone)]
+struct Game {
+    width: i8,
+    height: i8,
+    snake: Snake,
+}
+
+impl Game {
+    fn update(&self, direction: Option<Direction>) -> Game {
+        let new_snake;
+        if direction.is_some() {
+            new_snake = self.snake.turn_in(direction.unwrap()).slide();
+        } else {
+            new_snake = self.snake.slide();
+        }
+        return Game {
+            width: self.width,
+            height: self.height,
+            snake: new_snake,
+        };
     }
 }
 
@@ -147,11 +160,21 @@ enum Direction {
 }
 
 fn are_opposite(d1: Direction, d2: Direction) -> bool {
-    if d1 == Direction::Up && d2 == Direction::Down { return true }
-    if d2 == Direction::Up && d1 == Direction::Down { return true }
-    if d1 == Direction::Left && d2 == Direction::Right { return true }
-    if d2 == Direction::Left && d1 == Direction::Right { return true }
+    if d1 == Direction::Up && d2 == Direction::Down { return true; }
+    if d2 == Direction::Up && d1 == Direction::Down { return true; }
+    if d1 == Direction::Left && d2 == Direction::Right { return true; }
+    if d2 == Direction::Left && d1 == Direction::Right { return true; }
     false
+}
+
+trait ToCStr {
+    fn to_c_str(&self) -> CString;
+}
+
+impl<'a> ToCStr for &'a str {
+    fn to_c_str(&self) -> CString {
+        CString::new(*self).unwrap()
+    }
 }
 
 
