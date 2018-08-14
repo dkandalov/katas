@@ -12,14 +12,14 @@ extern "C" {
     fn halfdelay(tenths: i8) -> i32;
     #[link_name = "box"]
     fn box_(window: *mut i8, verch: i8, horch: i8);
-    fn mvprintw(y: i8, x: i8, s: *const libc::c_char);
+    fn mvprintw(y: i16, x: i16, s: *const libc::c_char);
     fn getch() -> i8;
     fn endwin() -> libc::c_int;
 
-    fn newwin(nlines: i8, ncols: i8, begin_y: i8, begin_x: i8) -> *mut i8;
+    fn newwin(nlines: i16, ncols: i16, begin_y: i8, begin_x: i8) -> *mut i8;
     fn wclear(window: *mut i8) -> i8;
     fn wrefresh(window: *mut i8) -> i8;
-    fn mvwprintw(window: *mut i8, y: i8, x: i8, s: *const libc::c_char);
+    fn mvwprintw(window: *mut i8, y: i16, x: i16, s: *const libc::c_char);
     fn wgetch(window: *mut i8) -> i8;
     fn delwin(window: *mut i8) -> i8;
 }
@@ -86,8 +86,8 @@ impl Game {
 
 #[derive(Debug, PartialEq, Clone)]
 struct Game {
-    width: i8,
-    height: i8,
+    width: i16,
+    height: i16,
     snake: Snake,
 }
 
@@ -156,8 +156,8 @@ impl Snake {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct Cell {
-    x: i8,
-    y: i8,
+    x: i16,
+    y: i16,
 }
 
 impl Cell {
