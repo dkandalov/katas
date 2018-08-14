@@ -1,6 +1,6 @@
 extern crate libc;
 
-use std::ffi::{CString, CStr};
+use std::ffi::{CString};
 
 #[link(name = "ncurses")]
 extern "C" {
@@ -44,7 +44,7 @@ fn main() {
         };
 
         let mut c = 0;
-        while c != 'q' as i8 {
+        while char::from(c as u8) != 'q' {
             wclear(window);
             box_(window, 0, 0);
             mvwprintw(window, snake.head().y + 1, snake.head().x + 1, "Q".to_c_str().as_ptr());
@@ -55,7 +55,17 @@ fn main() {
             wrefresh(window);
 
             c = wgetch(window);
+            let direction = match char::from(c as u8) {
+                'i' => Some(Direction::Up),
+                'j' => Some(Direction::Left),
+                'k' => Some(Direction::Down),
+                'l' => Some(Direction::Right),
+                _ => Option::None
+            };
 
+            if direction.is_some() {
+                snake = snake.turn_in(direction.unwrap())
+            }
             snake = snake.slide();
         }
 
@@ -83,6 +93,14 @@ impl Snake {
 
     fn tail(&self) -> Vec<Cell> {
         self.cells[1..self.cells.len()].to_owned()
+    }
+
+    fn turn_in(&self, new_direction: Direction) -> Snake {
+        if are_opposite(new_direction, self.direction) {
+            self.clone()
+        } else {
+            Snake { cells: self.cells.clone(), direction: new_direction }
+        }
     }
 
     fn slide(&self) -> Snake {
@@ -128,6 +146,15 @@ enum Direction {
     Right,
 }
 
+fn are_opposite(d1: Direction, d2: Direction) -> bool {
+    if d1 == Direction::Up && d2 == Direction::Down { return true }
+    if d2 == Direction::Up && d1 == Direction::Down { return true }
+    if d1 == Direction::Left && d2 == Direction::Right { return true }
+    if d2 == Direction::Left && d1 == Direction::Right { return true }
+    false
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,5 +173,28 @@ mod tests {
                 direction: Direction::Right,
             }
         )
+    }
+
+    #[test]
+    fn snake_can_change_direction() {
+        let snake = Snake {
+            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            direction: Direction::Right,
+        };
+
+        assert_eq!(
+            snake.turn_in(Direction::Down).slide(),
+            Snake {
+                cells: vec![Cell { x: 2, y: 1 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                direction: Direction::Down,
+            }
+        );
+        assert_eq!(
+            snake.turn_in(Direction::Left).slide(),
+            Snake {
+                cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                direction: Direction::Right,
+            }
+        );
     }
 }
