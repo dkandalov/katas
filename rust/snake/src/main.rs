@@ -40,10 +40,10 @@ fn main() {
         let mut game = Game {
             width,
             height,
-            snake: Snake {
-                cells: vec![Cell { x: 4, y: 0 }, Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-                direction: Direction::Right,
-            },
+            snake: Snake::new(
+                vec![Cell { x: 4, y: 0 }, Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+                Direction::Right
+            ),
             apples: Apples::create(width, height)
         };
         let window = newwin(game.height + 2, game.width + 2, 0, 0);
@@ -123,14 +123,15 @@ impl Game {
         } else {
             new_snake = self.snake.slide();
         }
-
         let new_apples = self.apples.clone().grow().clone(); // TODO
-        
+
+        let (new_snake2, new_apples2) = new_snake.eat(new_apples);
+
         return Game {
             width: self.width,
             height: self.height,
-            snake: new_snake,
-            apples: new_apples
+            snake: new_snake2,
+            apples: new_apples2
         };
     }
 }
@@ -139,9 +140,14 @@ impl Game {
 struct Snake {
     cells: Vec<Cell>,
     direction: Direction,
+    eaten_apples: i16
 }
 
 impl Snake {
+    fn new(cells: Vec<Cell>, direction: Direction) -> Snake {
+        Snake { cells, direction, eaten_apples: 0 }
+    }
+
     fn head(&self) -> &Cell {
         &self.cells[0]
     }
@@ -154,18 +160,39 @@ impl Snake {
         if are_opposite(new_direction, self.direction) {
             self.clone()
         } else {
-            Snake { cells: self.cells.clone(), direction: new_direction }
+            Snake { cells: self.cells.clone(), direction: new_direction, eaten_apples: self.eaten_apples }
         }
     }
 
     fn slide(&self) -> Snake {
+        // TODO cleanup
         let mut vec: Vec<Cell> = vec![self.cells.first().unwrap().move_in(&self.direction)];
 
         let mut new_cells = self.cells.clone();
-        new_cells.pop();
+        if self.eaten_apples == 0 {
+            new_cells.pop();
+        }
         vec.append(&mut new_cells);
 
-        Snake { cells: vec, direction: self.direction }
+        Snake { cells: vec, direction: self.direction, eaten_apples: std::cmp::max(0, self.eaten_apples - 1) }
+    }
+
+    fn eat(&self, apples: Apples) -> (Snake, Apples) {
+        if apples.cells.contains(self.head()) {
+            let mut new_apple_cells = apples.cells.clone();
+            new_apple_cells.retain(|it| it != self.head());
+            let new_apples = apples.with_cells(new_apple_cells);
+
+            let new_snake = Snake {
+                cells: self.cells.clone(),
+                direction: self.direction,
+                eaten_apples: self.eaten_apples + 1
+            };
+
+            (new_snake, new_apples)
+        } else {
+            (self.clone(), apples.clone())
+        }
     }
 }
 
@@ -188,6 +215,10 @@ impl Apples {
             rng: ChaChaRng::from_rng(EntropyRng::new()).unwrap()
         };
         return apples;
+    }
+
+    fn with_cells(self, cells: Vec<Cell>) -> Apples {
+        Apples { cells, ..self }
     }
 
     fn grow(&mut self) -> &mut Apples {
@@ -262,39 +293,60 @@ mod snake_tests {
 
     #[test]
     fn snake_moves_right() {
-        let snake = Snake {
-            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-            direction: Direction::Right,
-        };
+        let snake = Snake::new(
+            vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            Direction::Right,
+        );
 
         assert_eq!(
             snake.slide(),
-            Snake {
-                cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
-                direction: Direction::Right,
-            }
+            Snake::new(
+                vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                Direction::Right,
+            )
         )
     }
 
     #[test]
     fn snake_can_change_direction() {
-        let snake = Snake {
-            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-            direction: Direction::Right,
-        };
+        let snake = Snake::new(
+            vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            Direction::Right,
+        );
 
         assert_eq!(
             snake.turn_in(Direction::Down).slide(),
-            Snake {
-                cells: vec![Cell { x: 2, y: 1 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
-                direction: Direction::Down,
-            }
+            Snake::new(
+                vec![Cell { x: 2, y: 1 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                Direction::Down
+            )
         );
         assert_eq!(
             snake.turn_in(Direction::Left).slide(),
+            Snake::new(
+                vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                Direction::Right
+            )
+        );
+    }
+
+    #[test]
+    fn snake_eats_an_apple() {
+        let snake = Snake::new(
+            vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            Direction::Right
+        );
+        let apples = Apples::create(10, 10).with_cells(vec![Cell { x: 2, y: 0 }]);
+
+        let (new_snake, new_apples) = snake.eat(apples);
+        assert_eq!(new_apples.cells, vec![]);
+        assert_eq!(new_snake.eaten_apples, 1);
+        assert_eq!(
+            new_snake.slide(),
             Snake {
-                cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }],
+                cells: vec![Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
                 direction: Direction::Right,
+                eaten_apples: 0
             }
         );
     }
@@ -306,10 +358,10 @@ mod game_tests {
 
     #[test]
     fn game_is_over_when_snake_hits_border() {
-        let snake = Snake {
-            cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-            direction: Direction::Right,
-        };
+        let snake = Snake::new(
+            vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            Direction::Right
+        );
         let game = Game { snake, width: 3, height: 1, apples: Apples::create(3, 1) };
 
         assert_eq!(game.is_over(), false);
@@ -319,10 +371,10 @@ mod game_tests {
 
     #[test]
     fn game_is_over_when_snake_bites_itself() {
-        let snake = Snake {
-            cells: vec![Cell { x: 0, y: 0 }, Cell { x: 0, y: 1 }, Cell { x: 1, y: 1 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
-            direction: Direction::Right,
-        };
+        let snake = Snake::new(
+            vec![Cell { x: 0, y: 0 }, Cell { x: 0, y: 1 }, Cell { x: 1, y: 1 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
+            Direction::Right
+        );
         let game = Game { snake, width: 100, height: 100, apples: Apples::create(3, 1) };
 
         assert_eq!(game.is_over(), true);
