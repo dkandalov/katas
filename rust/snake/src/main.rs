@@ -1,7 +1,7 @@
 extern crate libc;
 extern crate rand;
 use rand::Rng;
-use rand::StdRng;
+use rand::ChaChaRng;
 use rand::SeedableRng;
 use std::ffi::{CString};
 
@@ -34,13 +34,16 @@ fn main() {
         curs_set(0);
         halfdelay(3);
 
+        let width = 20;
+        let height = 10;
         let mut game = Game {
-            width: 20,
-            height: 10,
+            width,
+            height,
             snake: Snake {
                 cells: vec![Cell { x: 4, y: 0 }, Cell { x: 3, y: 0 }, Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
                 direction: Direction::Right,
-            }
+            },
+            apples: Apples::create(width, height)
         };
         let window = newwin(game.height + 2, game.width + 2, 0, 0);
 
@@ -72,6 +75,9 @@ impl Game {
             wclear(window);
             box_(window, 0, 0);
 
+            self.apples.cells.iter().for_each(|cell|
+                mvwprintw(window, cell.y + 1, cell.x + 1, ".".to_c_str().as_ptr())
+            );
             self.snake.tail().iter().for_each(|cell|
                 mvwprintw(window, cell.y + 1, cell.x + 1, "o".to_c_str().as_ptr())
             );
@@ -87,11 +93,12 @@ impl Game {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 struct Game {
     width: i16,
     height: i16,
     snake: Snake,
+    apples: Apples
 }
 
 impl Game {
@@ -115,10 +122,14 @@ impl Game {
         } else {
             new_snake = self.snake.slide();
         }
+
+        let new_apples = self.apples.clone().grow().clone(); // TODO
+        
         return Game {
             width: self.width,
             height: self.height,
             snake: new_snake,
+            apples: new_apples
         };
     }
 }
@@ -157,19 +168,39 @@ impl Snake {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 struct Apples {
     field_width: i16,
     field_height: i16,
     cells: Vec<Cell>,
     growth_speed: i16,
-    rng: StdRng
+    rng: ChaChaRng
 }
 
 impl Apples {
-    fn grow(&self) -> Apples {
+    fn create(field_width: i16, field_height: i16) -> Apples {
+        let apples = Apples {
+            field_width,
+            field_height,
+            cells: vec![],
+            growth_speed: 3,
+            rng: ChaChaRng::new_unseeded()
+        };
+        return apples;
+    }
 
-        return self.clone()
+    fn grow(&mut self) -> &mut Apples {
+        let n = self.rng.gen_range(0, self.growth_speed);
+        if n != 0 {
+            return self
+        }
+        let cell = Cell {
+            x: self.rng.gen_range(0, self.field_width),
+            y: self.rng.gen_range(0, self.field_height)
+        };
+        self.cells.push(cell);
+
+        return self;
     }
 }
 
@@ -273,7 +304,7 @@ mod tests {
             cells: vec![Cell { x: 2, y: 0 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
             direction: Direction::Right,
         };
-        let game = Game { width: 3, height: 1, snake };
+        let game = Game { snake, width: 3, height: 1, apples: Apples::create(3, 1) };
 
         assert_eq!(game.is_over(), false);
         assert_eq!(game.update(None).is_over(), true);
@@ -286,7 +317,7 @@ mod tests {
             cells: vec![Cell { x: 0, y: 0 }, Cell { x: 0, y: 1 }, Cell { x: 1, y: 1 }, Cell { x: 1, y: 0 }, Cell { x: 0, y: 0 }],
             direction: Direction::Right,
         };
-        let game = Game { width: 100, height: 100, snake };
+        let game = Game { snake, width: 100, height: 100, apples: Apples::create(3, 1) };
 
         assert_eq!(game.is_over(), true);
     }
@@ -297,8 +328,8 @@ mod tests {
             1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
             1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2
         ];
-        let rng: StdRng = StdRng::from_seed(seed);
-        let apples = Apples {
+        let rng = ChaChaRng::from_seed(seed);
+        let mut apples = Apples {
             field_width: 20,
             field_height: 10,
             cells: vec![],
@@ -308,7 +339,7 @@ mod tests {
 
         assert_eq!(
             apples.grow().grow().grow().cells,
-            vec![]
+            vec![Cell { x: 7, y: 0 }]
         );
     }
 }
