@@ -4,6 +4,7 @@ use rand::Rng;
 use rand::ChaChaRng;
 use rand::SeedableRng;
 use std::ffi::{CString};
+use rand::rngs::EntropyRng;
 
 #[link(name = "ncurses")]
 #[allow(dead_code)]
@@ -184,7 +185,7 @@ impl Apples {
             field_height,
             cells: vec![],
             growth_speed: 3,
-            rng: ChaChaRng::new_unseeded()
+            rng: ChaChaRng::from_rng(EntropyRng::new()).unwrap()
         };
         return apples;
     }
@@ -256,7 +257,7 @@ impl<'a> ToCStr for &'a str {
 
 
 #[cfg(test)]
-mod tests {
+mod snake_tests {
     use super::*;
 
     #[test]
@@ -297,6 +298,11 @@ mod tests {
             }
         );
     }
+}
+
+#[cfg(test)]
+mod game_tests {
+    use super::*;
 
     #[test]
     fn game_is_over_when_snake_hits_border() {
@@ -321,6 +327,11 @@ mod tests {
 
         assert_eq!(game.is_over(), true);
     }
+}
+
+#[cfg(test)]
+mod apples_tests {
+    use super::*;
 
     #[test]
     fn apples_grow_at_random_locations() {
