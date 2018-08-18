@@ -1,8 +1,11 @@
 import Direction.*
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import platform.osx.*
-import kotlin.math.max
+import platform.posix.fclose
+import platform.posix.fopen
+import platform.posix.fwrite
 import kotlin.random.Random
 
 fun main(args: Array<String>) = memScoped {
@@ -13,11 +16,11 @@ fun main(args: Array<String>) = memScoped {
     curs_set(0)
     halfdelay(3)
 
-    var game = Game(
+    val game = Game(
         width = 20,
         height = 10,
         snake = Snake(
-            cells = listOf(Cell(4, 0), Cell(3, 0), Cell(2, 0), Cell(1, 0), Cell(0, 0)),
+            cells = mutableListOf(Cell(4, 0), Cell(3, 0), Cell(2, 0), Cell(1, 0), Cell(0, 0)),
             direction = right
         )
     )
@@ -38,7 +41,7 @@ fun main(args: Array<String>) = memScoped {
             'l'  -> right
             else -> null
         }
-        game = game.update(direction)
+        game.update(direction)
     }
 }
 
@@ -47,87 +50,84 @@ fun Game.draw(window: CPointer<WINDOW>?) {
     box(window, 0, 0)
 
     apples.cells.forEach { mvwprintw(window, it.y + 1, it.x + 1, ".") }
-    snake.tail.forEach { mvwprintw(window, it.y + 1, it.x + 1, "o") }
-    snake.head.let { mvwprintw(window, it.y + 1, it.x + 1, "Q") }
+    snake.tail().forEach { mvwprintw(window, it.y + 1, it.x + 1, "o") }
+    snake.head().let { mvwprintw(window, it.y + 1, it.x + 1, "Q") }
 
-    if (isOver) {
+    if (isOver()) {
         mvwprintw(window, 0, 4, "Game is Over")
-        mvwprintw(window, 1, 3, "Your score is $score")
+        mvwprintw(window, 1, 3, "Your score is ${score()}")
     }
 
     wrefresh(window)
 }
 
 data class Game(
-    val width: Int,
-    val height: Int,
-    val snake: Snake,
-    val apples: Apples = Apples(width, height)
+    var width: Int,
+    var height: Int,
+    var snake: Snake,
+    var apples: Apples = Apples(width, height)
 ) {
-    val score = snake.cells.size
+    fun score() = snake.cells.size
 
-    val isOver = snake.tail.contains(snake.head) ||
+    fun isOver() = snake.tail().contains(snake.head()) ||
         snake.cells.any { it.x < 0 || it.x >= width || it.y < 0 || it.y >= height }
 
-    fun update(direction: Direction?): Game {
-        if (isOver) return this
-        val (newSnake, newApples) = snake
-            .turn(direction)
-            .move()
-            .eat(apples.grow())
-        return copy(snake = newSnake, apples = newApples)
+    fun update(direction: Direction?) {
+        if (isOver()) return
+        apples.grow()
+        snake.turn(direction).move().eat(apples)
     }
 }
 
 data class Snake(
-    val cells: List<Cell>,
-    val direction: Direction,
-    val eatenApples: Int = 0
+    var cells: MutableList<Cell>,
+    var direction: Direction,
+    var eatenApples: Int = 0
 ) {
-    val head = cells.first()
-    val tail = cells.subList(1, cells.size)
+    fun head() = cells.first()
+    fun tail() = cells.subList(1, cells.size)
 
     fun move(): Snake {
-        val newHead = head.moveIn(direction)
-        val newTail = if (eatenApples > 0) cells else cells.dropLast(1)
-        return copy(
-            cells = listOf(newHead) + newTail,
-            eatenApples = max(0, eatenApples - 1)
-        )
+        cells.add(0, head().copy().moveIn(direction))
+        if (eatenApples == 0) cells.removeAt(cells.size - 1)
+        if (eatenApples > 0) eatenApples--
+        return this
     }
 
     fun turn(newDirection: Direction?): Snake {
-        return if (newDirection == null || newDirection.isOppositeTo(direction)) this
-        else copy(direction = newDirection)
+        if (newDirection != null && !newDirection.isOppositeTo(direction)) {
+            direction = newDirection
+        }
+        return this
     }
 
-    fun eat(apples: Apples): Pair<Snake, Apples> {
-        if (!apples.cells.contains(head)) return Pair(this, apples)
-        return Pair(
-            copy(eatenApples = eatenApples + 1),
-            apples.copy(cells = apples.cells - head)
-        )
+    fun eat(apples: Apples) {
+        if (apples.cells.contains(head())) {
+            eatenApples += 1
+            apples.cells.remove(head())
+        }
     }
 }
 
 data class Apples(
-    val fieldWidth: Int,
-    val fieldHeight: Int,
-    val cells: List<Cell> = emptyList(),
-    val growthSpeed: Int = 3,
-    val random: Random = Random
+    var fieldWidth: Int,
+    var fieldHeight: Int,
+    var cells: MutableList<Cell> = ArrayList(),
+    var growthSpeed: Int = 3,
+    var random: Random = Random
 ) {
-    fun grow(): Apples {
-        if (random.nextInt(growthSpeed) != 0) return this
-        return copy(
-            cells = cells + Cell(random.nextInt(fieldWidth), random.nextInt(fieldHeight))
-        )
+    fun grow() {
+        if (random.nextInt(growthSpeed) == 0) {
+            cells.add(Cell(random.nextInt(fieldWidth), random.nextInt(fieldHeight)))
+        }
     }
 }
 
-data class Cell(val x: Int, val y: Int) {
+data class Cell(var x: Int, var y: Int) {
     fun moveIn(direction: Direction): Cell {
-        return copy(x = x + direction.dx, y = y + direction.dy)
+        x += direction.dx
+        y += direction.dy
+        return this
     }
 }
 
