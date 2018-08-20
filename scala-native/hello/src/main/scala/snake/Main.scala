@@ -17,6 +17,7 @@ object system {
 	def newwin(nlines: CInt, ncols: CInt, beginY: CInt, beginX: CInt): Ptr[CInt] = extern
 	def delwin(window: Ptr[CInt]): CInt = extern
 	def wclear(window: Ptr[CInt]): CInt = extern
+	def wrefresh(window: Ptr[CInt]): CInt = extern
 	def box(window: Ptr[CInt], verch: CInt, horch: CInt): CInt = extern
 	def mvwprintw(window: Ptr[CInt], y: Int, x: Int, s: CString): CInt = extern
 	def mvprintw(y: Int, x: Int, s: CString): CInt = extern
@@ -40,18 +41,18 @@ object Hello extends App {
 			curs_set(0)
 			halfdelay(3)
 
-			val width = 20
-			val height = 10
-			val window = newwin(height + 2, width + 2, 0, 0)
-			var snake = Snake(cells = List(Cell(2, 0), Cell(1, 0), Cell(0, 0)), direction = Right)
+			var game = Game(
+				width = 20,
+				height = 10,
+				snake = Snake(cells = List(Cell(4, 0), Cell(3, 0), Cell(2, 0), Cell(1, 0), Cell(0, 0)), direction = Right)
+			)
+
+			val window = newwin(game.height + 2, game.width + 2, 0, 0)
 
 			var c = 0
 			while (c.toChar != 'q') {
-				wclear(window)
-				box(window, 0, 0)
 
-				snake.tail.foreach { cell => mvwprintw(window, cell.y + 1, cell.x + 1, toCString("o")) }
-				mvwprintw(window, snake.head.y + 1, snake.head.x + 1, toCString("Q"))
+				draw(game, window)
 
 				c = wgetch(window)
 				val direction = c.toChar match {
@@ -62,11 +63,28 @@ object Hello extends App {
 					case _ => null
 				}
 
-				snake = snake.turn(direction).move()
+				game = game.update(direction)
 			}
 
 			delwin(window)
 			endwin()
+		}
+	}
+
+	private def draw(game: Game, window: Ptr[CInt]) = {
+		Zone { implicit z =>
+			wclear(window)
+			box(window, 0, 0)
+
+			game.snake.tail.foreach { cell => mvwprintw(window, cell.y + 1, cell.x + 1, c"o") }
+			mvwprintw(window, game.snake.head.y + 1, game.snake.head.x + 1, c"Q")
+
+			if (game.isOver) {
+				mvwprintw(window, 0, 4, c"Game is Over")
+				mvwprintw(window, 1, 3, toCString(s"Your score is ${game.score}"))
+			}
+
+			wrefresh(window)
 		}
 	}
 
@@ -91,6 +109,20 @@ object Hello extends App {
 		`snake moves right`()
 		`snake changes direction`()
 		`snake doesn't change direction to opposite`()
+	}
+}
+
+case class Game(width: Int, height: Int, snake: Snake) {
+
+	val score: Int = snake.cells.length
+
+	val isOver: Boolean =
+		snake.cells.exists{ cell => cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y > height } ||
+		snake.tail.contains(snake.head)
+
+	def update(direction: Direction): Game = {
+		if (isOver) return this
+		copy(snake = snake.turn(direction).move())
 	}
 }
 
