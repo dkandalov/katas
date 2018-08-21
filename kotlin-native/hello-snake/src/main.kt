@@ -4,6 +4,7 @@ import kotlinx.cinterop.memScoped
 import platform.osx.*
 import kotlin.math.max
 import kotlin.random.Random
+import kotlin.system.getTimeMillis
 
 fun main(args: Array<String>) = memScoped {
     initscr()
@@ -11,7 +12,7 @@ fun main(args: Array<String>) = memScoped {
 
     noecho()
     curs_set(0)
-    halfdelay(3)
+    halfdelay(1)
 
     var game = Game(
         width = 20,
@@ -25,9 +26,11 @@ fun main(args: Array<String>) = memScoped {
     val window = newwin(game.height + 2, game.width + 2, 0, 0)
     defer { delwin(window) }
 
+    val updateDuration = 40
+    var lastUpdateMs = getTimeMillis()
+
     var c = 0
     while (c.toChar() != 'q') {
-
         game.draw(window)
 
         c = wgetch(window)
@@ -38,7 +41,16 @@ fun main(args: Array<String>) = memScoped {
             'l'  -> right
             else -> null
         }
-        game = game.update(direction)
+
+        if (direction != null) {
+            game = game.update(direction)
+            lastUpdateMs += updateDuration
+        }
+        val nowMs = getTimeMillis()
+        while (nowMs - lastUpdateMs >= updateDuration) {
+            game = game.update()
+            lastUpdateMs += updateDuration
+        }
     }
 }
 
@@ -69,7 +81,7 @@ data class Game(
     val isOver = snake.tail.contains(snake.head) ||
         snake.cells.any { it.x < 0 || it.x >= width || it.y < 0 || it.y >= height }
 
-    fun update(direction: Direction?): Game {
+    fun update(direction: Direction? = null): Game {
         if (isOver) return this
         val (newSnake, newApples) = snake
             .turn(direction)
