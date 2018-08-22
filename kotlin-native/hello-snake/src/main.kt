@@ -1,10 +1,11 @@
 import Direction.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.memScoped
-import platform.osx.*
+//import platform.osx.*
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.system.getTimeMillis
+import ncurses.*
 
 fun main(args: Array<String>) = memScoped {
     initscr()
@@ -26,9 +27,6 @@ fun main(args: Array<String>) = memScoped {
     val window = newwin(game.height + 2, game.width + 2, 0, 0)
     defer { delwin(window) }
 
-    val updateDuration = 40
-    var lastUpdateMs = getTimeMillis()
-
     var c = 0
     while (c.toChar() != 'q') {
         game.draw(window)
@@ -42,15 +40,7 @@ fun main(args: Array<String>) = memScoped {
             else -> null
         }
 
-        if (direction != null) {
-            game = game.update(direction)
-            lastUpdateMs += updateDuration
-        }
-        val nowMs = getTimeMillis()
-        while (nowMs - lastUpdateMs >= updateDuration) {
-            game = game.update()
-            lastUpdateMs += updateDuration
-        }
+        game = game.update(direction)
     }
 }
 
