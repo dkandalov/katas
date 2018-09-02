@@ -8,10 +8,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.FileReader;
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
  * Date: 17/4/11
  */
 public class Xml1 {
-	private static final String FILENAME = "orders2.xml";
+	private static final String FILENAME = "../scala/src/katas/scala/orderbook/orders2.xml";
 
 	@Test public void shouldCreateSetOfSymbols() throws Exception {
 		Set<String> symbols = readSymbols_SAX(FILENAME);
@@ -49,7 +49,7 @@ public class Xml1 {
 	private Set<String> readSymbols_SAX(String fileName) throws Exception {
 		final Set<String> result = new TreeSet<String>();
 
-		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 		xmlReader.setContentHandler(new DefaultHandler() {
 			@Override
 			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
