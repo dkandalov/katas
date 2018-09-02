@@ -2,11 +2,11 @@ package katas.java.jtest;
 
 import org.junit.Test;
 
-import static katas.java.jtest.FluentAssertions.*;
-import static org.hamcrest.Matchers.equalTo;
+import static katas.java.jtest.FluentMatchers.expect;
 
 public class Tests {
     @Test public void foo() {
-        assert_(1, equalTo(2));
+//        expect(1).equalTo("");
+        expect(1).is(true);
     }
 }
