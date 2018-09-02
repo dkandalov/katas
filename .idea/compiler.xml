@@ -25,6 +25,7 @@
         <module name="java" />
         <module name="java-katas" />
         <module name="katas" />
+        <module name="katas-java" />
         <module name="kotlin" />
         <module name="kotlin-katas-and-stuff" />
         <module name="morestuff" />
@@ -36,6 +37,7 @@
       <module name="java" target="1.8" />
       <module name="java-katas" target="1.8" />
       <module name="katas" target="1.8" />
+      <module name="katas-java" target="1.10" />
       <module name="kotlin" target="1.8" />
       <module name="kotlin-katas-and-stuff" target="1.8" />
       <module name="scala" target="1.8" />
