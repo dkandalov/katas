@@ -7,6 +7,7 @@ import static katas.java.jtest.FailedAssertionFinder.*;
 import static org.junit.Assert.assertThat;
 
 public class FluentMatchers {
+
     public static Completion expect(Object actual) {
         return new Completion(actual);
     }
