@@ -4,11 +4,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SnakeTests {
-    @Test fun `snake moves right`() {
-        val snake = Snake(
-            cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)),
-            direction = right
-        )
+    private val snake = Snake(
+        cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)),
+        direction = right
+    )
+
+    @Test fun `snake moved right`() {
         assertEquals(
             actual = snake.move(),
             expected = Snake(
@@ -19,10 +20,6 @@ class SnakeTests {
     }
 
     @Test fun `snake changes direction`() {
-        val snake = Snake(
-            cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)),
-            direction = right
-        )
         assertEquals(
             actual = snake.turn(down).move(),
             expected = Snake(
@@ -40,19 +37,22 @@ class SnakeTests {
     }
 
     @Test fun `snake eats an apple`() {
-        val snake = Snake(
-            cells = listOf(Cell(2, 0), Cell(1, 0), Cell(0, 0)),
-            direction = right
-        )
-        val apples = Apples(cells = listOf(Cell(2, 0)), fieldWidth = 20, fieldHeight = 10)
+        val apples = Apples(20, 10, cells = listOf(Cell(2, 0)))
 
         val (newSnake, newApples) = snake.eat(apples)
-        assertEquals(actual = newSnake.eatenApples, expected = 1)
+
+        assertEquals(
+            actual = newApples.cells,
+            expected = emptyList()
+        )
+        assertEquals(
+            actual = newSnake.eatenApples,
+            expected = 1
+        )
         assertEquals(
             actual = newSnake.move().cells,
             expected = listOf(Cell(3, 0), Cell(2, 0), Cell(1, 0), Cell(0, 0))
         )
-        assertEquals(actual = newApples.cells, expected = emptyList())
     }
 }
 
@@ -67,8 +67,3 @@ class ApplesTests {
         )
     }
 }
-
-
-
-
-

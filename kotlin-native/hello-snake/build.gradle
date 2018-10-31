@@ -13,16 +13,16 @@ buildscript {
 apply plugin: "konan"
 
 konanArtifacts {
-    interop("ncurses") {
-        defFile "ncurses.def"
-    }
     program("snake") {
         srcDir "src"
-        libraries { artifact "ncurses" }
+        //libraries { artifact "ncurses" }
     }
     program("snakeTest") {
         srcDir "src"
         srcDir "test"
-        libraries { artifact "ncurses" }
+        //libraries { artifact "ncurses" }
     }
+    //interop("ncurses") {
+    //    defFile "ncurses.def"
+    //}
 }
