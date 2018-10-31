@@ -21,10 +21,7 @@ public class Approver {
         //noinspection ResultOfMethodCallIgnored
         packageDir.mkdirs();
 
-        String className = element.getClassName();
-        int i = className.lastIndexOf('.');
-        if (i != -1) className = className.substring(i + 1);
-        String fileName = className + "." + element.getMethodName();
+        String fileName = simpleName(element.getClassName()) + "." + element.getMethodName();
         File approvedFile = new File(packageDirPath + fileName + ".approved");
         File actualFile = new File(packageDirPath + fileName + ".actual");
 
@@ -47,6 +44,11 @@ public class Approver {
         } catch (IOException e) {
             error(e);
         }
+    }
+
+    private static String simpleName(String className) {
+        int i = className.lastIndexOf('.');
+        return i == -1 ? className : className.substring(i + 1);
     }
 
     private static void error(Throwable throwable) {
