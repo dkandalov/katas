@@ -2,7 +2,6 @@ package katas.kotlin.eightQueen
 
 import katas.kotlin.shouldEqual
 import org.junit.Test
-import kotlin.coroutines.experimental.buildSequence
 
 class EightQueen23 {
     @Test fun `find positions of queens on board in which they don't attack each other`() {
@@ -30,7 +29,7 @@ class EightQueen23 {
     private fun Board.doFindQueenPositions(): List<Board> = findQueenPositions().toList()
 
     private fun Board.findQueenPositions(): Sequence<Board> {
-        val nextMoves = buildSequence {
+        val nextMoves = sequence {
             val x = (queens.map { it.x }.max() ?: -1) + 1
             0.until(size)
                 .map { y -> Queen(x, y) }

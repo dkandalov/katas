@@ -3,7 +3,6 @@ package katas.kotlin.mukanren
 import katas.kotlin.shouldEqual
 import org.junit.Test
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 data class Variable(val name: String)
 
@@ -36,7 +35,7 @@ class Goal(val f: (State) -> Sequence<State>) {
     fun pursueIn(state: State): Sequence<State> = f.invoke(state)
 
     fun pursueInEach(states: Sequence<State>): Sequence<State> {
-        return buildSequence {
+        return sequence {
             val results = pursueIn(states.iterator().next())
             val overallResults = interleave(results, pursueInEach(states))
             overallResults.forEach { state ->
@@ -102,7 +101,7 @@ class RelationsOnListsTest {
 
 private fun <T> interleave(vararg sequences: Sequence<T>): Sequence<T> {
     val iterators = LinkedList(sequences.map { it.iterator() })
-    return buildSequence {
+    return sequence {
         while (iterators.isNotEmpty()) {
             val iterator = iterators.removeFirst()
             if (iterator.hasNext()) {

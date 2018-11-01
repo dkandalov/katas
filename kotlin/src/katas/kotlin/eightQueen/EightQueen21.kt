@@ -2,7 +2,6 @@ package katas.kotlin.eightQueen
 
 import katas.kotlin.shouldEqual
 import org.junit.Test
-import kotlin.coroutines.experimental.buildSequence
 
 class EightQueen21 {
     @Test fun `find positions of queens so that they don't attack each other`() {
@@ -33,7 +32,7 @@ class EightQueen21 {
     }
 
     private data class Board(val size: Int, val queens: List<Queen> = emptyList()) {
-        fun findPositions(): Sequence<Board> = buildSequence {
+        fun findPositions(): Sequence<Board> = sequence {
             var boards = listOf(Board(size))
             allPossiblePositions().forEach { queen ->
                 boards += boards.mapNotNull { it.add(queen) }.toList()
@@ -41,7 +40,7 @@ class EightQueen21 {
             boards.filter { it.size == it.queens.size }.forEach { yield(it) }
         }
 
-        fun allPossiblePositions(): Sequence<Queen> = buildSequence {
+        fun allPossiblePositions(): Sequence<Queen> = sequence {
             0.until(size).forEach { x ->
                 0.until(size).forEach { y ->
                     yield(Queen(x, y))

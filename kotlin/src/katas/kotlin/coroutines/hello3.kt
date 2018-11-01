@@ -1,14 +1,14 @@
 package katas.kotlin.coroutines
 
 import java.lang.Thread.currentThread
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
+import kotlin.coroutines.resume
 
 object Hello3 {
     class MyContinuation<in T>(override val context: MyContext): Continuation<T> {
-        override fun resume(value: T) {
+        override fun resumeWith(result: Result<T>) {
             println("resumed")
         }
-        override fun resumeWithException(exception: Throwable) = TODO()
     }
 
     class MyContext: AbstractCoroutineContextElement(ContinuationInterceptor), ContinuationInterceptor {

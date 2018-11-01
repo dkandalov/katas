@@ -2,7 +2,6 @@ package katas.kotlin.palindromes
 
 import katas.kotlin.shouldEqual
 import org.junit.Test
-import kotlin.coroutines.experimental.buildSequence
 
 class Palindromes {
 
@@ -54,7 +53,7 @@ class Palindromes {
         return result.sortedBy { -it.value.length }.distinct().take(maxAmount)
     }
 
-    fun String.allSubstrings(): Sequence<Pair<String, IntRange>> = buildSequence {
+    fun String.allSubstrings(): Sequence<Pair<String, IntRange>> = sequence {
         val s = this@allSubstrings
         0.until(s.length).forEach { from ->
             s.length.downTo(from + 1).forEach { to ->

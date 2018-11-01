@@ -2,7 +2,6 @@ package katas.kotlin.eightQueen
 
 import katas.kotlin.shouldEqual
 import org.junit.Test
-import kotlin.coroutines.experimental.buildSequence
 
 class EightQueen22 {
 
@@ -19,7 +18,7 @@ class EightQueen22 {
     }
 
     private data class Board(val size: Int, val queens: List<Queen> = emptyList()) {
-        fun findPositions(): Sequence<Board> = buildSequence {
+        fun findPositions(): Sequence<Board> = sequence {
             var boards = listOf(Board(size))
             0.until(size).forEach { x ->
                 0.until(size).forEach { y ->

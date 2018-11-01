@@ -14,10 +14,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors.newCachedThreadPool
 import java.util.concurrent.Future
 import java.util.function.Supplier
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 class PP {
 
@@ -205,14 +206,14 @@ class PP {
 
     private class CoDataSource(private val dataSource: DataSource) {
         suspend fun read(): Int {
-            return suspendCoroutineOrReturn { continuation: Continuation<Int> ->
+            return suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Int> ->
                 dataSource.asyncRead { continuation.resume(it) }
                 COROUTINE_SUSPENDED
             }
         }
 
         suspend fun parallelRead(count: Int): List<Int> {
-            return suspendCoroutineOrReturn { continuation: Continuation<List<Int>> ->
+            return suspendCoroutineUninterceptedOrReturn { continuation: Continuation<List<Int>> ->
                 val values = CopyOnWriteArrayList<Int>()
                 0.until(count).forEach {
                     dataSource.asyncRead {

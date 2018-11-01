@@ -1,19 +1,19 @@
 package katas.kotlin.coroutines
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.createCoroutineUnchecked
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 object Hello2 {
     class MyContinuation: Continuation<Unit> {
         override val context: CoroutineContext = EmptyCoroutineContext
-        override fun resume(value: Unit) {}
-        override fun resumeWithException(exception: Throwable) = throw exception
+        override fun resumeWith(result: Result<Unit>) {}
     }
 
     fun createCoroutine(block: suspend () -> Unit): Continuation<Unit> {
-        return block.createCoroutineUnchecked(MyContinuation())
+        return block.createCoroutineUnintercepted(MyContinuation())
     }
 
     fun launchCoroutine(block: suspend () -> Unit) {
@@ -35,12 +35,12 @@ object Hello2 {
 
     fun cc(block: suspend () -> Unit): Continuation<Unit> {
         val continuation = MyContinuation()
-        block.createCoroutineUnchecked(continuation)
+        block.createCoroutineUnintercepted(continuation)
         return continuation
     }
 
     private suspend fun yeeld() {
-        suspendCoroutineOrReturn { it: Continuation<Int> ->
+        suspendCoroutineUninterceptedOrReturn { it: Continuation<Int> ->
             c = it
             COROUTINE_SUSPENDED
         }
@@ -60,7 +60,7 @@ object Hello2 {
 //        coroutine.resume(Unit)
 //        coroutine.resume(Unit)
 
-        buildSequence {
+        sequence {
             yield(1)
         }
 

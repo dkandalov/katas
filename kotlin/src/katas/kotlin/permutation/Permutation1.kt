@@ -5,7 +5,6 @@ package katas.kotlin.permutation
 import kotlincommon.join
 import kotlincommon.printed
 import org.junit.Test
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * The original paper http://www.ams.org/journals/mcom/1963-17-083/S0025-5718-1963-0159764-2/S0025-5718-1963-0159764-2.pdf
@@ -34,7 +33,7 @@ class Permutation1 {
 
         private fun <E> List<E>.permutations(): Sequence<List<E>> {
             val list = this
-            return buildSequence {
+            return sequence {
                 val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }
                 var maxIndex: Index? = Index(-1, left)
 

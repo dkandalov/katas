@@ -1,10 +1,11 @@
 package katas.kotlin.snake.v0_refactored
 
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 fun main(args: Array<String>) {
     CoGameUI.build(GameSwingUI()) {
@@ -29,7 +30,7 @@ private class CoGameUI(private val gameUI: GameUI) {
     private var eventContinuation: Continuation<Direction?>? = null
 
     suspend fun startGame() {
-        return suspendCoroutineOrReturn { continuation: Continuation<Unit> ->
+        return suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Unit> ->
             gameUI.init(object: GameUI.Observer {
                 override fun onGameStart() {
                     continuation.resume(Unit)
@@ -52,7 +53,7 @@ private class CoGameUI(private val gameUI: GameUI) {
     }
 
     suspend fun readEvent(): Direction? {
-        return suspendCoroutineOrReturn { continuation: Continuation<Direction?> ->
+        return suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Direction?> ->
             eventContinuation = continuation
             COROUTINE_SUSPENDED
         }

@@ -1,9 +1,10 @@
 
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 fun create(block: suspend Unit.() -> Unit) {
     block.createCoroutine(Unit, completion = EmptyContinuation).resume(Unit)
@@ -14,7 +15,7 @@ fun main(args: Array<String>) {
     var savedC: Continuation<Unit>? = null
     create {
         println("init")
-        suspendCoroutineOrReturn { c: Continuation<Unit> ->
+        suspendCoroutineUninterceptedOrReturn { c: Continuation<Unit> ->
             savedC = c
             COROUTINE_SUSPENDED
         }
@@ -22,7 +23,7 @@ fun main(args: Array<String>) {
         if (count < 5) {
             println("🚀 $count")
             count += 1
-            suspendCoroutineOrReturn { _: Continuation<Unit> ->
+            suspendCoroutineUninterceptedOrReturn { _: Continuation<Unit> ->
                 COROUTINE_SUSPENDED
             }
         }

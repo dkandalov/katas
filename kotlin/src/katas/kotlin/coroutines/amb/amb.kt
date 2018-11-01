@@ -2,9 +2,10 @@ package katas.kotlin.coroutines.amb
 
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import java.util.*
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 fun main(args: Array<String>) {
     ResumableFunction.create {
@@ -32,7 +33,7 @@ private class ResumableFunction {
 
     suspend fun amb(choices: MutableList<Int>, name: String = ""): Int {
         lateinit var c: Continuation<Unit>
-        suspendCoroutineOrReturn { it: Continuation<Unit> -> c = it; Unit }
+        suspendCoroutineUninterceptedOrReturn { it: Continuation<Unit> -> c = it; Unit }
         continuations.addLast(c)
 
         if (choices.isEmpty()) {

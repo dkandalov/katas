@@ -1,11 +1,10 @@
 package katas.kotlin.coroutines
 
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 object Hello {
     class MyContinuation<Unit>(override val context: CoroutineContext): Continuation<Unit> {
-        override fun resume(value: Unit) {}
-        override fun resumeWithException(exception: Throwable) = TODO()
+        override fun resumeWith(result: Result<Unit>) {}
     }
 
     class MyContext: AbstractCoroutineContextElement(MyContext) {

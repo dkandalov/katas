@@ -4,12 +4,13 @@ package katas.kotlin.coroutines.steps.step2
 
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.EmptyCoroutineContext
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 /**
  * Send/receive values from coroutine
@@ -77,7 +78,7 @@ private class YieldingFunction<T> {
     }
 
     suspend fun yield(n: T): T {
-        return suspendCoroutineOrReturn { it: Continuation<T> ->
+        return suspendCoroutineUninterceptedOrReturn { it: Continuation<T> ->
             yieldedValue = n
             c = it
             COROUTINE_SUSPENDED
@@ -95,6 +96,5 @@ private class YieldingFunction<T> {
 
 private object EmptyContinuation: Continuation<Unit> {
     override val context: CoroutineContext = EmptyCoroutineContext
-    override fun resume(value: Unit) {}
-    override fun resumeWithException(exception: Throwable) = throw exception
+    override fun resumeWith(result: Result<Unit>) {}
 }

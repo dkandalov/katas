@@ -4,12 +4,13 @@ package katas.kotlin.coroutines.steps.step3
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.EmptyCoroutineContext
-import kotlin.coroutines.experimental.createCoroutine
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 val events = ArrayList<String>()
 fun log(it: Any?) = events.add(it.toString())
@@ -46,7 +47,7 @@ fun main(args: Array<String>) {
 
 private suspend fun foo(f: ResumableFunction) {
     log("started foo")
-    log("stacktrace:\n" + Exception().stackTrace.map{ it.toString().replace(Regex(":\\d+"), "")}.joinToString("\n"))
+    log("stacktrace:\n" + Exception().stackTrace.joinToString("\n") { it.toString().replace(Regex(":\\d+"), "")})
     f.yield()
     log("finished foo")
 }
@@ -61,7 +62,7 @@ private class ResumableFunction {
     }
 
     suspend fun yield() {
-        return suspendCoroutineOrReturn { it: Continuation<Unit> ->
+        return suspendCoroutineUninterceptedOrReturn { it: Continuation<Unit> ->
             c = it
             COROUTINE_SUSPENDED
         }
@@ -78,6 +79,5 @@ private class ResumableFunction {
 
 private object EmptyContinuation: Continuation<Unit> {
     override val context: CoroutineContext = EmptyCoroutineContext
-    override fun resume(value: Unit) {}
-    override fun resumeWithException(exception: Throwable) = throw exception
+    override fun resumeWith(result: Result<Unit>) {}
 }

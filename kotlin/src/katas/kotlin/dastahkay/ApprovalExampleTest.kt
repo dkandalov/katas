@@ -33,8 +33,8 @@ class ApprovalExampleTest {
         packageDir.mkdirs()
 
         val fileName = method.declaringClass.simpleName + "." + method.name
-        val approvedFile = File(packageDirPath + fileName + ".approved")
-        val actualFile = File(packageDirPath + fileName + ".actual")
+        val approvedFile = File("$packageDirPath$fileName.approved")
+        val actualFile = File("$packageDirPath$fileName.actual")
 
         if (approvedFile.exists()) {
             val approvedValue = approvedFile.readText()
