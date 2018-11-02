@@ -30,7 +30,7 @@ class ContactsTests {
     @Test fun `adding maximum amount of elements`() {
         val contacts = TrieNode()
         val random = Random(123)
-        0.until(100000).forEach { _ ->
+        0.until(100000).forEach {
             contacts.add(random.nextString(21))
         }
     }
@@ -83,46 +83,52 @@ private fun main(lines: Sequence<String>) {
 
     val tree = TrieNode()
     0.until(n).forEach {
-        val parts = i.next().split(Regex(" +"))
+        val parts = i.next().split(" ")
         val command = parts[0]
         val value = parts[1]
-        if (command == "add") {
+        if (command[0] == 'a') {
 //            addDuration += measureTimeMillis {
                 tree.add(value)
 //            }
-        } else if (command == "find") {
+        } else if (command[0] == 'f') {
 //            findDuration += measureTimeMillis {
                 println(tree.amountOfMatches(value))
 //            }
         }
     }
-
 //    println("addDuration = $addDuration")
 //    println("findDuration = $findDuration")
 }
 
 
-private data class TrieNode(
-    val children: MutableMap<Char, TrieNode> = HashMap(),
-    var leafCount: Int = 0
+private class TrieNode(
+    private val childChars: CharArray = CharArray(26, { '-' }),
+    private val childNodes: Array<TrieNode?> = Array(26, { null }),
+    private var childCount: Int = 0,
+    private var size: Int = 0
 ) {
     fun add(s: String) {
         var node = this
         s.forEach { c ->
-            node.children.putIfAbsent(c, TrieNode())
-            node = node.children[c]!!
-            node.leafCount++
+            var i = node.childChars.indexOf(c)
+            if (i == -1) {
+                i = node.childCount
+                node.childChars[i] = c
+                node.childNodes[i] = TrieNode()
+                node.childCount++
+            }
+            node = node.childNodes[i]!!
+            node.size++
         }
     }
 
     fun amountOfMatches(s: String): Int {
         var node = this
-        for (i in s.indices) {
-            val child = node.children[s[i]]
-            if (child == null) return 0 else node = child
+        s.forEach { c ->
+            val i = node.childChars.indexOf(c)
+            if (i == -1) return 0
+            else node = node.childNodes[i]!!
         }
-        return node.leafCount
+        return node.size
     }
-
-    override fun toString() = children.toString()
 }
