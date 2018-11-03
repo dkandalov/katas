@@ -1,36 +1,33 @@
 
-import katas.kotlin.coroutines.steps.step1.EmptyContinuation
+import katas.kotlin.coroutines.MyContinuation
+import katas.kotlin.coroutines.MyEmptyCoroutineContext
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.createCoroutine
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
 
-fun create(block: suspend Unit.() -> Unit) {
-    block.createCoroutine(Unit, completion = EmptyContinuation).resume(Unit)
+fun createCoroutine(block: suspend Unit.() -> Unit) {
+    block.createCoroutine(Unit, completion = MyContinuation(MyEmptyCoroutineContext)).resume(Unit)
 }
 
 fun main(args: Array<String>) {
     var count = 0
-    var savedC: Continuation<Unit>? = null
-    create {
+    var savedContinuation: Continuation<Unit>? = null
+    createCoroutine {
         println("init")
-        suspendCoroutineUninterceptedOrReturn { c: Continuation<Unit> ->
-            savedC = c
+        suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Unit> ->
+            savedContinuation = continuation
             COROUTINE_SUSPENDED
         }
-        println("foo")
         if (count < 5) {
             println("🚀 $count")
             count += 1
-            suspendCoroutineUninterceptedOrReturn { _: Continuation<Unit> ->
-                COROUTINE_SUSPENDED
-            }
         }
         println("done")
     }
-    savedC?.resume(Unit)
-    savedC?.resume(Unit)
-    savedC?.resume(Unit)
-    savedC?.resume(Unit)
+    savedContinuation?.resume(Unit)
+    savedContinuation?.resume(Unit)
+    savedContinuation?.resume(Unit)
+    savedContinuation?.resume(Unit)
 }
