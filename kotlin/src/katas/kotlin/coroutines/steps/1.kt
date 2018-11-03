@@ -4,13 +4,9 @@ package katas.kotlin.coroutines.steps.step1
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.resume
 
 /**
  * Yield coroutine execution
@@ -41,14 +37,12 @@ private class ResumableFunction {
     private var c: Continuation<Unit>? = null
 
     fun resume() {
-        val cont = c
-        c = null
-        cont?.resume(Unit)
+        c?.resume(Unit)
     }
 
     suspend fun yield() {
-        return suspendCoroutineUninterceptedOrReturn { it: Continuation<Unit> ->
-            c = it
+        return suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Unit> ->
+            c = continuation
             COROUTINE_SUSPENDED
         }
     }

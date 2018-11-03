@@ -4,7 +4,6 @@ import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.resume
 
 object Hello2 {
     class MyContinuation: Continuation<Unit> {
@@ -57,12 +56,13 @@ object Hello2 {
         }
         coroutine.resume(Unit)
         coroutine.resume(Unit)
+        coroutine.resume(Unit)
 //        coroutine.resume(Unit)
 //        coroutine.resume(Unit)
 
-        sequence {
-            yield(1)
-        }
+//        sequence {
+//            yield(1)
+//        }
 
 //        launchCoroutine {
 //            println("Hello coroutine world (${currentThread().name})")
