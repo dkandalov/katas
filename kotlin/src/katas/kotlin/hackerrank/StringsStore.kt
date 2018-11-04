@@ -50,24 +50,25 @@ class StringsStoreTests {
             |aba
             |xzxb
             |ab
-        """.trim().trimMargin()
-            .printed()
-            .split("\n")
-            .asSequence()
+        """.toLineSequence()
+        val output = OutputRecorder()
 
-        val output = object : (Any?) -> Unit {
-            var s = ""
-            override fun invoke(o: Any?) {
-                s += o.toString() + "\n"
-            }
-        }
         main(input, output)
 
-        output.s.printed() shouldEqual """
+        output.text shouldEqual """
             |2
             |1
             |0
         """.trimMargin() + "\n"
 
+    }
+}
+
+fun String.toLineSequence(): Sequence<String> = trim().trimMargin().split("\n").asSequence()
+
+class OutputRecorder: (Any?) -> Unit {
+    var text = ""
+    override fun invoke(o: Any?) {
+        text += o.toString() + "\n"
     }
 }
