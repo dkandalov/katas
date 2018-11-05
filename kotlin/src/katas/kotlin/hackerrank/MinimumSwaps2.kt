@@ -26,7 +26,7 @@ fun minimumSwaps(array: Array<Int>): Int {
     var swapCount = 0
     var i = 0
     while (i <= array.size - 2) {
-        if (array[i] > array[i + 1]) {
+        if (i + 1 != array[i]) {
             array.swap(i, array.findIndexToSwap(array[i]) ?: error(""))
             swapCount++
         } else {
@@ -41,6 +41,7 @@ private fun Array<Int>.findIndexToSwap(i: Int): Int? {
 }
 
 private fun <T> Array<T>.swap(i1: Int, i2: Int) {
+    println("$i1 $i2")
     val tmp = this[i1]
     this[i1] = this[i2]
     this[i2] = tmp
