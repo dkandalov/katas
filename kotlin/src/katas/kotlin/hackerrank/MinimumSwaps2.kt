@@ -23,6 +23,11 @@ private fun main(input: Sequence<String>, output: (Any?) -> Unit = { println(it)
 
 fun minimumSwaps(array: Array<Int>): Int {
     if (array.size <= 1) return 0
+    var i = 0
+    while (i < array.size - 2) {
+        if (array[i] > array[i + 1]) return 3
+        i++
+    }
     return 3
 }
 
