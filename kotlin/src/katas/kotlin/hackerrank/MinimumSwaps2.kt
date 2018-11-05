@@ -1,7 +1,6 @@
 package katas.kotlin.hackerrank
 
 import katas.kotlin.shouldEqual
-import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 
@@ -25,7 +24,7 @@ fun minimumSwaps(array: Array<Int>): Int {
     if (array.size <= 1) return 0
     var swapCount = 0
     while (true) {
-        val i = array.indices.find { array[it] != it + 1 } ?: return swapCount
+        val i = array.indices.find { array[it] != it + 1 && array[it] + 1 != array[it + 1]} ?: return swapCount
         array.swap(i, array.findIndexToSwap(array[i]) ?: error(i))
         swapCount++
     }
@@ -75,7 +74,6 @@ class MinimumSwaps2 {
         """
     }
 
-    @Ignore
     @Test fun `testcase 1`() {
         """|5
            |2 3 4 1 5
