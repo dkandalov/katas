@@ -49,29 +49,13 @@ private fun <T> Array<T>.swap(i1: Int, i2: Int) {
 
 class MinimumSwaps2 {
     @Test fun `no swaps`() {
-        """|1
-           |1
-        """ shouldProduce """
-           |0
-        """
-        """|2
-           |1 2
-        """ shouldProduce """
-           |0
-        """
+        minimumSwaps(arrayOf(1)) shouldEqual 0
+        minimumSwaps(arrayOf(1, 2)) shouldEqual 0
     }
 
     @Test fun `single swap`() {
-        """|2
-           |2 1
-        """ shouldProduce """
-           |1
-        """
-        """|3
-           |3 2 1
-        """ shouldProduce """
-           |1
-        """
+        minimumSwaps(arrayOf(2, 1)) shouldEqual 1
+        minimumSwaps(arrayOf(3, 2, 1)) shouldEqual 1
     }
 
     @Ignore
