@@ -27,8 +27,7 @@ fun minimumSwaps(array: Array<Int>): Int {
     var i = 0
     while (i <= array.size - 2) {
         if (array[i] > array[i + 1]) {
-            val j = array.findIndexToSwap(i) ?: error("")
-            array.swap(i, j)
+            array.swap(i, array.findIndexToSwap(array[i]) ?: error(""))
             swapCount++
         } else {
             i++
@@ -38,7 +37,7 @@ fun minimumSwaps(array: Array<Int>): Int {
 }
 
 private fun Array<Int>.findIndexToSwap(i: Int): Int? {
-    return indices.drop(1).reversed().find { this[it] < this[it - 1] }
+    return indices.take(i).drop(1).reversed().find { this[it] < this[it - 1] }
 }
 
 private fun <T> Array<T>.swap(i1: Int, i2: Int) {
@@ -65,6 +64,11 @@ class MinimumSwaps2 {
     @Test fun `single swap`() {
         """|2
            |2 1
+        """ shouldProduce """
+           |1
+        """
+        """|3
+           |3 2 1
         """ shouldProduce """
            |1
         """
