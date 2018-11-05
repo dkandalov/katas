@@ -24,16 +24,11 @@ private fun main(input: Sequence<String>, output: (Any?) -> Unit = { println(it)
 fun minimumSwaps(array: Array<Int>): Int {
     if (array.size <= 1) return 0
     var swapCount = 0
-    var i = 0
-    while (i <= array.size - 2) {
-        if (i + 1 != array[i]) {
-            array.swap(i, array.findIndexToSwap(array[i]) ?: error(i))
-            swapCount++
-        } else {
-            i++
-        }
+    while (true) {
+        val i = array.indices.find { array[it] != it + 1 } ?: return swapCount
+        array.swap(i, array.findIndexToSwap(array[i]) ?: error(i))
+        swapCount++
     }
-    return swapCount
 }
 
 private fun Array<Int>.findIndexToSwap(n: Int): Int? {
