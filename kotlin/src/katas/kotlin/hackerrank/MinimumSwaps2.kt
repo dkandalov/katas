@@ -27,13 +27,18 @@ fun minimumSwaps(array: Array<Int>): Int {
     var i = 0
     while (i <= array.size - 2) {
         if (array[i] > array[i + 1]) {
-            array.swap(i, i + 1)
+            val j = array.findIndexToSwap(i) ?: error("")
+            array.swap(i, j)
             swapCount++
         } else {
             i++
         }
     }
     return swapCount
+}
+
+private fun Array<Int>.findIndexToSwap(i: Int): Int? {
+    return indices.drop(1).reversed().find { this[it] < this[it - 1] }
 }
 
 private fun <T> Array<T>.swap(i1: Int, i2: Int) {
