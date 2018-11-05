@@ -64,7 +64,6 @@ class MinimumSwaps2 {
         minimumSwaps(arrayOf(3, 1, 2)) shouldEqual 2
     }
 
-    @Ignore
     @Test fun `testcase from the task`() {
         """|7
            |7 1 3 2 4 5 6
