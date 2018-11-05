@@ -21,10 +21,19 @@ private fun main(input: Sequence<String>, output: (Any?) -> Unit = { println(it)
 }
 
 fun minimumSwaps(array: Array<Int>): Int {
+    if (array.size <= 1) return 0
     return 3
 }
 
 class MinimumSwaps2 {
+    @Test fun `no swaps`() {
+        """|1
+           |1
+        """ shouldProduce """
+           |0
+        """
+    }
+
     @Test fun `testcase 0`() {
         """|4
            |4 3 1 2
