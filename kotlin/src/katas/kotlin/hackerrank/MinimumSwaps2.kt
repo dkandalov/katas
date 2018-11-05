@@ -58,6 +58,10 @@ class MinimumSwaps2 {
         minimumSwaps(arrayOf(3, 2, 1)) shouldEqual 1
     }
 
+    @Test fun `two swaps`() {
+        minimumSwaps(arrayOf(3, 1, 2)) shouldEqual 2
+    }
+
     @Ignore
     @Test fun `testcase from the task`() {
         """|7
