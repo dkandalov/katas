@@ -27,12 +27,21 @@ fun minimumSwaps(array: Array<Int>): Int {
     var i = 0
     while (i <= array.size - 2) {
         if (array[i] > array[i + 1]) {
+            array.swap(i, i + 1)
             swapCount++
+        } else {
+            i++
         }
-        i++
     }
     return swapCount
 }
+
+private fun <T> Array<T>.swap(i1: Int, i2: Int) {
+    val tmp = this[i1]
+    this[i1] = this[i2]
+    this[i2] = tmp
+}
+
 
 class MinimumSwaps2 {
     @Test fun `no swaps`() {
