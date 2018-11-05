@@ -36,8 +36,8 @@ fun minimumSwaps(array: Array<Int>): Int {
     return swapCount
 }
 
-private fun Array<Int>.findIndexToSwap(i: Int): Int? {
-    return indices.take(i).drop(1).reversed().find { this[it] < this[it - 1] }
+private fun Array<Int>.findIndexToSwap(n: Int): Int? {
+    return indices.take(n + 1).drop(1).reversed().find { this[it] < this[it - 1] }
 }
 
 private fun <T> Array<T>.swap(i1: Int, i2: Int) {
@@ -73,7 +73,6 @@ class MinimumSwaps2 {
         """
     }
 
-    @Ignore
     @Test fun `testcase 0`() {
         """|4
            |4 3 1 2
