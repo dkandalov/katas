@@ -1,6 +1,7 @@
 package katas.kotlin.hackerrank
 
 import katas.kotlin.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 
@@ -31,6 +32,15 @@ class MinimumSwaps2 {
            |1
         """ shouldProduce """
            |0
+        """
+    }
+
+    @Ignore
+    @Test fun `testcase from the task`() {
+        """|7
+           |7 1 3 2 4 5 6
+        """ shouldProduce """
+           |5
         """
     }
 
