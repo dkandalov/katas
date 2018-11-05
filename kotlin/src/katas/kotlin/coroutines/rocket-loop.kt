@@ -13,21 +13,20 @@ fun createCoroutine(block: suspend Unit.() -> Unit) {
 
 fun main(args: Array<String>) {
     var count = 0
-    var savedContinuation: Continuation<Unit>? = null
+    var savedContinuation: Continuation<Int>? = null
     createCoroutine {
         println("init")
-        suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Unit> ->
+        println(100 + suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Int> ->
             savedContinuation = continuation
-            COROUTINE_SUSPENDED
-        }
+            continuation.resume(100)
+            println("🐶")
+        })
         if (count < 5) {
             println("🚀 $count")
             count += 1
+            savedContinuation?.resume(count) // recursive
         }
         println("done")
     }
-    savedContinuation?.resume(Unit)
-    savedContinuation?.resume(Unit)
-    savedContinuation?.resume(Unit)
-    savedContinuation?.resume(Unit)
+    // savedContinuation?.resume(count)
 }
