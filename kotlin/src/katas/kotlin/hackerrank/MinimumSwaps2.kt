@@ -20,13 +20,21 @@ private fun main(input: Sequence<String>, output: (Any?) -> Unit = { println(it)
     output(minimumSwaps(array))
 }
 
-fun minimumSwaps(array: Array<Int>): Int {
-    if (array.size <= 1) return 0
-    var swapCount = 0
-    while (true) {
-        val i = array.indices.find { array[it] != it + 1 && array[it] + 1 != array[it + 1]} ?: return swapCount
-        array.swap(i, array.findIndexToSwap(array[i]) ?: error(i))
-        swapCount++
+fun minimumSwaps(array: Array<Int>): Int = findSwapsToSort(array).count()
+
+private data class Swap(val i1: Int, val i2: Int) {
+    override fun toString() = "Swap($i1, $i2)"
+}
+
+private fun findSwapsToSort(array: Array<Int>): Sequence<Swap> {
+    return if (array.size <= 1) emptySequence()
+    else sequence {
+        while (true) {
+            val i = array.indices.find { array[it] != it + 1 && array[it] + 1 != array[it + 1] } ?: break
+            val swap = Swap(i, array.findIndexToSwap(array[i]) ?: error(i))
+            array.swap(swap.i1, swap.i2)
+            yield(swap)
+        }
     }
 }
 
@@ -35,27 +43,25 @@ private fun Array<Int>.findIndexToSwap(n: Int): Int? {
 }
 
 private fun <T> Array<T>.swap(i1: Int, i2: Int) {
-    println("$i1 $i2")
     val tmp = this[i1]
     this[i1] = this[i2]
     this[i2] = tmp
-    println(this.toList())
 }
 
 
 class MinimumSwaps2 {
     @Test fun `no swaps`() {
-        minimumSwaps(arrayOf(1)) shouldEqual 0
-        minimumSwaps(arrayOf(1, 2)) shouldEqual 0
+        arrayOf(1) isSortedWithSwaps emptyList()
+        arrayOf(1, 2) isSortedWithSwaps emptyList()
     }
 
     @Test fun `single swap`() {
-        minimumSwaps(arrayOf(2, 1)) shouldEqual 1
-        minimumSwaps(arrayOf(3, 2, 1)) shouldEqual 1
+        arrayOf(2, 1) isSortedWithSwaps listOf(Swap(0, 1))
+        arrayOf(3, 2, 1) isSortedWithSwaps listOf(Swap(0, 2))
     }
 
     @Test fun `two swaps`() {
-        minimumSwaps(arrayOf(3, 1, 2)) shouldEqual 2
+        arrayOf(3, 1, 2) isSortedWithSwaps listOf(Swap(0, 1), Swap(1, 2))
     }
 
     @Test fun `testcase from the task`() {
@@ -88,6 +94,10 @@ class MinimumSwaps2 {
         """ shouldProduce """
            |3
         """
+    }
+
+    private infix fun Array<Int>.isSortedWithSwaps(expected: List<Swap>) {
+        findSwapsToSort(this).toList() shouldEqual expected
     }
 
     private infix fun String.shouldProduce(expectedOutput: String) {
