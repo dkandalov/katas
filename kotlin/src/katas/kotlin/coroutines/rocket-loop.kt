@@ -14,6 +14,7 @@ fun createCoroutine(block: suspend Unit.() -> Unit) {
 fun main(args: Array<String>) {
     var count = 0
     var savedContinuation: Continuation<Int>? = null
+
     createCoroutine {
         println("init")
         println(100 + suspendCoroutineUninterceptedOrReturn { continuation: Continuation<Int> ->

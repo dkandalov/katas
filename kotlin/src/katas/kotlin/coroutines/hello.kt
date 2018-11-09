@@ -43,6 +43,7 @@ class MyContinuation<Unit>(override val context: CoroutineContext): Continuation
 }
 
 object MyEmptyCoroutineContext : CoroutineContext {
+    @Suppress("UNCHECKED_CAST")
     override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? =
         if (key === ContinuationInterceptor.Key) (MyInterceptor as E?) else null
     override fun <R> fold(initial: R, operation: (R, CoroutineContext.Element) -> R): R = initial
@@ -54,9 +55,7 @@ object MyEmptyCoroutineContext : CoroutineContext {
 
 object MyInterceptor : ContinuationInterceptor, AbstractCoroutineContextElement(Key) {
     object Key : CoroutineContext.Key<MyInterceptor>
-
     override fun <T> interceptContinuation(continuation: Continuation<T>) = continuation
-
 }
 
 fun main(args: Array<String>) {
