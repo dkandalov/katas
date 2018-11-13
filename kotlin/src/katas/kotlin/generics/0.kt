@@ -1,4 +1,4 @@
-@file:Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER", "unused", "RemoveExplicitTypeArguments", "UNCHECKED_CAST", "UNUSED_LAMBDA_EXPRESSION")
+@file:Suppress("MemberVisibilityCanBePrivate", "UNUSED_PARAMETER", "unused", "RemoveExplicitTypeArguments", "UNCHECKED_CAST", "UNUSED_LAMBDA_EXPRESSION", "UNUSED_VARIABLE")
 
 package katas.kotlin.generics
 

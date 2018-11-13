@@ -1,5 +1,7 @@
 package katas.kotlin.trigram
 
+import io.kotlintest.matchers.startWith
+import io.kotlintest.should
 import io.kotlintest.specs.StringSpec
 import kotlincommon.printed
 import kotlincommon.skip
@@ -16,7 +18,7 @@ class Trigram3Test : StringSpec() {
                 }
 
             val random = Random(123)
-            val initialKey = trigrams.keys.get(random)
+            val initialKey = trigrams.keys[random]
             val textGenerator = generateSequence(initialKey) { key ->
                 val nexWords = trigrams[key] ?: trigrams.entries[random].value
                 Pair(key.second, nexWords[random])
@@ -38,6 +40,6 @@ class Trigram3Test : StringSpec() {
         val nbsp = "feff".toInt(16).toChar()
         return readLines()
             .flatMap { it.trim().trim(nbsp).split(Regex("\\s+")) }
-            .filterNot { it.isNullOrEmpty() }
+            .filterNot { it.isEmpty() }
     }
 }
