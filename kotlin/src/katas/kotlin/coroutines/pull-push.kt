@@ -7,6 +7,7 @@ import com.natpryce.hamkrest.equalTo
 import katas.kotlin.coroutines.PP.CoDataSource.Companion.build
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
 import kotlincommon.printed
+import org.junit.Ignore
 import org.junit.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
@@ -249,6 +250,7 @@ class PP {
 }
 
 class PullPushPlayground {
+    @Ignore // TODO
     @Test fun `pulled reader`() {
         val reader = Reader()
         val writer = Writer()

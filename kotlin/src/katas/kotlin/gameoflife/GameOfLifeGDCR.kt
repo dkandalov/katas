@@ -1,6 +1,7 @@
 package katas.kotlin.gameoflife
 
 import katas.kotlin.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 
 data class Cell(val x: Int, val y: Int) {
@@ -81,6 +82,7 @@ class GameOfLife {
         ))
     }
 
+    @Ignore // unfinished
     @Test fun `dead cell with exactly three live neighbours becomes a live cell, as if by reproduction`() {
         val universe = """
         |xx

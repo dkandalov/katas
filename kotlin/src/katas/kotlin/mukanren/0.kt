@@ -1,6 +1,7 @@
 package katas.kotlin.mukanren
 
 import katas.kotlin.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 
@@ -87,6 +88,7 @@ object Relations {
 }
 
 class RelationsOnListsTest {
+    @Ignore // TODO
     @Test fun `allows two lists to be unified`() {
         val x = Variable("x")
         val y = Variable("y")
