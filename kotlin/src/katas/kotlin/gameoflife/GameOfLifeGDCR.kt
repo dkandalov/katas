@@ -1,5 +1,6 @@
 package katas.kotlin.gameoflife
 
+import katas.kotlin.gameoflife.foo.Cell
 import katas.kotlin.shouldEqual
 import org.junit.Ignore
 import org.junit.Test

@@ -1,4 +1,4 @@
-package katas.kotlin.gameoflife
+package katas.kotlin.gameoflife.foo
 
 import katas.kotlin.shouldEqual
 import org.junit.Test
