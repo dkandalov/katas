@@ -1,8 +1,10 @@
 package katas.kotlin.hackerrank
 
 import katas.kotlin.shouldEqual
-import org.junit.Ignore
+import kotlincommon.permutations
+import kotlincommon.printed
 import org.junit.Test
+import java.io.File
 import java.util.*
 
 /**
@@ -21,6 +23,21 @@ private fun main(input: Sequence<String>, output: (Any?) -> Unit = { println(it)
     output(minimumSwaps(array))
 }
 
+fun minimumSwaps_(array: Array<Int>): Int {
+    var result = 0
+    var i = 0
+    while (i < array.lastIndex) {
+        if (array[i] != i + 1) {
+            var j = i
+            while (array[j] != i + 1) j++
+            array.apply(Swap(i, j))
+            result++
+        }
+        i++
+    }
+    return result
+}
+
 fun minimumSwaps(array: Array<Int>): Int = findSwapsToSort(array).count()
 
 private data class Swap(val i1: Int, val i2: Int) {
@@ -29,22 +46,23 @@ private data class Swap(val i1: Int, val i2: Int) {
 
 private fun findSwapsToSort(array: Array<Int>): Sequence<Swap> =
     if (array.size <= 1) emptySequence()
-    else generateSequence {
-        val i = array.indices.find { array[it] != it + 1 && array[it] + 1 != array[it + 1] } ?: return@generateSequence null
-        val swap = Swap(i, array.findIndexToSwap(array[i]) ?: error(i))
-        array.apply(swap)
-        println(array.toList())
-        swap
-    }
+    else {
+        var n = 0
+        generateSequence {
+            val i = IntRange(n, array.lastIndex).find { array[it] != it + 1 } ?: return@generateSequence null
 
-private fun Array<Int>.findIndexToSwap(n: Int): Int? {
-    var i = minOf(n + 1, size - 1)
-    while (i >= 1) {
-        if (this[i - 1] > this[i]) return i
-        i--
+            var j = i
+            while (array[j] != i + 1) j++
+            // This 👇 really slows down testcase 9
+            // val j = IntRange(i, array.lastIndex).find { array[it] == i + 1 } ?: error(i)
+
+            val swap = Swap(i, j)
+            array.apply(swap)
+
+            n = i
+            swap
+        }
     }
-    return null
-}
 
 private fun <T> Array<T>.apply(swap: Swap) {
     val tmp = this[swap.i1]
@@ -68,26 +86,25 @@ class MinimumSwaps2 {
         arrayOf(1, 3, 2) isSortedWithSwaps listOf(Swap(1, 2))
 
         arrayOf(2, 1, 3) isSortedWithSwaps listOf(Swap(0, 1))
-        arrayOf(2, 3, 1) isSortedWithSwaps listOf(Swap(1, 2), Swap(0, 1))
+        arrayOf(2, 3, 1) isSortedWithSwaps listOf(Swap(0, 2), Swap(1, 2))
 
         arrayOf(3, 1, 2) isSortedWithSwaps listOf(Swap(0, 1), Swap(1, 2))
         arrayOf(3, 2, 1) isSortedWithSwaps listOf(Swap(0, 2))
     }
 
     @Test fun `swaps for four elements`() {
-        arrayOf(2, 1, 4, 3) isSortedWithSwaps listOf()
+        arrayOf(2, 1, 4, 3) isSortedWithSwaps listOf(Swap(0, 1), Swap(2, 3))
 
-//        val permutations = arrayOf(1, 2, 3, 4).toList().permutations().map { it.toTypedArray() }
-//        permutations.forEach {
-//            findSwapsToSort(it).toList().printed()
-//        }
+        val permutations = arrayOf(1, 2, 3, 4).toList().permutations().map { it.toTypedArray() }
+        permutations.forEach {
+            findSwapsToSort(it).toList().printed()
+        }
     }
 
     @Test fun `testcase from the task`() {
         arrayOf(7, 1, 3, 2, 4, 5, 6) isSortedWithSwaps listOf(
-            Swap(0, 3), Swap(0, 1), Swap(3, 4), Swap(4, 5), Swap(5, 6)
+            Swap(0, 1), Swap(1, 3), Swap(3, 4), Swap(4, 5), Swap(5, 6)
         )
-
         """|7
            |7 1 3 2 4 5 6
         """ shouldOutput """
@@ -96,10 +113,11 @@ class MinimumSwaps2 {
     }
 
     @Test fun `testcase 0`() {
-        arrayOf(4, 3, 1, 2) isSortedWithSwaps listOf(
-            Swap(0, 2), Swap(2, 3), Swap(1, 2)
+        arrayOf(4, 3, 1, 2) isSortedWithSteps listOf(
+            listOf(1, 3, 4, 2) to Swap(0, 2),
+            listOf(1, 2, 4, 3) to Swap(1, 3),
+            listOf(1, 2, 3, 4) to Swap(2, 3)
         )
-
         """|4
            |4 3 1 2
         """ shouldOutput """
@@ -108,10 +126,11 @@ class MinimumSwaps2 {
     }
 
     @Test fun `testcase 1`() {
-        arrayOf(2, 3, 4, 1, 5) isSortedWithSwaps listOf(
-            Swap(2, 3), Swap(1, 2), Swap(0, 1)
+        arrayOf(2, 3, 4, 1, 5) isSortedWithSteps listOf(
+            listOf(1, 3, 4, 2, 5) to Swap(0, 3),
+            listOf(1, 2, 4, 3, 5) to Swap(1, 3),
+            listOf(1, 2, 3, 4, 5) to Swap(2, 3)
         )
-
         """|5
            |2 3 4 1 5
         """ shouldOutput """
@@ -123,7 +142,6 @@ class MinimumSwaps2 {
         arrayOf(1, 3, 5, 2, 4, 6, 7) isSortedWithSwaps listOf(
             Swap(1, 3), Swap(2, 3), Swap(3, 4)
         )
-
         """|7
            |1 3 5 2 4 6 7
         """ shouldOutput """
@@ -131,12 +149,18 @@ class MinimumSwaps2 {
         """
     }
 
-    @Ignore
     @Test fun `testcase 4`() {
         """|50
            |2 31 1 38 29 5 44 6 12 18 39 9 48 49 13 11 7 27 14 33 50 21 46 23 15 26 8 47 40 3 32 22 34 42 16 41 24 10 4 28 36 30 37 35 20 17 45 43 25 19
         """ shouldOutput """
            |46
+        """
+    }
+
+    @Test fun `testcase 9`() {
+        val input = File("src/katas/kotlin/hackerrank/MinimumSwaps2-input09.txt").readText()
+        input shouldOutput """
+           |49990
         """
     }
 
@@ -151,6 +175,10 @@ class MinimumSwaps2 {
 
     private infix fun Array<Int>.isSortedWithSwaps(expected: List<Swap>) {
         findSwapsToSort(this).toList() shouldEqual expected
+    }
+
+    private infix fun Array<Int>.isSortedWithSteps(expected: List<Pair<List<Int>, Swap>>) {
+        findSwapsToSort(this).map { this.toList() to it }.toList() shouldEqual expected
     }
 
     private infix fun String.shouldOutput(expectedOutput: String) {
