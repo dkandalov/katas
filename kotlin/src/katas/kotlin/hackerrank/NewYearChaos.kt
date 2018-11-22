@@ -88,7 +88,7 @@ class NewYearChaosTests {
 
     private infix fun String.shouldProduce(expectedOutput: String) {
         val outputRecorder = OutputRecorder()
-        main(toLineSequence(), outputRecorder)
+        main(trimToLineSequence(), outputRecorder)
         outputRecorder.text shouldEqual expectedOutput.trimMargin() + "\n"
     }
 }

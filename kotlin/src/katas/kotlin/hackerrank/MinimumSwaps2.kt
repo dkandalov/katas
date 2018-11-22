@@ -183,7 +183,7 @@ class MinimumSwaps2 {
 
     private infix fun String.shouldOutput(expectedOutput: String) {
         val outputRecorder = OutputRecorder()
-        main(toLineSequence(), outputRecorder)
+        main(trimToLineSequence(), outputRecorder)
         outputRecorder.text shouldEqual expectedOutput.trimMargin() + "\n"
     }
 }

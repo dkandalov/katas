@@ -1,6 +1,5 @@
 package katas.kotlin.hackerrank
 
-import kotlincommon.printed
 import katas.kotlin.shouldEqual
 import org.junit.Test
 import java.util.*
@@ -50,7 +49,7 @@ class StringsStoreTests {
             |aba
             |xzxb
             |ab
-        """.toLineSequence()
+        """.trimToLineSequence()
         val output = OutputRecorder()
 
         main(input, output)
@@ -64,7 +63,7 @@ class StringsStoreTests {
     }
 }
 
-fun String.toLineSequence(): Sequence<String> = trim().trimMargin().split("\n").asSequence()
+fun String.trimToLineSequence(): Sequence<String> = trim().trimMargin().split("\n").asSequence()
 
 class OutputRecorder: (Any?) -> Unit {
     var text = ""
