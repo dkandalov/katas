@@ -62,6 +62,14 @@ class MatrixLayerRotationTests {
             arrayOf(4, 3)
         ).toClockwiseList() shouldEqual
             listOf(1, 2, 3, 4)
+
+        arrayOf(
+            arrayOf(1, 2, 3, 4),
+            arrayOf(5, 6, 7, 8),
+            arrayOf(9, 10, 11, 12),
+            arrayOf(13, 14, 15, 16)
+        ).toClockwiseList() shouldEqual
+            listOf(1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5)
     }
 
     @Test fun `no rotations`() {

@@ -1,4 +1,4 @@
-package katas.kotlin.hackerrank
+package katas.kotlin.hackerrank.array_manipulation
 
 import katas.kotlin.shouldEqual
 import org.junit.Test

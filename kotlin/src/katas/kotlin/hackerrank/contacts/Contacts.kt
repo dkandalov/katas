@@ -1,4 +1,4 @@
-package katas.kotlin.hackerrank
+package katas.kotlin.hackerrank.contacts
 
 import katas.kotlin.shouldEqual
 import org.junit.Ignore

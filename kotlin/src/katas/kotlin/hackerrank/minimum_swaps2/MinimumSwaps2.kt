@@ -1,5 +1,7 @@
-package katas.kotlin.hackerrank
+package katas.kotlin.hackerrank.minimum_swaps2
 
+import katas.kotlin.hackerrank.OutputRecorder
+import katas.kotlin.hackerrank.trimToLineSequence
 import katas.kotlin.shouldEqual
 import kotlincommon.permutations
 import kotlincommon.printed
