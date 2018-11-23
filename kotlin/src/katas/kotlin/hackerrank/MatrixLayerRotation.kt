@@ -30,46 +30,109 @@ private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(i
 }
 
 fun matrixRotation(matrix: Array<Array<Int>>, rotations: Int) {
-    val shiftedList = matrix.toClockwiseList().let {
-        it.drop(rotations) + it.take(rotations)
+    0.until(rotations).forEach {
+        applyClockwiseSwaps(matrix)
     }
-    shiftedList.applyTo(matrix)
 }
 
-private fun Array<Array<Int>>.toClockwiseList(): List<Int> {
-    val fromColumn = 0
-    val toColumn = first().size - 1
-    val fromRow = 0
-    val toRow = size - 1
-
-    val result = ArrayList<Int>()
-    IntRange(fromColumn, toColumn - 1).forEach { result.add(this[0][it]) }
-    IntRange(fromRow, toRow - 1).forEach { result.add(this[it][toColumn]) }
-    IntRange(fromColumn + 1, toColumn).reversed().forEach { result.add(this[toRow][it]) }
-    IntRange(fromRow + 1, toRow).reversed().forEach { result.add(this[it][fromColumn]) }
-    return result
+private fun applyClockwiseSwaps(array: Array<Array<Int>>) {
+    array.listClockwiseSwaps().forEach { swap ->
+        array.apply(swap)
+    }
 }
 
-private fun List<Int>.applyTo(matrix: Array<Array<Int>>) {
-    TODO()
+private fun Array<Array<Int>>.listClockwiseSwaps(
+    fromColumn: Int = 0,
+    toColumn: Int = first().size - 1,
+    fromRow: Int = 0,
+    toRow: Int = size - 1
+): List<Swap> {
+    val points = ArrayList<Point>()
+    IntRange(fromColumn, toColumn - 1).forEach { points.add(Point(fromRow, it)) }
+    IntRange(fromRow, toRow - 1).forEach { points.add(Point(it, toColumn)) }
+    IntRange(fromColumn + 1, toColumn).reversed().forEach { points.add(Point(toRow, it)) }
+    IntRange(fromRow + 1, toRow).reversed().forEach { points.add(Point(it, fromColumn)) }
+    val swaps = points.windowed(2).map { Swap(it[0], it[1]) }
+
+    return if (toColumn - fromColumn > 1 && toRow - fromRow > 1) {
+        swaps + listClockwiseSwaps(fromColumn + 1, toColumn - 1, fromRow + 1, toRow - 1)
+    } else {
+        swaps
+    }
+}
+
+private fun Array<Array<Int>>.toPrintableString() =
+    this.indices.joinToString("\n") { row ->
+        this[row].indices.joinToString(" ") { column ->
+            this[row][column].toString()
+        }
+    }
+
+private operator fun Array<Array<Int>>.get(point: Point) = this[point.row][point.column]
+private operator fun Array<Array<Int>>.set(point: Point, value: Int) {
+    this[point.row][point.column] = value
+}
+
+private fun Array<Array<Int>>.apply(swap: Swap) {
+    val tmp = this[swap.p1]
+    this[swap.p1] = this[swap.p2]
+    this[swap.p2] = tmp
+}
+
+private data class Point(val row: Int, val column: Int) {
+    override fun toString() = "[$row,$column]"
+}
+
+private data class Swap(val p1: Point, val p2: Point) {
+    override fun toString() = "Swap($p1,$p2)"
 }
 
 
 class MatrixLayerRotationTests {
-    @Test fun `array to clockwise list`() {
-        arrayOf(
+    @Test fun `2x2 array clockwise swaps`() {
+        val array = arrayOf(
             arrayOf(1, 2),
             arrayOf(4, 3)
-        ).toClockwiseList() shouldEqual
-            listOf(1, 2, 3, 4)
+        )
+        array.listClockwiseSwaps() shouldEqual
+            listOf(
+                Swap(Point(0, 0), Point(0, 1)),
+                Swap(Point(0, 1), Point(1, 1)),
+                Swap(Point(1, 1), Point(1, 0))
+            )
 
-        arrayOf(
+        applyClockwiseSwaps(array)
+        array.toPrintableString() shouldEqual """
+            |2 3
+            |1 4
+        """.trimMargin()
+    }
+
+    @Test fun `4x4 array clockwise swaps`() {
+        val array = arrayOf(
             arrayOf(1, 2, 3, 4),
             arrayOf(5, 6, 7, 8),
             arrayOf(9, 10, 11, 12),
             arrayOf(13, 14, 15, 16)
-        ).toClockwiseList() shouldEqual
-            listOf(1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5)
+        )
+        array.listClockwiseSwaps() shouldEqual
+            listOf(
+                // swaps for outer layer
+                Swap(Point(0, 0), Point(0, 1)), Swap(Point(0, 1), Point(0, 2)), Swap(Point(0, 2), Point(0, 3)),
+                Swap(Point(0, 3), Point(1, 3)), Swap(Point(1, 3), Point(2, 3)), Swap(Point(2, 3), Point(3, 3)),
+                Swap(Point(3, 3), Point(3, 2)), Swap(Point(3, 2), Point(3, 1)), Swap(Point(3, 1), Point(3, 0)),
+                Swap(Point(3, 0), Point(2, 0)), Swap(Point(2, 0), Point(1, 0)),
+                // swaps for inner layer
+                Swap(Point(1, 1), Point(1, 2)), Swap(Point(1, 2), Point(2, 2)), Swap(Point(2, 2), Point(2, 1))
+            )
+
+        applyClockwiseSwaps(array)
+        array.toPrintableString() shouldEqual """
+            |2 3 4 8
+            |1 7 11 12
+            |5 6 10 16
+            |9 13 14 15
+        """.trimMargin()
     }
 
     @Test fun `no rotations`() {
@@ -103,6 +166,32 @@ class MatrixLayerRotationTests {
            |2 11 10 16
            |1 7 6 15
            |5 9 13 14
+        """
+    }
+
+    @Test fun `sample input 2`() {
+        """|5 4 7
+           |1 2 3 4
+           |7 8 9 10
+           |13 14 15 16
+           |19 20 21 22
+           |25 26 27 28
+        """ shouldOutput """
+           |28 27 26 25
+           |22 9 15 19
+           |16 8 21 13
+           |10 14 20 7
+           |4 3 2 1
+        """
+    }
+
+    @Test fun `sample input 3`() {
+        """|2 2 3
+           |1 1
+           |1 1
+        """ shouldOutput """
+           |1 1
+           |1 1
         """
     }
 
