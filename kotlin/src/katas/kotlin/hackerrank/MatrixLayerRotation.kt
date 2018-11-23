@@ -30,14 +30,10 @@ private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(i
 }
 
 fun matrixRotation(matrix: Array<Array<Int>>, rotations: Int) {
-    0.until(rotations).forEach {
-        applyClockwiseSwaps(matrix)
-    }
-}
-
-private fun applyClockwiseSwaps(array: Array<Array<Int>>) {
-    array.listClockwiseSwaps().forEach { swap ->
-        array.apply(swap)
+    matrix.listClockwiseSwaps().forEach { swaps ->
+        0.until(rotations.rem(swaps.size + 1)).forEach {
+            swaps.forEach { swap -> matrix.apply(swap) }
+        }
     }
 }
 
@@ -46,7 +42,7 @@ private fun Array<Array<Int>>.listClockwiseSwaps(
     toColumn: Int = first().size - 1,
     fromRow: Int = 0,
     toRow: Int = size - 1
-): List<Swap> {
+): List<List<Swap>> {
     val points = ArrayList<Point>()
     IntRange(fromColumn, toColumn - 1).forEach { points.add(Point(fromRow, it)) }
     IntRange(fromRow, toRow - 1).forEach { points.add(Point(it, toColumn)) }
@@ -55,9 +51,9 @@ private fun Array<Array<Int>>.listClockwiseSwaps(
     val swaps = points.windowed(2).map { Swap(it[0], it[1]) }
 
     return if (toColumn - fromColumn > 1 && toRow - fromRow > 1) {
-        swaps + listClockwiseSwaps(fromColumn + 1, toColumn - 1, fromRow + 1, toRow - 1)
+        listOf(swaps) + listClockwiseSwaps(fromColumn + 1, toColumn - 1, fromRow + 1, toRow - 1)
     } else {
-        swaps
+        listOf(swaps)
     }
 }
 
@@ -94,14 +90,27 @@ class MatrixLayerRotationTests {
             arrayOf(1, 2),
             arrayOf(4, 3)
         )
-        array.listClockwiseSwaps() shouldEqual
+        array.listClockwiseSwaps() shouldEqual listOf(
             listOf(
                 Swap(Point(0, 0), Point(0, 1)),
                 Swap(Point(0, 1), Point(1, 1)),
                 Swap(Point(1, 1), Point(1, 0))
             )
+        )
 
-        applyClockwiseSwaps(array)
+        matrixRotation(array, 1)
+        array.toPrintableString() shouldEqual """
+            |2 3
+            |1 4
+        """.trimMargin()
+    }
+
+    @Test fun `2x2 array full cycle rotation`() {
+        val array = arrayOf(
+            arrayOf(1, 2),
+            arrayOf(4, 3)
+        )
+        matrixRotation(array, 5)
         array.toPrintableString() shouldEqual """
             |2 3
             |1 4
@@ -115,18 +124,21 @@ class MatrixLayerRotationTests {
             arrayOf(9, 10, 11, 12),
             arrayOf(13, 14, 15, 16)
         )
-        array.listClockwiseSwaps() shouldEqual
+        array.listClockwiseSwaps() shouldEqual listOf(
+            // swaps for outer layer
             listOf(
-                // swaps for outer layer
                 Swap(Point(0, 0), Point(0, 1)), Swap(Point(0, 1), Point(0, 2)), Swap(Point(0, 2), Point(0, 3)),
                 Swap(Point(0, 3), Point(1, 3)), Swap(Point(1, 3), Point(2, 3)), Swap(Point(2, 3), Point(3, 3)),
                 Swap(Point(3, 3), Point(3, 2)), Swap(Point(3, 2), Point(3, 1)), Swap(Point(3, 1), Point(3, 0)),
-                Swap(Point(3, 0), Point(2, 0)), Swap(Point(2, 0), Point(1, 0)),
-                // swaps for inner layer
+                Swap(Point(3, 0), Point(2, 0)), Swap(Point(2, 0), Point(1, 0))
+            ),
+            // swaps for inner layer
+            listOf(
                 Swap(Point(1, 1), Point(1, 2)), Swap(Point(1, 2), Point(2, 2)), Swap(Point(2, 2), Point(2, 1))
             )
+        )
 
-        applyClockwiseSwaps(array)
+        matrixRotation(array, 1)
         array.toPrintableString() shouldEqual """
             |2 3 4 8
             |1 7 11 12
