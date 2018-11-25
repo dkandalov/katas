@@ -30,7 +30,32 @@ class RollingHash(
     }
 }
 
-class RollingHashTests {
+fun findIndexOf(s: String, text: String): Int {
+    if (text.length < s.length) return -1
+
+    val hash = RollingHash(s, s.length)
+    var textHash = RollingHash(text, s.length)
+
+    0.until(text.length - s.length + 1).forEach { i ->
+        if (hash.value == textHash.value) return i
+        textHash = textHash.roll()
+    }
+
+    return -1
+}
+
+class RobinKarpTests {
+    @Test fun `find index of a string in text`() {
+        findIndexOf("", text = "") shouldEqual 0
+        findIndexOf("", text = "abc") shouldEqual 0
+        findIndexOf("abc", text = "") shouldEqual -1
+        findIndexOf("abc", text = "abc") shouldEqual 0
+
+        findIndexOf("ab", "abcdef") shouldEqual 0
+        findIndexOf("cd", "abcdef") shouldEqual 2
+        findIndexOf("ef", "abcdef") shouldEqual 4
+    }
+
     // https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
     @Test fun `rolling hash example from wikipedia`() {
         val hash = RollingHash("abra", size = 3)
