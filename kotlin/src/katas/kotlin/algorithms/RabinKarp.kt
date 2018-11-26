@@ -21,9 +21,9 @@ class RollingHash(
             prevMultiplier = (prevMultiplier * base).rem(modulus)
         }
 
-        val prevChar = s[startIndex].toInt()
+        val prevChar = s[startIndex]
         val newChar = s[startIndex + size]
-        var newValue = value + modulus - (prevChar * prevMultiplier) % modulus
+        var newValue = value + modulus - (prevChar.toInt() * prevMultiplier) % modulus
         newValue = (newValue * base + newChar.toInt()).rem(modulus)
 
         return RollingHash(s, size, startIndex + 1, base, modulus, newValue)
