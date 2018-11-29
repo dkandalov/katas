@@ -160,7 +160,7 @@ class MinimumSwaps2 {
     }
 
     @Test fun `testcase 9`() {
-        val input = File("src/katas/kotlin/hackerrank/MinimumSwaps2-input09.txt").readText()
+        val input = File("src/katas/kotlin/hackerrank/minimum_swaps2/MinimumSwaps2-input09.txt").readText()
         input shouldOutput """
            |49990
         """

@@ -5,6 +5,30 @@ import org.junit.Test
 import java.io.*
 import java.util.*
 
+/**
+ * https://www.hackerrank.com/challenges/crush
+ */
+fun main(args: Array<String>) {
+    main(System.`in`, System.out)
+}
+
+fun main(input: InputStream, output: OutputStream) {
+    val scanner = Scanner(input).useDelimiter("[\n\\s]+")
+    val n = scanner.nextInt()
+    val array = ArrayManipulation(size = n)
+
+    val m = scanner.nextInt()
+    0.until(m).forEach {
+        val from = scanner.nextInt()
+        val to = scanner.nextInt()
+        val value = scanner.nextInt()
+        array.update(from - 1, to, value)
+    }
+    output.writer().use {
+        it.write(array.max().toString())
+    }
+}
+
 class ArrayManipulationTests {
     @Test fun example() {
         val input = """
@@ -21,7 +45,7 @@ class ArrayManipulationTests {
     }
 
     @Test fun `test case 4`() {
-        val input = File("src/katas/kotlin/hackerrank/ArrayManipulation-testcase-4.txt").inputStream()
+        val input = File("src/katas/kotlin/hackerrank/array_manipulation/ArrayManipulation-testcase-4.txt").inputStream()
         val output = ByteArrayOutputStream()
 
         main(input, output)
@@ -30,7 +54,7 @@ class ArrayManipulationTests {
     }
 
     @Test fun `test case 7`() {
-        val input = File("src/katas/kotlin/hackerrank/ArrayManipulation-testcase-7.txt").inputStream()
+        val input = File("src/katas/kotlin/hackerrank/array_manipulation/ArrayManipulation-testcase-7.txt").inputStream()
         val output = ByteArrayOutputStream()
 
         main(input, output)
@@ -62,24 +86,3 @@ class ArrayManipulation(size: Int) {
         return max
     }
 }
-
-fun main(input: InputStream, output: OutputStream) {
-    val scanner = Scanner(input).useDelimiter("[\n\\s]+")
-    val n = scanner.nextInt()
-    val array = ArrayManipulation(size = n)
-
-    val m = scanner.nextInt()
-    0.until(m).forEach {
-        val from = scanner.nextInt()
-        val to = scanner.nextInt()
-        val value = scanner.nextInt()
-        array.update(from - 1, to, value)
-    }
-    output.writer().use {
-        it.write(array.max().toString())
-    }
-}
-
-//fun main(args: Array<String>) {
-//    main(System.`in`, System.out)
-//}

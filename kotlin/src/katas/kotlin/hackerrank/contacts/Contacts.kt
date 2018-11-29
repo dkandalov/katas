@@ -6,6 +6,71 @@ import org.junit.Test
 import java.io.File
 import java.util.*
 
+// https://www.hackerrank.com/challenges/ctci-contacts
+fun main(args: Array<String>) {
+    val scanner = Scanner(System.`in`)
+    main(lines = generateSequence { scanner.nextLine() })
+}
+
+private fun main(lines: Sequence<String>) {
+    val i = lines.iterator()
+    val n = i.next().toInt()
+
+//    var addDuration: Duration = Duration.ZERO
+//    var findDuration: Duration = Duration.ZERO
+
+    val tree = TrieNode()
+    0.until(n).forEach {
+        val parts = i.next().split(" ")
+        val command = parts[0]
+        val value = parts[1]
+        if (command[0] == 'a') {
+//            addDuration += measureTimeMillis {
+            tree.add(value)
+//            }
+        } else if (command[0] == 'f') {
+//            findDuration += measureTimeMillis {
+            println(tree.amountOfMatches(value))
+//            }
+        }
+    }
+//    println("addDuration = $addDuration")
+//    println("findDuration = $findDuration")
+}
+
+private class TrieNode(
+    private val childChars: CharArray = CharArray(26, { '-' }),
+    private val childNodes: Array<TrieNode?> = Array(26, { null }),
+    private var childCount: Int = 0,
+    private var size: Int = 0
+) {
+    fun add(s: String) {
+        var node = this
+        s.forEach { c ->
+            var i = node.childChars.indexOf(c)
+            if (i == -1) {
+                i = node.childCount
+                node.childChars[i] = c
+                node.childNodes[i] = TrieNode()
+                node.childCount++
+            }
+            node = node.childNodes[i]!!
+            node.size++
+        }
+    }
+
+    fun amountOfMatches(s: String): Int {
+        var node = this
+        s.forEach { c ->
+            val i = node.childChars.indexOf(c)
+            if (i == -1) return 0
+            else node = node.childNodes[i]!!
+        }
+        return node.size
+    }
+}
+
+
 class ContactsTests {
 
     @Test fun `add and find contacts`() {
@@ -37,25 +102,25 @@ class ContactsTests {
 
     @Ignore
     @Test fun `hackerrank test case 2 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-2-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/contacts/Contacts-testcase-2-input.txt").readLines()
         main(lines.asSequence())
     }
 
     @Ignore
     @Test fun `hackerrank test case 3 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-3-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/contacts/Contacts-testcase-3-input.txt").readLines()
         main(lines.asSequence())
     }
 
     @Ignore
     @Test fun `hackerrank test case 5 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-5-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/contacts/Contacts-testcase-5-input.txt").readLines()
         main(lines.asSequence())
     }
 
     @Ignore
     @Test fun `hackerrank test case 12 (fixing performance)`() {
-        val lines = File("src/katas/kotlin/hackerrank/Contacts-testcase-12-input.txt").readLines()
+        val lines = File("src/katas/kotlin/hackerrank/contacts/Contacts-testcase-12-input.txt").readLines()
         main(lines.asSequence())
     }
 
@@ -66,69 +131,5 @@ class ContactsTests {
             return res.toChar()
         }
         return List(length, { safeChar() }).joinToString("")
-    }
-}
-
-fun main(args: Array<String>) {
-    val scanner = Scanner(System.`in`)
-    main(lines = generateSequence { scanner.nextLine() })
-}
-
-private fun main(lines: Sequence<String>) {
-    val i = lines.iterator()
-    val n = i.next().toInt()
-
-//    var addDuration: Duration = Duration.ZERO
-//    var findDuration: Duration = Duration.ZERO
-
-    val tree = TrieNode()
-    0.until(n).forEach {
-        val parts = i.next().split(" ")
-        val command = parts[0]
-        val value = parts[1]
-        if (command[0] == 'a') {
-//            addDuration += measureTimeMillis {
-                tree.add(value)
-//            }
-        } else if (command[0] == 'f') {
-//            findDuration += measureTimeMillis {
-                println(tree.amountOfMatches(value))
-//            }
-        }
-    }
-//    println("addDuration = $addDuration")
-//    println("findDuration = $findDuration")
-}
-
-
-private class TrieNode(
-    private val childChars: CharArray = CharArray(26, { '-' }),
-    private val childNodes: Array<TrieNode?> = Array(26, { null }),
-    private var childCount: Int = 0,
-    private var size: Int = 0
-) {
-    fun add(s: String) {
-        var node = this
-        s.forEach { c ->
-            var i = node.childChars.indexOf(c)
-            if (i == -1) {
-                i = node.childCount
-                node.childChars[i] = c
-                node.childNodes[i] = TrieNode()
-                node.childCount++
-            }
-            node = node.childNodes[i]!!
-            node.size++
-        }
-    }
-
-    fun amountOfMatches(s: String): Int {
-        var node = this
-        s.forEach { c ->
-            val i = node.childChars.indexOf(c)
-            if (i == -1) return 0
-            else node = node.childNodes[i]!!
-        }
-        return node.size
     }
 }

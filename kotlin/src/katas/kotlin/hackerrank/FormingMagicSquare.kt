@@ -4,6 +4,9 @@ import kotlincommon.permutations
 import kotlincommon.printed
 import java.util.*
 
+/**
+ * https://www.hackerrank.com/challenges/magic-square-forming
+ */
 fun main(args: Array<String>) {
     val scanner = Scanner(System.`in`)
     val i = generateSequence { scanner.nextLine() }.iterator()
