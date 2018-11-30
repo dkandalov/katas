@@ -29,6 +29,28 @@ fun main(input: InputStream, output: OutputStream) {
     }
 }
 
+class ArrayManipulation(size: Int) {
+    private val array = LongArray(size)
+
+    fun update(from: Int, to: Int, value: Int) {
+        if (from > 0) array[from - 1] = array[from - 1] - value
+        if (to > 0) array[to - 1] = array[to - 1] + value
+    }
+
+    fun max(): Long {
+        var max = Long.MIN_VALUE
+        var i = array.size - 1
+        var sum = 0L
+        while (i >= 0) {
+            sum += array[i]
+            array[i] = sum
+            if (sum > max) max = sum
+            i--
+        }
+        return max
+    }
+}
+
 class ArrayManipulationTests {
     @Test fun example() {
         val input = """
@@ -64,25 +86,3 @@ class ArrayManipulationTests {
 }
 
 fun String.toInputStream(): InputStream = ByteArrayInputStream(this.toByteArray())
-
-class ArrayManipulation(size: Int) {
-    private val array = LongArray(size)
-
-    fun update(from: Int, to: Int, value: Int) {
-        if (from > 0) array[from - 1] = array[from - 1] - value
-        if (to > 0) array[to - 1] = array[to - 1] + value
-    }
-
-    fun max(): Long {
-        var max = Long.MIN_VALUE
-        var i = array.size - 1
-        var sum = 0L
-        while (i >= 0) {
-            sum += array[i]
-            array[i] = sum
-            if (sum > max) max = sum
-            i--
-        }
-        return max
-    }
-}
