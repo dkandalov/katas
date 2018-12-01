@@ -1,21 +1,18 @@
 package katas.kotlin.sort.quicksort
 
-import katas.kotlin.sort.checkSortFunction
-import org.junit.Test
+import katas.kotlin.sort.SortingTests
 
-class QuickSort9 {
-    private fun <T : Comparable<T>> sort(list: List<T>): List<T> {
-        if (list.size <= 1) return list
+class QuickSort9 : SortingTests({ sort(it) }) {
+    companion object {
+        private fun <T : Comparable<T>> sort(list: List<T>): List<T> {
+            if (list.size <= 1) return list
 
-        val pivot = list.first()
-        val tail = list.subList(1, list.size)
+            val pivot = list.first()
+            val tail = list.subList(1, list.size)
 
-        return sort(tail.filter { it <= pivot }) +
+            return sort(tail.filter { it <= pivot }) +
                 pivot +
                 sort(tail.filter { it > pivot })
-    }
-
-    @Test fun `sort list of integers`() {
-        checkSortFunction(::sort)
+        }
     }
 }
