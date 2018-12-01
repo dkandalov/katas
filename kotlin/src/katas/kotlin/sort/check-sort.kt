@@ -44,7 +44,10 @@ abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
 
     private fun <T : Comparable<T>> List<T>.isSorted() {
         windowed(2).forEach { (item1, item2) ->
-            if (item1 > item2) fail("Item $item1 was greater than $item2 in list: $this")
+            if (item1 > item2) fail(
+                "List $this is not sorted\n" +
+                "because item $item1 was greater than $item2"
+            )
         }
     }
 }
