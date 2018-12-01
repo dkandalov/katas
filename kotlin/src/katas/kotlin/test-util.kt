@@ -4,13 +4,24 @@ import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import kotlincommon.printed
 import org.junit.Assert
 import org.junit.Test
+import java.lang.AssertionError
 
 fun <T> Collection<T>.doesNotContain(t: T) = !contains(t)
 
 infix fun <T> T.shouldEqual(that: T) {
-    assertThat(this, equalTo(that))
+    try {
+        assertThat(this, equalTo(that))
+    } catch (e: AssertionError) {
+        if (this != null && that != null && this.toString() == that.toString()) {
+            // Cast to Any because of this issue https://youtrack.jetbrains.com/issue/KT-20778
+            println("Actual class: " + (this as Any)::class.simpleName)
+            println("Expected class: " + (that as Any)::class.simpleName)
+        }
+        throw e
+    }
 }
 
 infix fun <T> T.shouldNotEqual(that: T) {

@@ -1,11 +1,10 @@
 package katas.kotlin.sort.quicksort
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
+import katas.kotlin.sort.checkSortFunction
 import org.junit.Test
 
 class QuickSort9 {
-    fun <T : Comparable<T>> sort(list: List<T>): List<T> {
+    private fun <T : Comparable<T>> sort(list: List<T>): List<T> {
         if (list.size <= 1) return list
 
         val pivot = list.first()
@@ -17,12 +16,6 @@ class QuickSort9 {
     }
 
     @Test fun `sort list of integers`() {
-        assertThat(sort(emptyList<Int>()), equalTo(emptyList()))
-        assertThat(sort(listOf(1)), equalTo(listOf(1)))
-        assertThat(sort(listOf(1, 2)), equalTo(listOf(1, 2)))
-        assertThat(sort(listOf(2, 1)), equalTo(listOf(1, 2)))
-        assertThat(sort(listOf(3, 2, 1)), equalTo(listOf(1, 2, 3)))
-        assertThat(sort(listOf(3, 2, 2, 1)), equalTo(listOf(1, 2, 2, 3)))
-        assertThat(sort(listOf(2, 3, 2, 1)), equalTo(listOf(1, 2, 2, 3)))
+        checkSortFunction(::sort)
     }
 }

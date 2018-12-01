@@ -1,16 +1,15 @@
 package katas.kotlin.sort.quicksort
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
+import katas.kotlin.sort.checkSortFunction
 import org.junit.Test
 
 class QuickSort10 {
-    fun <T : Comparable<T>> sort(list: MutableList<T>, from: Int = 0, to: Int = list.size - 1): MutableList<T> {
+    private fun <T : Comparable<T>> quickSort(list: MutableList<T>, from: Int = 0, to: Int = list.size - 1): MutableList<T> {
         if (from >= to) return list
 
         val i = partition(list, from, to)
-        sort(list, from, i - 1)
-        sort(list, i, to)
+        quickSort(list, from, i - 1)
+        quickSort(list, i, to)
         
         return list
     }
@@ -38,12 +37,6 @@ class QuickSort10 {
     }
 
     @Test fun `sort list of integers`() {
-        assertThat(sort(mutableListOf<Int>()), equalTo(emptyList<Int>()))
-        assertThat(sort(mutableListOf(1)), equalTo(listOf(1)))
-        assertThat(sort(mutableListOf(1, 2)), equalTo(listOf(1, 2)))
-        assertThat(sort(mutableListOf(2, 1)), equalTo(listOf(1, 2)))
-        assertThat(sort(mutableListOf(3, 2, 1)), equalTo(listOf(1, 2, 3)))
-        assertThat(sort(mutableListOf(3, 2, 2, 1)), equalTo(listOf(1, 2, 2, 3)))
-        assertThat(sort(mutableListOf(2, 3, 2, 1)), equalTo(listOf(1, 2, 2, 3)))
+        checkSortFunction { quickSort(it.toMutableList()) }
     }
 }
