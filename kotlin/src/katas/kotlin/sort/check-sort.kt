@@ -7,10 +7,12 @@ import org.junit.Test
 import kotlin.random.Random
 
 abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
-    @Test fun `basic examples`() {
+    @Test fun `trivial examples`() {
         sort(emptyList()) shouldEqual emptyList()
         sort(listOf(1)) shouldEqual listOf(1)
+    }
 
+    @Test fun `basic examples`() {
         sort(listOf(1, 2)) shouldEqual listOf(1, 2)
         sort(listOf(2, 1)) shouldEqual listOf(1, 2)
 
