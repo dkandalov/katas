@@ -32,3 +32,31 @@ class MergeSort2 : SortingTests(::sort) {
         }
     }
 }
+
+class MergeSortWithLessAllocation : SortingTests({ sort(it.toMutableList()) }) {
+    companion object {
+        private fun <T : Comparable<T>> sort(list: MutableList<T>) =
+            doSort(list, from = 0, to = list.size, buffer = ArrayList(list))
+
+        private fun <T : Comparable<T>> doSort(list: MutableList<T>, from: Int, to: Int, buffer: MutableList<T>): List<T> {
+            if (to - from <= 1) return buffer
+            val i = (to + from) / 2
+            doSort(list, from, i, buffer)
+            doSort(list, i, to, buffer)
+            return merge(list, buffer, from, i, to)
+        }
+
+        private fun <T : Comparable<T>> merge(list: MutableList<T>, buffer: MutableList<T>, from: Int, mid: Int, to: Int): List<T> {
+            var i = from
+            var j = mid
+            var w = from
+
+            while (i < mid && j < to) buffer[w++] = list[if (list[i] < list[j]) i++ else j++]
+            while (i < mid) buffer[w++] = list[i++]
+            while (j < to) buffer[w++] = list[j++]
+            while (--w >= from) list[w] = buffer[w]
+
+            return list
+        }
+    }
+}
