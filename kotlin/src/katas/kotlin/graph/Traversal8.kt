@@ -35,6 +35,8 @@ class Traversal8 {
     }
 
     @Test fun `breadth-first traversal`() {
+        "🎄" shouldEqual "\uD83C\uDF84"
+
         "[a]".toGraph().let {
             it.bft("a") shouldEqual "a"
             it.bft("x") shouldEqual ""
