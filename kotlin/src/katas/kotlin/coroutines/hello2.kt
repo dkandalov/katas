@@ -15,7 +15,7 @@ object Hello2 {
         return block.createCoroutineUnintercepted(MyContinuation())
     }
 
-    fun launchCoroutine(block: suspend () -> Unit) {
+    fun startCoroutine(block: suspend () -> Unit) {
         block.startCoroutine(MyContinuation())
     }
 
@@ -46,19 +46,14 @@ object Hello2 {
     }
 
     fun main() {
-        val coroutine = cc {
+        startCoroutine {
             println("begin")
             noop()
-            println("1")
-            val r1 = yeeld()
-            println(r1)
+//            val r1 = yeeld()
+//            println(r1)
             println("end")
         }
-        coroutine.resume(Unit)
-        coroutine.resume(Unit)
-        coroutine.resume(Unit)
-//        coroutine.resume(Unit)
-//        coroutine.resume(Unit)
+        println("---")
 
 //        sequence {
 //            yield(1)
