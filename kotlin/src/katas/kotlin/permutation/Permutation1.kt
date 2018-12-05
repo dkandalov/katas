@@ -12,7 +12,7 @@ import org.junit.Test
  */
 class Permutation1 {
     @Test fun `permutations of a list`() {
-        validatePermutationsFunction { it.permutations().toList() }
+        checkPermutationsFunction { it.permutations().toList() }
 
         listOf(0, 1).permutations().toList().printed()
         listOf(0, 1, 2).permutations().toList().printed()
@@ -31,7 +31,7 @@ class Permutation1 {
             override fun toString() = (if (direction == left) "<" else ">") + value
         }
 
-        private fun <E> List<E>.permutations(): Sequence<List<E>> {
+        fun <E> List<E>.permutations(): Sequence<List<E>> {
             val list = this
             return sequence {
                 val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }

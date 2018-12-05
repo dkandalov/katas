@@ -4,7 +4,7 @@ import org.junit.Test
 
 class Permutation2 {
     @Test fun `permutation of a list`() {
-        validatePermutationsFunction { list -> permutationsOf(list) }
+        checkPermutationsFunction(::permutationsOf)
     }
 
     private fun <E> permutationsOf(list: List<E>): List<List<E>> =
