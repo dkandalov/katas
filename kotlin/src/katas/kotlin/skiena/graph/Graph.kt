@@ -1,13 +1,9 @@
-@file:Suppress("EXPERIMENTAL_FEATURE_WARNING")
+package katas.kotlin.skiena.graph
 
-package graph
-
-import graph.Colour.*
-import kotlin.coroutines.experimental.buildSequence
-import kotlin.math.max
-import kotlin.test.Test
-import kotlin.test.assertEquals
-
+import katas.kotlin.shouldEqual
+import kotlincommon.join
+import org.junit.Test
+import katas.kotlin.skiena.graph.Colour.*
 
 // ------------------------------
 // 5.2 Data Structures for Graphs
@@ -17,16 +13,10 @@ data class EdgeNode(
     var y: Int,
     var weight: Int?,
     var next: EdgeNode?
-)
-
-fun EdgeNode?.asIterable(): Iterable<EdgeNode> = buildSequence {
-    var edgeNode: EdgeNode? = this@asIterable
-    while (edgeNode != null) {
-        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-        yield(edgeNode!!)
-        edgeNode = edgeNode.next
-    }
-}.asIterable()
+) : Iterable<EdgeNode> {
+    override fun iterator(): Iterator<EdgeNode> =
+        generateSequence(this) { edgeNode -> edgeNode.next }.iterator()
+}
 
 
 class Graph(
@@ -43,7 +33,7 @@ class Graph(
     )
 
     private fun insertEdge(x: Int, y: Int) {
-        val max = max(x, y) + 1
+        val max = maxOf(x, y) + 1
         if (max > numberOfVertices) numberOfVertices = max
         edges.ensureSize(max, defaultValue = null)
         degree.ensureSize(max, defaultValue = 0)
@@ -56,7 +46,7 @@ class Graph(
         val processedEdgeFrom = Array(numberOfVertices) { false }
         val processedEdgeTo = Array(numberOfVertices) { false }
         return edges.indices.flatMap { x ->
-            edges[x].asIterable()
+            (edges[x] ?: emptyList<EdgeNode>())
                 .filterNot { edge -> processedEdgeFrom[edge.y] && processedEdgeTo[x] }
                 .map { edge ->
                     processedEdgeFrom[x] = true
@@ -131,7 +121,7 @@ fun Graph.bfs(
         processVertexEarly(vertex)
         processed[vertex] = true
 
-        edges[vertex].asIterable().forEach { edge ->
+        edges[vertex]!!.asIterable().forEach { edge ->
             val y = edge.y
             if (!processed[y] || this.directed) {
                 processEdge(vertex, y)
@@ -166,6 +156,7 @@ class BfsTest {
     }
 }
 
+
 // -------------------
 // 5.6.2 Finding Paths
 // -------------------
@@ -180,6 +171,7 @@ class FindingPathsTest {
         findPath(1, 4, parents).join() shouldEqual "1, 5, 4"
     }
 }
+
 
 // --------------------------
 // 5.7.1 Connected Components
@@ -206,6 +198,7 @@ class ConnectedComponentsTest {
         Graph.read("0-1,2-3").connectedComponents() shouldEqual listOf(listOf(0, 1), listOf(2, 3))
     }
 }
+
 
 // -------------------------
 // 5.7.2 Two-Coloring Graphs
@@ -286,7 +279,7 @@ fun Graph.dfs(
 
     processVertexEarly(vertex)
 
-    edges[vertex].asIterable().forEach { edge ->
+    edges[vertex]!!.forEach { edge ->
         val y = edge.y
         if (!discovered[y]) {
             parents[y] = vertex
@@ -358,24 +351,4 @@ fun <T> ArrayList<T>.ensureSize(minSize: Int, defaultValue: T): ArrayList<T> {
         0.until(minSize - size).forEach { add(defaultValue) }
     }
     return this
-}
-
-infix fun <T> T.shouldEqual(that: T) {
-    assertEquals(that, this)
-}
-
-fun <T> T.printed(f: (T) -> String = { it.toString() }): T {
-    println(f(this))
-    return this
-}
-
-fun <T> Iterable<T>.join(
-    separator: CharSequence = ", ",
-    prefix: CharSequence = "",
-    postfix: CharSequence = "",
-    limit: Int = -1,
-    truncated: CharSequence = "...",
-    transform: ((T) -> CharSequence)? = null
-): String {
-    return this.joinToString(separator, prefix, postfix, limit, truncated, transform)
 }
