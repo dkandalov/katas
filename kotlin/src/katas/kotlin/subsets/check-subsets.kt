@@ -23,9 +23,22 @@ abstract class SubsetTests(private val subsetsOf: (Collection<Int>) -> Set<Set<I
     }
 
     @Test fun `amount of subsets`() {
-        subsetsOf(IntRange(0, 7).toList()).size shouldEqual 2.pow(8)
+        checkAmountOfSubsets(subsets = subsetsOf(IntRange(0, 7).toList()), setSize = 8)
 
         val randomSet = Array(10, { Random.nextInt(0, 99) }).toSet()
-        subsetsOf(randomSet).size shouldEqual 2.pow(randomSet.size)
+        checkAmountOfSubsets(subsets = subsetsOf(randomSet), setSize = randomSet.size)
+    }
+
+    private fun checkAmountOfSubsets(subsets: Set<Set<Int>>, setSize: Int) {
+        subsets.size shouldEqual 2.pow(setSize)
+
+        val expectedAmountOfSetsBySize = pascalTriangle(setSize + 1).last()
+            .mapIndexed { index, it -> Pair(index, it) }.toMap()
+
+        val actualAmountOfSetsBySize = subsets.fold(HashMap<Int, Int>()) { map, it ->
+            map[it.size] = map.getOrDefault(it.size, 0) + 1
+            map
+        }
+        actualAmountOfSetsBySize shouldEqual expectedAmountOfSetsBySize
     }
 }
