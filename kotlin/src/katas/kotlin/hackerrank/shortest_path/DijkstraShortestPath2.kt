@@ -51,11 +51,11 @@ private fun Graph.shortestPaths(from: Int): Paths {
     val minDist = Array(size + 1, { Int.MAX_VALUE }).toMutableList()
     minDist[from] = 0
 
-    val queue = PriorityQueue<Int>(Comparator.comparingInt({ node: Int -> minDist[node] }))
+    val queue = BinaryHeap<Int>(Comparator.comparingInt({ node: Int -> minDist[node] }))
     queue.addAll(nodes)
 
     while (queue.isNotEmpty()) {
-        val current = queue.remove()
+        val current = queue.removeMin()
 
         neighboursOf(current)
             .filter { queue.contains(it) }
@@ -64,12 +64,9 @@ private fun Graph.shortestPaths(from: Int): Paths {
                 if (distance < minDist[neighbour] || minDist[neighbour] == Int.MAX_VALUE) {
                     minDist[neighbour] = distance
                     prev[neighbour] = current
+                    queue.updatePriorityOf(neighbour)
                 }
             }
-
-        val elements = queue.toList()
-        queue.clear()
-        queue.addAll(elements)
     }
     minDist.indices.forEach {
         if (minDist[it] == Int.MAX_VALUE) minDist[it] = -1

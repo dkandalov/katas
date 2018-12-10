@@ -22,6 +22,7 @@ class BinaryHeap<E>(
         else this[0]
 
     fun add(value: E) {
+        if (indexByValue.containsKey(value)) return
         if (size == array.size) {
             array = Arrays.copyOf(array, array.size * 2)
         }
@@ -91,6 +92,12 @@ class BinaryHeap<E>(
         indexByValue[value] = index
     }
 
+    fun isEmpty(): Boolean = size == 0
+
+    fun isNotEmpty(): Boolean = !isEmpty()
+
+    fun contains(value: E): Boolean = indexByValue.containsKey(value)
+
     companion object {
         fun <E> binaryHeapOf(vararg values: E): BinaryHeap<E> {
             val result = BinaryHeap<E>()
@@ -140,12 +147,12 @@ class BinaryHeapTests {
         heap.size() shouldEqual 10
     }
 
-    @Test fun `can have duplicates`() {
+    @Test fun `cannot have duplicates`() {
         val heap = BinaryHeap<Int>()
         10.downTo(1).forEach {
             heap.add(42)
         }
-        heap.size() shouldEqual 10
+        heap.size() shouldEqual 1
     }
 
     @Test fun `can use custom comparator`() {
