@@ -11,9 +11,21 @@ import guru.nidi.graphviz.model.Link
 import katas.kotlin.shouldEqual
 import kotlincommon.printed
 import org.junit.Test
+import java.io.File
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
+// See https://www.hackerrank.com/challenges/dijkstrashortreach
+fun shortestReach(numberOfNodes: Int, edges: Array<Array<Int>>, startNode: Int): Array<Int> {
+    val graph = Graph(size = numberOfNodes)
+    edges.forEach { (from, to, weight) ->
+        graph.addEdge(from, to, weight)
+    }
+    val result = graph.shortestPaths(startNode).minDist.toMutableList()
+    result.removeAt(startNode)
+    result.removeAt(0)
+    return result.toTypedArray()
+}
 
 private data class Edge(val from: Int, val to: Int, val weight: Int)
 
@@ -46,12 +58,12 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
 
 private data class Paths(val minDist: List<Int>, val prevNode: List<Int>)
 
-private fun Graph.shortestPaths(from: Int): Paths {
+private fun Graph.shortestPaths(fromNode: Int): Paths {
     val prev = Array(size + 1, { -1 }).toMutableList()
     val minDist = Array(size + 1, { Int.MAX_VALUE }).toMutableList()
-    minDist[from] = 0
+    minDist[fromNode] = 0
 
-    val queue = BinaryHeap<Int>(Comparator.comparingInt({ node: Int -> minDist[node] }))
+    val queue = BinaryHeap<Int>(Comparator { node1, node2 -> minDist[node1].compareTo(minDist[node2]) })
     queue.addAll(nodes)
 
     while (queue.isNotEmpty()) {
@@ -103,24 +115,37 @@ class DijkstraShortestPath2Tests {
             addEdge(3, 4, weight = 2)
             addEdge(1, 3, weight = 15)
 
-            val (minDist, _) = shortestPaths(1).printed()
-            minDist.drop(2) shouldEqual listOf(5, 11, 13, -1)
+            val (minDist, _) = shortestPaths(fromNode = 1).printed()
+            minDist.drop(1) shouldEqual listOf(0, 5, 11, 13, -1)
 
             // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/basic-example.png"))
         }
     }
 
-    @Test fun `example 1`() {
+    @Test fun `sample tests case 0`() {
         Graph(size = 4).apply {
             addEdge(1, 2, weight = 24)
             addEdge(1, 4, weight = 20)
             addEdge(3, 1, weight = 3)
             addEdge(4, 3, weight = 12)
 
-            val (minDist, _) = shortestPaths(1).printed()
-            minDist.drop(2) shouldEqual listOf(24, 3, 15)
+            val (minDist, _) = shortestPaths(fromNode = 1).printed()
+            minDist.drop(1) shouldEqual listOf(0, 24, 3, 15)
 
-            // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/another-example.png"))
+             renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/sample-test-case-0.png"))
+        }
+    }
+
+    @Test fun `sample tests case 1`() {
+        Graph(size = 5).apply {
+            addEdge(1, 2, weight = 10)
+            addEdge(1, 3, weight = 6)
+            addEdge(2, 4, weight = 8)
+
+            val (minDist, _) = shortestPaths(fromNode = 2).printed()
+            minDist.drop(1) shouldEqual listOf(10, 0, 16, 8, -1)
+
+            renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/sample-test-case-1.png"))
         }
     }
 }
