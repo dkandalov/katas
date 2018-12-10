@@ -10,6 +10,7 @@ import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.shouldEqual
 import kotlincommon.printed
+import org.junit.Test
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
@@ -38,7 +39,7 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
     fun findEdge(node1: Int, node2: Int): Edge? {
         return adjacency[node1]!!.find { (from, to, _) ->
             (from == node1 && to == node2) ||
-            (from == node2 && to == node1)
+                (from == node2 && to == node1)
         }
     }
 }
@@ -76,7 +77,6 @@ private fun Graph.shortestPaths(from: Int): Paths {
     return Paths(minDist, prev)
 }
 
-
 private fun Graph.renderAsGraphViz(graphName: String = "graph", height: Int = 500): Renderer {
     val graphViz = mutGraph(graphName).setDirected(false)
     graphViz.graphAttrs().add(RankDir.LEFT_TO_RIGHT)
@@ -98,27 +98,89 @@ private fun Graph.renderAsGraphViz(graphName: String = "graph", height: Int = 50
     return Graphviz.fromGraph(graphViz).height(height).render(Format.PNG)
 }
 
-fun main(args: Array<String>) {
-    Graph(size = 5).apply {
-        addEdge(1, 2, weight = 5)
-        addEdge(2, 3, weight = 6)
-        addEdge(3, 4, weight = 2)
-        addEdge(1, 3, weight = 15)
+class DijkstraShortestPath2Tests {
+    @Test fun `basic example`() {
+        Graph(size = 5).apply {
+            addEdge(1, 2, weight = 5)
+            addEdge(2, 3, weight = 6)
+            addEdge(3, 4, weight = 2)
+            addEdge(1, 3, weight = 15)
 
-        val (minDist, _) = shortestPaths(1).printed()
-        minDist.drop(2) shouldEqual listOf(5, 11, 13, -1)
+            val (minDist, _) = shortestPaths(1).printed()
+            minDist.drop(2) shouldEqual listOf(5, 11, 13, -1)
 
-        // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/basic-example.png"))
+            // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/basic-example.png"))
+        }
     }
-    Graph(size = 4).apply {
-        addEdge(1, 2, weight = 24)
-        addEdge(1, 4, weight = 20)
-        addEdge(3, 1, weight = 3)
-        addEdge(4, 3, weight = 12)
 
-        val (minDist, _) = shortestPaths(1).printed()
-        minDist.drop(2) shouldEqual listOf(24, 3, 15)
+    @Test fun `example 1`() {
+        Graph(size = 4).apply {
+            addEdge(1, 2, weight = 24)
+            addEdge(1, 4, weight = 20)
+            addEdge(3, 1, weight = 3)
+            addEdge(4, 3, weight = 12)
 
-        // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/another-example.png"))
+            val (minDist, _) = shortestPaths(1).printed()
+            minDist.drop(2) shouldEqual listOf(24, 3, 15)
+
+            // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/another-example.png"))
+        }
+    }
+}
+
+
+class FibonacciHeap<E : Comparable<E>> {
+    private data class Node<E>(val value: E) {
+        lateinit var next: Node<E>
+        lateinit var prev: Node<E>
+
+        fun leftInsert(node: Node<E>): Node<E> {
+            prev.next = node
+            node.prev = prev
+            node.next = this
+            prev = node
+            return node
+        }
+    }
+
+    private var minNode: Node<E>? = null
+
+    fun add(value: E) {
+        if (minNode == null) {
+            minNode = Node(value).apply {
+                next = this
+                prev = this
+            }
+        } else {
+            val node = minNode!!.leftInsert(Node(value))
+            if (node.value < minNode!!.value) minNode = node
+        }
+    }
+
+    fun minValue() = minNode?.value
+
+    fun removeMin(): E? {
+        if (minNode == null) return null
+        TODO()
+    }
+
+    override fun toString(): String {
+        if (minNode == null) return "[]"
+        val rootNodes = mutableListOf(minNode)
+        while (rootNodes.last()!!.next != rootNodes.first()) {
+            rootNodes.add(rootNodes.last()?.next)
+        }
+        return rootNodes.requireNoNulls().joinToString { it.value.toString() }
+    }
+}
+
+class FibonacciHeapTests {
+    @Test fun `construct heap`() {
+        val heap = FibonacciHeap<Int>()
+        heap.add(3)
+        heap.add(1)
+        heap.add(2)
+        heap.printed()
+        heap.minValue() shouldEqual 1
     }
 }
