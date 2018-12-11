@@ -52,6 +52,17 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
     private val neighbours = LinkedHashMap<Int, LinkedHashSet<Int>>()
 
     fun addEdge(from: Int, to: Int, weight: Int) {
+        val existingEdge = adjacency
+            .getOrPut(from, { LinkedHashSet() })
+            .find { (from == it.from && to == it.to) || (from == it.to && to == it.from) }
+        if (existingEdge != null) {
+            if (existingEdge.weight < weight) return
+            else {
+                adjacency.getOrPut(from, { LinkedHashSet() }).remove(existingEdge)
+                adjacency.getOrPut(to, { LinkedHashSet() }).remove(existingEdge)
+            }
+        }
+
         val edge = Edge(from, to, weight)
         edges.add(edge)
         adjacency.getOrPut(from, { LinkedHashSet() }).add(edge)
@@ -62,11 +73,10 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
 
     fun neighboursOf(node: Int): Set<Int> = neighbours[node] ?: emptySet()
 
-    fun findEdges(node1: Int, node2: Int): List<Edge> {
-        return (adjacency[node1] ?: LinkedHashSet()).filter { (from, to, _) ->
-            (from == node1 && to == node2) || (from == node2 && to == node1)
+    fun findEdge(from: Int, to: Int): Edge? =
+        adjacency[from]?.find {
+            (from == it.from && to == it.to) || (from == it.to && to == it.from)
         }
-    }
 }
 
 private data class Paths(val prevNode: List<Int>, val minDist: List<Int>)
@@ -88,7 +98,7 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
         neighboursOf(node)
             .filter { queue.contains(it) }
             .forEach { neighbour ->
-                val distance = minDist[node] + findEdges(node, neighbour).minBy { it.weight }?.weight!!
+                val distance = minDist[node] + findEdge(node, neighbour)!!.weight
                 if (distance < minDist[neighbour]) {
                     minDist[neighbour] = distance
                     prev[neighbour] = node
