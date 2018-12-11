@@ -6,6 +6,7 @@ import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.random.Random
 
 class BinaryHeap<E>(
     private val comparator: Comparator<E> = defaultComparator(),
@@ -18,7 +19,7 @@ class BinaryHeap<E>(
 
     fun size(): Int = size
 
-    fun min(): E =
+    fun element(): E =
         if (size == 0) throw NoSuchElementException()
         else this[0]
 
@@ -36,7 +37,7 @@ class BinaryHeap<E>(
         collection.forEach { add(it) }
     }
 
-    fun removeMin(): E {
+    fun remove(): E {
         if (size == 0) throw NoSuchElementException()
 
         val result = this[0]
@@ -46,28 +47,37 @@ class BinaryHeap<E>(
         return result
     }
 
-    fun updatePriorityOf(value: E) {
-        swap(0, indexByValue[value]!!)
-        siftDown(0)
+    fun removeAll(): List<E> {
+        val result = ArrayList<E>(size)
+        while (isNotEmpty()) {
+            result.add(remove())
+        }
+        return result
     }
 
-    private tailrec fun siftUp(index: Int) {
-        if (index.parent == -1) return
-        if (this[index.parent] > this[index]) {
-            swap(index.parent, index)
-            siftUp(index.parent)
-        }
+    fun updatePriorityOf(value: E) {
+        siftDown(siftUp(indexByValue[value]!!))
+    }
+
+    fun clear() {
+        size = 0
+        indexByValue.clear()
+    }
+
+    private tailrec fun siftUp(index: Int): Int {
+        if (index.parent == -1 || this[index.parent] <= this[index]) return index
+        swap(index.parent, index)
+        return siftUp(index.parent)
     }
 
     private tailrec fun siftDown(index: Int) {
         var minIndex = index
         if (index.child1 < size && this[index.child1] < this[minIndex]) minIndex = index.child1
         if (index.child2 < size && this[index.child2] < this[minIndex]) minIndex = index.child2
+        if (minIndex == index) return
 
-        if (index != minIndex) {
-            swap(index, minIndex)
-            siftDown(minIndex)
-        }
+        swap(index, minIndex)
+        siftDown(minIndex)
     }
 
     fun toSet(): Set<E> = 0.until(size).mapTo(LinkedHashSet()) { this[it] }
@@ -86,9 +96,7 @@ class BinaryHeap<E>(
         this[index2] = tmp
     }
 
-    private operator fun get(index: Int): E {
-        return array[index]!!
-    }
+    private operator fun get(index: Int): E = array[index]!!
 
     private operator fun set(index: Int, value: E?) {
         array[index] = value!!
@@ -129,16 +137,16 @@ class BinaryHeapTests {
         val heap = BinaryHeap<Int>()
         10.downTo(1).forEach { n ->
             heap.add(n)
-            heap.min() shouldEqual n
+            heap.element() shouldEqual n
         }
     }
 
     @Test fun `removes min value`() {
-        binaryHeapOf(1).removeMin() shouldEqual 1
+        binaryHeapOf(1).remove() shouldEqual 1
         binaryHeapOf(3, 2, 1).let {
-            it.removeMin() shouldEqual 1
-            it.removeMin() shouldEqual 2
-            it.removeMin() shouldEqual 3
+            it.remove() shouldEqual 1
+            it.remove() shouldEqual 2
+            it.remove() shouldEqual 3
         }
     }
 
@@ -165,9 +173,9 @@ class BinaryHeapTests {
         val heap = BinaryHeap(comparator = customComparator)
         heap.addAll(listOf("a", "b", "c"))
 
-        heap.removeMin() shouldEqual "c"
-        heap.removeMin() shouldEqual "b"
-        heap.removeMin() shouldEqual "a"
+        heap.remove() shouldEqual "c"
+        heap.remove() shouldEqual "b"
+        heap.remove() shouldEqual "a"
     }
 
     @Test fun `can update priority of an item`() {
@@ -177,9 +185,22 @@ class BinaryHeapTests {
         val heap = BinaryHeap(comparator = customComparator)
         heap.addAll(listOf("a", "b", "c"))
 
-        heap.min() shouldEqual "c"
+        heap.element() shouldEqual "c"
         map["a"] = -1
         heap.updatePriorityOf("a")
-        heap.min() shouldEqual "a"
+        heap.element() shouldEqual "a"
+    }
+
+    @Test fun `removing all items returns them in sorted order`() {
+        binaryHeapOf(3, 2, 1).removeAll() shouldEqual listOf(1, 2, 3)
+
+        (0..100).forEach {
+            val randomSize = Random.nextInt(10, 100)
+            Random.nextBytes(randomSize).toList().let { bytes ->
+                val heap = BinaryHeap<Byte>()
+                heap.addAll(bytes)
+                heap.removeAll() shouldEqual bytes.distinct().sorted()
+            }
+        }
     }
 }
