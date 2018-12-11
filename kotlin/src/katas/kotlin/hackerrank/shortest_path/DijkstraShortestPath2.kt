@@ -48,25 +48,21 @@ private data class Edge(val from: Int, val to: Int, val weight: Int)
 private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedHashSet()) {
     val nodes: Set<Int> get() = IntRange(1, size).toSet()
 
-    private val adjacency = LinkedHashMap<Int, LinkedHashSet<Edge>>()
+    private val adjacency = LinkedHashMap<Pair<Int, Int>, Edge>()
     private val neighbours = LinkedHashMap<Int, LinkedHashSet<Int>>()
 
     fun addEdge(from: Int, to: Int, weight: Int) {
-        val existingEdge = adjacency
-            .getOrPut(from, { LinkedHashSet() })
-            .find { (from == it.from && to == it.to) || (from == it.to && to == it.from) }
+        if (from > to) return addEdge(to, from, weight)
+
+        val existingEdge = adjacency[Pair(from, to)]
         if (existingEdge != null) {
             if (existingEdge.weight < weight) return
-            else {
-                adjacency.getOrPut(from, { LinkedHashSet() }).remove(existingEdge)
-                adjacency.getOrPut(to, { LinkedHashSet() }).remove(existingEdge)
-            }
+            else adjacency.remove(Pair(from, to))
         }
 
         val edge = Edge(from, to, weight)
         edges.add(edge)
-        adjacency.getOrPut(from, { LinkedHashSet() }).add(edge)
-        adjacency.getOrPut(to, { LinkedHashSet() }).add(edge)
+        adjacency[Pair(from, to)] = edge
         neighbours.getOrPut(from, { LinkedHashSet() }).add(to)
         neighbours.getOrPut(to, { LinkedHashSet() }).add(from)
     }
@@ -74,9 +70,8 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
     fun neighboursOf(node: Int): Set<Int> = neighbours[node] ?: emptySet()
 
     fun findEdge(from: Int, to: Int): Edge? =
-        adjacency[from]?.find {
-            (from == it.from && to == it.to) || (from == it.to && to == it.from)
-        }
+        if (from > to) adjacency[Pair(to, from)]
+        else adjacency[Pair(from, to)]
 }
 
 private data class Paths(val prevNode: List<Int>, val minDist: List<Int>)
@@ -92,8 +87,8 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
     while (queue.isNotEmpty()) {
         val node = queue.remove()
 
-        val isNotReachable = minDist[node] == Int.MAX_VALUE
-        if (isNotReachable) continue
+        val isUnreachableNode = minDist[node] == Int.MAX_VALUE
+        if (isUnreachableNode) continue
 
         neighboursOf(node)
             .filter { queue.contains(it) }
