@@ -2,9 +2,7 @@ package katas.kotlin.hackerrank.shortest_path
 
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.attribute.RankDir
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Graphviz
-import guru.nidi.graphviz.engine.Renderer
+import guru.nidi.graphviz.engine.*
 import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
@@ -16,8 +14,8 @@ import java.util.*
 import kotlin.collections.LinkedHashSet
 
 // See https://www.hackerrank.com/challenges/dijkstrashortreach
-fun shortestReach(numberOfNodes: Int, edges: Array<Array<Int>>, startNode: Int): Array<Int> {
-    val graph = Graph(size = numberOfNodes)
+fun shortestReach(nodeCount: Int, edges: Array<Array<Int>>, startNode: Int): Array<Int> {
+    val graph = Graph(size = nodeCount)
     edges.forEach { (from, to, weight) ->
         graph.addEdge(from, to, weight)
     }
@@ -38,25 +36,22 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
     fun addEdge(from: Int, to: Int, weight: Int) {
         val edge = Edge(from, to, weight)
         edges.add(edge)
-
         adjacency.getOrPut(from, { LinkedHashSet() }).add(edge)
         adjacency.getOrPut(to, { LinkedHashSet() }).add(edge)
-
         neighbours.getOrPut(from, { LinkedHashSet() }).add(to)
         neighbours.getOrPut(to, { LinkedHashSet() }).add(from)
     }
 
     fun neighboursOf(node: Int): Set<Int> = neighbours[node] ?: emptySet()
 
-    fun findEdge(node1: Int, node2: Int): Edge? {
-        return adjacency[node1]!!.find { (from, to, _) ->
-            (from == node1 && to == node2) ||
-                (from == node2 && to == node1)
+    fun findEdges(node1: Int, node2: Int): List<Edge> {
+        return (adjacency[node1] ?: LinkedHashSet()).filter { (from, to, _) ->
+            (from == node1 && to == node2) || (from == node2 && to == node1)
         }
     }
 }
 
-private data class Paths(val minDist: List<Int>, val prevNode: List<Int>)
+private data class Paths(val prevNode: List<Int>, val minDist: List<Int>)
 
 private fun Graph.shortestPaths(fromNode: Int): Paths {
     val prev = Array(size + 1, { -1 }).toMutableList()
@@ -67,13 +62,16 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
     queue.addAll(nodes)
 
     while (queue.isNotEmpty()) {
-        val current = queue.removeMin()
+        val current = queue.remove()
+
+        val isNotReachable = minDist[current] == Int.MAX_VALUE
+        if (isNotReachable) continue
 
         neighboursOf(current)
             .filter { queue.contains(it) }
             .forEach { neighbour ->
-                val distance = minDist[current] + findEdge(current, neighbour)!!.weight
-                if (distance < minDist[neighbour] || minDist[neighbour] == Int.MAX_VALUE) {
+                val distance = minDist[current] + findEdges(current, neighbour).minBy { it.weight }?.weight!!
+                if (distance < minDist[neighbour]) {
                     minDist[neighbour] = distance
                     prev[neighbour] = current
                     queue.updatePriorityOf(neighbour)
@@ -83,7 +81,7 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
     minDist.indices.forEach {
         if (minDist[it] == Int.MAX_VALUE) minDist[it] = -1
     }
-    return Paths(minDist, prev)
+    return Paths(prev, minDist)
 }
 
 private fun Graph.renderAsGraphViz(graphName: String = "graph", height: Int = 500): Renderer {
@@ -108,6 +106,8 @@ private fun Graph.renderAsGraphViz(graphName: String = "graph", height: Int = 50
 }
 
 class DijkstraShortestPath2Tests {
+    private val basePath = "src/katas/kotlin/hackerrank/shortest_path"
+
     @Test fun `basic example`() {
         Graph(size = 5).apply {
             addEdge(1, 2, weight = 5)
@@ -115,7 +115,7 @@ class DijkstraShortestPath2Tests {
             addEdge(3, 4, weight = 2)
             addEdge(1, 3, weight = 15)
 
-            val (minDist, _) = shortestPaths(fromNode = 1).printed()
+            val minDist = shortestPaths(fromNode = 1).minDist.printed()
             minDist.drop(1) shouldEqual listOf(0, 5, 11, 13, -1)
 
             // renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/basic-example.png"))
@@ -129,10 +129,10 @@ class DijkstraShortestPath2Tests {
             addEdge(3, 1, weight = 3)
             addEdge(4, 3, weight = 12)
 
-            val (minDist, _) = shortestPaths(fromNode = 1).printed()
+            val minDist = shortestPaths(fromNode = 1).minDist.printed()
             minDist.drop(1) shouldEqual listOf(0, 24, 3, 15)
 
-             renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/sample-test-case-0.png"))
+//            renderAsGraphViz().toFile(File("$basePath/sample-test-case-0.png"))
         }
     }
 
@@ -142,67 +142,38 @@ class DijkstraShortestPath2Tests {
             addEdge(1, 3, weight = 6)
             addEdge(2, 4, weight = 8)
 
-            val (minDist, _) = shortestPaths(fromNode = 2).printed()
+            val minDist = shortestPaths(fromNode = 2).minDist.printed()
             minDist.drop(1) shouldEqual listOf(10, 0, 16, 8, -1)
 
-            renderAsGraphViz().toFile(File("src/katas/kotlin/hackerrank/shortest_path/sample-test-case-1.png"))
-        }
-    }
-}
-
-
-class FibonacciHeap<E : Comparable<E>> {
-    private data class Node<E>(val value: E) {
-        lateinit var next: Node<E>
-        lateinit var prev: Node<E>
-
-        fun leftInsert(node: Node<E>): Node<E> {
-            prev.next = node
-            node.prev = prev
-            node.next = this
-            prev = node
-            return node
+//            renderAsGraphViz().toFile(File("$basePath/sample-test-case-1.png"))
         }
     }
 
-    private var minNode: Node<E>? = null
-
-    fun add(value: E) {
-        if (minNode == null) {
-            minNode = Node(value).apply {
-                next = this
-                prev = this
+    @Test fun `test cases 2`() {
+        val scanner = Scanner(File("$basePath/test-cases-2.txt"))
+        val numberOfTests = scanner.nextLine().trim().toInt()
+        (1..numberOfTests).map { i ->
+            val (nodeCount, edgeCount) = scanner.nextLine().split(" ").let { Pair(it[0].toInt(), it[1].toInt()) }
+            val edges = Array(edgeCount, { Array(3, { 0 }) })
+            for (j in 0 until edgeCount) {
+                edges[j] = scanner.nextLine().split(" ").map { it.trim().toInt() }.toTypedArray()
             }
-        } else {
-            val node = minNode!!.leftInsert(Node(value))
-            if (node.value < minNode!!.value) minNode = node
-        }
-    }
+            val startNode = scanner.nextLine().trim().toInt()
 
-    fun minValue() = minNode?.value
+            val graph = Graph(size = nodeCount)
+            edges.forEach { (from, to, weight) ->
+                graph.addEdge(from, to, weight)
+            }
 
-    fun removeMin(): E? {
-        if (minNode == null) return null
-        TODO()
-    }
+            "test case $i (from $startNode): " + shortestReach(nodeCount, edges, startNode).joinToString(" ")
+        }.joinToString("\n", prefix = "\n") shouldEqual """
 
-    override fun toString(): String {
-        if (minNode == null) return "[]"
-        val rootNodes = mutableListOf(minNode)
-        while (rootNodes.last()!!.next != rootNodes.first()) {
-            rootNodes.add(rootNodes.last()?.next)
-        }
-        return rootNodes.requireNoNulls().joinToString { it.value.toString() }
-    }
-}
-
-class FibonacciHeapTests {
-    @Test fun `construct heap`() {
-        val heap = FibonacciHeap<Int>()
-        heap.add(3)
-        heap.add(1)
-        heap.add(2)
-        heap.printed()
-        heap.minValue() shouldEqual 1
+            test case 1 (from 17): 20 25 25 68 86 39 22 70 36 53 91 35 88 27 30 43 54 74 41
+            test case 2 (from 60): 9 8 8 8 12 7 15 8 4 1 12 9 7 10 4 10 10 4 1 7 12 7 11 12 15 10 5 11 6 7 9 11 9 7 7 14 5 13 6 8 10 7 4 9 3 5 5 9 13 1 8 11 4 9 6 7 7 8 11 6 10 7 8 9 13 9 12 8 3 5 7 15 6 10 11 5 11
+            test case 3 (from 85): 154 90 186 190 178 114 123 -1 -1 123 -1 104 -1 -1 -1 207 134 123 98 155 -1 198 68 90 170 135 -1 103 145 -1 54 111 163 173 115 87 159 75 -1 94 102 -1 76 67 167 138 216 -1 172 102 212 163 103 112 -1 182 49 145 92 -1 -1 194 -1 182 -1 201 96 -1 85 121 108 161 130 100 120 -1 -1 118 215 92 156 162 163 168 71 110 -1 -1 190 217 100 105 178
+            test case 4 (from 49): 13 30 17 33 16 9 31 34 14 20 21 19 24 34 27 42 15 16 19 23 18 21 11 21 28 15 15 45 18 26 17 20 16 28 27 16 22 21 18 21 34 14 26 27 11 23 17 24 27 22 19 18 21 17 17 22 14 20 12 27 21 10 42 10 25 19 22
+            test case 5 (from 1): 3 6 8 11 7 12 10 18 4 8 3 6 12 1 2 10 1 8 5 6 9 9 8 17 11 12 8
+            test case 6 (from 1): 3 4 5 3 4 5 5 4 4 7 6 4 1 4 5 5 5 4 5 6 5 6 4 5 3 5 5 6 2 6 3 3 6 5 3 6 3 2 6 4 1 6 3 4 5 6 7 7 3 6 3 5 3 5 4 7 4 4 6 4 5 5 5 4 2 2 3 6 4 6 4 4 5 4 6 3 5 5 4 4 4 2 1 3 3 3 2
+        """.trimIndent()
     }
 }
