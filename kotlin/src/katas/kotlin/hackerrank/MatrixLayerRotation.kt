@@ -212,9 +212,9 @@ class MatrixLayerRotationTests {
         main(toReadLineFunction(), outputRecorder)
         outputRecorder.text shouldEqual expectedOutput.trimMargin() + "\n"
     }
+}
 
-    private fun String.toReadLineFunction(): () -> String {
-        val i = trim().trimMargin().split("\n").asSequence().iterator()
-        return { i.next() }
-    }
+fun String.toReadLineFunction(): () -> String {
+    val i = trim().trimMargin().split("\n").asSequence().iterator()
+    return { i.next() }
 }

@@ -6,6 +6,8 @@ import guru.nidi.graphviz.engine.*
 import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
+import katas.kotlin.hackerrank.OutputRecorder
+import katas.kotlin.hackerrank.toReadLineFunction
 import katas.kotlin.shouldEqual
 import kotlincommon.printed
 import org.junit.Test
@@ -13,16 +15,32 @@ import java.io.File
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
-// See https://www.hackerrank.com/challenges/dijkstrashortreach
-fun shortestReach(nodeCount: Int, edges: Array<Array<Int>>, startNode: Int): Array<Int> {
-    val graph = Graph(size = nodeCount)
-    edges.forEach { (from, to, weight) ->
-        graph.addEdge(from, to, weight)
+/**
+ * See https://www.hackerrank.com/challenges/dijkstrashortreach
+ */
+fun main(args: Array<String>) {
+    val scanner = Scanner(System.`in`)
+    val i = generateSequence { scanner.nextLine() }.iterator()
+    main({ i.next() })
+}
+
+private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
+    val numberOfTests = readLine().toInt()
+    (1..numberOfTests).map {
+        val (nodeCount, edgeCount) = readLine().split(" ").let { Pair(it[0].toInt(), it[1].toInt()) }
+
+        val graph = Graph(size = nodeCount)
+        for (j in 0 until edgeCount) {
+            val edge = readLine().split(" ").map { it.trim().toInt() }.toTypedArray()
+            graph.addEdge(edge[0], edge[1], edge[2])
+        }
+        val startNode = readLine().trim().toInt()
+
+        val result = graph.shortestPaths(startNode).minDist.toMutableList()
+        result.removeAt(startNode)
+        result.removeAt(0)
+        writeLine(result.joinToString(" "))
     }
-    val result = graph.shortestPaths(startNode).minDist.toMutableList()
-    result.removeAt(startNode)
-    result.removeAt(0)
-    return result.toTypedArray()
 }
 
 private data class Edge(val from: Int, val to: Int, val weight: Int)
@@ -62,18 +80,18 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
     queue.addAll(nodes)
 
     while (queue.isNotEmpty()) {
-        val current = queue.remove()
+        val node = queue.remove()
 
-        val isNotReachable = minDist[current] == Int.MAX_VALUE
+        val isNotReachable = minDist[node] == Int.MAX_VALUE
         if (isNotReachable) continue
 
-        neighboursOf(current)
+        neighboursOf(node)
             .filter { queue.contains(it) }
             .forEach { neighbour ->
-                val distance = minDist[current] + findEdges(current, neighbour).minBy { it.weight }?.weight!!
+                val distance = minDist[node] + findEdges(node, neighbour).minBy { it.weight }?.weight!!
                 if (distance < minDist[neighbour]) {
                     minDist[neighbour] = distance
-                    prev[neighbour] = current
+                    prev[neighbour] = node
                     queue.updatePriorityOf(neighbour)
                 }
             }
@@ -150,30 +168,18 @@ class DijkstraShortestPath2Tests {
     }
 
     @Test fun `test cases 2`() {
-        val scanner = Scanner(File("$basePath/test-cases-2.txt"))
-        val numberOfTests = scanner.nextLine().trim().toInt()
-        (1..numberOfTests).map { i ->
-            val (nodeCount, edgeCount) = scanner.nextLine().split(" ").let { Pair(it[0].toInt(), it[1].toInt()) }
-            val edges = Array(edgeCount, { Array(3, { 0 }) })
-            for (j in 0 until edgeCount) {
-                edges[j] = scanner.nextLine().split(" ").map { it.trim().toInt() }.toTypedArray()
-            }
-            val startNode = scanner.nextLine().trim().toInt()
+        val readLine = File("$basePath/test-cases-2.txt").readText().toReadLineFunction()
+        val outputRecorder = OutputRecorder()
 
-            val graph = Graph(size = nodeCount)
-            edges.forEach { (from, to, weight) ->
-                graph.addEdge(from, to, weight)
-            }
+        main(readLine, outputRecorder)
 
-            "test case $i (from $startNode): " + shortestReach(nodeCount, edges, startNode).joinToString(" ")
-        }.joinToString("\n", prefix = "\n") shouldEqual """
-
-            test case 1 (from 17): 20 25 25 68 86 39 22 70 36 53 91 35 88 27 30 43 54 74 41
-            test case 2 (from 60): 9 8 8 8 12 7 15 8 4 1 12 9 7 10 4 10 10 4 1 7 12 7 11 12 15 10 5 11 6 7 9 11 9 7 7 14 5 13 6 8 10 7 4 9 3 5 5 9 13 1 8 11 4 9 6 7 7 8 11 6 10 7 8 9 13 9 12 8 3 5 7 15 6 10 11 5 11
-            test case 3 (from 85): 154 90 186 190 178 114 123 -1 -1 123 -1 104 -1 -1 -1 207 134 123 98 155 -1 198 68 90 170 135 -1 103 145 -1 54 111 163 173 115 87 159 75 -1 94 102 -1 76 67 167 138 216 -1 172 102 212 163 103 112 -1 182 49 145 92 -1 -1 194 -1 182 -1 201 96 -1 85 121 108 161 130 100 120 -1 -1 118 215 92 156 162 163 168 71 110 -1 -1 190 217 100 105 178
-            test case 4 (from 49): 13 30 17 33 16 9 31 34 14 20 21 19 24 34 27 42 15 16 19 23 18 21 11 21 28 15 15 45 18 26 17 20 16 28 27 16 22 21 18 21 34 14 26 27 11 23 17 24 27 22 19 18 21 17 17 22 14 20 12 27 21 10 42 10 25 19 22
-            test case 5 (from 1): 3 6 8 11 7 12 10 18 4 8 3 6 12 1 2 10 1 8 5 6 9 9 8 17 11 12 8
-            test case 6 (from 1): 3 4 5 3 4 5 5 4 4 7 6 4 1 4 5 5 5 4 5 6 5 6 4 5 3 5 5 6 2 6 3 3 6 5 3 6 3 2 6 4 1 6 3 4 5 6 7 7 3 6 3 5 3 5 4 7 4 4 6 4 5 5 5 4 2 2 3 6 4 6 4 4 5 4 6 3 5 5 4 4 4 2 1 3 3 3 2
+        outputRecorder.text.trim() shouldEqual """
+            20 25 25 68 86 39 22 70 36 53 91 35 88 27 30 43 54 74 41
+            9 8 8 8 12 7 15 8 4 1 12 9 7 10 4 10 10 4 1 7 12 7 11 12 15 10 5 11 6 7 9 11 9 7 7 14 5 13 6 8 10 7 4 9 3 5 5 9 13 1 8 11 4 9 6 7 7 8 11 6 10 7 8 9 13 9 12 8 3 5 7 15 6 10 11 5 11
+            154 90 186 190 178 114 123 -1 -1 123 -1 104 -1 -1 -1 207 134 123 98 155 -1 198 68 90 170 135 -1 103 145 -1 54 111 163 173 115 87 159 75 -1 94 102 -1 76 67 167 138 216 -1 172 102 212 163 103 112 -1 182 49 145 92 -1 -1 194 -1 182 -1 201 96 -1 85 121 108 161 130 100 120 -1 -1 118 215 92 156 162 163 168 71 110 -1 -1 190 217 100 105 178
+            13 30 17 33 16 9 31 34 14 20 21 19 24 34 27 42 15 16 19 23 18 21 11 21 28 15 15 45 18 26 17 20 16 28 27 16 22 21 18 21 34 14 26 27 11 23 17 24 27 22 19 18 21 17 17 22 14 20 12 27 21 10 42 10 25 19 22
+            3 6 8 11 7 12 10 18 4 8 3 6 12 1 2 10 1 8 5 6 9 9 8 17 11 12 8
+            3 4 5 3 4 5 5 4 4 7 6 4 1 4 5 5 5 4 5 6 5 6 4 5 3 5 5 6 2 6 3 3 6 5 3 6 3 2 6 4 1 6 3 4 5 6 7 7 3 6 3 5 3 5 4 7 4 4 6 4 5 5 5 4 2 2 3 6 4 6 4 4 5 4 6 3 5 5 4 4 4 2 1 3 3 3 2
         """.trimIndent()
     }
 }
