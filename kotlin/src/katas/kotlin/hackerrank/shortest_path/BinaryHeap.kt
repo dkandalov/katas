@@ -4,6 +4,7 @@ import katas.kotlin.hackerrank.shortest_path.BinaryHeap.Companion.binaryHeapOf
 import katas.kotlin.shouldEqual
 import org.junit.Test
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class BinaryHeap<E>(
@@ -46,7 +47,7 @@ class BinaryHeap<E>(
     }
 
     fun updatePriorityOf(value: E) {
-        this[0] = this[indexByValue[value]!!]
+        swap(0, indexByValue[value]!!)
         siftDown(0)
     }
 
@@ -71,8 +72,10 @@ class BinaryHeap<E>(
 
     fun toSet(): Set<E> = 0.until(size).mapTo(LinkedHashSet()) { this[it] }
 
+    fun toList(): List<E> = 0.until(size).mapTo(ArrayList()) { this[it] }
+
     override fun toString(): String {
-        return toSet().joinToString { it.toString() }
+        return toList().joinToString { it.toString() }
     }
 
     private operator fun E.compareTo(that: E) = comparator.compare(this, that)
