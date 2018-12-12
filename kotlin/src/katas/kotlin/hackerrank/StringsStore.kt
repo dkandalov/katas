@@ -62,12 +62,3 @@ class StringsStoreTests {
 
     }
 }
-
-fun String.trimToLineSequence(): Sequence<String> = trim().trimMargin().split("\n").asSequence()
-
-class OutputRecorder: (Any?) -> Unit {
-    var text = ""
-    override fun invoke(o: Any?) {
-        text += o.toString() + "\n"
-    }
-}

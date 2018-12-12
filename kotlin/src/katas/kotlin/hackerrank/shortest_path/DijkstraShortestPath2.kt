@@ -8,7 +8,9 @@ import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
+import katas.kotlin.measureDuration
 import katas.kotlin.shouldEqual
+import kotlincommon.measureTimeMillis
 import kotlincommon.printed
 import org.junit.Test
 import java.io.File
@@ -19,22 +21,28 @@ import kotlin.collections.LinkedHashSet
  * See https://www.hackerrank.com/challenges/dijkstrashortreach
  */
 fun main(args: Array<String>) {
-    val scanner = Scanner(System.`in`)
+    val scanner = Scanner(System.`in`.bufferedReader())
     val i = generateSequence { scanner.nextLine() }.iterator()
     main({ i.next() })
 }
 
-private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
+private fun String.parseIntTriple(): Triple<Int, Int, Int> {
+    val i1 = indexOf(' ')
+    val i2 = lastIndexOf(' ')
+    return Triple(substring(0, i1).toInt(), substring(i1 + 1, i2).toInt(), substring(i2 + 1).toInt())
+}
+
+private inline fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
     val numberOfTests = readLine().toInt()
     (1..numberOfTests).map {
         val (nodeCount, edgeCount) = readLine().split(" ").let { Pair(it[0].toInt(), it[1].toInt()) }
 
         val graph = Graph(size = nodeCount)
         for (j in 0 until edgeCount) {
-            val edge = readLine().split(" ").map { it.trim().toInt() }.toTypedArray()
-            graph.addEdge(edge[0], edge[1], edge[2])
+            val (from, to, weight) = readLine().parseIntTriple()
+            graph.addEdge(from, to, weight)
         }
-        val startNode = readLine().trim().toInt()
+        val startNode = readLine().toInt()
 
         val result = graph.shortestPaths(startNode).minDist.toMutableList()
         result.removeAt(startNode)
@@ -45,8 +53,9 @@ private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(i
 
 private data class Edge(val from: Int, val to: Int, val weight: Int)
 
-private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedHashSet()) {
+private class Graph(val size: Int) {
     val nodes: Set<Int> get() = IntRange(1, size).toSet()
+    val edges: Set<Edge> get() = adjacency.values.toSet()
 
     private val adjacency = LinkedHashMap<Pair<Int, Int>, Edge>()
     private val neighbours = LinkedHashMap<Int, LinkedHashSet<Int>>()
@@ -55,14 +64,9 @@ private data class Graph(val size: Int, val edges: LinkedHashSet<Edge> = LinkedH
         if (from > to) return addEdge(to, from, weight)
 
         val existingEdge = adjacency[Pair(from, to)]
-        if (existingEdge != null) {
-            if (existingEdge.weight < weight) return
-            else adjacency.remove(Pair(from, to))
-        }
+        if (existingEdge != null && existingEdge.weight <= weight) return
 
-        val edge = Edge(from, to, weight)
-        edges.add(edge)
-        adjacency[Pair(from, to)] = edge
+        adjacency[Pair(from, to)] = Edge(from, to, weight)
         neighbours.getOrPut(from, { LinkedHashSet() }).add(to)
         neighbours.getOrPut(to, { LinkedHashSet() }).add(from)
     }
@@ -173,7 +177,7 @@ class DijkstraShortestPath2Tests {
     }
 
     @Test fun `test cases 2`() {
-        val readLine = File("$basePath/test-cases-2.txt").readText().toReadLineFunction()
+        val readLine = File("$basePath/test-cases-2-input.txt").readText().toReadLineFunction()
         val outputRecorder = OutputRecorder()
 
         main(readLine, outputRecorder)
@@ -186,5 +190,14 @@ class DijkstraShortestPath2Tests {
             3 6 8 11 7 12 10 18 4 8 3 6 12 1 2 10 1 8 5 6 9 9 8 17 11 12 8
             3 4 5 3 4 5 5 4 4 7 6 4 1 4 5 5 5 4 5 6 5 6 4 5 3 5 5 6 2 6 3 3 6 5 3 6 3 2 6 4 1 6 3 4 5 6 7 7 3 6 3 5 3 5 4 7 4 4 6 4 5 5 5 4 2 2 3 6 4 6 4 4 5 4 6 3 5 5 4 4 4 2 1 3 3 3 2
         """.trimIndent()
+    }
+
+    @Test fun `test cases 7`() {
+        val readLine = File("$basePath/test-cases-7-input.txt").inputStream().toReadLineFunction()
+        val outputRecorder = OutputRecorder()
+
+        main(readLine, outputRecorder)
+
+        outputRecorder.text.trim() shouldEqual File("$basePath/test-cases-7-expected.txt").readText()
     }
 }
