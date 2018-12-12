@@ -2,15 +2,15 @@ package katas.kotlin.hackerrank.shortest_path
 
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.attribute.RankDir
-import guru.nidi.graphviz.engine.*
+import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.engine.Graphviz
+import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory.mutGraph
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
-import katas.kotlin.measureDuration
 import katas.kotlin.shouldEqual
-import kotlincommon.measureTimeMillis
 import kotlincommon.printed
 import org.junit.Test
 import java.io.File
@@ -21,9 +21,8 @@ import kotlin.collections.LinkedHashSet
  * See https://www.hackerrank.com/challenges/dijkstrashortreach
  */
 fun main(args: Array<String>) {
-    val scanner = Scanner(System.`in`.bufferedReader())
-    val i = generateSequence { scanner.nextLine() }.iterator()
-    main({ i.next() })
+    val reader = System.`in`.bufferedReader()
+    main({ reader.readLine() })
 }
 
 private fun String.parseIntTriple(): Triple<Int, Int, Int> {
