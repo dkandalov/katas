@@ -13,28 +13,27 @@ data class Edge<T>(
         generateSequence(this) { edgeNode -> edgeNode.next }.iterator()
 }
 
-class Graph<T>(val edgeByVertex: MutableMap<T, Edge<T>?> = HashMap()) {
+class Graph<T>(val edgesByVertex: MutableMap<T, Edge<T>?> = HashMap()) {
+
+    val vertices: Set<T> get() = edgesByVertex.keys
 
     fun insertEdge(from: T, to: T) {
-        edgeByVertex[from] = Edge(toVertex = to, next = edgeByVertex[from])
-        edgeByVertex[to] = Edge(toVertex = from, next = edgeByVertex[to])
+        edgesByVertex[from] = Edge(toVertex = to, next = edgesByVertex[from])
+        edgesByVertex[to] = Edge(toVertex = from, next = edgesByVertex[to])
     }
 
     override fun toString(): String {
-        val processedFrom = HashMap<T, Boolean>()
-        val processedTo = HashMap<T, Boolean>()
-        val processed = HashMap<T, Boolean>()
-        return edgeByVertex.keys.flatMap { vertex ->
-            val edges = edgeByVertex[vertex] ?: emptyList<Edge<T>>()
+        val processedFrom = HashSet<T>()
+        val processedTo = HashSet<T>()
+        return edgesByVertex.keys.flatMap { vertex ->
+            val edges = edgesByVertex[vertex] ?: emptyList<Edge<T>>()
             edges
                 .filterNot { edge ->
-                    processedFrom.getOrDefault(edge.toVertex, false) && processedTo.getOrDefault(vertex, false)
+                    processedFrom.contains(edge.toVertex) && processedTo.contains(vertex)
                 }
                 .map { edge ->
-                    processedFrom[vertex] = true
-                    processedTo[edge.toVertex] = true
-                    processed[vertex] = true
-                    processed[edge.toVertex] = true
+                    processedFrom.add(vertex)
+                    processedTo.add(edge.toVertex)
                     "$vertex-${edge.toVertex}"
                 }
         }.join(",")
