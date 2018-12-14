@@ -4,22 +4,15 @@ import katas.kotlin.shouldEqual
 import kotlincommon.join
 import org.junit.Test
 
-data class Edge<T>(
-    var toVertex: T,
-    var next: Edge<T>?,
-    var weight: Int? = null
-) : Iterable<Edge<T>> {
-    override fun iterator(): Iterator<Edge<T>> =
-        generateSequence(this) { edgeNode -> edgeNode.next }.iterator()
-}
+data class Edge<T>(var from: T, var to: T, var weight: Int? = null)
 
-class Graph<T>(val edgesByVertex: MutableMap<T, Edge<T>?> = HashMap()) {
+class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
 
     val vertices: Set<T> get() = edgesByVertex.keys
 
     fun insertEdge(from: T, to: T) {
-        edgesByVertex[from] = Edge(toVertex = to, next = edgesByVertex[from])
-        edgesByVertex[to] = Edge(toVertex = from, next = edgesByVertex[to])
+        edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to))
+        edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from))
     }
 
     override fun toString(): String {
@@ -29,12 +22,12 @@ class Graph<T>(val edgesByVertex: MutableMap<T, Edge<T>?> = HashMap()) {
             val edges = edgesByVertex[vertex] ?: emptyList<Edge<T>>()
             edges
                 .filterNot { edge ->
-                    processedFrom.contains(edge.toVertex) && processedTo.contains(vertex)
+                    processedFrom.contains(edge.to) && processedTo.contains(vertex)
                 }
                 .map { edge ->
                     processedFrom.add(vertex)
-                    processedTo.add(edge.toVertex)
-                    "$vertex-${edge.toVertex}"
+                    processedTo.add(edge.to)
+                    "$vertex-${edge.to}"
                 }
         }.join(",")
     }
@@ -64,7 +57,7 @@ class GraphTest {
 
         // 1──2──4
         // └──3──┘
-        graphWithCycle.toString() shouldEqual "1-3,1-2,2-4,3-4"
+        graphWithCycle.toString() shouldEqual "1-2,1-3,2-4,3-4"
     }
 
     companion object {
