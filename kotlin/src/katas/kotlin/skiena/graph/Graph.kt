@@ -24,7 +24,7 @@ class Graph(
     var degree: ArrayList<Int>,
     var numberOfVertices: Int = 0,
     var numberOfEdges: Int = 0,
-    var directed: Boolean
+    val directed: Boolean
 ) {
     constructor(directed: Boolean) : this(
         edges = ArrayList<EdgeNode?>(),
@@ -121,15 +121,15 @@ fun Graph.bfs(
         processVertexEarly(vertex)
         processed[vertex] = true
 
-        edges[vertex]!!.asIterable().forEach { edge ->
-            val y = edge.y
-            if (!processed[y] || this.directed) {
-                processEdge(vertex, y)
+        edges[vertex]!!.forEach { edge ->
+            val targetVertex = edge.y
+            if (!processed[targetVertex] || directed) {
+                processEdge(vertex, targetVertex)
             }
-            if (!discovered[y]) {
-                queue.add(y)
-                discovered[y] = true
-                parents[y] = vertex
+            if (!discovered[targetVertex]) {
+                queue.add(targetVertex)
+                discovered[targetVertex] = true
+                parents[targetVertex] = vertex
             }
         }
         processVertexLate(vertex)
