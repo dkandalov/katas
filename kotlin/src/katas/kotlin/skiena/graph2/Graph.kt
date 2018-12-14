@@ -64,6 +64,12 @@ class GraphTest {
 
         // 1──2──4
         // └──3──┘
-        Graph.readInt("1-2,1-3,2-4,3-4").toString() shouldEqual "1-3,1-2,2-4,3-4"
+        graphWithCycle.toString() shouldEqual "1-3,1-2,2-4,3-4"
+    }
+
+    companion object {
+        // 1──2──4
+        // └──3──┘
+        val graphWithCycle = Graph.readInt("1-2,1-3,2-4,3-4")
     }
 }
