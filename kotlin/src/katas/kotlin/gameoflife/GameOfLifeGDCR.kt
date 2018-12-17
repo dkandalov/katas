@@ -1,7 +1,7 @@
 package katas.kotlin.gameoflife
 
 import katas.kotlin.gameoflife.foo.Cell
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
 
@@ -91,9 +91,9 @@ class GameOfLife {
         """.parseAsUniverse()
 
         universe.evolve() shouldEqual """
-        |xx
-        |xx
-        """.parseAsUniverse()
+            |xx
+            |xx
+            """.parseAsUniverse()
     }
 
     @Test fun `count amount of cell neighbours`() {

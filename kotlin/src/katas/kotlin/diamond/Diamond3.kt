@@ -1,6 +1,6 @@
 package katas.kotlin.diamond
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class Diamond3 {
@@ -9,28 +9,28 @@ class Diamond3 {
         diamond(size = 1) shouldEqual "A"
 
         diamond(size = 2) shouldEqual """
-            |-A-
-            |B-B
-            |-A-
-        """.trimMargin()
+                |-A-
+                |B-B
+                |-A-
+            """.trimMargin()
 
         diamond(size = 3) shouldEqual """
-            |--A--
-            |-B-B-
-            |C---C
-            |-B-B-
-            |--A--
-        """.trimMargin()
+                |--A--
+                |-B-B-
+                |C---C
+                |-B-B-
+                |--A--
+            """.trimMargin()
 
         diamond(size = 4) shouldEqual """
-            |---A---
-            |--B-B--
-            |-C---C-
-            |D-----D
-            |-C---C-
-            |--B-B--
-            |---A---
-        """.trimMargin()
+                |---A---
+                |--B-B--
+                |-C---C-
+                |D-----D
+                |-C---C-
+                |--B-B--
+                |---A---
+            """.trimMargin()
     }
 
     private fun diamond(size: Int, startLetter: Char = 'A'): String {

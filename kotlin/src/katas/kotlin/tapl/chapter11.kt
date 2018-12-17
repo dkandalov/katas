@@ -4,12 +4,12 @@ package katas.kotlin.tapl.chapter11
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.shouldEqual
 import katas.kotlin.tapl.chapter11.TestUtil.aka
 import katas.kotlin.tapl.chapter11.TestUtil.evaluatesTo
 import katas.kotlin.tapl.chapter11.TestUtil.invoke
 import katas.kotlin.tapl.chapter11.TestUtil.v
 import katas.kotlin.tapl.chapter11.TestUtil.λ
+import kotlincommon.test.shouldEqual
 import org.junit.Assert.fail
 import org.junit.Test
 

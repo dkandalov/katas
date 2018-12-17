@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 
@@ -55,10 +55,10 @@ class StringsStoreTests {
         main(input, output)
 
         output.text shouldEqual """
-            |2
-            |1
-            |0
-        """.trimMargin() + "\n"
+                |2
+                |1
+                |0
+            """.trimMargin() + "\n"
 
     }
 }

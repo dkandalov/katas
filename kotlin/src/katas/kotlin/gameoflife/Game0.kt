@@ -1,75 +1,75 @@
 package katas.kotlin.gameoflife
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class Game0 {
     @Test fun `empty universe`() {
         """
-        |-
-        """.asUniverse().step() shouldEqual
-        """
-        |-
-        """.asUniverse()
+            |-
+            """.asUniverse().step() shouldEqual
+            """
+            |-
+            """.asUniverse()
     }
 
     @Test fun `live cell with fewer than two live neighbours dies, as if caused by underpopulation`() {
         """
-        |x
-        """.asUniverse().step() shouldEqual
-        """
-        |-
-        """.asUniverse()
+            |x
+            """.asUniverse().step() shouldEqual
+            """
+            |-
+            """.asUniverse()
 
         """
-        |xx
-        """.asUniverse().step() shouldEqual
-        """
-        |--
-        """.asUniverse()
+            |xx
+            """.asUniverse().step() shouldEqual
+            """
+            |--
+            """.asUniverse()
     }
 
     @Test fun `live cell with two or three live neighbours lives on to the next generation`() {
         """
-        |xxx
-        """.asUniverse().step() shouldEqual
+            |xxx
+            """.asUniverse().step() shouldEqual
+            """
+            |-x-
+            """.asUniverse()
         """
-        |-x-
-        """.asUniverse()
-        """
-        |-x-
-        |xx-
-        """.asUniverse().step() shouldEqual
-        """
-        |xx-
-        |xx-
-        """.asUniverse()
+            |-x-
+            |xx-
+            """.asUniverse().step() shouldEqual
+            """
+            |xx-
+            |xx-
+            """.asUniverse()
     }
 
     @Test fun `live cell with more than three live neighbours dies, as if by overpopulation`() {
         """
-        |x--
-        |xx-
-        |xxx
-        """.asUniverse().step() shouldEqual
-        """
-        |xx-
-        |--x
-        |x-x
-        """.asUniverse()
+            |x--
+            |xx-
+            |xxx
+            """.asUniverse().step() shouldEqual
+            """
+            |xx-
+            |--x
+            |x-x
+            """.asUniverse()
     }
 
     @Test fun `dead cell with exactly three live neighbours becomes a live cell, as if by reproduction`() {
         """
-        |x--
-        |---
-        |x-x
-        """.asUniverse().step() shouldEqual
-        """
-        |---
-        |-x-
-        |---
-        """.asUniverse()
+            |x--
+            |---
+            |x-x
+            """.asUniverse().step() shouldEqual
+            """
+            |---
+            |-x-
+            |---
+            """.asUniverse()
     }
 
     private fun String.asUniverse(): List<String> = trim().trimMargin().split("\n")

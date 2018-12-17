@@ -1,7 +1,7 @@
 package katas.kotlin.subsets
 
-import katas.kotlin.shouldEqual
 import kotlincommon.pow
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

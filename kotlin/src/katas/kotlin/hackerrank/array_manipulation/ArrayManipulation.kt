@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank.array_manipulation
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.io.*
 import java.util.*

@@ -1,7 +1,7 @@
 package katas.kotlin.skiena.graph2
 
-import katas.kotlin.shouldEqual
 import katas.kotlin.skiena.graph2.GraphTest.Companion.graphWithCycle
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList

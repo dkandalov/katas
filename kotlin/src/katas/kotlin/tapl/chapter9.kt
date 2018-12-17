@@ -3,12 +3,12 @@ package katas.kotlin.tapl.chapter9
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import katas.kotlin.shouldEqual
 import katas.kotlin.tapl.chapter9.TestUtil.aka
 import katas.kotlin.tapl.chapter9.TestUtil.evaluatesTo
 import katas.kotlin.tapl.chapter9.TestUtil.invoke
 import katas.kotlin.tapl.chapter9.TestUtil.v
 import katas.kotlin.tapl.chapter9.TestUtil.λ
+import kotlincommon.test.shouldEqual
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test

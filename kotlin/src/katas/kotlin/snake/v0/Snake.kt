@@ -1,8 +1,8 @@
 package katas.kotlin.snake.v0
 
-import katas.kotlin.shouldEqual
 import katas.kotlin.snake.v0.Direction.*
 import katas.kotlin.snake.v0.Game.State.*
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.Random
 
@@ -27,7 +27,7 @@ class SnakeTests {
         // x
         // x
         val snake = Snake(Point(2, 2), Point(2, 3), Point(2, 4))
-        
+
         snake.move(Up) shouldEqual Snake(Point(2, 1), Point(2, 2), Point(2, 3))
         snake.move(Down) shouldEqual Snake(Point(2, 5), Point(2, 4), Point(2, 3))
         // Xx

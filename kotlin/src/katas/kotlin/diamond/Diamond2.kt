@@ -1,46 +1,46 @@
 package katas.kotlin.diamond
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class Diamonds2Tests {
     @Test fun `create diamonds of various size`() {
         diamond(size = 1) shouldEqual """
-            |A
-        """.trimMargin()
+                |A
+            """.trimMargin()
 
         diamond(size = 2) shouldEqual """
-            |-A-
-            |B-B
-            |-A-
-        """.trimMargin()
+                |-A-
+                |B-B
+                |-A-
+            """.trimMargin()
 
         diamond(size = 4) shouldEqual """
-            |---A---
-            |--B-B--
-            |-C---C-
-            |D-----D
-            |-C---C-
-            |--B-B--
-            |---A---
-        """.trimMargin()
+                |---A---
+                |--B-B--
+                |-C---C-
+                |D-----D
+                |-C---C-
+                |--B-B--
+                |---A---
+            """.trimMargin()
     }
 
     @Test fun `create quarter diamonds of various size`() {
         quarterDiamond(size = 1) shouldEqual """
-            |A
-        """.trimMargin()
+                |A
+            """.trimMargin()
 
         quarterDiamond(size = 2) shouldEqual """
-            |-A
-            |B-
-        """.trimMargin()
+                |-A
+                |B-
+            """.trimMargin()
 
         quarterDiamond(size = 3) shouldEqual """
-            |--A
-            |-B-
-            |C--
-        """.trimMargin()
+                |--A
+                |-B-
+                |C--
+            """.trimMargin()
     }
 
     @Test fun `reflect string`() {

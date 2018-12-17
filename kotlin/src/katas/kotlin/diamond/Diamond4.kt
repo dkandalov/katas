@@ -1,7 +1,7 @@
 package katas.kotlin.diamond
 
-import katas.kotlin.shouldEqual
 import kotlincommon.tail
+import kotlincommon.test.shouldEqual
 import kotlincommon.times
 import org.junit.Test
 
@@ -9,17 +9,17 @@ class Diamond4 {
     @Test fun `diamonds of various sizes`() {
         diamond(from = 'A', to = 'A') shouldEqual "A"
         diamond(from = 'A', to = 'B') shouldEqual """
-         |-A-
-         |B-B
-         |-A-
-        """.trimMargin()
+             |-A-
+             |B-B
+             |-A-
+            """.trimMargin()
         diamond(from = 'A', to = 'C') shouldEqual """
-         |--A--
-         |-B-B-
-         |C---C
-         |-B-B-
-         |--A--
-        """.trimMargin()
+             |--A--
+             |-B-B-
+             |C---C
+             |-B-B-
+             |--A--
+            """.trimMargin()
     }
 
     private fun diamond(from: Char, to: Char): String {

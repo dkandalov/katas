@@ -1,8 +1,8 @@
 package katas.kotlin.graph
 
 import katas.kotlin.graph.Graph.Node
-import katas.kotlin.shouldEqual
 import kotlincommon.join
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 

@@ -1,7 +1,7 @@
 package katas.kotlin.skiena.graph2
 
-import katas.kotlin.shouldEqual
 import kotlincommon.join
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 data class Edge<T>(var from: T, var to: T, var weight: Int? = null)

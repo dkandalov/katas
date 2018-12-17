@@ -2,9 +2,9 @@ package katas.kotlin.hackerrank.minimum_swaps2
 
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.trimToLineSequence
-import katas.kotlin.shouldEqual
 import kotlincommon.permutations
 import kotlincommon.printed
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.io.File
 import java.util.*

@@ -1,7 +1,7 @@
 package katas.kotlin.diamond
 
-import katas.kotlin.shouldEqual
 import kotlincommon.join
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class SNDiamondTests {
@@ -14,10 +14,10 @@ class SNDiamondTests {
 
     @Test fun `generate triangle`() {
         triangle(toLetter = 'C') shouldEqual """
-            |A
-            |B-B
-            |C---C
-        """.trimMargin()
+                |A
+                |B-B
+                |C---C
+            """.trimMargin()
     }
 
     private fun triangle(toLetter: Char): String {

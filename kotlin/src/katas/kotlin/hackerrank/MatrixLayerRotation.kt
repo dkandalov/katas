@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList
@@ -100,9 +100,9 @@ class MatrixLayerRotationTests {
 
         matrixRotation(array, 1)
         array.toPrintableString() shouldEqual """
-            |2 3
-            |1 4
-        """.trimMargin()
+                |2 3
+                |1 4
+            """.trimMargin()
     }
 
     @Test fun `2x2 array full cycle rotation`() {
@@ -112,9 +112,9 @@ class MatrixLayerRotationTests {
         )
         matrixRotation(array, 5)
         array.toPrintableString() shouldEqual """
-            |2 3
-            |1 4
-        """.trimMargin()
+                |2 3
+                |1 4
+            """.trimMargin()
     }
 
     @Test fun `4x4 array clockwise swaps`() {
@@ -140,11 +140,11 @@ class MatrixLayerRotationTests {
 
         matrixRotation(array, 1)
         array.toPrintableString() shouldEqual """
-            |2 3 4 8
-            |1 7 11 12
-            |5 6 10 16
-            |9 13 14 15
-        """.trimMargin()
+                |2 3 4 8
+                |1 7 11 12
+                |5 6 10 16
+                |9 13 14 15
+            """.trimMargin()
     }
 
     @Test fun `no rotations`() {

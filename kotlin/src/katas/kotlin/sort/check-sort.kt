@@ -1,8 +1,8 @@
 package katas.kotlin.sort
 
 import io.kotlintest.fail
-import katas.kotlin.shouldEqual
 import kotlincommon.permutations
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

@@ -1,6 +1,6 @@
 package katas.kotlin.subsets
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class Subsets1 : SubsetTests({ it.subsets() }) {

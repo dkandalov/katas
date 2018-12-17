@@ -1,6 +1,6 @@
 package katas.kotlin.binarysearch
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class BinarySearchTest8 {

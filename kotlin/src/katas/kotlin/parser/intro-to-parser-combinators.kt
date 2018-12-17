@@ -3,7 +3,7 @@
 package katas.kotlin.parser
 
 import kotlincommon.printed
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 

@@ -1,7 +1,7 @@
 package katas.kotlin.coroutines.steps
 
-import katas.kotlin.shouldEqual
 import kotlincommon.printed
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 

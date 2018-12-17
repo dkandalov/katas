@@ -1,6 +1,6 @@
 package katas.kotlin.algorithms
 
-import katas.kotlin.shouldEqual
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class RollingHash(

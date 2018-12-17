@@ -1,9 +1,9 @@
 package katas.kotlin.`bloom-filter`
 
 import kotlincommon.printed
-import katas.kotlin.shouldEqual
 import kotlincommon.byteArray
 import kotlincommon.byteList
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.io.File
 import java.security.MessageDigest
@@ -65,7 +65,7 @@ class BloomFilter0 {
             val alreadyAdded = filter.add(it)
             if (alreadyAdded) clashCount++
         }
-        
+
         clashCount.printed{ "clash count: $it" } shouldEqual 1
     }
 
