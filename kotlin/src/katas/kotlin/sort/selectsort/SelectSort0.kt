@@ -1,7 +1,7 @@
 package katas.kotlin.sort.selectsort
 
 import katas.kotlin.sort.SortingTests
-import katas.kotlin.swap
+import kotlincommon.swap
 
 class SelectSort0 : SortingTests({ sort(it.toMutableList()) })
 

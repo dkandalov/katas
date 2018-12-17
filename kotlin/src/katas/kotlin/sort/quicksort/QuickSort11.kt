@@ -1,7 +1,7 @@
 package katas.kotlin.sort.quicksort
 
 import katas.kotlin.sort.SortingTests
-import katas.kotlin.swap
+import kotlincommon.swap
 
 class QuickSort11 : SortingTests({ sort(it.toMutableList()) }) {
     companion object {

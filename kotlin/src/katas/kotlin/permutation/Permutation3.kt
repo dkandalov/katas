@@ -1,6 +1,6 @@
 package katas.kotlin.permutation
 
-import kotlincommon.tail
+import katas.kotlin.tail
 import org.junit.Test
 
 class Permutation3 {

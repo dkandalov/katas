@@ -1,7 +1,7 @@
 package katas.kotlin.sort.insertionsort
 
 import katas.kotlin.sort.SortingTests
-import katas.kotlin.swap
+import kotlincommon.swap
 
 class InsertionSort0 : SortingTests({ insertSort(it.toMutableList()) }) {
     companion object {

@@ -4,10 +4,8 @@ import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import kotlincommon.printed
 import org.junit.Assert
 import org.junit.Test
-import java.lang.AssertionError
 
 fun <T> Collection<T>.doesNotContain(t: T) = !contains(t)
 
