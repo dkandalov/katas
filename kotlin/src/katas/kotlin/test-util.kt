@@ -7,7 +7,6 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Assert
 import org.junit.Test
 
-fun <T> Collection<T>.doesNotContain(t: T) = !contains(t)
 
 infix fun <T> T.shouldEqual(that: T) {
     try {
@@ -20,10 +19,6 @@ infix fun <T> T.shouldEqual(that: T) {
         }
         throw e
     }
-}
-
-infix fun <T> T.shouldNotEqual(that: T) {
-    assertThat(this, !equalTo(that))
 }
 
 infix fun <T> Iterable<T>.shouldHaveSameElementsAs(that: Iterable<T>) {

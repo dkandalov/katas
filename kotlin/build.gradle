@@ -20,6 +20,7 @@ repositories {
 	ivy {
 		layout "pattern"
 		artifactPattern "http://raw.githubusercontent.com/dkandalov/kotlin-common/master/jars/[organisation]-[artifact]-[revision](-[classifier])(.[ext])"
+		artifactPattern "http://raw.githubusercontent.com/dkandalov/kotlin-common-test/master/jars/[organisation]-[artifact]-[revision](-[classifier])(.[ext])"
 	}
 }
 group "katas"
@@ -36,6 +37,7 @@ dependencies {
 	compile "org.http4k:http4k-server-jetty:3.18.1"
 	compile "org.http4k:http4k-client-apache:3.18.1"
 	compile "dkandalov:kotlin-common:0.1.1"
+	compile "dkandalov:kotlin-common-test:0.1"
 	compile "io.kotlintest:kotlintest-runner-junit4:3.1.10"
 	compile "com.natpryce:hamkrest:1.4.0.0"
     compile "guru.nidi:graphviz-java:0.8.0"
