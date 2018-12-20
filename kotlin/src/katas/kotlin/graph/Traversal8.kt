@@ -1,7 +1,7 @@
 package katas.kotlin.graph
 
-import katas.kotlin.doesNotContain
 import katas.kotlin.graph.Graph.Node
+import kotlincommon.doesNotContain
 import kotlincommon.join
 import kotlincommon.test.shouldEqual
 import org.junit.Test
