@@ -1,6 +1,6 @@
 package katas.kotlin.permutation
 
-import katas.kotlin.sort.mergesort.printed
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
