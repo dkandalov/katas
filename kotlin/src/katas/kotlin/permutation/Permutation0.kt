@@ -1,6 +1,8 @@
 package katas.kotlin.permutation
 
+import kotlincommon.join
 import kotlincommon.printed
+import kotlincommon.swap
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -47,6 +49,19 @@ class Permutation0 {
         checkPermutationsFunction { it.toMutableList().permutations_add_min_change().toList() }
     }
 
+    @Test fun `lexicographic permutations`() {
+        listOf(1, 2, 3).permutations_lexicographic() shouldEqual listOf(
+            listOf(1, 2, 3),
+            listOf(1, 3, 2),
+            listOf(2, 1, 3),
+            listOf(2, 3, 1),
+            listOf(3, 1, 2),
+            listOf(3, 2, 1)
+        )
+        listOf(1, 2, 3, 4).permutations_lexicographic().join("\n").printed()
+        checkPermutationsFunction { it.toMutableList().permutations_lexicographic().toList() }
+    }
+
     companion object {
         private fun List<Int>.permutations_remove(): List<List<Int>> =
             if (size <= 1) listOf(this)
@@ -89,6 +104,25 @@ class Permutation0 {
                 }
                 if (index % 2 != 0) permutation.reversed() else permutation
             }.flatten()
+        }
+
+        /**
+         * https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
+         * https://www.nayuki.io/page/next-lexicographical-permutation-algorithm
+         */
+        private fun List<Int>.permutations_lexicographic(): List<List<Int>> {
+            val values = this
+            val list = indices.toMutableList()
+            val result = ArrayList<List<Int>>()
+            result.add(list.map { values[it] })
+
+            while (true) {
+                val i = list.indices.windowed(2).findLast { (i1, i2) -> list[i1] < list[i2] }?.first() ?: return result
+                val j = IntRange(i + 1, list.size - 1).findLast { list[i] < list[it] }!!
+                list.swap(i, j)
+                list.subList(i + 1, list.size).reverse()
+                result.add(list.map { values[it] })
+            }
         }
     }
 }
