@@ -7,11 +7,13 @@ class Permutation0 {
         checkPermutationsFunction { it.permutations() }
     }
 
-    private fun List<Int>.permutations(): List<List<Int>> {
-        if (size <= 1) return listOf(this)
-        return flatMap { item ->
-            (this - item).permutations().map { permutation ->
-                permutation + item
+    companion object {
+        fun List<Int>.permutations(): List<List<Int>> {
+            if (size <= 1) return listOf(this)
+            return flatMap { item ->
+                (this - item).permutations().map { permutation ->
+                    permutation + item
+                }
             }
         }
     }
