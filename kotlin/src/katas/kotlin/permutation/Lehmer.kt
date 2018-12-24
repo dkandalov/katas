@@ -42,6 +42,8 @@ class LehmerTests {
 
     @Test fun `map number to a Lehmer code`() {
         0.toLehmerCode() shouldEqual LehmerCode(0)
+        0.toLehmerCode(size = 1) shouldEqual LehmerCode(0)
+        0.toLehmerCode(size = 2) shouldEqual LehmerCode(0, 0)
 
         0.toLehmerCode() shouldEqual LehmerCode(0)
         1.toLehmerCode() shouldEqual LehmerCode(1, 0)
@@ -71,6 +73,8 @@ class LehmerTests {
         LehmerCode(2, 1, 0).toPermutation() shouldEqual listOf(2, 1, 0)
 
         LehmerCode(1, 0, 2, 1, 0).toPermutation() shouldEqual listOf(1, 0, 4, 3, 2)
+        LehmerCode(1, 0, 2, 1, 0).toPermutation(listOf(1, 2, 3, 4, 5)) shouldEqual listOf(2, 1, 5, 4, 3)
+        LehmerCode(1, 0, 2, 1, 0).toPermutation(listOf('a', 'b', 'c', 'd', 'e')) shouldEqual listOf('b', 'a', 'e', 'd', 'c')
     }
 }
 
@@ -94,6 +98,10 @@ data class LehmerCode(val value: List<Int>) {
             indices.removeAt(it)
         }
     }
+
+    fun <T> toPermutation(list: List<T>): List<T> {
+        return toPermutation().map { list[it] }
+    }
 }
 
 fun List<Int>.toLehmerCode(): LehmerCode {
@@ -104,9 +112,9 @@ fun List<Int>.toLehmerCode(): LehmerCode {
     })
 }
 
-fun Int.toLehmerCode(): LehmerCode = toLong().toLehmerCode()
+fun Int.toLehmerCode(size: Int = -1): LehmerCode = toLong().toLehmerCode(size)
 
-fun Long.toLehmerCode(): LehmerCode {
+fun Long.toLehmerCode(size: Int = -1): LehmerCode {
     val result = ArrayList<Int>()
     result.add(0)
 
@@ -124,5 +132,9 @@ fun Long.toLehmerCode(): LehmerCode {
 
         value -= remainder * factorial
     }
-    return LehmerCode(result.toList())
+
+    if (size != -1) {
+        IntRange(result.size, size - 1).forEach { result.add(0, 0) }
+    }
+    return LehmerCode(result)
 }

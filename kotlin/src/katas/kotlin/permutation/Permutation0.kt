@@ -45,7 +45,11 @@ class Permutation0 {
             listOf(3, 1, 2),
             listOf(1, 3, 2)
         )
-        mutableListOf(1, 2, 3, 4).permutations_add_min_change().toList().printed()
+
+        mutableListOf(1, 2, 3, 4).permutations_add_min_change().printed()
+        mutableListOf(0, 1, 2, 3).permutations_add_min_change().printed()
+            .map { it.toLehmerCode().toLong().printed() }
+
         checkPermutationsFunction { it.toMutableList().permutations_add_min_change().toList() }
     }
 
@@ -59,7 +63,25 @@ class Permutation0 {
             listOf(3, 2, 1)
         )
         listOf(1, 2, 3, 4).permutations_lexicographic().join("\n").printed()
+
+        listOf(0, 1, 2, 3).permutations_lexicographic()
+            .map { it.toLehmerCode().toLong() } shouldEqual LongRange(0, 23).toList()
+
         checkPermutationsFunction { it.toMutableList().permutations_lexicographic().toList() }
+    }
+
+    @Test fun `lexicographic permutations using Lehmer code`() {
+        listOf(1, 2, 3).permutations_lehmer() shouldEqual listOf(
+            listOf(1, 2, 3),
+            listOf(1, 3, 2),
+            listOf(2, 1, 3),
+            listOf(2, 3, 1),
+            listOf(3, 1, 2),
+            listOf(3, 2, 1)
+        )
+        listOf(1, 2, 3, 4).permutations_lehmer().join("\n").printed()
+
+        checkPermutationsFunction { it.toMutableList().permutations_lehmer().toList() }
     }
 
     companion object {
@@ -123,6 +145,14 @@ class Permutation0 {
                 list.subList(i + 1, list.size).reverse()
                 result.add(list.map { values[it] })
             }
+        }
+
+        private fun List<Int>.permutations_lehmer(): List<List<Int>> {
+            if (isEmpty()) return listOf(emptyList())
+
+            fun factorial(n: Int): Long = if (n <= 1) n.toLong() else n * factorial(n - 1)
+            return LongRange(0, factorial(size) - 1)
+                .map { it.toLehmerCode(size = size).toPermutation(this) }
         }
     }
 }
