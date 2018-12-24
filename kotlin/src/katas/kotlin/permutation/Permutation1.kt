@@ -17,7 +17,7 @@ class Permutation1 {
         listOf(0, 1).permutations().toList().printed()
         listOf(1, 2, 3, 4).permutations().toList().printed()
         "abcd".toCharArray().toList().permutations().toList().printed()
-        0.until(10_000).toList().permutations().take(10).toList().printed()
+        0.until(10_000).toList().permutations().take(10).toList()
     }
 
     companion object {
@@ -25,9 +25,10 @@ class Permutation1 {
         private const val right = 1
 
         private data class Index(val value: Int, var direction: Int) {
-            fun inverseDirection() {
+            fun reverseDirection() {
                 direction = if (direction == left) right else left
             }
+
             override fun toString() = (if (direction == left) "<" else ">") + value
         }
 
@@ -35,22 +36,26 @@ class Permutation1 {
             val list = this
             return sequence {
                 val indices = list.indices.mapTo(ArrayList()) { Index(it, left) }
-                var maxIndex: Index? = Index(-1, left)
+                var maxIndex = indices.findLargestMovable()
+
+                yield(list)
 
                 while (maxIndex != null) {
+                    val i = indices.indexOf(maxIndex)
+                    indices.swap(i, i + maxIndex.direction)
                     yield(indices.map { list[it.value] })
 
-                    maxIndex = indices.filterIndexed { i, _ -> indices.isMobile(i) }.maxBy { it.value }
-                    if (maxIndex != null) {
-                        val i = indices.indexOf(maxIndex)
-                        indices.swap(i, i + maxIndex.direction)
-                        indices.filter { it.value > maxIndex.value }.forEach { it.inverseDirection() }
-                    }
+                    indices.forEach { if (it.value > maxIndex!!.value) it.reverseDirection() }
+                    maxIndex = indices.findLargestMovable()
                 }
             }
         }
 
-        private fun List<Index>.isMobile(i: Int): Boolean {
+        private fun List<Index>.findLargestMovable(): Index? {
+            return filterIndexed { i, _ -> canMove(i) }.maxBy { it.value }
+        }
+
+        private fun List<Index>.canMove(i: Int): Boolean {
             val j = i + this[i].direction
             return (j >= 0 && j < size) && this[i].value > this[j].value
         }

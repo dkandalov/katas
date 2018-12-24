@@ -6,7 +6,7 @@ import kotlincommon.swap
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-class Permutation0 {
+class AllPermutationTypes {
 
     @Test fun `permutations by removal`() {
         listOf(1, 2, 3).permutations_remove() shouldEqual listOf(
@@ -20,7 +20,7 @@ class Permutation0 {
         listOf(1, 2, 3, 4).permutations_remove().printed()
 
         checkPermutationsFunction { it.permutations_remove().toList() }
-        checkPermutationsFunction { it.permutationsSequence().toList() }
+        checkPermutationsFunction { it.permutations_remove_sequence().toList() }
     }
 
     @Test fun `permutations by addition`() {
@@ -93,12 +93,12 @@ class Permutation0 {
                 }
             }
 
-        private fun List<Int>.permutationsSequence(): Sequence<List<Int>> {
+        private fun List<Int>.permutations_remove_sequence(): Sequence<List<Int>> {
             if (size <= 1) return sequenceOf(this)
             val list = this
             return sequence {
                 list.forEach { item ->
-                    yieldAll((list - item).permutationsSequence().map { permutation ->
+                    yieldAll((list - item).permutations_remove_sequence().map { permutation ->
                         permutation + item
                     })
                 }

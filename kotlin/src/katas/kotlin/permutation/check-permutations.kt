@@ -1,11 +1,11 @@
 package katas.kotlin.permutation
 
 import katas.kotlin.shouldHaveSameElementsAs
+import kotlincommon.test.shouldEqual
 
 fun checkPermutationsFunction(permutationsOf: (List<Int>) -> List<List<Int>>) {
-    permutationsOf(emptyList()) shouldHaveSameElementsAs listOf(emptyList())
-
-    permutationsOf(listOf(1)) shouldHaveSameElementsAs listOf(listOf(1))
+    permutationsOf(emptyList()) shouldEqual listOf(emptyList())
+    permutationsOf(listOf(1)) shouldEqual listOf(listOf(1))
 
     permutationsOf(listOf(1, 2)) shouldHaveSameElementsAs listOf(
         listOf(1, 2), listOf(2, 1)
