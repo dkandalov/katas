@@ -5,6 +5,7 @@ import kotlincommon.printed
 import kotlincommon.swap
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.util.*
 
 class AllPermutationTypes {
 
@@ -81,8 +82,22 @@ class AllPermutationTypes {
         )
         listOf(1, 2, 3, 4).permutations_lehmer().join("\n").printed()
 
-        checkPermutationsFunction { it.toMutableList().permutations_lehmer().toList() }
+        checkPermutationsFunction { it.permutations_lehmer().toList() }
     }
+
+    @Test fun `Heap's permutations`() {
+        mutableListOf(1, 2, 3).permutations_heaps() shouldEqual listOf(
+            listOf(1, 2, 3),
+            listOf(2, 1, 3),
+            listOf(3, 1, 2),
+            listOf(1, 3, 2),
+            listOf(2, 3, 1),
+            listOf(3, 2, 1)
+        )
+        mutableListOf(1, 2, 3, 4).permutations_heaps().join("\n").printed()
+        checkPermutationsFunction { it.toMutableList().permutations_heaps().toList() }
+    }
+
 
     companion object {
         private fun List<Int>.permutations_remove(): List<List<Int>> =
@@ -153,6 +168,17 @@ class AllPermutationTypes {
             fun factorial(n: Int): Long = if (n <= 1) n.toLong() else n * factorial(n - 1)
             return LongRange(0, factorial(size) - 1)
                 .map { it.toLehmerCode(size = size).toPermutation(this) }
+        }
+
+        private fun MutableList<Int>.permutations_heaps(n: Int = size): List<List<Int>> {
+            if (n <= 1) return listOf(ArrayList(this))
+            return sequence {
+                (1..n).forEach { i ->
+                    yieldAll(permutations_heaps(n - 1))
+                    if (n % 2 == 0) swap(i - 1, n - 1)
+                    else swap(0, n - 1)
+                }
+            }.toList()
         }
     }
 }
