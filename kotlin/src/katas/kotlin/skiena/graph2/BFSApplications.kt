@@ -70,8 +70,8 @@ class BFSApplicationTests {
         diamondGraph.twoColor() shouldEqual mapOf(
             1 to true,
             2 to false,
-            3 to false,
-            4 to true
+            3 to true,
+            4 to false
         )
         meshGraph.twoColor() shouldEqual emptyMap()
     }

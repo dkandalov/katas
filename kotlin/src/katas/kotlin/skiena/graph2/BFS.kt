@@ -109,16 +109,16 @@ class BFSTests {
             processEdge = { edges.add(it) }
         )
 
-        searchResult.vertices.toList() shouldEqual listOf(1, 2, 3, 4)
-        earlyVertices shouldEqual listOf(1, 2, 3, 4)
-        lateVertices shouldEqual listOf(1, 2, 3, 4)
-        edges shouldEqual listOf(Edge(1, 2), Edge(1, 3), Edge(2, 4), Edge(3, 4))
+        searchResult.vertices.toList() shouldEqual listOf(1, 2, 4, 3)
+        earlyVertices shouldEqual listOf(1, 2, 4, 3)
+        lateVertices shouldEqual listOf(1, 2, 4, 3)
+        edges shouldEqual listOf(Edge(1, 2), Edge(1, 4), Edge(2, 3), Edge(4, 3))
     }
 
     @Test fun `breadth-first vertex traversal`() {
         linearGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3)
         disconnectedGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2)
-        diamondGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
+        diamondGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 4, 3)
         meshGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
     }
 
@@ -130,7 +130,7 @@ class BFSTests {
             Edge(1, 2)
         )
         diamondGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
-            Edge(1, 2), Edge(1, 3), Edge(2, 4), Edge(3, 4)
+            Edge(1, 2), Edge(1, 4), Edge(2, 3), Edge(4, 3)
         )
         meshGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
             Edge(1, 2), Edge(1, 3), Edge(1, 4), Edge(2, 3), Edge(2, 4), Edge(3, 4)

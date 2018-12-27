@@ -20,7 +20,7 @@ class DFSTests {
     @Test fun `depth-first vertex traversal`() {
         linearGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2, 3)
         disconnectedGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2)
-        diamondGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2, 4, 3)
+        diamondGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
         meshGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
     }
 }
