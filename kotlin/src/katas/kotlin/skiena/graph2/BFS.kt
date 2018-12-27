@@ -1,6 +1,8 @@
 package katas.kotlin.skiena.graph2
 
 import katas.kotlin.skiena.graph2.GraphTest.Companion.diamondGraph
+import katas.kotlin.skiena.graph2.GraphTest.Companion.disconnectedGraph
+import katas.kotlin.skiena.graph2.GraphTest.Companion.linearGraph
 import katas.kotlin.skiena.graph2.GraphTest.Companion.meshGraph
 import kotlincommon.doesNotContain
 import kotlincommon.test.shouldEqual
@@ -113,11 +115,19 @@ class BFSTests {
     }
 
     @Test fun `breadth-first vertex traversal`() {
+        linearGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3)
+        disconnectedGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2)
         diamondGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
         meshGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
     }
 
     @Test fun `breadth-first edge traversal`() {
+        linearGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+            Edge(1, 2), Edge(2, 3)
+        )
+        disconnectedGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+            Edge(1, 2)
+        )
         diamondGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
             Edge(1, 2), Edge(1, 3), Edge(2, 4), Edge(3, 4)
         )

@@ -65,6 +65,10 @@ class GraphTest {
     }
 
     companion object {
+        val linearGraph = Graph.readInts("1-2,2-3")
+
+        val disconnectedGraph = Graph.readInts("1-2,3-4")
+
         //   2
         //  / \
         // 1   4
