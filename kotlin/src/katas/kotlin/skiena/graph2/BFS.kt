@@ -1,6 +1,7 @@
 package katas.kotlin.skiena.graph2
 
-import katas.kotlin.skiena.graph2.GraphTest.Companion.graphWithCycle
+import katas.kotlin.skiena.graph2.GraphTest.Companion.diamondGraph
+import katas.kotlin.skiena.graph2.GraphTest.Companion.meshGraph
 import kotlincommon.doesNotContain
 import kotlincommon.test.shouldEqual
 import org.junit.Test
@@ -76,8 +77,7 @@ fun <T> Graph<T>.bfsEdges(fromVertex: T): LinkedHashSet<Edge<T>> {
 
     val result = LinkedHashSet<Edge<T>>()
     val visited = HashSet<T>()
-    val queue = LinkedList<T>()
-    queue.add(fromVertex)
+    val queue = LinkedList<T>().apply { add(fromVertex) }
 
     while (queue.isNotEmpty()) {
         val vertex = queue.removeFirst()
@@ -99,9 +99,7 @@ class BFSTests {
         val lateVertices = ArrayList<Int>()
         val edges = ArrayList<Edge<Int>>()
 
-        // 1──2──4
-        // └──3──┘
-        val searchResult = graphWithCycle.bfs_skiena(
+        val searchResult = diamondGraph.bfs_skiena(
             fromVertex = 1,
             processVertexEarly = { earlyVertices.add(it) },
             processVertexLate = { lateVertices.add(it) },
@@ -115,12 +113,16 @@ class BFSTests {
     }
 
     @Test fun `breadth-first vertex traversal`() {
-        graphWithCycle.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
+        diamondGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
+        meshGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
     }
 
     @Test fun `breadth-first edge traversal`() {
-        graphWithCycle.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+        diamondGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
             Edge(1, 2), Edge(1, 3), Edge(2, 4), Edge(3, 4)
+        )
+        meshGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+            Edge(1, 2), Edge(1, 3), Edge(1, 4), Edge(2, 3), Edge(2, 4), Edge(3, 4)
         )
     }
 }

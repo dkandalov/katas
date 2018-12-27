@@ -60,14 +60,23 @@ class GraphTest {
 
         Graph.readInts("1-2,2-3").toString() shouldEqual "1-2,2-3"
 
-        // 1──2──4
-        // └──3──┘
-        graphWithCycle.toString() shouldEqual "1-2,1-3,2-4,3-4"
+        diamondGraph.toString() shouldEqual "1-2,1-3,2-4,3-4"
+        meshGraph.toString() shouldEqual "1-2,1-3,1-4,2-3,2-4,3-4"
     }
 
     companion object {
-        // 1──2──4
-        // └──3──┘
-        val graphWithCycle = Graph.readInts("1-2,1-3,2-4,3-4")
+        //   2
+        //  / \
+        // 1   4
+        //  \ /
+        //   3
+        val diamondGraph = Graph.readInts("1-2,1-3,2-4,3-4")
+
+        //   2
+        //  /|\
+        // 1-+-4
+        //  \|/
+        //   3
+        val meshGraph = Graph.readInts("1-2,1-3,1-4,2-3,2-4,3-4")
     }
 }
