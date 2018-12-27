@@ -4,7 +4,12 @@ import kotlincommon.join
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-data class Edge<T>(var from: T, var to: T, var weight: Int? = null)
+data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
+    override fun toString(): String {
+        val weightString = if (weight != null) ", $weight" else ""
+        return "Edge($from->$to$weightString)"
+    }
+}
 
 class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
 
@@ -35,7 +40,7 @@ class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap(
     companion object {
         fun read(s: String): Graph<String> = read(s) { it }
 
-        fun readInt(s: String): Graph<Int> = read(s) { it.toInt() }
+        fun readInts(s: String): Graph<Int> = read(s) { it.toInt() }
 
         fun <T> read(s: String, parse: (String) -> T): Graph<T> {
             val graph = Graph<T>()
@@ -50,10 +55,10 @@ class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap(
 
 class GraphTest {
     @Test fun `create undirected graph from string`() {
-        Graph.readInt("1-2").toString() shouldEqual "1-2"
-        Graph.readInt("2-1").toString() shouldEqual "1-2"
+        Graph.readInts("1-2").toString() shouldEqual "1-2"
+        Graph.readInts("2-1").toString() shouldEqual "1-2"
 
-        Graph.readInt("1-2,2-3").toString() shouldEqual "1-2,2-3"
+        Graph.readInts("1-2,2-3").toString() shouldEqual "1-2,2-3"
 
         // 1──2──4
         // └──3──┘
@@ -63,6 +68,6 @@ class GraphTest {
     companion object {
         // 1──2──4
         // └──3──┘
-        val graphWithCycle = Graph.readInt("1-2,1-3,2-4,3-4")
+        val graphWithCycle = Graph.readInts("1-2,1-3,2-4,3-4")
     }
 }
