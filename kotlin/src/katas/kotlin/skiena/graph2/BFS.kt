@@ -57,27 +57,28 @@ fun <T> Graph<T>.bfs_skiena(
     return SearchResult(prevVertex, processed)
 }
 
-fun <T> Graph<T>.bfs(fromVertex: T): LinkedHashSet<T> {
-    if (!vertices.contains(fromVertex)) error("Graph doesn't contain vertex '$fromVertex'")
-
-    val result = LinkedHashSet<T>()
-    val queue = LinkedList<T>()
-    queue.add(fromVertex)
+fun <T> Graph<T>.bfs(fromVertex: T): List<T> {
+    val result = ArrayList<T>()
+    val wasQueued = HashSet<T>().apply { add(fromVertex) }
+    val queue = LinkedList<T>().apply { add(fromVertex) }
 
     while (queue.isNotEmpty()) {
         val vertex = queue.removeFirst()
         result.add(vertex)
 
         val neighbors = edgesByVertex[vertex]?.map { it.to } ?: emptyList()
-        queue.addAll(neighbors - result)
+        neighbors
+            .filter { wasQueued.doesNotContain(it) }
+            .forEach {
+                wasQueued.add(it)
+                queue.add(it)
+            }
     }
     return result
 }
 
-fun <T> Graph<T>.bfsEdges(fromVertex: T): LinkedHashSet<Edge<T>> {
-    if (!vertices.contains(fromVertex)) error("Graph doesn't contain vertex '$fromVertex'")
-
-    val result = LinkedHashSet<Edge<T>>()
+fun <T> Graph<T>.bfsEdges(fromVertex: T): List<Edge<T>> {
+    val result = ArrayList<Edge<T>>()
     val visited = HashSet<T>()
     val queue = LinkedList<T>().apply { add(fromVertex) }
 
@@ -115,23 +116,23 @@ class BFSTests {
     }
 
     @Test fun `breadth-first vertex traversal`() {
-        linearGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3)
-        disconnectedGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2)
-        diamondGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
-        meshGraph.bfs(fromVertex = 1).toList() shouldEqual listOf(1, 2, 3, 4)
+        linearGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3)
+        disconnectedGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2)
+        diamondGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
+        meshGraph.bfs(fromVertex = 1) shouldEqual listOf(1, 2, 3, 4)
     }
 
     @Test fun `breadth-first edge traversal`() {
-        linearGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+        linearGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
             Edge(1, 2), Edge(2, 3)
         )
-        disconnectedGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+        disconnectedGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
             Edge(1, 2)
         )
-        diamondGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+        diamondGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
             Edge(1, 2), Edge(1, 3), Edge(2, 4), Edge(3, 4)
         )
-        meshGraph.bfsEdges(fromVertex = 1).toList() shouldEqual listOf(
+        meshGraph.bfsEdges(fromVertex = 1) shouldEqual listOf(
             Edge(1, 2), Edge(1, 3), Edge(1, 4), Edge(2, 3), Edge(2, 4), Edge(3, 4)
         )
     }

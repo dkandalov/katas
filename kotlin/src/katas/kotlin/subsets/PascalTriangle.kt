@@ -4,6 +4,7 @@ import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+// See https://www.mathsisfun.com/pascals-triangle.html
 class PascalTriangle {
     @Test fun `generate Pascal triangle`() {
         pascalTriangle(9).joinToString("\n").printed() shouldEqual """
