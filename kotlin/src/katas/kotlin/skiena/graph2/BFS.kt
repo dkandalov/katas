@@ -66,12 +66,10 @@ fun <T> Graph<T>.bfs(fromVertex: T): List<T> {
         val vertex = queue.removeFirst()
         result.add(vertex)
 
-        val neighbors = edgesByVertex[vertex]?.map { it.to } ?: emptyList()
-        neighbors
-            .filter { wasQueued.doesNotContain(it) }
-            .forEach {
-                wasQueued.add(it)
-                queue.add(it)
+        edgesByVertex[vertex]?.map { it.to }
+            ?.forEach {
+                val justAdded = wasQueued.add(it)
+                if (justAdded) queue.add(it)
             }
     }
     return result
