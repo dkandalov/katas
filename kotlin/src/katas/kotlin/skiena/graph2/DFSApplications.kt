@@ -22,8 +22,8 @@ fun <T> Graph<T>.findCutVertices(
     parent: MutableMap<T, T> = HashMap(),
     depth: MutableMap<T, Int> = HashMap<T, Int>().apply { put(vertex, 1) },
     low: MutableMap<T, Int> = HashMap<T, Int>().apply { put(vertex, 1) },
-    result: MutableList<T> = ArrayList()
-): List<T> {
+    result: MutableSet<T> = HashSet()
+): Set<T> {
     var isCutVertex = false
     var childCount = 0
     edgesByVertex[vertex]?.forEach { (from, to) ->
@@ -57,25 +57,25 @@ class DFSApplicationsTests {
     }
 
     @Test fun `find cut vertices of undirected graph`() {
-        linearGraph.findCutVertices() shouldEqual listOf(2)
-        diamondGraph.findCutVertices() shouldEqual emptyList()
-        meshGraph.findCutVertices() shouldEqual emptyList()
+        linearGraph.findCutVertices() shouldEqual setOf(2)
+        diamondGraph.findCutVertices() shouldEqual emptySet()
+        meshGraph.findCutVertices() shouldEqual emptySet()
 
-        //   2
+        //   3
         //  / \
-        // 1   3--5--6
+        // 2   4--5--6
         //  \ /
-        //   4
-        Graph.readInts("1-2,1-4,2-3,3-4,3-5,5-6").findCutVertices() shouldEqual listOf(5, 3)
+        //   1
+        Graph.readInts("1-2,1-4,2-3,3-4,4-5,5-6").findCutVertices() shouldEqual setOf(4, 5)
 
         // 2--3--6
         // |  |  |
         // 1--4--5
-        Graph.readInts("1-2,1-4,2-3,3-4,4-5,5-6,6-3").findCutVertices() shouldEqual emptyList()
+        Graph.readInts("1-2,1-4,2-3,3-4,4-5,5-6,6-3").findCutVertices() shouldEqual emptySet()
 
         // 2--3--4
         // |  |  |
         // 1--6--5
-        Graph.readInts("1-2,1-6,2-3,3-4,4-5,5-6,3-6").findCutVertices() shouldEqual emptyList()
+        Graph.readInts("1-2,1-6,2-3,3-4,4-5,5-6,3-6").findCutVertices() shouldEqual emptySet()
     }
 }

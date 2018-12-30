@@ -26,13 +26,13 @@ class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap(
         return edgesByVertex.keys.flatMap { vertex ->
             val edges = edgesByVertex[vertex] ?: emptyList<Edge<T>>()
             edges
-                .filterNot { edge ->
-                    processedFrom.contains(edge.to) && processedTo.contains(vertex)
+                .filterNot { (from, to) ->
+                    processedFrom.contains(to) && processedTo.contains(from)
                 }
-                .map { edge ->
-                    processedFrom.add(vertex)
-                    processedTo.add(edge.to)
-                    "$vertex-${edge.to}"
+                .map { (from, to) ->
+                    processedFrom.add(from)
+                    processedTo.add(to)
+                    "$from-$to"
                 }
         }.join(",")
     }
@@ -69,18 +69,18 @@ class GraphTest {
 
         val disconnectedGraph = Graph.readInts("1-2,3-4")
 
-        //   2
+        //   3
         //  / \
-        // 1   3
+        // 2   4
         //  \ /
-        //   4
+        //   1
         val diamondGraph = Graph.readInts("1-2,1-4,2-3,3-4")
 
-        //   2
+        //   3
         //  /|\
-        // 1-+-3
+        // 2-+-4
         //  \|/
-        //   4
+        //   1
         val meshGraph = Graph.readInts("1-2,1-3,1-4,2-3,2-4,3-4")
     }
 }
