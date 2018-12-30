@@ -9,10 +9,12 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 fun <T> Graph<T>.dfs(fromVertex: T, result: MutableList<T> = ArrayList()): List<T> {
-    if (result.contains(fromVertex)) return result
-    result.add(fromVertex)
     edgesByVertex[fromVertex]?.forEach {
-        dfs(it.to, result)
+        if (result.doesNotContain(it.from)) result.add(it.from)
+        if (result.doesNotContain(it.to)) {
+            result.add(it.to)
+            dfs(it.to, result)
+        }
     }
     return result
 }
@@ -30,6 +32,7 @@ fun <T> Graph<T>.dfsEdges(fromVertex: T, result: MutableList<Edge<T>> = ArrayLis
 private val <T> Edge<T>.inverse: Edge<T> get() = Edge(to, from)
 
 class DFSTests {
+
     @Test fun `depth-first vertex traversal`() {
         linearGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2, 3)
         disconnectedGraph.dfs(fromVertex = 1) shouldEqual listOf(1, 2)
