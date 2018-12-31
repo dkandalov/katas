@@ -1,15 +1,15 @@
 package katas.kotlin.sort.mergesort
 
-import katas.kotlin.permutations
-import katas.kotlin.printed
 import kotlincommon.listOfInts
+import kotlincommon.permutations
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.random.Random
 
-class MergeSortTests {
+class MergeSort4Tests {
     @Test fun `trivial examples`() {
         emptyList<Int>().mergeSort() shouldEqual emptyList()
         listOf(1).mergeSort() shouldEqual listOf(1)

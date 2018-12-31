@@ -1,6 +1,7 @@
 package katas.kotlin.permutation
 
 import kotlincommon.join
+import kotlincommon.longFactorial
 import kotlincommon.printed
 import kotlincommon.swap
 import kotlincommon.test.shouldEqual
@@ -165,8 +166,7 @@ class AllPermutationTypes {
         private fun List<Int>.permutations_lehmer(): List<List<Int>> {
             if (isEmpty()) return listOf(emptyList())
 
-            fun factorial(n: Int): Long = if (n <= 1) n.toLong() else n * factorial(n - 1)
-            return LongRange(0, factorial(size) - 1)
+            return LongRange(0, size.longFactorial() - 1)
                 .map { it.toLehmerCode(size = size).toPermutation(this) }
         }
 

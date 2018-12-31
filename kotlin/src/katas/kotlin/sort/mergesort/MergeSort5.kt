@@ -1,8 +1,8 @@
 package katas.kotlin.sort.mergesort
 
-import katas.kotlin.permutations
-import katas.kotlin.printed
 import kotlincommon.listOfInts
+import kotlincommon.permutations
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
