@@ -11,7 +11,7 @@ import katas.kotlin.skiena.graph2.GraphTest.Companion.meshGraph
 import org.junit.Test
 import java.io.File
 
-fun <T> Graph<T>.saveAsPng(graphName: String = "graph", height: Int = 500) {
+fun <T> Graph<T>.savedAsPng(graphName: String = "graph", height: Int = 500): Graph<T> {
     val graphViz = Factory.mutGraph(graphName).setDirected(false)
     graphViz.graphAttrs().add(RankDir.LEFT_TO_RIGHT)
 
@@ -31,14 +31,16 @@ fun <T> Graph<T>.saveAsPng(graphName: String = "graph", height: Int = 500) {
         }
 
     saveAsPngViaHttp(height, graphName, graphViz)
+
+    return this
 }
 
 fun Renderer.toFile(fileName: String) = toFile(File(fileName))
 
 class GraphVizTests {
     @Test fun rendering() {
-        linearGraph.saveAsPng("linearGraph")
-        diamondGraph.saveAsPng("diamondGraph")
-        meshGraph.saveAsPng("meshGraph")
+        linearGraph.savedAsPng("linearGraph")
+        diamondGraph.savedAsPng("diamondGraph")
+        meshGraph.savedAsPng("meshGraph")
     }
 }

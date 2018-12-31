@@ -57,7 +57,7 @@ fun <T> Graph<T>.bfs_skiena(
     return SearchResult(prevVertex, processed)
 }
 
-fun <T> Graph<T>.bfs(fromVertex: T): List<T> {
+fun <T> Graph<T>.bfs(fromVertex: T = vertices.first()): List<T> {
     val result = ArrayList<T>()
     val wasQueued = HashSet<T>().apply { add(fromVertex) }
     val queue = LinkedList<T>().apply { add(fromVertex) }

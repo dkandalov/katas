@@ -28,7 +28,7 @@ object GraphvizRasterizerServer {
                 val path = request.query("path")!!
 
                 Graphviz.fromString(request.bodyString())
-                    .engine(Engine.CIRCO)
+                    //.engine(Engine.CIRCO)
                     .run { if (width != null) this.width(width) else this }
                     .run { if (height != null) this.height(height) else this }
                     .render(Format.PNG)
