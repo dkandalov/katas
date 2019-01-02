@@ -75,7 +75,7 @@ fun <T> Graph<T>.bfs(fromVertex: T = vertices.first()): List<T> {
     return result
 }
 
-fun <T> Graph<T>.bfsEdges(fromVertex: T): List<Edge<T>> {
+fun <T> Graph<T>.bfsEdges(fromVertex: T = vertices.first()): List<Edge<T>> {
     val result = ArrayList<Edge<T>>()
     val visited = HashSet<T>()
     val queue = LinkedList<T>().apply { add(fromVertex) }

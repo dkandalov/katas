@@ -11,7 +11,7 @@ data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
     }
 }
 
-class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
+data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
 
     val vertices: Set<T> get() = edgesByVertex.keys
 
