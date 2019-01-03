@@ -65,7 +65,6 @@ fun <T> Graph<T>.bfs(fromVertex: T = vertices.first()): List<T> {
     while (queue.isNotEmpty()) {
         val vertex = queue.removeFirst()
         result.add(vertex)
-
         edgesByVertex[vertex]?.map { it.to }
             ?.forEach {
                 val justAdded = wasQueued.add(it)

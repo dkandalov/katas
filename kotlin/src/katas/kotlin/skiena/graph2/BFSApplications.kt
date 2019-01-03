@@ -18,7 +18,8 @@ fun <T> Graph<T>.components(): List<Graph<T>> {
     vertices.forEach { vertex ->
         if (visitedVertices.add(vertex)) {
             val componentVertices = bfs(vertex)
-            result.add(Graph(edgesByVertex.filter { componentVertices.contains(it.key) }.toMutableMap()))
+            val componentGraph = Graph(HashMap(edgesByVertex).apply { keys.retainAll(componentVertices) })
+            result.add(componentGraph)
             visitedVertices.addAll(componentVertices)
         }
     }
@@ -37,8 +38,7 @@ fun <T> Graph<T>.twoColor(): Map<T, Boolean> {
                 if (fromColor == null) {
                     result[edge.from] = true
                     result[edge.to] = false
-                }
-                else if (fromColor == toColor) return emptyMap()
+                } else if (fromColor == toColor) return emptyMap()
                 else result[edge.to] = !fromColor
             }
         }

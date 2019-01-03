@@ -15,20 +15,21 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = Has
 
     val vertices: Set<T> get() = edgesByVertex.keys
 
-    fun insertEdge(from: T, to: T) {
+    fun addEdge(from: T, to: T) {
         edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to))
         edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from))
+    }
+
+    fun addVertex(vertex: T) {
+        edgesByVertex.getOrPut(vertex, { ArrayList() })
     }
 
     override fun toString(): String {
         val processedFrom = HashSet<T>()
         val processedTo = HashSet<T>()
-        return edgesByVertex.keys.flatMap { vertex ->
-            val edges = edgesByVertex[vertex] ?: emptyList<Edge<T>>()
-            edges
-                .filterNot { (from, to) ->
-                    processedFrom.contains(to) && processedTo.contains(from)
-                }
+        return edgesByVertex.entries.flatMap { (vertex, edges) ->
+            if (edges.isEmpty()) listOf("$vertex")
+            else edges.filterNot { (from, to) -> processedFrom.contains(to) && processedTo.contains(from) }
                 .map { (from, to) ->
                     processedFrom.add(from)
                     processedTo.add(to)
@@ -45,8 +46,12 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = Has
         fun <T> read(s: String, parse: (String) -> T): Graph<T> {
             val graph = Graph<T>()
             s.split(",").forEach { token ->
-                val (x, y) = token.split("-").map { parse(it) }
-                graph.insertEdge(x, y)
+                val split = token.split("-")
+                if (split.size == 2) {
+                    graph.addEdge(from = parse(split[0]), to = parse(split[1]))
+                } else {
+                    graph.addVertex(parse(split[0]))
+                }
             }
             return graph
         }
@@ -57,8 +62,8 @@ class GraphTest {
     @Test fun `create undirected graph from string`() {
         Graph.readInts("1-2").toString() shouldEqual "1-2"
         Graph.readInts("2-1").toString() shouldEqual "1-2"
-
         Graph.readInts("1-2,2-3").toString() shouldEqual "1-2,2-3"
+        Graph.readInts("1-2,3").toString() shouldEqual "1-2,3"
 
         diamondGraph.toString() shouldEqual "1-2,1-4,2-3,3-4"
         meshGraph.toString() shouldEqual "1-2,1-3,1-4,2-3,2-4,3-4"
