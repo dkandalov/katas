@@ -1,40 +1,58 @@
-package katas.kotlin.hackerrank
+package katas.kotlin.hackerrank.roads_and_libraries
 
+import katas.kotlin.hackerrank.OutputRecorder
+import katas.kotlin.hackerrank.toReadLineFunction
+import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.collections.HashSet
 
 
 class RoadsAndLibrariesTests {
+    /**
+     * https://www.hackerrank.com/challenges/torque-and-development
+     */
     fun main(args: Array<String>) {
-        val scan = Scanner(System.`in`)
-        val q = scan.nextLine().trim().toInt()
+        val reader = BufferedReader(InputStreamReader(System.`in`))
+        main({ reader.readLine() })
+    }
+
+    private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
+        val q = readLine().trim().toInt()
 
         for (qItr in 1..q) {
-            val nmC_libC_road = scan.nextLine().split(" ")
+            val nmC_libC_road = readLine().split(" ")
             val n = nmC_libC_road[0].trim().toInt()
             val m = nmC_libC_road[1].trim().toInt()
             val c_lib = nmC_libC_road[2].trim().toInt()
             val c_road = nmC_libC_road[3].trim().toInt()
             val cities = Array(m, { Array(2, { 0 }) })
             for (i in 0 until m) {
-                cities[i] = scan.nextLine().split(" ").map { it.trim().toInt() }.toTypedArray()
+                cities[i] = readLine().split(" ").map { it.trim().toInt() }.toTypedArray()
             }
 
-            println(roadsAndLibraries(n, c_lib, c_road, cities))
+            writeLine(roadsAndLibraries(n, c_lib, c_road, cities))
         }
     }
 
     private fun roadsAndLibraries(citiesCount: Int, libraryCost: Int, roadCost: Int, cityLinks: Array<Array<Int>>): Long {
-        val graph = Graph<Int>()
-        (1..citiesCount).forEach { graph.addVertex(it) }
-        cityLinks.forEach { graph.addEdge(it[0], it[1]) }
-        return findMinCost(graph, libraryCost, roadCost)
+        return measureDuration("roadsAndLibraries") {
+            val graph = Graph<Int>()
+            (1..citiesCount).forEach { graph.addVertex(it) }
+            cityLinks.forEach { graph.addEdge(it[0], it[1]) }
+            measureDuration("findMinCost") {
+                findMinCost(graph, libraryCost, roadCost)
+            }
+        }
     }
 
     private fun findMinCost(graph: Graph<Int>, libraryCost: Int, roadCost: Int): Long {
-        return graph.components().sumByLong { component ->
+        val components = measureDuration("components") { graph.components() }
+        return components.sumByLong { component ->
             val allLibsCost = component.vertices.size * libraryCost.toLong()
             val allRoadsCost = component.minSpanningTree().size * roadCost + libraryCost.toLong()
             minOf(allLibsCost, allRoadsCost)
@@ -155,5 +173,25 @@ class RoadsAndLibrariesTests {
 
     @Test fun `sample test case 2`() {
         findMinCost(Graph.readInts("1-2,1-3,1-4,5"), libraryCost = 6, roadCost = 1) shouldEqual 15
+    }
+
+    @Test fun `test case 2`() {
+        val readLine = File("src/katas/kotlin/hackerrank/roads_and_libraries/test-case2.txt").inputStream().toReadLineFunction()
+        val outputRecorder = OutputRecorder()
+
+        main(readLine, outputRecorder)
+
+        outputRecorder.text.trim() shouldEqual """
+            5649516
+            5295483
+            9261576
+            3960530
+            7629795
+            40216260
+            6701050
+            40280315
+            4614540
+            12407190
+        """.trimIndent()
     }
 }
