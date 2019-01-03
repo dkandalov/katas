@@ -4,21 +4,28 @@ import katas.kotlin.skiena.graph2.GraphTest.Companion.diamondGraph
 import katas.kotlin.skiena.graph2.GraphTest.Companion.disconnectedGraph
 import katas.kotlin.skiena.graph2.GraphTest.Companion.linearGraph
 import katas.kotlin.skiena.graph2.GraphTest.Companion.meshGraph
-import kotlincommon.doesNotContain
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.util.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.set
 
-fun <T> Graph<T>.countComponents(): Int {
-    var result = 0
+
+fun <T> Graph<T>.components(): List<Graph<T>> {
+    val result = ArrayList<Graph<T>>()
     val visitedVertices = HashSet<T>()
     vertices.forEach { vertex ->
-        if (visitedVertices.doesNotContain(vertex)) {
-            visitedVertices.addAll(bfs(vertex))
-            result++
+        if (visitedVertices.add(vertex)) {
+            val componentVertices = bfs(vertex)
+            result.add(Graph(edgesByVertex.filter { componentVertices.contains(it.key) }.toMutableMap()))
+            visitedVertices.addAll(componentVertices)
         }
     }
     return result
 }
+
+fun <T> Graph<T>.countComponents(): Int = components().size
 
 fun <T> Graph<T>.twoColor(): Map<T, Boolean> {
     val result = HashMap<T, Boolean>()
@@ -40,6 +47,13 @@ fun <T> Graph<T>.twoColor(): Map<T, Boolean> {
 }
 
 class BFSApplicationTests {
+
+    @Test fun `graph components`() {
+        linearGraph.components() shouldEqual listOf(linearGraph)
+        disconnectedGraph.components() shouldEqual listOf(Graph.readInts("1-2"), Graph.readInts("3-4"))
+        diamondGraph.components() shouldEqual listOf(diamondGraph)
+    }
+
     @Test fun `count components`() {
         Graph.readInts("1-2").countComponents() shouldEqual 1
         Graph.readInts("1-2,2-3").countComponents() shouldEqual 1
