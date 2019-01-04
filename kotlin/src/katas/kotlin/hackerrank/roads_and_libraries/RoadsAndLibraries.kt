@@ -9,7 +9,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.util.*
-import kotlin.collections.HashSet
+import kotlin.collections.HashMap
 
 
 class RoadsAndLibrariesTests {
@@ -40,23 +40,21 @@ class RoadsAndLibrariesTests {
     }
 
     private fun roadsAndLibraries(citiesCount: Int, libraryCost: Int, roadCost: Int, cityLinks: Array<Array<Int>>): Long {
-        return measureDuration("roadsAndLibraries") {
-            val graph = Graph<Int>()
+        val graph = Graph<Int>()
+        measureDuration("setup") {
             (1..citiesCount).forEach { graph.addVertex(it) }
             cityLinks.forEach { graph.addEdge(it[0], it[1]) }
-            measureDuration("findMinCost") {
-                findMinCost(graph, libraryCost, roadCost)
-            }
         }
+        return findMinCost(graph, libraryCost, roadCost)
     }
 
     private fun findMinCost(graph: Graph<Int>, libraryCost: Int, roadCost: Int): Long {
         val components = measureDuration("components") { graph.components() }
-        return components.sumByLong { component ->
+        return measureDuration("sumByLong") {components.sumByLong { component ->
             val allLibsCost = component.vertices.size * libraryCost.toLong()
-            val allRoadsCost = component.minSpanningTree().size * roadCost + libraryCost.toLong()
+            val allRoadsCost = component.minSpanningTreeEdgesSize() * roadCost + libraryCost.toLong()
             minOf(allLibsCost, allRoadsCost)
-        }
+        }}
     }
 
     private data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
@@ -96,54 +94,24 @@ class RoadsAndLibrariesTests {
         }
     }
 
-    private fun <T> Graph<T>.bfs(fromVertex: T = vertices.first()): List<T> {
-        val result = ArrayList<T>()
-        val wasQueued = HashSet<T>().apply { add(fromVertex) }
-        val queue = LinkedList<T>().apply { add(fromVertex) }
-
-        while (queue.isNotEmpty()) {
-            val vertex = queue.removeFirst()
-            result.add(vertex)
-            edgesByVertex[vertex]?.map { it.to }
-                ?.forEach {
-                    val justAdded = wasQueued.add(it)
-                    if (justAdded) queue.add(it)
-                }
-        }
-        return result
-    }
-
     private fun <T> Graph<T>.components(): List<Graph<T>> {
         val result = ArrayList<Graph<T>>()
-        val visitedVertices = HashSet<T>()
+        val graphByVertex = HashMap<T, Graph<T>>()
         vertices.forEach { vertex ->
-            if (visitedVertices.add(vertex)) {
-                val componentVertices = bfs(vertex)
-                val componentGraph = Graph(HashMap(edgesByVertex).apply { keys.retainAll(componentVertices) })
-                result.add(componentGraph)
-                visitedVertices.addAll(componentVertices)
+            var graph = graphByVertex[vertex]
+            if (graph == null) {
+                graph = Graph()
+                result.add(graph)
+                graphByVertex[vertex] = graph
             }
+            val neighbourEdges = edgesByVertex[vertex]!!
+            graph.edgesByVertex[vertex] = neighbourEdges
+            neighbourEdges.forEach { (_, to) -> graphByVertex[to] = graph }
         }
         return result
     }
 
-    private fun <T> Graph<T>.minSpanningTree(): List<Edge<T>> {
-        val result = ArrayList<Edge<T>>()
-
-        val queuedVertices = HashSet<T>().apply { add(vertices.first()) }
-        val queue = LinkedList<T>().apply { add(vertices.first()) }
-
-        while (queue.isNotEmpty()) {
-            val vertex = queue.removeFirst()
-            edgesByVertex[vertex]?.forEach { edge ->
-                if (queuedVertices.add(edge.to)) {
-                    result.add(edge)
-                    queue.add(edge.to)
-                }
-            }
-        }
-        return result
-    }
+    private fun Graph<*>.minSpanningTreeEdgesSize() = vertices.size - 1
 
     private inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
         var sum = 0L
@@ -151,10 +119,6 @@ class RoadsAndLibrariesTests {
             sum += selector(element)
         }
         return sum
-    }
-
-    @Test fun `minimum spanning trees`() {
-        Graph.readInts("1-2,2-3,3-1").minSpanningTree() shouldEqual listOf(Edge(1, 2), Edge(1, 3))
     }
 
     @Test fun `example from problem description`() {
@@ -192,6 +156,26 @@ class RoadsAndLibrariesTests {
             40280315
             4614540
             12407190
+        """.trimIndent()
+    }
+
+    @Test fun `test case 3`() {
+        val readLine = File("src/katas/kotlin/hackerrank/roads_and_libraries/test-case3.txt").inputStream().toReadLineFunction()
+        val outputRecorder = OutputRecorder()
+
+        main(readLine, outputRecorder)
+
+        outputRecorder.text.trim() shouldEqual """
+            7850257285
+            6785201034
+            813348013
+            4211840970
+            8610471142
+            7263742960
+            4331105640
+            1226092626
+            7288635830
+            8276704464
         """.trimIndent()
     }
 }
