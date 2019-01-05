@@ -1,7 +1,9 @@
 package katas.kotlin.sort
 
 import io.kotlintest.fail
+import kotlincommon.listOfInts
 import kotlincommon.permutations
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
@@ -10,6 +12,7 @@ abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
     @Test fun `trivial examples`() {
         sort(emptyList()) shouldEqual emptyList()
         sort(listOf(1)) shouldEqual listOf(1)
+        sort(listOf(1, 1)) shouldEqual listOf(1, 1)
     }
 
     @Test fun `basic examples`() {
@@ -30,14 +33,16 @@ abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
     }
 
     @Test fun `random lists`() {
+        val random = Random(seed = Random.nextInt().printed("seed="))
+
         // Odd size list
-        Array(5, { Random.nextInt(0, 99) }).toList().let {
+        random.listOfInts(size = 5, valuesRange = 0..5).printed().let {
             it.permutations().forEach { list ->
                 sort(list).isSorted()
             }
         }
         // Even size list
-        Array(6, { Random.nextInt(0, 99) }).toList().let {
+        random.listOfInts(size = 6, valuesRange = 0..6).printed().let {
             it.permutations().forEach { list ->
                 sort(list).isSorted()
             }

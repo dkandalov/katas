@@ -7,14 +7,17 @@ class QuickSort10 : SortingTests({ quickSort(it.toMutableList()) }) {
         private fun <T : Comparable<T>> quickSort(list: MutableList<T>, from: Int = 0, to: Int = list.size - 1): MutableList<T> {
             if (from >= to) return list
 
-            val i = partition(list, from, to)
+            val i = almostHoarePartition(list, from, to)
             quickSort(list, from, i - 1)
             quickSort(list, i, to)
 
             return list
         }
 
-        private fun <T : Comparable<T>> partition(list: MutableList<T>, from: Int, to: Int): Int {
+        /**
+         * https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
+         */
+        private fun <T : Comparable<T>> almostHoarePartition(list: MutableList<T>, from: Int, to: Int): Int {
             val pivot = list[from]
             var i = from
             var j = to
