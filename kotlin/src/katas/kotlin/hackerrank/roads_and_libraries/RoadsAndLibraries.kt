@@ -2,7 +2,6 @@ package katas.kotlin.hackerrank.roads_and_libraries
 
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
-import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.io.BufferedReader
@@ -22,39 +21,36 @@ class RoadsAndLibrariesTests {
     }
 
     private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
-        val q = readLine().trim().toInt()
+        val q = readLine().toInt()
 
         for (qItr in 1..q) {
-            val nmC_libC_road = readLine().split(" ")
-            val n = nmC_libC_road[0].trim().toInt()
-            val m = nmC_libC_road[1].trim().toInt()
-            val c_lib = nmC_libC_road[2].trim().toInt()
-            val c_road = nmC_libC_road[3].trim().toInt()
-            val cities = Array(m, { Array(2, { 0 }) })
-            for (i in 0 until m) {
-                cities[i] = readLine().split(" ").map { it.trim().toInt() }.toTypedArray()
+            val split = readLine().split(' ')
+            val n = split[0].toInt()
+            val m = split[1].toInt()
+            val libraryCost = split[2].toInt()
+            val roadCost = split[3].toInt()
+            val cities = (0 until m).mapTo(ArrayList(m)) {
+                readLine().split(' ').map { it.toInt() }
             }
-
-            writeLine(roadsAndLibraries(n, c_lib, c_road, cities))
+            writeLine(roadsAndLibraries(n, libraryCost, roadCost, cities))
         }
     }
 
-    private fun roadsAndLibraries(citiesCount: Int, libraryCost: Int, roadCost: Int, cityLinks: Array<Array<Int>>): Long {
+    private fun roadsAndLibraries(citiesCount: Int, libraryCost: Int, roadCost: Int, cityLinks: List<List<Int>>): Long {
         val graph = Graph<Int>()
-        measureDuration("setup") {
-            (1..citiesCount).forEach { graph.addVertex(it) }
-            cityLinks.forEach { graph.addEdge(it[0], it[1]) }
-        }
+        (1..citiesCount).forEach { graph.addVertex(it) }
+        cityLinks.forEach { graph.addEdge(it[0], it[1]) }
         return findMinCost(graph, libraryCost, roadCost)
     }
 
     private fun findMinCost(graph: Graph<Int>, libraryCost: Int, roadCost: Int): Long {
-        val components = measureDuration("components") { graph.components() }
-        return measureDuration("sumByLong") {components.sumByLong { component ->
+        val components = graph.components()
+        return components.sumByLong { component ->
+            val minSpanningTreeEdgesSize = component.vertices.size - 1
+            val allRoadsCost = minSpanningTreeEdgesSize * roadCost + libraryCost.toLong()
             val allLibsCost = component.vertices.size * libraryCost.toLong()
-            val allRoadsCost = component.minSpanningTreeEdgesSize() * roadCost + libraryCost.toLong()
             minOf(allLibsCost, allRoadsCost)
-        }}
+        }
     }
 
     private data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
@@ -64,16 +60,16 @@ class RoadsAndLibrariesTests {
         }
     }
 
-    private data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
+    private data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>?> = HashMap()) {
         val vertices: Set<T> get() = edgesByVertex.keys
 
         fun addEdge(from: T, to: T) {
-            edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to))
-            edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from))
+            edgesByVertex.getOrPut(from, { ArrayList() })!!.add(Edge(from, to))
+            edgesByVertex.getOrPut(to, { ArrayList() })!!.add(Edge(to, from))
         }
 
         fun addVertex(vertex: T) {
-            edgesByVertex.getOrPut(vertex, { ArrayList() })
+            edgesByVertex[vertex] = null
         }
 
         companion object {
@@ -104,14 +100,12 @@ class RoadsAndLibrariesTests {
                 result.add(graph)
                 graphByVertex[vertex] = graph
             }
-            val neighbourEdges = edgesByVertex[vertex]!!
+            val neighbourEdges = edgesByVertex[vertex]
             graph.edgesByVertex[vertex] = neighbourEdges
-            neighbourEdges.forEach { (_, to) -> graphByVertex[to] = graph }
+            neighbourEdges?.forEach { (_, to) -> graphByVertex[to] = graph }
         }
         return result
     }
-
-    private fun Graph<*>.minSpanningTreeEdgesSize() = vertices.size - 1
 
     private inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
         var sum = 0L
