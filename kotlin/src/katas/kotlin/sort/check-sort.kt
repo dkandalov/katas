@@ -32,7 +32,7 @@ abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
         }
     }
 
-    @Test fun `random lists`() {
+    @Test fun `sort random lists`() {
         val random = Random(seed = Random.nextInt().printed("seed="))
 
         // Odd size list

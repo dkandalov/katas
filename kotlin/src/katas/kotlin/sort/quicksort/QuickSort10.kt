@@ -1,6 +1,7 @@
 package katas.kotlin.sort.quicksort
 
 import katas.kotlin.sort.SortingTests
+import kotlincommon.swap
 
 class QuickSort10 : SortingTests({ quickSort(it.toMutableList()) }) {
     companion object {
@@ -24,19 +25,21 @@ class QuickSort10 : SortingTests({ quickSort(it.toMutableList()) }) {
             while (i <= j) {
                 while (list[i] < pivot) i++
                 while (list[j] > pivot) j--
-                if (i <= j) {
-                    swap(list, i, j)
-                    i++
-                    j--
-                }
+                if (i <= j) list.swap(i++, j--)
             }
             return i
         }
 
-        private fun <T> swap(list: MutableList<T>, i: Int, j: Int) {
-            val tmp = list[i]
-            list[i] = list[j]
-            list[j] = tmp
+        private fun <E: Comparable<E>> hoarePartition(list: MutableList<E>, from: Int, to: Int): Int {
+            val pivot = list[from]
+            var i = from
+            var j = to
+            while (true) {
+                while (list[i] < pivot) i++
+                while (list[j] > pivot) j--
+                if (i < j) list.swap(i++, j--)
+                else return j
+            }
         }
     }
 }
