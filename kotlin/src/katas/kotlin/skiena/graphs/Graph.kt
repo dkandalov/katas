@@ -15,9 +15,9 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = Has
 
     val vertices: Set<T> get() = edgesByVertex.keys
 
-    fun addEdge(from: T, to: T) {
-        edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to))
-        edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from))
+    fun addEdge(from: T, to: T, weight: Int? = null) {
+        edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to, weight))
+        edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from, weight))
     }
 
     fun addVertex(vertex: T) {
@@ -30,10 +30,11 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = Has
         return edgesByVertex.entries.flatMap { (vertex, edges) ->
             if (edges.isEmpty()) listOf("$vertex")
             else edges.filterNot { (from, to) -> processedFrom.contains(to) && processedTo.contains(from) }
-                .map { (from, to) ->
+                .map { (from, to, weight) ->
                     processedFrom.add(from)
                     processedTo.add(to)
-                    "$from-$to"
+                    val weightString = if (weight != null) "/$weight" else ""
+                    "$from-$to$weightString"
                 }
         }.join(",")
     }
@@ -46,12 +47,13 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = Has
         fun <T> read(s: String, parse: (String) -> T): Graph<T> {
             val graph = Graph<T>()
             s.split(",").forEach { token ->
-                val split = token.split("-")
-                if (split.size == 2) {
-                    graph.addEdge(from = parse(split[0]), to = parse(split[1]))
-                } else {
-                    graph.addVertex(parse(split[0]))
-                }
+                val split = token.split('-', '/')
+                val weight = if (split.size == 3) split[2].toInt() else null
+                val to = if (split.size >= 2) parse(split[1]) else null
+                val from = parse(split[0])
+
+                if (to != null) graph.addEdge(from, to, weight)
+                else graph.addVertex(from)
             }
             return graph
         }
@@ -67,6 +69,13 @@ class GraphTest {
 
         diamondGraph.toString() shouldEqual "1-2,1-4,2-3,3-4"
         meshGraph.toString() shouldEqual "1-2,1-3,1-4,2-3,2-4,3-4"
+    }
+
+    @Test fun `create undirected weighted graph from string`() {
+        Graph.readInts("1-2/10").toString() shouldEqual "1-2/10"
+        Graph.readInts("2-1/10").toString() shouldEqual "1-2/10"
+        Graph.readInts("1-2/10,2-3/20").toString() shouldEqual "1-2/10,2-3/20"
+        Graph.readInts("1-2/10,3").toString() shouldEqual "1-2/10,3"
     }
 
     companion object {
