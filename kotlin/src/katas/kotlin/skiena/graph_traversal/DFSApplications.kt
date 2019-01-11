@@ -1,8 +1,8 @@
-package katas.kotlin.skiena.graph2
+package katas.kotlin.skiena.graph_traversal
 
-import katas.kotlin.skiena.graph2.GraphTest.Companion.diamondGraph
-import katas.kotlin.skiena.graph2.GraphTest.Companion.linearGraph
-import katas.kotlin.skiena.graph2.GraphTest.Companion.meshGraph
+import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.diamondGraph
+import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.linearGraph
+import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.meshGraph
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 

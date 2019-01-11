@@ -3,7 +3,7 @@ package katas.kotlin
 import guru.nidi.graphviz.engine.*
 import guru.nidi.graphviz.model.MutableGraph
 import guru.nidi.graphviz.model.Serializer
-import katas.kotlin.skiena.graph2.toFile
+import katas.kotlin.skiena.graph_traversal.toFile
 import org.http4k.client.ApacheClient
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
