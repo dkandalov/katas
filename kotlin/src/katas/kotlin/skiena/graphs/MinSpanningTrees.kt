@@ -35,7 +35,7 @@ private fun <T> Graph<T>.primMST(): Graph<T> {
             .minBy { it.weight!! }!!
 
         tree.addEdge(minEdge.from, minEdge.to, minEdge.weight)
-   }
+    }
 
     return tree
 }
