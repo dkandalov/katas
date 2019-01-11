@@ -1,4 +1,4 @@
-package katas.kotlin.skiena.graph_traversal
+package katas.kotlin.skiena.graphs
 
 import kotlincommon.join
 import kotlincommon.test.shouldEqual

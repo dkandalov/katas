@@ -1,8 +1,8 @@
-package katas.kotlin.skiena.graph_traversal.skiena_graph
+package katas.kotlin.skiena.graphs.skiena_graph
 
 import kotlincommon.join
 import org.junit.Test
-import katas.kotlin.skiena.graph_traversal.skiena_graph.Colour.*
+import katas.kotlin.skiena.graphs.skiena_graph.Colour.*
 import kotlincommon.test.shouldEqual
 
 // ------------------------------

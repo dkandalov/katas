@@ -1,13 +1,13 @@
-package katas.kotlin.skiena.graph_traversal
+package katas.kotlin.skiena.graphs
 
 import guru.nidi.graphviz.attribute.RankDir
 import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.saveAsPngViaHttp
-import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.diamondGraph
-import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.linearGraph
-import katas.kotlin.skiena.graph_traversal.GraphTest.Companion.meshGraph
+import katas.kotlin.skiena.graphs.GraphTest.Companion.diamondGraph
+import katas.kotlin.skiena.graphs.GraphTest.Companion.linearGraph
+import katas.kotlin.skiena.graphs.GraphTest.Companion.meshGraph
 import org.junit.Test
 import java.io.File
 
