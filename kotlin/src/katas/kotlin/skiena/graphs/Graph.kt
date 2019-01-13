@@ -11,17 +11,17 @@ data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
     }
 }
 
-data class Graph<T>(val edgesByVertex: MutableMap<T, MutableList<Edge<T>>> = HashMap()) {
+data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = HashMap()) {
 
     val vertices: Set<T> get() = edgesByVertex.keys
 
     fun addEdge(from: T, to: T, weight: Int? = null) {
-        edgesByVertex.getOrPut(from, { ArrayList() }).add(Edge(from, to, weight))
-        edgesByVertex.getOrPut(to, { ArrayList() }).add(Edge(to, from, weight))
+        edgesByVertex.getOrPut(from, { LinkedHashSet() }).add(Edge(from, to, weight))
+        edgesByVertex.getOrPut(to, { LinkedHashSet() }).add(Edge(to, from, weight))
     }
 
     fun addVertex(vertex: T) {
-        edgesByVertex.getOrPut(vertex, { ArrayList() })
+        edgesByVertex.getOrPut(vertex, { LinkedHashSet() })
     }
 
     override fun toString(): String {
