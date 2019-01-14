@@ -3,6 +3,7 @@ package katas.kotlin.skiena.graphs
 import katas.kotlin.skiena.graphs.WeightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.exampleGraph
+import katas.kotlin.skiena.graphs.WeightedGraphs.triangleGraph
 import kotlincommon.doesNotContain
 import kotlincommon.test.shouldEqual
 import org.junit.Test
@@ -11,6 +12,11 @@ import java.util.Comparator.comparingInt
 
 object WeightedGraphs {
     val linearGraph = Graph.readInts("1-2/10,2-3/20")
+
+    // 2 -- 3
+    //  \  /
+    //   1
+    val triangleGraph = Graph.readInts("1-2/20,1-3/20,2-3/10")
 
     //   3
     //  / \
@@ -26,12 +32,14 @@ object WeightedGraphs {
 class MinimumSpanningTreeTests {
     @Test fun `Prim's min spanning tree`() {
         linearGraph.primMST() shouldEqual linearGraph
+        triangleGraph.primMST() shouldEqual Graph.readInts("1-2/20,2-3/10")
         diamondGraph.primMST() shouldEqual Graph.readInts("1-2/10,1-4/20,2-3/30")
         exampleGraph.primMST() shouldEqual Graph.read("A-B/5,A-C/7,C-F/3,C-D/4,E-F/2,F-G/2")
     }
 
     @Test fun `Kruskal's min spanning tree`() {
         linearGraph.kruskalMST() shouldEqual linearGraph
+        triangleGraph.kruskalMST() shouldEqual Graph.readInts("1-3/20,2-3/10")
         diamondGraph.kruskalMST() shouldEqual Graph.readInts("1-2/10,1-4/20,2-3/30")
         exampleGraph.kruskalMST() shouldEqual Graph.read("A-B/5,A-C/7,C-F/3,C-D/4,E-F/2,F-G/2")
     }
