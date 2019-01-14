@@ -1,9 +1,9 @@
 package katas.kotlin.skiena.graphs
 
-import katas.kotlin.skiena.graphs.GraphTest.Companion.diamondGraph
-import katas.kotlin.skiena.graphs.GraphTest.Companion.disconnectedGraph
-import katas.kotlin.skiena.graphs.GraphTest.Companion.linearGraph
-import katas.kotlin.skiena.graphs.GraphTest.Companion.meshGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.disconnectedGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.ArrayList

@@ -1,5 +1,7 @@
 package katas.kotlin.skiena.graphs
 
+import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
 import kotlincommon.join
 import kotlincommon.test.shouldEqual
 import org.junit.Test
@@ -77,24 +79,24 @@ class GraphTest {
         Graph.readInts("1-2/10,2-3/20").toString() shouldEqual "1-2/10,2-3/20"
         Graph.readInts("1-2/10,3").toString() shouldEqual "1-2/10,3"
     }
+}
 
-    companion object {
-        val linearGraph = Graph.readInts("1-2,2-3")
+object UnweightedGraphs {
+    val linearGraph = Graph.readInts("1-2,2-3")
 
-        val disconnectedGraph = Graph.readInts("1-2,3-4")
+    val disconnectedGraph = Graph.readInts("1-2,3-4")
 
-        //   3
-        //  / \
-        // 2   4
-        //  \ /
-        //   1
-        val diamondGraph = Graph.readInts("1-2,1-4,2-3,3-4")
+    //   3
+    //  / \
+    // 2   4
+    //  \ /
+    //   1
+    val diamondGraph = Graph.readInts("1-2,1-4,2-3,3-4")
 
-        //   3
-        //  /|\
-        // 2-+-4
-        //  \|/
-        //   1
-        val meshGraph = Graph.readInts("1-2,1-3,1-4,2-3,2-4,3-4")
-    }
+    //   3
+    //  /|\
+    // 2-+-4
+    //  \|/
+    //   1
+    val meshGraph = Graph.readInts("1-2,1-3,1-4,2-3,2-4,3-4")
 }

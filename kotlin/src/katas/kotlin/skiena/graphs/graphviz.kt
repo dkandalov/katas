@@ -5,9 +5,9 @@ import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.saveAsPngViaHttp
-import katas.kotlin.skiena.graphs.GraphTest.Companion.diamondGraph
-import katas.kotlin.skiena.graphs.GraphTest.Companion.linearGraph
-import katas.kotlin.skiena.graphs.GraphTest.Companion.meshGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
+import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
 import org.junit.Test
 import java.io.File
 
