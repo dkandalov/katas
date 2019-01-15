@@ -11,6 +11,7 @@ import java.util.*
 import java.util.Comparator.comparingInt
 
 object WeightedGraphs {
+    // 1 -- 2 -- 3
     val linearGraph = Graph.readInts("1-2/10,2-3/20")
 
     // 2 -- 3
