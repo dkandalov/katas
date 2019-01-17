@@ -38,18 +38,21 @@ abstract class SortingTests(private val sort: (List<Int>) -> List<Int>) {
         // Odd size list
         random.listOfInts(size = 5, valuesRange = 0..5).printed().let {
             it.permutations().forEach { list ->
-                sort(list).isSorted()
+                sort(list).expectToBeSorted()
             }
         }
         // Even size list
         random.listOfInts(size = 6, valuesRange = 0..6).printed().let {
             it.permutations().forEach { list ->
-                sort(list).isSorted()
+                sort(list).expectToBeSorted()
             }
         }
+
+        val list = random.listOfInts(sizeRange = 0..100).printed()
+        sort(list).expectToBeSorted()
     }
 
-    private fun <T : Comparable<T>> List<T>.isSorted() {
+    private fun <T : Comparable<T>> List<T>.expectToBeSorted() {
         windowed(2).forEach { (item1, item2) ->
             if (item1 > item2) fail(
                 "List $this is not sorted\n" +
