@@ -6,7 +6,7 @@ import kotlincommon.join
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
+data class Edge<T>(val from: T, val to: T, val weight: Int? = null) {
     override fun toString(): String {
         val weightString = if (weight != null) ", $weight" else ""
         return "Edge($from->$to$weightString)"

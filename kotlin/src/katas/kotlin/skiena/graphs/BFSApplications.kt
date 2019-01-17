@@ -28,6 +28,8 @@ fun <T> Graph<T>.components(): List<Graph<T>> {
 
 fun <T> Graph<T>.countComponents(): Int = components().size
 
+fun <T> Graph<T>.bipartite(): Map<T, Boolean> = twoColor()
+
 fun <T> Graph<T>.twoColor(): Map<T, Boolean> {
     val result = HashMap<T, Boolean>()
     vertices.forEach { vertex ->
@@ -66,10 +68,6 @@ class BFSApplicationTests {
     }
 
     @Test fun `color bipartite graph`() {
-        Graph.readInts("1-2").twoColor() shouldEqual mapOf(
-            1 to true,
-            2 to false
-        )
         linearGraph.twoColor() shouldEqual mapOf(
             1 to true,
             2 to false,
