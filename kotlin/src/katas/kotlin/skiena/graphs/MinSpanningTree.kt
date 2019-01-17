@@ -10,25 +10,6 @@ import org.junit.Test
 import java.util.*
 import java.util.Comparator.comparingInt
 
-object WeightedGraphs {
-    // 1 -- 2 -- 3
-    val linearGraph = Graph.readInts("1-2/10,2-3/20")
-
-    // 2 -- 3
-    //  \  /
-    //   1
-    val triangleGraph = Graph.readInts("1-2/20,1-3/20,2-3/10")
-
-    //   3
-    //  / \
-    // 2   4
-    //  \ /
-    //   1
-    val diamondGraph = Graph.readInts("1-2/10,1-4/20,2-3/30,3-4/40")
-
-    // From Skiena Figure 6.3
-    val exampleGraph = Graph.read("A-B/5,A-C/7,A-D/12,B-C/9,C-D/4,B-E/7,C-E/4,C-F/3,E-F/2,E-G/5,F-G/2")
-}
 
 class MinimumSpanningTreeTests {
     @Test fun `Prim's min spanning tree`() {
@@ -123,7 +104,7 @@ private fun <T> Graph<T>.kruskalMST(): Graph<T> {
     val set = DisjointSet(vertices)
 
     val queue = PriorityQueue<Edge<T>>(comparingInt { it.weight!! })
-    queue.addAll(edgesByVertex.values.flatten())
+    queue.addAll(edges)
 
     while (queue.isNotEmpty()) {
         val (from, to, weight) = queue.remove()

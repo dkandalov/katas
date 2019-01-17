@@ -8,14 +8,15 @@ import org.junit.Test
 
 data class Edge<T>(val from: T, val to: T, val weight: Int? = null) {
     override fun toString(): String {
-        val weightString = if (weight != null) ", $weight" else ""
-        return "Edge($from->$to$weightString)"
+        val weightString = if (weight != null) "/$weight" else ""
+        return "$from-$to$weightString"
     }
 }
 
 data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = HashMap()) {
 
     val vertices: Set<T> get() = edgesByVertex.keys
+    val edges: List<Edge<T>> get() = edgesByVertex.values.flatten()
 
     fun addEdge(from: T, to: T, weight: Int? = null) {
         edgesByVertex.getOrPut(from, { LinkedHashSet() }).add(Edge(from, to, weight))
@@ -32,11 +33,10 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = H
         return edgesByVertex.entries.flatMap { (vertex, edges) ->
             if (edges.isEmpty()) listOf("$vertex")
             else edges.filterNot { (from, to) -> processedFrom.contains(to) && processedTo.contains(from) }
-                .map { (from, to, weight) ->
-                    processedFrom.add(from)
-                    processedTo.add(to)
-                    val weightString = if (weight != null) "/$weight" else ""
-                    "$from-$to$weightString"
+                .map { edge ->
+                    processedFrom.add(edge.from)
+                    processedTo.add(edge.to)
+                    edge.toString()
                 }
         }.join(",")
     }
@@ -82,8 +82,10 @@ class GraphTest {
 }
 
 object UnweightedGraphs {
+    // 1 -- 2 -- 3
     val linearGraph = Graph.readInts("1-2,2-3")
 
+    // 1 -- 2   3 -- 4
     val disconnectedGraph = Graph.readInts("1-2,3-4")
 
     //   3
@@ -99,4 +101,24 @@ object UnweightedGraphs {
     //  \|/
     //   1
     val meshGraph = Graph.readInts("1-2,1-3,1-4,2-3,2-4,3-4")
+}
+
+object WeightedGraphs {
+    // 1 -- 2 -- 3
+    val linearGraph = Graph.readInts("1-2/10,2-3/20")
+
+    // 2 -- 3
+    //  \  /
+    //   1
+    val triangleGraph = Graph.readInts("1-2/20,1-3/20,2-3/10")
+
+    //   3
+    //  / \
+    // 2   4
+    //  \ /
+    //   1
+    val diamondGraph = Graph.readInts("1-2/10,1-4/20,2-3/30,3-4/40")
+
+    // From Skiena Figure 6.3
+    val exampleGraph = Graph.read("A-B/5,A-C/7,A-D/12,B-C/9,C-D/4,B-E/7,C-E/4,C-F/3,E-F/2,E-G/5,F-G/2")
 }

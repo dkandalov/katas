@@ -7,7 +7,7 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 fun <T> Graph<T>.hasCycles(): Boolean {
-    val fromVertex = edgesByVertex.keys.first()
+    val fromVertex = vertices.first()
     val visited = HashSet<T>().apply { add(fromVertex) }
     dfsEdges(fromVertex).forEach { edge ->
         val justAdded = visited.add(edge.to)

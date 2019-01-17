@@ -86,7 +86,7 @@ private fun Graph<Int>.floydWarshallShortestPaths(): AllShortestPaths {
     val size = vertices.size + 1 // +1 to make lists indexed from 1
     val dist = MutableList(size, { MutableList(size) { Int.MAX_VALUE / 2 } })
     val next = MutableList(size, { MutableList(size) { -1 } })
-    edgesByVertex.values.flatten().forEach { edge ->
+    edges.forEach { edge ->
         dist[edge.from][edge.to] = edge.weight!!
         next[edge.from][edge.to] = edge.to
     }
