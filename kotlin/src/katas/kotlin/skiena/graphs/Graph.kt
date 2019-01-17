@@ -11,16 +11,25 @@ data class Edge<T>(val from: T, val to: T, val weight: Int? = null) {
         val weightString = if (weight != null) "/$weight" else ""
         return "$from-$to$weightString"
     }
+
+    companion object {
+        fun <T> read(token: String, parse: (String) -> T): Edge<T>? {
+            val split = token.split('-', '/')
+            val weight = if (split.size == 3) split[2].toInt() else null
+            val to = if (split.size >= 2) parse(split[1]) else return null
+            val from = parse(split[0])
+            return Edge(from, to, weight)
+        }
+    }
 }
 
 data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = HashMap()) {
-
     val vertices: Set<T> get() = edgesByVertex.keys
     val edges: List<Edge<T>> get() = edgesByVertex.values.flatten()
 
-    fun addEdge(from: T, to: T, weight: Int? = null) {
-        edgesByVertex.getOrPut(from, { LinkedHashSet() }).add(Edge(from, to, weight))
-        edgesByVertex.getOrPut(to, { LinkedHashSet() }).add(Edge(to, from, weight))
+    fun addEdge(edge: Edge<T>) {
+        edgesByVertex.getOrPut(edge.from, { LinkedHashSet() }).add(edge)
+        edgesByVertex.getOrPut(edge.to, { LinkedHashSet() }).add(Edge(edge.to, edge.from, edge.weight))
     }
 
     fun addVertex(vertex: T) {
@@ -49,13 +58,9 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = H
         fun <T> read(s: String, parse: (String) -> T): Graph<T> {
             val graph = Graph<T>()
             s.split(",").forEach { token ->
-                val split = token.split('-', '/')
-                val weight = if (split.size == 3) split[2].toInt() else null
-                val to = if (split.size >= 2) parse(split[1]) else null
-                val from = parse(split[0])
-
-                if (to != null) graph.addEdge(from, to, weight)
-                else graph.addVertex(from)
+                val edge = Edge.read(token, parse)
+                if (edge != null) graph.addEdge(edge)
+                else graph.addVertex(parse(token))
             }
             return graph
         }

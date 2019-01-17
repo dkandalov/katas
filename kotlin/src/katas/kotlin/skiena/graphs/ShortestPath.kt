@@ -126,7 +126,7 @@ private fun <T> Graph<T>.dijkstraShortestPaths(): Graph<T> {
             .onEach { distance[it.to] = distance[it.from]!! + it.weight!! }
             .minBy { distance[it.to]!! }!!
 
-        tree.addEdge(minEdge.from, minEdge.to, minEdge.weight)
+        tree.addEdge(minEdge)
     }
     return tree
 }

@@ -107,9 +107,9 @@ private fun <T> Graph<T>.kruskalMST(): Graph<T> {
     queue.addAll(edges)
 
     while (queue.isNotEmpty()) {
-        val (from, to, weight) = queue.remove()
-        if (set.join(from, to)) {
-            tree.addEdge(from, to, weight)
+        val edge = queue.remove()
+        if (set.join(edge.from, edge.to)) {
+            tree.addEdge(edge)
         }
     }
     return tree
@@ -125,7 +125,7 @@ private fun <T> Graph<T>.primMST(): Graph<T> {
             .filter { edge -> tree.vertices.doesNotContain(edge.to) }
             .minBy { it.weight!! }!!
 
-        tree.addEdge(minEdge.from, minEdge.to, minEdge.weight)
+        tree.addEdge(minEdge)
     }
 
     return tree
