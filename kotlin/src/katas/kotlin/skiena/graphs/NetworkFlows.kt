@@ -3,6 +3,7 @@ package katas.kotlin.skiena.graphs
 import katas.kotlin.skiena.graphs.DirectedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.DirectedGraphs.meshGraph
 import kotlincommon.join
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -13,6 +14,51 @@ interface EdgeType<T> {
     val from: T
     val to: T
 }
+
+data class FlowEdge<T>(
+    override val from: T,
+    override val to: T,
+    val capacity: Int,
+    val flow: Int,
+    val residue: Int
+): EdgeType<T> {
+
+    override fun toString() = "$from-$to|$capacity/$flow/$residue"
+
+    companion object {
+        fun <T> read(token: String, parse: (String) -> T): FlowEdge<T>? {
+            val split = token.split('-', '|', '/')
+            return FlowEdge(
+                from = parse(split[0]),
+                to = if (split.size >= 2) parse(split[1]) else return null,
+                capacity = split[2].toInt(),
+                flow = if (split.size >= 4) split[3].toInt() else 0,
+                residue = if (split.size >= 5) split[4].toInt() else 0
+            )
+        }
+    }
+}
+
+fun readFlowGraph(s: String): DirectedGraph<String, FlowEdge<String>> {
+    val graph = DirectedGraph<String, FlowEdge<String>>()
+    s.split(",").forEach { token ->
+        val edge = FlowEdge.read(token, parse = { it })
+        if (edge != null) graph.addEdge(edge) else graph.addVertex(token)
+    }
+    return graph
+}
+
+class FlowGraphTests {
+    @Test fun `create flow graph from string`() {
+        readFlowGraph("s-v|3,s-w|2,v-w|5,v-t|2,w-t|3").toString() shouldEqual
+            "s-v|3/0/0," +
+            "s-w|2/0/0," +
+            "v-w|5/0/0," +
+            "v-t|2/0/0," +
+            "w-t|3/0/0"
+    }
+}
+
 
 data class DirectedEdge<T>(override val from: T, override val to: T): EdgeType<T> {
     override fun toString() = "$from-$to"
@@ -63,8 +109,8 @@ data class DirectedGraph<T, E: EdgeType<T>>(val edgesByVertex: MutableMap<T, Lin
     }
 }
 
-class DirectedGraphTest {
-    @Test fun `create undirected graph from string`() {
+class DirectedGraphTests {
+    @Test fun `create directed graph from string`() {
         DirectedGraph.readInts("1-2").toString() shouldEqual "1-2"
         DirectedGraph.readInts("2-1").toString() shouldEqual "2-1"
         DirectedGraph.readInts("1-2,2-3").toString() shouldEqual "1-2,2-3"
