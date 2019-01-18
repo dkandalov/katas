@@ -6,24 +6,69 @@ import kotlincommon.join
 import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.util.*
 
-// https://cs.stackexchange.com/questions/55041/residual-graph-in-maximum-flow
-class NetworkFlows
-
-interface EdgeType<T> {
-    val from: T
-    val to: T
+class MaximumNetworkFlowTests {
+    @Test fun `find maximum network flow in the diamond graph`() {
+        FlowGraphs.diamondGraph.maximumFlow(source = "s", sink = "t").printed()
+    }
 }
+
+// See https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
+private fun <T> DirectedGraph<T, FlowEdge<T>>.maximumFlow(source: T, sink: T): Any {
+    edges.forEach { edge ->
+        val reverseEdge = FlowEdge(edge.to, edge.from, edge.capacity, edge.flow)
+        reverseEdge.reverse = edge
+        edge.reverse = reverseEdge
+        addEdge(reverseEdge)
+    }
+
+    var flow = 0
+    while (true) {
+        val path = ArrayList<FlowEdge<T>>()
+        val queue = LinkedList<T>()
+        queue.add(source)
+        while (queue.isNotEmpty()) {
+            val vertex = queue.removeFirst()
+            println("vertex = ${vertex}")
+            edgesByVertex[vertex]?.forEach { edge ->
+                if (path.none { it.to == edge.to } && edge.to != source && edge.capacity > edge.flow) {
+                    path.add(edge)
+                    queue.add(edge.to)
+                }
+            }
+        }
+        if (path.lastOrNull()?.to != sink) {
+            println("break")
+            println(this)
+            break
+        }
+
+        var minFlow = Int.MAX_VALUE
+        path.forEach {
+            minFlow = minOf(minFlow, it.capacity - it.flow)
+        }
+        path.forEach {
+            it.flow += minFlow
+            it.reverse!!.flow -= minFlow
+        }
+        flow += minFlow
+
+        println("path = ${path}")
+    }
+    return flow
+}
+
 
 data class FlowEdge<T>(
     override val from: T,
     override val to: T,
     val capacity: Int,
-    val flow: Int,
-    val residue: Int
+    var flow: Int
 ): EdgeType<T> {
+    var reverse: FlowEdge<T>? = null
 
-    override fun toString() = "$from-$to|$capacity/$flow/$residue"
+    override fun toString() = "$from-$to|$capacity/$flow"
 
     companion object {
         fun <T> read(token: String, parse: (String) -> T): FlowEdge<T>? {
@@ -32,8 +77,7 @@ data class FlowEdge<T>(
                 from = parse(split[0]),
                 to = if (split.size >= 2) parse(split[1]) else return null,
                 capacity = split[2].toInt(),
-                flow = if (split.size >= 4) split[3].toInt() else 0,
-                residue = if (split.size >= 5) split[4].toInt() else 0
+                flow = if (split.size >= 4) split[3].toInt() else 0
             )
         }
     }
@@ -50,15 +94,19 @@ fun readFlowGraph(s: String): DirectedGraph<String, FlowEdge<String>> {
 
 class FlowGraphTests {
     @Test fun `create flow graph from string`() {
-        readFlowGraph("s-v|3,s-w|2,v-w|5,v-t|2,w-t|3").toString() shouldEqual
-            "s-v|3/0/0," +
-            "s-w|2/0/0," +
-            "v-w|5/0/0," +
-            "v-t|2/0/0," +
-            "w-t|3/0/0"
+        FlowGraphs.diamondGraph.toString() shouldEqual
+            "s-v|3/0," +
+            "s-w|2/0," +
+            "v-w|5/0," +
+            "v-t|2/0," +
+            "w-t|3/0"
     }
 }
 
+object FlowGraphs {
+    // From https://cs.stackexchange.com/questions/55041/residual-graph-in-maximum-flow
+    val diamondGraph = readFlowGraph("s-v|3,s-w|2,v-w|5,v-t|2,w-t|3")
+}
 
 data class DirectedEdge<T>(override val from: T, override val to: T): EdgeType<T> {
     override fun toString() = "$from-$to"
@@ -72,6 +120,11 @@ data class DirectedEdge<T>(override val from: T, override val to: T): EdgeType<T
             )
         }
     }
+}
+
+interface EdgeType<T> {
+    val from: T
+    val to: T
 }
 
 data class DirectedGraph<T, E: EdgeType<T>>(val edgesByVertex: MutableMap<T, LinkedHashSet<E>> = HashMap()) {
@@ -122,12 +175,6 @@ class DirectedGraphTests {
 }
 
 object DirectedGraphs {
-    // 1 -- 2 -- 3
-    val linearGraph = DirectedGraph.readInts("1-2,2-3")
-
-    // 1 -- 2   3 -- 4
-    val disconnectedGraph = DirectedGraph.readInts("1-2,3-4")
-
     //   3
     //  / \
     // 2   4
