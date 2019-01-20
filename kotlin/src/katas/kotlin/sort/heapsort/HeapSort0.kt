@@ -1,8 +1,12 @@
 package katas.kotlin.sort.heapsort
 
+import kotlincommon.listOfInts
 import kotlincommon.permutations
+import kotlincommon.printed
+import kotlincommon.swap
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.random.Random
 
 class HeapSort0Tests {
     @Test fun `sort a list`() {
@@ -12,6 +16,19 @@ class HeapSort0Tests {
         listOf(1, 2, 3).permutations().forEach {
             it.heapSort() shouldEqual listOf(1, 2, 3)
         }
+
+        listOf(1, 2, 3, 4).permutations().forEach {
+            it.heapSort() shouldEqual listOf(1, 2, 3, 4)
+        }
+
+        fun List<Int>.isSorted() =
+            windowed(size = 2).all { it[0] <= it[1] }
+
+        val list = Random(seed = Random.nextInt().printed()).listOfInts(
+            sizeRange = 0..100,
+            valuesRange = 0..100
+        ).printed().heapSort()
+        list.printed().isSorted() shouldEqual true
     }
 
     @Test fun `remove smallest element from heap`() {
@@ -26,27 +43,72 @@ class HeapSort0Tests {
         heap.removeTop() shouldEqual 2
         heap.isEmpty() shouldEqual true
     }
+
+    @Test fun `array-based heap`() {
+        val heap = Heap()
+
+        heap.add(2)
+        heap.add(1)
+        heap.add(3)
+        heap.add(-1)
+
+        heap.removeTop() shouldEqual -1
+        heap.removeTop() shouldEqual 1
+        heap.removeTop() shouldEqual 2
+        heap.removeTop() shouldEqual 3
+    }
 }
 
-private fun <E: Comparable<E>> List<E>.heapSort(): List<E> {
-    val result = ArrayList<E>()
+class Heap(list: List<Int> = emptyList()) {
+    private val array = Array(size = 256, init = { 0 })
+    private var size = 0
+
+    init {
+        list.forEach { add(it) }
+    }
+
+    fun add(element: Int) {
+        array[size] = element
+        siftUp(size)
+        size++
+    }
+
+    fun removeTop(): Int {
+        val result = array[0]
+        array[0] = array[size - 1]
+        size--
+        siftDown(0)
+        return result
+    }
+
+    private fun siftUp(index: Int) {
+        val parentIndex = if (index == 0) -1 else (index - 1) / 2
+        if (parentIndex != -1 && array[parentIndex] > array[index]) {
+            array.swap(parentIndex, index)
+            siftUp(parentIndex)
+        }
+    }
+
+    private fun siftDown(index: Int) {
+        var minIndex = index
+        val childIndex1 = index * 2 + 1
+        val childIndex2 = index * 2 + 2
+        if (childIndex1 < size && array[childIndex1] < array[minIndex]) minIndex = childIndex1
+        if (childIndex2 < size && array[childIndex2] < array[minIndex]) minIndex = childIndex2
+
+        if (minIndex == index) return
+        array.swap(index, minIndex)
+        siftDown(minIndex)
+    }
+
+    fun isEmpty(): Boolean = size == 0
+}
+
+private fun List<Int>.heapSort(): List<Int> {
+    val result = ArrayList<Int>()
     val heap = Heap(this)
     while (!heap.isEmpty()) {
         result.add(heap.removeTop())
     }
     return result
-}
-
-class Heap<T: Comparable<T>>(elements: List<T>) {
-    private val data = elements.toMutableList()
-
-    fun removeTop(): T {
-        val element = data.min()!!
-        data.remove(element)
-        return element
-    }
-
-    fun isEmpty(): Boolean {
-        return data.isEmpty()
-    }
 }
