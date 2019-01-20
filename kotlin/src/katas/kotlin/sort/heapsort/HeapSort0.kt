@@ -31,21 +31,8 @@ class HeapSort0Tests {
         list.printed().isSorted() shouldEqual true
     }
 
-    @Test fun `remove smallest element from heap`() {
-        val heap = Heap(listOf(1, 2, 0))
-
-        heap.removeTop() shouldEqual 0
-        heap.isEmpty() shouldEqual false
-
-        heap.removeTop() shouldEqual 1
-        heap.isEmpty() shouldEqual false
-
-        heap.removeTop() shouldEqual 2
-        heap.isEmpty() shouldEqual true
-    }
-
-    @Test fun `array-based heap`() {
-        val heap = Heap()
+    @Test fun `array-based binary heap`() {
+        val heap = BinaryHeap()
 
         heap.add(2)
         heap.add(1)
@@ -59,7 +46,7 @@ class HeapSort0Tests {
     }
 }
 
-class Heap(list: List<Int> = emptyList()) {
+class BinaryHeap(list: List<Int> = emptyList()) {
     private val array = Array(size = 256, init = { 0 })
     private var size = 0
 
@@ -106,7 +93,7 @@ class Heap(list: List<Int> = emptyList()) {
 
 private fun List<Int>.heapSort(): List<Int> {
     val result = ArrayList<Int>()
-    val heap = Heap(this)
+    val heap = BinaryHeap(this)
     while (!heap.isEmpty()) {
         result.add(heap.removeTop())
     }
