@@ -10,45 +10,45 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class MaximumNetworkFlowTests {
-    @Test fun `find maximum network flow in the diamond graph`() {
-        FlowGraphs.diamondGraph().let {
-            it.maximumFlow(source = "s", sink = "t").printed() shouldEqual 5
-            it.edges.joinToString("\n") shouldEqual """
-                |s-v|3/3
-                |s-w|2/2
-                |t-v|2/-2
-                |t-w|3/-3
-                |v-w|5/1
-                |v-t|2/2
-                |v-s|3/-3
-                |w-t|3/3
-                |w-s|2/-2
-                |w-v|5/-1
-            """.trimMargin()
+    @Test fun `maximum network flow in the diamond graph`() {
+        FlowGraphs.diamondGraph.let {
+            it.maximumFlow(source = "s", sink = "t",isBfs = false).printed() shouldEqual 5
+//            it.edges.joinToString("\n") shouldEqual """
+//                |s-v|3/3
+//                |s-w|2/2
+//                |t-v|2/-2
+//                |t-w|3/-3
+//                |v-w|5/1
+//                |v-t|2/2
+//                |v-s|3/-3
+//                |w-t|3/3
+//                |w-s|2/-2
+//                |w-v|5/-1
+//            """.trimMargin()
         }
     }
 
-    @Test fun `foo`() {
-        FlowGraphs.diamondGraph2().let {
-            it.maximumFlow(source = "a", sink = "d").printed() shouldEqual 5
-            it.edges.joinToString("\n") shouldEqual """
-                |s-v|3/3
-                |s-w|2/2
-                |t-v|2/-2
-                |t-w|3/-3
-                |v-w|5/1
-                |v-t|2/2
-                |v-s|3/-3
-                |w-t|3/3
-                |w-s|2/-2
-                |w-v|5/-1
-            """.trimMargin()
+    @Test fun `maximum network flow in the diamond2 graph`() {
+        FlowGraphs.diamondGraph2.let {
+            it.maximumFlow(source = "a", sink = "d", isBfs = false).printed() shouldEqual 20
+//            it.edges.joinToString("\n") shouldEqual """
+//                |a-b|10/10
+//                |a-c|10/10
+//                |b-c|1/0
+//                |b-d|10/10
+//                |b-a|10/-10
+//                |c-d|10/10
+//                |c-a|10/-10
+//                |c-b|1/0
+//                |d-b|10/-10
+//                |d-c|10/-10
+//            """.trimMargin()
         }
     }
 }
 
 // See https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm
-private fun <T> DirectedGraph<T, FlowEdge<T>>.maximumFlow(source: T, sink: T): Any {
+private fun <T> DirectedGraph<T, FlowEdge<T>>.maximumFlow(source: T, sink: T, isBfs: Boolean = true): Any {
     edges.forEach { edge ->
         val reverseEdge = FlowEdge(edge.to, edge.from, edge.capacity, flow = 0)
         reverseEdge.reverse = edge
@@ -56,40 +56,55 @@ private fun <T> DirectedGraph<T, FlowEdge<T>>.maximumFlow(source: T, sink: T): A
         addEdge(reverseEdge)
     }
 
-    var flow = 0
+    var maxFlow = 0
     while (true) {
-        val pathEdges = HashMap<T, FlowEdge<T>>()
-        val queue = LinkedList<T>()
-        queue.add(source)
-        while (queue.isNotEmpty()) {
-            val vertex = queue.removeFirst()
-            edgesByVertex[vertex]?.forEach { edge ->
-                if (pathEdges[edge.to] == null && edge.to != source && edge.capacity > edge.flow) {
-                    pathEdges[edge.to] = edge
-                    queue.add(edge.to)
-                }
-            }
-        }
-        if (pathEdges[sink] == null) {
-            println("break")
-            edges.forEach { println(it) }
-            break
-        }
-        val path = pathEdges.toReversePathFrom(sink)
+        val path = if (isBfs) findPathBFS(source, sink) else findPathDFS(source, sink)
+        if (path.isEmpty()) break
 
-        var minFlow = Int.MAX_VALUE
-        path.forEach {
-            minFlow = minOf(minFlow, it.capacity - it.flow)
+        val flow = path.map { it.capacity - it.flow }.min()!!
+        path.forEach { edge ->
+            edge.flow += flow
+            // TODO Not sure how reverse flow is supposed to actually work here. Seems to be unnecessary for the above examples.
+            edge.reverse!!.flow -= flow
         }
-        path.forEach {
-            it.flow += minFlow
-            it.reverse!!.flow -= minFlow
-        }
-        flow += minFlow
+        maxFlow += flow
 
         println("path = $path")
     }
-    return flow
+    return maxFlow
+}
+
+private fun <T> DirectedGraph<T, FlowEdge<T>>.findPathDFS(source: T, sink: T): List<FlowEdge<T>> {
+    val pathEdges = HashMap<T, FlowEdge<T>>()
+    val queue = LinkedList<T>()
+    queue.add(source)
+    while (queue.isNotEmpty()) {
+        val vertex = queue.removeFirst()
+        val edge = edgesByVertex[vertex]?.find { edge ->
+            pathEdges[edge.to] == null && edge.to != source && edge.capacity > edge.flow
+        }
+        if (edge != null) {
+            pathEdges[edge.to] = edge
+            queue.add(edge.to)
+        }
+    }
+    return pathEdges.toReversePathFrom(sink)
+}
+
+private fun <T> DirectedGraph<T, FlowEdge<T>>.findPathBFS(source: T, sink: T): List<FlowEdge<T>> {
+    val pathEdges = HashMap<T, FlowEdge<T>>()
+    val queue = LinkedList<T>()
+    queue.add(source)
+    while (queue.isNotEmpty()) {
+        val vertex = queue.removeFirst()
+        edgesByVertex[vertex]?.forEach { edge ->
+            if (pathEdges[edge.to] == null && edge.to != source && edge.capacity > edge.flow) {
+                pathEdges[edge.to] = edge
+                queue.add(edge.to)
+            }
+        }
+    }
+    return pathEdges.toReversePathFrom(sink)
 }
 
 private fun <T> Map<T, FlowEdge<T>>.toReversePathFrom(vertex: T): List<FlowEdge<T>> {
@@ -132,7 +147,7 @@ fun readFlowGraph(s: String): DirectedGraph<String, FlowEdge<String>> {
 
 class FlowGraphTests {
     @Test fun `create flow graph from string`() {
-        FlowGraphs.diamondGraph().toString() shouldEqual
+        FlowGraphs.diamondGraph.toString() shouldEqual
             "s-v|3/0," +
             "s-w|2/0," +
             "v-w|5/0," +
@@ -143,10 +158,12 @@ class FlowGraphTests {
 
 object FlowGraphs {
     // From https://cs.stackexchange.com/questions/55041/residual-graph-in-maximum-flow
-    fun diamondGraph() = readFlowGraph("s-v|3,s-w|2,v-w|5,v-t|2,w-t|3")
+    val diamondGraph: DirectedGraph<String, FlowEdge<String>>
+        get() = readFlowGraph("s-v|3,s-w|2,v-w|5,v-t|2,w-t|3")
 
     // From https://en.wikipedia.org/wiki/Ford%E2%80%93Fulkerson_algorithm#Integral_example
-    fun diamondGraph2() = readFlowGraph("a-b|10,a-c|10,b-c|1,b-d|10,c-d|10")
+    val diamondGraph2: DirectedGraph<String, FlowEdge<String>>
+        get() = readFlowGraph("a-b|10,a-c|10,b-c|1,b-d|10,c-d|10")
 }
 
 data class DirectedEdge<T>(override val from: T, override val to: T): EdgeType<T> {
