@@ -20,13 +20,8 @@ class SubsetsTests {
         override fun isComplete() = true
     }
 
-    data class SubsetsResult(override val value: List<List<Int>> = emptyList()): Result<List<Int>> {
-        override operator fun plus(solution: Solution<List<Int>>) = copy(value = value + listOf(solution.value))
-        override operator fun plus(that: Result<List<Int>>) = SubsetsResult(value + that.value)
-    }
-
     private fun subsets2(list: List<Int>): List<List<Int>> =
-        backtrack(Subset(list), SubsetsResult()).value
+        backtrack(Subset(list))
 
     fun subsets(set: Set<Int>): Set<Set<Int>> {
         return setOf(set) + set.flatMap { subsets(set - it) }
@@ -60,13 +55,8 @@ class AllPathsTests {
         private fun findNextEdge() = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
     }
 
-    data class Paths(override val value: List<List<Int>> = emptyList()): Result<List<Int>> {
-        override fun plus(solution: Solution<List<Int>>) = copy(value = value + listOf(solution.value))
-        override fun plus(that: Result<List<Int>>) = copy(value = value + that.value)
-    }
-
     private fun Graph<Int>.findAllPaths(from: Int, to: Int): List<List<Int>> {
-        return backtrack(Path(this, from, to), Paths()).value
+        return backtrack(Path(this, from, to))
     }
 }
 
@@ -108,13 +98,8 @@ class EightQueenTests {
         }
     }
 
-    private data class EightQueenResult(override val value: List<List<Queen>> = emptyList()): Result<List<Queen>> {
-        override operator fun plus(solution: Solution<List<Queen>>): Result<List<Queen>> = copy(value = value + listOf(solution.value))
-        override operator fun plus(that: Result<List<Queen>>): Result<List<Queen>> = copy(value = value + that.value)
-    }
-
     private fun eightQueen(boardSize: Int): List<List<Queen>> {
-        return backtrack(EightQueenSolution(boardSize), EightQueenResult()).value
+        return backtrack(EightQueenSolution(boardSize))
     }
 }
 
@@ -126,18 +111,9 @@ interface Solution<T> {
     fun skipNext(): Solution<T>
 }
 
-interface Result<T> {
-    val value: List<T>
-    operator fun plus(solution: Solution<T>): Result<T>
-    operator fun plus(that: Result<T>): Result<T>
-}
-
-fun <T> backtrack(solution: Solution<T>, emptyResult: Result<T>): Result<T> {
-    return if (solution.hasNext()) {
-        backtrack(solution.skipNext(), emptyResult) +
-            backtrack(solution.next(), emptyResult)
-    } else {
-        if (solution.isComplete()) emptyResult + solution
-        else emptyResult
+fun <T> backtrack(solution: Solution<T>): List<T> =
+    when {
+        solution.hasNext()    -> backtrack(solution.skipNext()) + backtrack(solution.next())
+        solution.isComplete() -> listOf(solution.value)
+        else                  -> emptyList()
     }
-}
