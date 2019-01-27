@@ -60,13 +60,61 @@ class AllPathsTests {
         private fun findNextEdge() = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
     }
 
-    data class Paths(override val value: List<List<Int>> = emptyList()) : Result<List<Int>> {
+    data class Paths(override val value: List<List<Int>> = emptyList()): Result<List<Int>> {
         override fun plus(solution: Solution<List<Int>>) = copy(value = value + listOf(solution.value))
         override fun plus(that: Result<List<Int>>) = copy(value = value + that.value)
     }
 
     private fun Graph<Int>.findAllPaths(from: Int, to: Int): List<List<Int>> {
         return backtrack(Path(this, from, to), Paths()).value
+    }
+}
+
+class EightQueenTests {
+    @Test fun `find queens positions`() {
+        eightQueen(boardSize = 4) shouldEqual listOf(
+            listOf(Queen(2, 0), Queen(0, 1), Queen(3, 2), Queen(1, 3)),
+            listOf(Queen(1, 0), Queen(3, 1), Queen(0, 2), Queen(2, 3))
+        )
+        eightQueen(boardSize = 8).size shouldEqual 92
+    }
+
+    private data class Queen(val row: Int, val column: Int) {
+        override fun toString() = "[$row,$column]"
+    }
+
+    private data class EightQueenSolution(
+        val boardSize: Int,
+        override val value: List<Queen> = emptyList(),
+        val row: Int = 0,
+        val column: Int = 0
+    ): Solution<List<Queen>> {
+        override fun isComplete() = value.size == boardSize && isValid()
+        override fun hasNext() = !isComplete() && isValid() && column < boardSize
+        override fun next() = copy(value = (value + Queen(row, column)), row = 0, column = column + 1)
+        override fun skipNext() =
+            if (row + 1 < boardSize) copy(row = row + 1)
+            else copy(row = 0, column = column + 1)
+
+        private fun isValid(): Boolean {
+            if (value.isEmpty()) return true
+            val queen = value.last()
+            val queens = value.subList(0, value.lastIndex)
+            val notOnTheSameLine = queens.none { it.row == queen.row || it.column == queen.column }
+            val notOnTheSameDiagonal = queens.none {
+                Math.abs(it.row - queen.row) == Math.abs(it.column - queen.column)
+            }
+            return notOnTheSameLine && notOnTheSameDiagonal
+        }
+    }
+
+    private data class EightQueenResult(override val value: List<List<Queen>> = emptyList()): Result<List<Queen>> {
+        override operator fun plus(solution: Solution<List<Queen>>): Result<List<Queen>> = copy(value = value + listOf(solution.value))
+        override operator fun plus(that: Result<List<Queen>>): Result<List<Queen>> = copy(value = value + that.value)
+    }
+
+    private fun eightQueen(boardSize: Int): List<List<Queen>> {
+        return backtrack(EightQueenSolution(boardSize), EightQueenResult()).value
     }
 }
 
@@ -87,7 +135,7 @@ interface Result<T> {
 fun <T> backtrack(solution: Solution<T>, emptyResult: Result<T>): Result<T> {
     return if (solution.hasNext()) {
         backtrack(solution.skipNext(), emptyResult) +
-        backtrack(solution.next(), emptyResult)
+            backtrack(solution.next(), emptyResult)
     } else {
         if (solution.isComplete()) emptyResult + solution
         else emptyResult
