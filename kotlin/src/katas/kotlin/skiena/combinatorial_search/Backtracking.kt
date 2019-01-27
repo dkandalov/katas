@@ -4,6 +4,7 @@ import katas.kotlin.skiena.graphs.Edge
 import katas.kotlin.skiena.graphs.Graph
 import katas.kotlin.skiena.graphs.UnweightedGraphs
 import kotlincommon.doesNotContain
+import kotlincommon.join
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -66,7 +67,14 @@ class EightQueenTests {
             listOf(Queen(2, 0), Queen(0, 1), Queen(3, 2), Queen(1, 3)),
             listOf(Queen(1, 0), Queen(3, 1), Queen(0, 2), Queen(2, 3))
         )
-        eightQueen(boardSize = 8).size shouldEqual 92
+        eightQueen(boardSize = 8).let {
+            it.take(5).forEach { solution ->
+                println(solution)
+                println(solution.toBoardString(8))
+                println()
+            }
+            it.size shouldEqual 92
+        }
     }
 
     private data class Queen(val row: Int, val column: Int) {
@@ -77,21 +85,22 @@ class EightQueenTests {
         val boardSize: Int,
         override val value: List<Queen> = emptyList(),
         val row: Int = 0,
-        val column: Int = 0
+        val column: Int = 0,
+        val valid: Boolean = true
     ): Solution<List<Queen>> {
-        override fun isComplete() = value.size == boardSize && isValid()
-        override fun hasNext() = !isComplete() && isValid() && column < boardSize
-        override fun next() = copy(value = (value + Queen(row, column)), row = 0, column = column + 1)
+        override fun isComplete() = value.size == boardSize && valid
+        override fun hasNext() = !isComplete() && column < boardSize && valid
+        override fun next() = Queen(row, column).let { queen ->
+            copy(value = value + queen, row = 0, column = column + 1, valid = isValid(queen))
+        }
+
         override fun skipNext() =
             if (row + 1 < boardSize) copy(row = row + 1)
             else copy(row = 0, column = column + 1)
 
-        private fun isValid(): Boolean {
-            if (value.isEmpty()) return true
-            val queen = value.last()
-            val queens = value.subList(0, value.lastIndex)
-            val notOnTheSameLine = queens.none { it.row == queen.row || it.column == queen.column }
-            val notOnTheSameDiagonal = queens.none {
+        private fun isValid(queen: Queen): Boolean {
+            val notOnTheSameLine = value.none { it.row == queen.row || it.column == queen.column }
+            val notOnTheSameDiagonal = value.none {
                 Math.abs(it.row - queen.row) == Math.abs(it.column - queen.column)
             }
             return notOnTheSameLine && notOnTheSameDiagonal
@@ -101,6 +110,13 @@ class EightQueenTests {
     private fun eightQueen(boardSize: Int): List<List<Queen>> {
         return backtrack(EightQueenSolution(boardSize))
     }
+
+    private fun List<Queen>.toBoardString(boardSize: Int) =
+        0.until(boardSize).join("\n") { row ->
+            0.until(boardSize).join("") { column ->
+                if (this@toBoardString.contains(Queen(row, column))) "*" else "-"
+            }
+        }
 }
 
 interface Solution<T> {
