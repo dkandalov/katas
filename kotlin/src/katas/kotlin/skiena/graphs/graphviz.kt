@@ -25,8 +25,8 @@ fun <T> Graph<T>.savedAsPng(graphName: String = "graph", height: Int = 500): Gra
 
     bfsEdges(vertices.first())
         .forEach { (from, to) ->
-            val fromNode = graphVizNodeById[from.toString()]!!
-            val toNode = graphVizNodeById[to.toString()]!!
+            val fromNode = graphVizNodeById.getValue(from.toString())
+            val toNode = graphVizNodeById.getValue(to.toString())
             fromNode.addLink(Link.to(toNode))
         }
 

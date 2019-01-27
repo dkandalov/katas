@@ -123,7 +123,7 @@ private fun <T> Graph<T>.dijkstraShortestPaths(): Graph<T> {
         val minEdge = tree.vertices
             .flatMap { vertex -> edgesByVertex[vertex]!! }
             .filter { edge -> tree.vertices.doesNotContain(edge.to) }
-            .onEach { distance[it.to] = distance[it.from]!! + it.weight!! }
+            .onEach { distance[it.to] = distance[it.from]!! + it.weight!! } // TODO is it possible that this update goes wrong?
             .minBy { distance[it.to]!! }!!
 
         tree.addEdge(minEdge)

@@ -27,9 +27,12 @@ data class Graph<T>(val edgesByVertex: MutableMap<T, LinkedHashSet<Edge<T>>> = H
     val vertices: Set<T> get() = edgesByVertex.keys
     val edges: List<Edge<T>> get() = edgesByVertex.values.flatten()
 
-    fun addEdge(edge: Edge<T>) {
+    fun addEdge(fromVertex: T, toVertex: T): Graph<T> = addEdge(Edge(fromVertex, toVertex))
+
+    fun addEdge(edge: Edge<T>): Graph<T> {
         edgesByVertex.getOrPut(edge.from, { LinkedHashSet() }).add(edge)
         edgesByVertex.getOrPut(edge.to, { LinkedHashSet() }).add(Edge(edge.to, edge.from, edge.weight))
+        return this
     }
 
     fun addVertex(vertex: T) {
