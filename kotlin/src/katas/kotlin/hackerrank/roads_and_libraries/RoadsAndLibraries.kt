@@ -2,6 +2,7 @@ package katas.kotlin.hackerrank.roads_and_libraries
 
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.io.BufferedReader
@@ -22,17 +23,16 @@ class RoadsAndLibrariesTests {
 
     private fun main(readLine: () -> String, writeLine: (Any?) -> Unit = { println(it) }) {
         val q = readLine().toInt()
-
-        for (qItr in 1..q) {
+        (1..1).forEach {
             val split = readLine().split(' ')
-            val n = split[0].toInt()
-            val m = split[1].toInt()
+            val citiesCount = split[0].toInt().printed("citiesCount ")
+            val cityLinksCount = split[1].toInt().printed("cityLinksCount ")
             val libraryCost = split[2].toInt()
             val roadCost = split[3].toInt()
-            val cities = (0 until m).mapTo(ArrayList(m)) {
+            val cities = (0 until cityLinksCount).mapTo(ArrayList(cityLinksCount)) {
                 readLine().split(' ').map { it.toInt() }
             }
-            writeLine(roadsAndLibraries(n, libraryCost, roadCost, cities))
+            writeLine(roadsAndLibraries(citiesCount, libraryCost, roadCost, cities))
         }
     }
 
@@ -45,12 +45,31 @@ class RoadsAndLibrariesTests {
 
     private fun findMinCost(graph: Graph<Int>, libraryCost: Int, roadCost: Int): Long {
         val components = graph.components()
+        components.size.printed("componentsSize ")
         return components.sumByLong { component ->
             val minSpanningTreeEdgesSize = component.vertices.size - 1
             val allRoadsCost = minSpanningTreeEdgesSize * roadCost + libraryCost.toLong()
             val allLibsCost = component.vertices.size * libraryCost.toLong()
             minOf(allLibsCost, allRoadsCost)
         }
+    }
+
+    private fun <T> Graph<T>.minSpanningTree(): List<Edge<T>> {
+        val result = ArrayList<Edge<T>>()
+
+        val queuedVertices = HashSet<T>().apply { add(vertices.first()) }
+        val queue = LinkedList<T>().apply { add(vertices.first()) }
+
+        while (queue.isNotEmpty()) {
+            val vertex = queue.removeFirst()
+            edgesByVertex[vertex]?.forEach { edge ->
+                if (queuedVertices.add(edge.to)) {
+                    result.add(edge)
+                    queue.add(edge.to)
+                }
+            }
+        }
+        return result
     }
 
     private data class Edge<T>(var from: T, var to: T, var weight: Int? = null) {
@@ -170,6 +189,26 @@ class RoadsAndLibrariesTests {
             1226092626
             7288635830
             8276704464
+        """.trimIndent()
+    }
+
+    @Test fun `test case 4`() {
+        val readLine = File("src/katas/kotlin/hackerrank/roads_and_libraries/test-case4.txt").inputStream().toReadLineFunction()
+        val outputRecorder = OutputRecorder()
+
+        main(readLine, outputRecorder)
+
+        outputRecorder.text.trim() shouldEqual """
+            9234981465
+            5854508506
+            7754252297
+            8085193494
+            9504556779
+            8011172848
+            9123393445
+            7326423794
+            8259748808
+            8049633228
         """.trimIndent()
     }
 }
