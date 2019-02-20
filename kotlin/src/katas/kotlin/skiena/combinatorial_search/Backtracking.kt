@@ -1,5 +1,8 @@
 package katas.kotlin.skiena.combinatorial_search
 
+import katas.kotlin.skiena.combinatorial_search.SudokuTests.Sudoku.Companion.columnIndicesAt
+import katas.kotlin.skiena.combinatorial_search.SudokuTests.Sudoku.Companion.rowIndicesAt
+import katas.kotlin.skiena.combinatorial_search.SudokuTests.Sudoku.Companion.squareIndicesAt
 import katas.kotlin.skiena.graphs.Edge
 import katas.kotlin.skiena.graphs.Graph
 import katas.kotlin.skiena.graphs.UnweightedGraphs
@@ -20,7 +23,7 @@ class SubsetsTests {
         val list: List<Int>,
         override val value: List<Int> = emptyList(),
         val count: Int = 0
-    ): Solution<List<Int>> {
+    ) : Solution<List<Int>> {
         override fun hasNext() = count < list.size
         override fun skipNext() = copy(count = count + 1)
         override fun next() = copy(value = value + list[count], count = count + 1)
@@ -54,7 +57,7 @@ class AllPathsTests {
         private val to: Int,
         override val value: List<Int> = listOf(from),
         private val skipped: Set<Edge<Int>> = emptySet()
-    ): Solution<List<Int>> {
+    ) : Solution<List<Int>> {
         private val nextEdge = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
 
         override fun hasNext(): Boolean = nextEdge != null && !isComplete()
@@ -95,7 +98,7 @@ class EightQueenTests {
         val row: Int = 0,
         val column: Int = 0,
         val valid: Boolean = true
-    ): Solution<List<Queen>> {
+    ) : Solution<List<Queen>> {
         override fun hasNext() = !isComplete() && column < boardSize && valid
 
         override fun skipNext() =
@@ -150,42 +153,34 @@ class SudokuTests {
         // TODO
     }
 
-    @Test fun `view on sudoku board rows`() {
-        0.until(9).forEach {
-            sudokuBoard.rowAt(index = it) shouldEqual listOf(6, 0, 0, 0, 0, 0, 2, 0, 3)
-        }
-        9.until(18).forEach {
-            sudokuBoard.rowAt(index = it) shouldEqual listOf(0, 0, 0, 4, 0, 3, 8, 0, 0)
-        }
-        72.until(81).forEach {
-            sudokuBoard.rowAt(index = it) shouldEqual listOf(8, 0, 4, 0, 0, 0, 0, 0, 2)
-        }
+    @Test fun `indices of sudoku rows`() {
+        0.until(9).forEach { rowIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 3, 4, 5, 6, 7, 8) }
+        9.until(18).forEach { rowIndicesAt(index = it) shouldEqual listOf(9, 10, 11, 12, 13, 14, 15, 16, 17) }
+        72.until(81).forEach { rowIndicesAt(index = it) shouldEqual listOf(72, 73, 74, 75, 76, 77, 78, 79, 80) }
     }
 
-    @Test fun `view on sudoku board columns`() {
-        0.until(9).map { it * 9 }.forEach {
-            sudokuBoard.columnAt(index = it) shouldEqual listOf(6, 0, 0, 0, 4, 0, 1, 0, 8)
-        }
-        0.until(9).map { it * 9 + 1 }.forEach {
-            sudokuBoard.columnAt(index = it) shouldEqual listOf(0, 0, 3, 0, 9, 0, 0, 0, 0)
-        }
-        0.until(9).map { it * 9 + 8 }.forEach {
-            sudokuBoard.columnAt(index = it) shouldEqual listOf(3, 0, 9, 0, 5, 0, 0, 0, 2)
-        }
+    @Test fun `indices of sudoku columns`() {
+        0.until(9).map { it * 9 }.forEach { columnIndicesAt(index = it) shouldEqual listOf(0, 9, 18, 27, 36, 45, 54, 63, 72) }
+        0.until(9).map { it * 9 + 1 }.forEach { columnIndicesAt(index = it) shouldEqual listOf(1, 10, 19, 28, 37, 46, 55, 64, 73) }
+        0.until(9).map { it * 9 + 8 }.forEach { columnIndicesAt(index = it) shouldEqual listOf(8, 17, 26, 35, 44, 53, 62, 71, 80) }
     }
 
-    @Test fun `view on sudoku board squares`() {
-        listOf(0, 1, 2).forEach {
-            sudokuBoard.squareAt(index = it) shouldEqual listOf(6, 0, 0, 0, 0, 0, 0, 3, 0)
-        }
+    @Test fun `indices of sudoku squares`() {
+        listOf(0, 1, 2).forEach { squareIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 9, 10, 11, 18, 19, 20) }
+        listOf(9, 10, 11).forEach { squareIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 9, 10, 11, 18, 19, 20) }
+        listOf(18, 19, 20).forEach { squareIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 9, 10, 11, 18, 19, 20) }
+
+        listOf(3, 4, 5).forEach { squareIndicesAt(index = it) shouldEqual listOf(3, 4, 5, 12, 13, 14, 21, 22, 23) }
+        listOf(6, 7, 8).forEach { squareIndicesAt(index = it) shouldEqual listOf(6, 7, 8, 15, 16, 17, 24, 25, 26) }
+        listOf(78, 79, 80).forEach { squareIndicesAt(index = it) shouldEqual listOf(60, 61, 62, 69, 70, 71, 78, 79, 80) }
     }
 
     private data class Sudoku(
         override val value: List<Int>,
         val guess: Int = 0,
         val index: Int = value.indexOf(0)
-    ): Solution<List<Int>> {
-        override fun isComplete() = value.doesNotContain(0) && isValid()
+    ) : Solution<List<Int>> {
+
         override fun hasNext() = !(index == value.lastIndex && guess == 9) && isValid()
 
         override fun next(): Solution<List<Int>> {
@@ -199,37 +194,13 @@ class SudokuTests {
             return copy(guess = newGuess, index = newIndex)
         }
 
+        override fun isComplete() = value.doesNotContain(0) && isValid()
+
         private fun isValid(): Boolean {
             if (value.isEmpty()) return true
-            return rowAt(index).count { it == value[index] } <= 1 &&
-                columnAt(index).count { it == value[index] } <= 1 &&
-                squareAt(index).count { it == value[index] } <= 1
-        }
-
-        fun rowAt(index: Int): List<Int> {
-            val result = ArrayList<Int>()
-            val from = index.div(9) * 9
-            from.until(from + 9).forEach { result.add(value[it]) }
-            return result
-        }
-
-        fun columnAt(index: Int): List<Int> {
-            val result = ArrayList<Int>()
-            val column = index.rem(9)
-            0.until(9).map { it * 9 + column }.forEach { result.add(value[it]) }
-            return result
-        }
-
-        fun squareAt(index: Int): List<Int> {
-            val result = ArrayList<Int>()
-            val column = index.rem(3)
-            val rowIndex = index.div(3) * 3
-            rowIndex.until(rowIndex + 3).forEach { rowShift ->
-                0.until(3).forEach {
-                    result.add(value[rowShift])
-                }
-            }
-            return result
+            return rowIndicesAt(index).count { it == value[index] } <= 1 &&
+                columnIndicesAt(index).count { it == value[index] } <= 1 &&
+                squareIndicesAt(index).count { it == value[index] } <= 1
         }
 
         companion object {
@@ -238,6 +209,32 @@ class SudokuTests {
                     if (c == '.') 0 else c.toString().toInt()
                 }
                 return Sudoku(cells)
+            }
+
+            fun rowIndicesAt(index: Int): List<Int> {
+                val result = ArrayList<Int>()
+                val firstColumnInRow = index / 9 * 9
+                firstColumnInRow.until(firstColumnInRow + 9).forEach { result.add(it) }
+                return result
+            }
+
+            fun columnIndicesAt(index: Int): List<Int> {
+                val result = ArrayList<Int>()
+                val column = index.rem(9)
+                0.until(9).map { it * 9 + column }.forEach { result.add(it) }
+                return result
+            }
+
+            fun squareIndicesAt(index: Int): List<Int> {
+                val result = ArrayList<Int>()
+                val firstColumnInSquare = (index / 3 * 3).rem(9)
+                val firstColumnInRow = index / (9 * 3) * (9 * 3)
+                0.until(3).map { firstColumnInRow + it * 9 }.forEach { startOfRow ->
+                    0.until(3).map { firstColumnInSquare + it }.forEach { colShift ->
+                        result.add(startOfRow + colShift)
+                    }
+                }
+                return result
             }
         }
     }
