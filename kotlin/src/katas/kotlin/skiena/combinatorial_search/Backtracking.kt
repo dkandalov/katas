@@ -55,11 +55,12 @@ class AllPathsTests {
         override val value: List<Int> = listOf(from),
         private val skipped: Set<Edge<Int>> = emptySet()
     ): Solution<List<Int>> {
+        private val nextEdge = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
+
+        override fun hasNext(): Boolean = nextEdge != null && !isComplete()
+        override fun skipNext() = copy(skipped = skipped + nextEdge!!)
+        override fun next() = copy(value = value + nextEdge!!.to)
         override fun isComplete() = value.last() == to
-        override fun hasNext() = !isComplete() && findNextEdge() != null
-        override fun next() = copy(value = value + findNextEdge()!!.to)
-        override fun skipNext() = copy(skipped = skipped + findNextEdge()!!)
-        private fun findNextEdge() = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
     }
 
     private fun Graph<Int>.findAllPaths(from: Int, to: Int): List<List<Int>> {
@@ -95,15 +96,17 @@ class EightQueenTests {
         val column: Int = 0,
         val valid: Boolean = true
     ): Solution<List<Queen>> {
-        override fun isComplete() = value.size == boardSize && valid
         override fun hasNext() = !isComplete() && column < boardSize && valid
-        override fun next() = Queen(row, column).let { queen ->
-            copy(value = value + queen, row = 0, column = column + 1, valid = isValid(queen))
-        }
 
         override fun skipNext() =
             if (row + 1 < boardSize) copy(row = row + 1)
             else copy(row = 0, column = column + 1)
+
+        override fun next() = Queen(row, column).let { queen ->
+            copy(value = value + queen, row = 0, column = column + 1, valid = isValid(queen))
+        }
+
+        override fun isComplete() = value.size == boardSize && valid
 
         private fun isValid(queen: Queen): Boolean {
             val notOnTheSameLine = value.none { it.row == queen.row || it.column == queen.column }
@@ -243,10 +246,10 @@ class SudokuTests {
 
 interface Solution<T> {
     val value: T
-    fun isComplete(): Boolean
     fun hasNext(): Boolean
-    fun next(): Solution<T>
     fun skipNext(): Solution<T>
+    fun next(): Solution<T>
+    fun isComplete(): Boolean
 }
 
 fun <T> backtrack(solution: Solution<T>): List<T> =
