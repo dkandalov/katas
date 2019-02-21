@@ -31,7 +31,7 @@ class SubsetsTests {
     }
 
     private fun subsets2(list: List<Int>): List<List<Int>> =
-        backtrack(Subset(list))
+        backtrack(Subset(list)).map { it.value }
 
     fun subsets(set: Set<Int>): Set<Set<Int>> {
         return setOf(set) + set.flatMap { subsets(set - it) }
@@ -60,14 +60,14 @@ class AllPathsTests {
     ) : Solution<List<Int>> {
         private val nextEdge = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
 
-        override fun hasNext(): Boolean = nextEdge != null && !isComplete()
+        override fun hasNext() = nextEdge != null && !isComplete()
         override fun skipNext() = copy(skipped = skipped + nextEdge!!)
         override fun next() = copy(value = value + nextEdge!!.to)
         override fun isComplete() = value.last() == to
     }
 
     private fun Graph<Int>.findAllPaths(from: Int, to: Int): List<List<Int>> {
-        return backtrack(Path(this, from, to))
+        return backtrack(Path(this, from, to)).map { it.value }
     }
 }
 
@@ -121,7 +121,7 @@ class EightQueenTests {
     }
 
     private fun eightQueen(boardSize: Int): List<List<Queen>> {
-        return backtrack(EightQueenSolution(boardSize))
+        return backtrack(EightQueenSolution(boardSize)).map { it.value }
     }
 
     private fun List<Queen>.toBoardString(boardSize: Int) =
@@ -289,9 +289,9 @@ interface Solution<T> {
     fun isComplete(): Boolean
 }
 
-fun <T> backtrack(solution: Solution<T>): List<T> =
+fun <T> backtrack(solution: Solution<T>): List<Solution<T>> =
     when {
         solution.hasNext()    -> backtrack(solution.skipNext()) + backtrack(solution.next())
-        solution.isComplete() -> listOf(solution.value)
+        solution.isComplete() -> listOf(solution)
         else                  -> emptyList()
     }
