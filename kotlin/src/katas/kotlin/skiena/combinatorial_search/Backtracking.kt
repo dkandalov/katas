@@ -134,7 +134,7 @@ class EightQueenTests {
 
 
 class SudokuTests {
-    private val sudokuBoard = Sudoku.parse("""
+    private val sudokuBoardString = """
             |6..|...|2.3
             |...|4.3|8..
             |.3.|7..|..9
@@ -146,11 +146,37 @@ class SudokuTests {
             |1..|..5|.8.
             |..9|6..|...
             |8.4|...|..2
-        """.trimMargin())
+        """.trimMargin()
+    private val sudoku = Sudoku.parse(sudokuBoardString)
 
     @Test fun `find sudoku solutions`() {
-        backtrack(sudokuBoard).forEach { it.printed() }
+        sudoku.hasNext() shouldEqual true
+
+        sudoku.next().let {
+            it.toString().lines().first() shouldEqual "62.|...|2.3"
+            it.hasNext() shouldEqual false
+        }
+        sudoku.skipNext().let {
+            it.toString().lines().first() shouldEqual "6..|...|2.3"
+            it.hasNext() shouldEqual true
+        }
+
+        sudoku.skipNext().next().let {
+            it.toString().lines().first() shouldEqual "63.|...|2.3"
+            it.hasNext() shouldEqual false
+        }
+        sudoku.skipNext().skipNext().next().let {
+            it.toString().lines().first() shouldEqual "64.|...|2.3"
+            it.hasNext() shouldEqual true
+        }
+        backtrack(sudoku).forEach {
+            it.printed()
+        }
         // TODO
+    }
+
+    @Test fun `sudoku conversion to string`() {
+        sudoku.toString() shouldEqual sudokuBoardString
     }
 
     @Test fun `indices of sudoku rows`() {
@@ -177,30 +203,43 @@ class SudokuTests {
 
     private data class Sudoku(
         override val value: List<Int>,
-        val guess: Int = 0,
-        val index: Int = value.indexOf(0)
+        val guessIndex: Int = value.indexOf(0),
+        val guess: Int = 1
     ) : Solution<List<Int>> {
 
-        override fun hasNext() = !(index == value.lastIndex && guess == 9) && isValid()
-
-        override fun next(): Solution<List<Int>> {
-            val (newIndex, newGuess) = if (guess == 9) Pair(value.indexOf(0), 1) else Pair(index, guess + 1)
-            val newValue = ArrayList(value).apply { set(newIndex, newGuess) }
-            return copy(value = newValue, guess = newGuess, index = newIndex)
+        override fun hasNext(): Boolean {
+            return guessIndex < value.size && isValidGuess()
         }
 
         override fun skipNext(): Solution<List<Int>> {
-            val (newIndex, newGuess) = if (guess == 9) Pair(value.indexOf(0), 1) else Pair(index, guess + 1)
-            return copy(guess = newGuess, index = newIndex)
+            val (nextIndex, nextGuess) =
+                if (guess == 9) Pair(value.size, 1)
+                else Pair(guessIndex, guess + 1)
+            return copy(guessIndex = nextIndex, guess = nextGuess)
         }
 
-        override fun isComplete() = value.doesNotContain(0) && isValid()
+        override fun next(): Solution<List<Int>> {
+            val (nextIndex, nextGuess) =
+                if (guess == 9) Pair(value.indices.find { it > guessIndex && value[it] == 0 }!!, 1)
+                else Pair(guessIndex, guess + 1)
+            val newValue = ArrayList(value).apply<ArrayList<Int>> { set(nextIndex, nextGuess) }
+            return copy(value = newValue, guessIndex = nextIndex, guess = nextGuess)
+        }
 
-        private fun isValid(): Boolean {
-            if (value.isEmpty()) return true
-            return rowIndicesAt(index).count { it == value[index] } <= 1 &&
-                columnIndicesAt(index).count { it == value[index] } <= 1 &&
-                squareIndicesAt(index).count { it == value[index] } <= 1
+        override fun isComplete() = value.doesNotContain(0)
+
+        private fun isValidGuess(): Boolean =
+            rowIndicesAt(guessIndex).count { value[it] == guess } <= 1 &&
+                columnIndicesAt(guessIndex).count { value[it] == guess } <= 1 &&
+                squareIndicesAt(guessIndex).count { value[it] == guess } <= 1
+
+        override fun toString(): String {
+            return value.windowed(size = 9, step = 9).mapIndexed { i, row ->
+                val separator = if (i == 3 || i == 6) "---+---+---\n" else ""
+                separator + row.windowed(size = 3, step = 3).joinToString("|") {
+                    it.joinToString("").replace('0', '.')
+                }
+            }.joinToString("\n")
         }
 
         companion object {
@@ -208,7 +247,8 @@ class SudokuTests {
                 val cells = s.replace(Regex("[|\\-+\n]"), "").mapTo(ArrayList()) { c ->
                     if (c == '.') 0 else c.toString().toInt()
                 }
-                return Sudoku(cells)
+                val guessIndex = cells.indexOf(0)
+                return Sudoku(cells, guessIndex, guess = 1)
             }
 
             fun rowIndicesAt(index: Int): List<Int> {
