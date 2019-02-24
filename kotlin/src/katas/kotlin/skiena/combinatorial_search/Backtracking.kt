@@ -73,19 +73,59 @@ class AllPathsTests {
 
 
 class EightQueenTests {
-    @Test fun `find queens positions`() {
-        eightQueen(boardSize = 4) shouldEqual listOf(
-            listOf(Queen(2, 0), Queen(0, 1), Queen(3, 2), Queen(1, 3)),
-            listOf(Queen(1, 0), Queen(3, 1), Queen(0, 2), Queen(2, 3))
-        )
-        eightQueen(boardSize = 8).let {
-            it.take(5).forEach { solution ->
-                println(solution)
-                println(solution.toBoardString(8))
-                println()
-            }
-            it.size shouldEqual 92
-        }
+    @Test fun `find queens positions on 4x4 board`() {
+        eightQueen(boardSize = 4).map { it.toBoardString(4) } shouldEqual listOf(
+            """|-*--
+               |---*
+               |*---
+               |--*-
+            """,
+            """|--*-
+               |*---
+               |---*
+               |-*--
+            """
+        ).map { it.trimMargin() }
+    }
+
+    @Test fun `find queens positions on 8x8 board`() {
+        val solutions = eightQueen(boardSize = 8)
+        val (solution1, solution2, solution3) = solutions.take(3).map { it.toBoardString(8) }
+
+        solution1 shouldEqual """
+                |--*-----
+                |-----*--
+                |---*----
+                |-*------
+                |-------*
+                |----*---
+                |------*-
+                |*-------
+            """.trimMargin()
+
+        solution2 shouldEqual """
+                |--*-----
+                |----*---
+                |-*------
+                |-------*
+                |-----*--
+                |---*----
+                |------*-
+                |*-------
+            """.trimMargin()
+
+        solution3 shouldEqual """
+                |----*---
+                |-*------
+                |---*----
+                |------*-
+                |--*-----
+                |-------*
+                |-----*--
+                |*-------
+            """.trimMargin()
+
+        solutions.size shouldEqual 92
     }
 
     private data class Queen(val row: Int, val column: Int) {
