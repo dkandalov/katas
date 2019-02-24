@@ -20,14 +20,14 @@ class SubsetsTests {
     }
 
     data class Subset(
-        val list: List<Int>,
+        private val list: List<Int>,
         override val value: List<Int> = emptyList(),
-        val count: Int = 0
+        private val index: Int = 0
     ) : Solution<List<Int>> {
-        override fun hasNext() = count < list.size
-        override fun skipNext() = copy(count = count + 1)
-        override fun next() = copy(value = value + list[count], count = count + 1)
-        override fun isComplete() = true
+        override fun hasNext() = index < list.size
+        override fun skipNext() = copy(index = index + 1)
+        override fun next() = copy(value = value + list[index], index = index + 1)
+        override fun isComplete() = !hasNext()
     }
 
     private fun subsets2(list: List<Int>): List<List<Int>> =
@@ -143,7 +143,7 @@ class EightQueenTests {
 
         override fun skipNext() =
             if (row + 1 < boardSize) copy(row = row + 1)
-            else copy(row = 0, column = column + 1)
+            else copy(row = 0, column = column + 1, valid = false)
 
         override fun next() = Queen(row, column).let { queen ->
             copy(value = value + queen, row = 0, column = column + 1, valid = isValid(queen))
@@ -329,9 +329,7 @@ interface Solution<T> {
     fun isComplete(): Boolean
 }
 
-fun <T> backtrack(solution: Solution<T>): List<Solution<T>> =
-    when {
-        solution.hasNext()    -> backtrack(solution.skipNext()) + backtrack(solution.next())
-        solution.isComplete() -> listOf(solution)
-        else                  -> emptyList()
-    }
+fun <T> backtrack(solution: Solution<T>): List<Solution<T>> {
+    val solutions = if (solution.hasNext()) backtrack(solution.skipNext()) + backtrack(solution.next()) else emptyList()
+    return if (solution.isComplete()) solutions + solution else solutions
+}
