@@ -139,7 +139,7 @@ class EightQueenTests {
         val column: Int = 0,
         val valid: Boolean = true
     ) : Solution<List<Queen>> {
-        override fun hasNext() = !isComplete() && column < boardSize && valid
+        override fun hasNext() = !isComplete() && valid
 
         override fun skipNext() =
             if (row + 1 < boardSize) copy(row = row + 1)
@@ -149,7 +149,7 @@ class EightQueenTests {
             copy(value = value + queen, row = 0, column = column + 1, valid = isValid(queen))
         }
 
-        override fun isComplete() = value.size == boardSize && valid
+        override fun isComplete() = boardSize == value.size && valid
 
         private fun isValid(queen: Queen): Boolean {
             val notOnTheSameLine = value.none { it.row == queen.row || it.column == queen.column }
@@ -193,26 +193,29 @@ class SudokuTests {
         sudoku.hasNext() shouldEqual true
 
         sudoku.next().let {
-            it.toString().lines().first() shouldEqual "62.|...|2.3"
-            it.hasNext() shouldEqual false
-        }
-        sudoku.skipNext().let {
-            it.toString().lines().first() shouldEqual "6..|...|2.3"
+            it.toString().lines().first() shouldEqual "61.|...|2.3"
             it.hasNext() shouldEqual true
+        }
+        sudoku.next().next().let {
+            it.toString().lines().first() shouldEqual "611|...|2.3"
+            it.hasNext() shouldEqual false
         }
 
         sudoku.skipNext().next().let {
-            it.toString().lines().first() shouldEqual "63.|...|2.3"
+            it.toString().lines().first() shouldEqual "62.|...|2.3"
             it.hasNext() shouldEqual false
         }
         sudoku.skipNext().skipNext().next().let {
+            it.toString().lines().first() shouldEqual "63.|...|2.3"
+            it.hasNext() shouldEqual false
+        }
+        sudoku.skipNext().skipNext().skipNext().next().let {
             it.toString().lines().first() shouldEqual "64.|...|2.3"
             it.hasNext() shouldEqual true
         }
         backtrack(sudoku).forEach {
-            it.printed()
+            it.printed("\n\n")
         }
-        // TODO
     }
 
     @Test fun `sudoku conversion to string`() {
@@ -236,42 +239,36 @@ class SudokuTests {
         listOf(9, 10, 11).forEach { squareIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 9, 10, 11, 18, 19, 20) }
         listOf(18, 19, 20).forEach { squareIndicesAt(index = it) shouldEqual listOf(0, 1, 2, 9, 10, 11, 18, 19, 20) }
 
-        listOf(3, 4, 5).forEach { squareIndicesAt(index = it) shouldEqual listOf(3, 4, 5, 12, 13, 14, 21, 22, 23) }
-        listOf(6, 7, 8).forEach { squareIndicesAt(index = it) shouldEqual listOf(6, 7, 8, 15, 16, 17, 24, 25, 26) }
-        listOf(78, 79, 80).forEach { squareIndicesAt(index = it) shouldEqual listOf(60, 61, 62, 69, 70, 71, 78, 79, 80) }
+        listOf(3, 4, 5, 12, 13, 14, 21, 22, 23).forEach { squareIndicesAt(index = it) shouldEqual listOf(3, 4, 5, 12, 13, 14, 21, 22, 23) }
+        listOf(6, 7, 8, 15, 16, 17, 24, 25, 26).forEach { squareIndicesAt(index = it) shouldEqual listOf(6, 7, 8, 15, 16, 17, 24, 25, 26) }
+        listOf(60, 61, 62, 69, 70, 71, 78, 79, 80).forEach { squareIndicesAt(index = it) shouldEqual listOf(60, 61, 62, 69, 70, 71, 78, 79, 80) }
     }
 
     private data class Sudoku(
         override val value: List<Int>,
-        val guessIndex: Int = value.indexOf(0),
-        val guess: Int = 1
+        private val guessIndex: Int = value.indexOf(0).let { if (it == -1) value.size else it },
+        private val guess: Int = 1
     ) : Solution<List<Int>> {
+        private val isValid = isValid()
 
-        override fun hasNext(): Boolean {
-            return guessIndex < value.size && isValidGuess()
-        }
+        override fun hasNext() = guess <= 9 && guessIndex >= 0 && guessIndex < value.size && isValid
 
-        override fun skipNext(): Solution<List<Int>> {
-            val (nextIndex, nextGuess) =
-                if (guess == 9) Pair(value.size, 1)
-                else Pair(guessIndex, guess + 1)
-            return copy(guessIndex = nextIndex, guess = nextGuess)
-        }
+        override fun skipNext() = copy(guess = guess + 1)
 
         override fun next(): Solution<List<Int>> {
-            val (nextIndex, nextGuess) =
-                if (guess == 9) Pair(value.indices.find { it > guessIndex && value[it] == 0 }!!, 1)
-                else Pair(guessIndex, guess + 1)
-            val newValue = ArrayList(value).apply<ArrayList<Int>> { set(nextIndex, nextGuess) }
-            return copy(value = newValue, guessIndex = nextIndex, guess = nextGuess)
+            val newValue = ArrayList(value).apply<ArrayList<Int>> { set(guessIndex, guess) }
+            return Sudoku(value = newValue, guess = 1)
         }
 
-        override fun isComplete() = value.doesNotContain(0)
+        override fun isComplete() = isValid && value.doesNotContain(0)
 
-        private fun isValidGuess(): Boolean =
-            rowIndicesAt(guessIndex).count { value[it] == guess } <= 1 &&
-                columnIndicesAt(guessIndex).count { value[it] == guess } <= 1 &&
-                squareIndicesAt(guessIndex).count { value[it] == guess } <= 1
+        private fun isValid(): Boolean =
+            0.until(guessIndex).all { index ->
+                val n = value[index]
+                rowIndicesAt(index).count { value[it] == n } == 1 &&
+                    columnIndicesAt(index).count { value[it] == n } == 1 &&
+                    squareIndicesAt(index).count { value[it] == n } == 1
+            }
 
         override fun toString(): String {
             return value.windowed(size = 9, step = 9).mapIndexed { i, row ->
@@ -287,8 +284,7 @@ class SudokuTests {
                 val cells = s.replace(Regex("[|\\-+\n]"), "").mapTo(ArrayList()) { c ->
                     if (c == '.') 0 else c.toString().toInt()
                 }
-                val guessIndex = cells.indexOf(0)
-                return Sudoku(cells, guessIndex, guess = 1)
+                return Sudoku(cells, guess = 1)
             }
 
             fun rowIndicesAt(index: Int): List<Int> {
