@@ -189,7 +189,26 @@ class SudokuTests {
         """.trimMargin()
     private val sudoku = Sudoku.parse(sudokuBoardString)
 
-    @Test fun `find sudoku solutions`() {
+    @Test fun `find easy sudoku solutions`() {
+        val solutions = backtrack(sudoku)
+        solutions.forEach { it.printed("\n\n") }
+
+        solutions.first() shouldEqual Sudoku.parse("""
+            |648|951|273
+            |927|463|851
+            |531|782|649
+            |---+---+---
+            |785|326|194
+            |492|817|365
+            |316|594|728
+            |---+---+---
+            |173|245|986
+            |259|638|417
+            |864|179|532
+        """.trimIndent())
+    }
+
+    @Test fun `sudoku solution steps`() {
         sudoku.hasNext() shouldEqual true
 
         sudoku.next().let {
@@ -212,9 +231,6 @@ class SudokuTests {
         sudoku.skipNext().skipNext().skipNext().next().let {
             it.toString().lines().first() shouldEqual "64.|...|2.3"
             it.hasNext() shouldEqual true
-        }
-        backtrack(sudoku).forEach {
-            it.printed("\n\n")
         }
     }
 
