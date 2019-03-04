@@ -12,50 +12,34 @@ import java.io.File
 
 class AnagramTests {
     @Test fun `check if strings are anagrams`() {
-        "".isAnagramOf("") shouldEqual true
-        "a".isAnagramOf("a") shouldEqual true
+        fun String.isTextAnagramOf(that: String) = this.toText().isAnagramOf(that.toText())
 
-        "a".isAnagramOf("b") shouldEqual false
-        "b".isAnagramOf("a") shouldEqual false
+        "".isTextAnagramOf("") shouldEqual false
+        "a".isTextAnagramOf("a") shouldEqual false
+        "a".isTextAnagramOf("b") shouldEqual false
+        "b".isTextAnagramOf("a") shouldEqual false
 
-        "ab".isAnagramOf("ba") shouldEqual true
-        "ba".isAnagramOf("ab") shouldEqual true
-        "ab".isAnagramOf("abb") shouldEqual false
+        "ab".isTextAnagramOf("ba") shouldEqual true
+        "ba".isTextAnagramOf("ab") shouldEqual true
+        "ab".isTextAnagramOf("abb") shouldEqual false
 
-        "a b".isAnagramOf("ab") shouldEqual true
-        "a b".isAnagramOf("ba") shouldEqual true
-        "AB".isAnagramOf("ba") shouldEqual true
+        "a b".isTextAnagramOf("ab") shouldEqual true
+        "a b".isTextAnagramOf("ba") shouldEqual true
+        "AB".isTextAnagramOf("ba") shouldEqual true
 
-        "listen".isAnagramOf("silent") shouldEqual true
-        "rail safety".isAnagramOf("fairy tales") shouldEqual true
-        "customers".isAnagramOf("store scum") shouldEqual true
-        "William Shakespeare".isAnagramOf("I am a weakish speller") shouldEqual true
+        "listen".isTextAnagramOf("silent") shouldEqual true
+        "rail safety".isTextAnagramOf("fairy tales") shouldEqual true
+        "customers".isTextAnagramOf("store scum") shouldEqual true
+        "William Shakespeare".isTextAnagramOf("I am a weakish speller") shouldEqual true
     }
 
     @Test fun `dictionary contains words with letters only`() {
-        dictionary.forEach { word ->
+        defaultDictionary.forEach { word ->
             word.value.toCharArray().forEach {
                 if (!it.isLetter()) fail(word.value)
             }
         }
     }
-
-/*
-    @Test fun `find anagrams for a single word`() {
-        fun String.findAnagrams(): List<String> {
-            val normalisedText = normalised()
-            return normalisedText.replace(" ", "")
-                .toCharArray().toList().permutationsSequence()
-                .map { it.join("") }
-                .filter { it != normalisedText && dictionary.contains(it) }
-                .toList()
-        }
-
-        "listen".findAnagrams() shouldEqual listOf("silent", "tinsel", "enlist")
-        "lis ten".findAnagrams() shouldEqual listOf("listen", "silent", "tinsel", "enlist")
-        "Listen".findAnagrams() shouldEqual listOf("silent", "tinsel", "enlist")
-    }
-*/
 
     @Test fun `find 'fairy tales' anagrams with tiny dictionary`() {
         val anagramFinder = AnagramFinder(
@@ -67,26 +51,25 @@ class AnagramTests {
         anagramFinder.next().hasNext() shouldEqual true
         anagramFinder.next().next().value shouldEqual "rail safety".toText()
 
-        backtrack(anagramFinder).map { it.value.joinToString() } shouldEqual listOf(
-            "tales fairy",
-            "safety rail",
+        backtrack(anagramFinder).map { it.value.toPrintableString() } shouldEqual listOf(
             "rail safety"
         )
     }
 
-    @Ignore("because it takes a very long time so run it manually")
-    @Test fun `find 'fairy tales' anagrams with full dictionary`() {
-        val text = "fairy tales".toText()
-        val filteredDictionary = dictionary
-            .filter { it.value.length > 2 }
-            .filter { word -> text.letters.containsAll(word.chars) }
-        val anagramFinder = AnagramFinder(text, filteredDictionary)
-
-        backtrack(anagramFinder).map { it.value } shouldEqual listOf(
-            "tales fairy",
-            "safety rail",
-            "rail safety"
+    @Test fun `find anagrams with duplicate words`() {
+        val dictionary = listOf("aaa", "fun", "nuf", "unf", "zzz").map { Word(it) }
+        findAnagrams("fun fun", dictionary) shouldEqual listOf(
+            "unf unf",
+            "nuf unf",
+            "nuf nuf",
+            "fun unf",
+            "fun nuf"
         )
+    }
+
+    @Ignore("because it takes long time so run it manually")
+    @Test fun `find 'fairy tales' anagrams with full dictionary`() {
+        findAnagrams("fairy tales").forEach { it.printed() }
     }
 
     @Test fun `multiset operations`() {
@@ -100,35 +83,16 @@ class AnagramTests {
     }
 }
 
-private data class Word(val value: String) {
-    val chars: Multiset<Char> = value.toCharMultiset()
+private fun findAnagrams(s: String, dictionary: List<Word> = defaultDictionary): List<String> {
+    val text = s.toText()
+    val filteredDictionary = dictionary
+        .filter { it.value.length > 2 }
+        .filter { word -> text.letters.containsAll(word.chars) }
+
+    val anagramFinder = AnagramFinder(text, filteredDictionary)
+
+    return backtrack(anagramFinder).map { it.value.toPrintableString() }
 }
-
-private fun String.toWord(): Word = Word(normalised())
-
-private data class Text(val words: List<Word>) {
-    val letters: Multiset<Char> = words.fold(HashMultiset.create()) { acc, it ->
-        acc.addAll(it.chars)
-        acc
-    }
-
-    fun add(word: Word) = Text(words + word)
-
-    fun joinToString() = words.joinToString(" ") { it.value }
-}
-
-private fun String.toText(): Text = Text(split(" ").map { it.toWord() })
-
-
-private inline fun <T> List<T>.findIndexed(skipElements: Int = 0, predicate: (T) -> Boolean): Pair<Int, T?> {
-    (skipElements..lastIndex).forEach { i ->
-        val element = this[i]
-        if (predicate(element)) return Pair(i, element)
-    }
-    return Pair(-1, null)
-}
-
-
 
 private data class AnagramFinder(
     val text: Text,
@@ -139,7 +103,7 @@ private data class AnagramFinder(
     val skippedWords: Set<Word> = emptySet()
 ) : Solution<Text> {
     private var nextWord: Word?
-    private var nextDictionaryIndex: Int?
+    private var nextDictionaryIndex: Int
 
     init {
         val (i, word) = dictionary.findIndexed(dictionaryIndex) { word ->
@@ -152,25 +116,52 @@ private data class AnagramFinder(
     override fun hasNext() = nextWord != null
 
     override fun skipNext() = copy(
-        dictionaryIndex = nextDictionaryIndex!!,
+        dictionaryIndex = nextDictionaryIndex,
         skippedWords = skippedWords + nextWord!!
     )/*.printed { it.skippedWords.size.toString() }*/
 
     override fun next() = copy(
         value = value.add(nextWord!!),
-        dictionaryIndex = 0,
+        dictionaryIndex = nextDictionaryIndex, // By updating index we exclude from output permutations of words, e.g. only one of "ab cd" and "cd ab" will be returned
         remainingChars = Multisets.difference(remainingChars, nextWord!!.chars),
         skippedWords = emptySet()
     )/*.printed { it.value.words.first().value }*/
 
-    override fun isComplete() = value != text && value.letters == text.letters
+    override fun isComplete() = value.isAnagramOf(text)
 }
 
-private val dictionary: Set<Word> = File("src/katas/kotlin/words.txt").readLines().map { it.toWord() }.toSet()
+
+private data class Word(val value: String) {
+    val chars: Multiset<Char> = value.toCharMultiset()
+}
+
+private data class Text(val words: List<Word>) {
+    val letters: Multiset<Char> = words.fold(HashMultiset.create()) { acc, it ->
+        acc.addAll(it.chars)
+        acc
+    }
+
+    fun add(word: Word) = Text(words + word)
+
+    fun isAnagramOf(text: Text) = this != text && letters == text.letters
+
+    fun toPrintableString() = words.joinToString(" ") { it.value }
+}
+
+private fun String.toWord() = Word(normalised())
+
+private fun String.toText() = Text(split(" ").map { it.toWord() })
+
+private inline fun <T> List<T>.findIndexed(skipElements: Int = 0, predicate: (T) -> Boolean): Pair<Int, T?> {
+    (skipElements..lastIndex).forEach { i ->
+        val element = this[i]
+        if (predicate(element)) return Pair(i, element)
+    }
+    return Pair(-1, null)
+}
+
+private val defaultDictionary: List<Word> = File("src/katas/kotlin/words.txt").readLines().map { it.toWord() }
 
 private fun String.toCharMultiset(): Multiset<Char> = ImmutableMultiset.copyOf(toCharArray().toTypedArray())
 
 private fun String.normalised(): String = replace("'", "").replace("-", "").toLowerCase()
-
-private fun String.isAnagramOf(s: String): Boolean =
-    replace(" ", "").toLowerCase().toCharArray().sorted() == s.replace(" ", "").toLowerCase().toCharArray().sorted()
