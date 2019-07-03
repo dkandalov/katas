@@ -60,7 +60,7 @@ private data class Node(val value: Int, val next: Node? = null) {
             else next + that.next
 
         val sum = value + that.value
-        if (sum >= 10) nextSumNode = if (nextSumNode == null) Node(1) else Node(1) + nextSumNode
+        if (sum >= 10) nextSumNode = if (nextSumNode == null) Node(1) else nextSumNode + Node(1)
 
         return Node(sum % 10).linkedTo(nextSumNode)
     }
