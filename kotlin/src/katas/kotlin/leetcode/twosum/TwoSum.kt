@@ -1,6 +1,6 @@
 @file:Suppress("DuplicatedCode")
 
-package katas.kotlin.twosum
+package katas.kotlin.leetcode.twosum
 
 import kotlincommon.printed
 import kotlincommon.test.shouldEqual
@@ -39,6 +39,15 @@ class TwoSum {
         return Array(size, { random.nextInt(min, max) })
     }
 
+    private fun Array<Int>.twoSum_it(target: Int): Pair<Int, Int> {
+        indices.forEach { i1 ->
+            (i1 + 1).until(size).forEach { i2 ->
+                if (this[i1] + this[i2] == target) return Pair(i1, i2)
+            }
+        }
+        error("no solution")
+    }
+
     private fun Array<Int>.twoSum_bs(target: Int): Pair<Int, Int> {
         val sortedArray = sortedArray()
         sortedArray.indices.forEach { i1 ->
@@ -50,7 +59,8 @@ class TwoSum {
         error("no solution")
     }
 
-    private fun Array<Int>.twoSum_it(target: Int): Pair<Int, Int> {
+    private fun Array<Int>.twoSum_set(target: Int): Pair<Int, Int> {
+        val set = indices.toSet()
         indices.forEach { i1 ->
             (i1 + 1).until(size).forEach { i2 ->
                 if (this[i1] + this[i2] == target) return Pair(i1, i2)
