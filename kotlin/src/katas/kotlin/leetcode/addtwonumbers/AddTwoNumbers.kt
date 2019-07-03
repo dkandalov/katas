@@ -12,6 +12,7 @@ class AddTwoNumbers {
     }
 
     @Test fun `convert linked list to string`() {
+        Node(1).toString() shouldEqual "1"
         Node(2).linkedTo(Node(1)).toString() shouldEqual "2 -> 1"
         Node(2).linkedTo(Node(3).linkedTo(Node(4))).toString() shouldEqual "2 -> 3 -> 4"
     }
