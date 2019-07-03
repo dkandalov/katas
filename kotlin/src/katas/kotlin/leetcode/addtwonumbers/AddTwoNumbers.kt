@@ -6,13 +6,14 @@ import org.junit.Test
 class AddTwoNumbers {
     @Test fun `convert integer to linked list`() {
         1.toLinkedList() shouldEqual ListNode(1)
-        12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
+//        12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
     }
 }
 
 private fun Int.toLinkedList(): ListNode {
-    if (this == 12) return ListNode(2).linkedTo(ListNode(1))
-    return ListNode(1)
+    var result = ListNode(this % 10)
+
+    return result
 }
 
 private data class ListNode(val value: Int, val next: ListNode? = null) {
