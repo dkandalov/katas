@@ -46,13 +46,13 @@ private data class Node(val value: Int, val next: Node? = null) {
     operator fun plus(that: Node?): Node {
         if (that == null) return this
 
-        val sum = value + that.value
         var nextSumNode =
             if (next == null && that.next == null) null
             else if (next == null) that.next
             else if (that.next == null) next
             else next + that.next
 
+        val sum = value + that.value
         if (sum >= 10) nextSumNode = Node(1) + nextSumNode
 
         return Node(sum % 10).linkedTo(nextSumNode)
