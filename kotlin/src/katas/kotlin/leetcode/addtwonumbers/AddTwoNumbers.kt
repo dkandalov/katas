@@ -15,6 +15,10 @@ class AddTwoNumbers {
         Node(2).linkedTo(Node(1)).toString() shouldEqual "2 -> 1"
         Node(2).linkedTo(Node(3).linkedTo(Node(4))).toString() shouldEqual "2 -> 3 -> 4"
     }
+
+    @Test fun `add two numbers`() {
+        Node(1) + Node(2) shouldEqual Node(3)
+    }
 }
 
 private fun Int.toLinkedList(): Node {
@@ -25,6 +29,10 @@ private fun Int.toLinkedList(): Node {
 
 private data class Node(val value: Int, val next: Node? = null) {
     fun linkedTo(that: Node) = copy(next = that)
+
+    operator fun plus(that: Node): Node {
+        return Node(value + that.value)
+    }
 
     override fun toString() = if (next == null) value.toString() else "$value -> $next"
 }
