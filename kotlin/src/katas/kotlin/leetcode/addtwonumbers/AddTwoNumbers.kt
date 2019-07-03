@@ -25,7 +25,6 @@ private fun Int.toLinkedList(): ListNode {
 
 private data class ListNode(val value: Int, val next: ListNode? = null) {
     fun linkedTo(that: ListNode) = copy(next = that)
-    fun linkedTo(n: Int) = copy(next = ListNode(n))
 
     override fun toString() = if (next == null) value.toString() else "$value -> $next"
 }
