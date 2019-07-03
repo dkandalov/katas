@@ -52,9 +52,7 @@ private fun Int.toLinkedList(): Node {
 private data class Node(val value: Int, val next: Node? = null) {
     fun linkedTo(that: Node?) = copy(next = that)
 
-    operator fun plus(that: Node?): Node {
-        if (that == null) return this
-
+    operator fun plus(that: Node): Node {
         var nextSumNode =
             if (next == null && that.next == null) null
             else if (next == null) that.next
@@ -62,7 +60,7 @@ private data class Node(val value: Int, val next: Node? = null) {
             else next + that.next
 
         val sum = value + that.value
-        if (sum >= 10) nextSumNode = Node(1) + nextSumNode
+        if (sum >= 10) nextSumNode = if (nextSumNode == null) Node(1) else Node(1) + nextSumNode
 
         return Node(sum % 10).linkedTo(nextSumNode)
     }
