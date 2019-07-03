@@ -10,6 +10,10 @@ class AddTwoNumbers {
         12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
         30.toLinkedList() shouldEqual ListNode(0).linkedTo(ListNode(3))
     }
+
+    @Test fun `convert linked list to string`() {
+        ListNode(2).linkedTo(ListNode(1)).toString() shouldEqual "2 -> 1"
+    }
 }
 
 private fun Int.toLinkedList(): ListNode {
@@ -22,4 +26,6 @@ private data class ListNode(val value: Int, val next: ListNode? = null) {
     fun linkedTo(that: ListNode): ListNode {
         return copy(next = that)
     }
+
+    override fun toString() = if (next == null) value.toString() else "$value -> $next"
 }
