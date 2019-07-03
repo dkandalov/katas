@@ -9,6 +9,7 @@ class AddTwoNumbers {
         1.toLinkedList() shouldEqual Node(1)
         12.toLinkedList() shouldEqual Node(2).linkedTo(Node(1))
         30.toLinkedList() shouldEqual Node(0).linkedTo(Node(3))
+        321.toLinkedList() shouldEqual Node(1).linkedTo(Node(2).linkedTo(Node(3)))
     }
 
     @Test fun `convert linked list to string`() {
