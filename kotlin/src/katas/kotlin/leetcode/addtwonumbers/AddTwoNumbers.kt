@@ -5,6 +5,7 @@ import org.junit.Test
 
 class AddTwoNumbers {
     @Test fun `convert integer to linked list`() {
+        0.toLinkedList() shouldEqual ListNode(0)
         1.toLinkedList() shouldEqual ListNode(1)
         12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
         30.toLinkedList() shouldEqual ListNode(0).linkedTo(ListNode(3))
