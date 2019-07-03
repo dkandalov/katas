@@ -12,7 +12,11 @@ class AddTwoNumbers {
 
 private fun Int.toLinkedList(): ListNode {
     var result = ListNode(this % 10)
-
+    var n = this / 10
+    while (n != 0) {
+        result = result.linkedTo(ListNode(n % 10))
+        n /= 10
+    }
     return result
 }
 
