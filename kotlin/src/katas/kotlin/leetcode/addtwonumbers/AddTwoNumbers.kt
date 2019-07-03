@@ -28,6 +28,7 @@ class AddTwoNumbers {
 
         21.toLinkedList() + 43.toLinkedList() shouldEqual 64.toLinkedList()
         123.toLinkedList() + 456.toLinkedList() shouldEqual 579.toLinkedList()
+        342.toLinkedList() + 465.toLinkedList() shouldEqual 807.toLinkedList()
     }
 }
 
