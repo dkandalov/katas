@@ -19,6 +19,7 @@ class AddTwoNumbers {
     @Test fun `add two numbers`() {
         Node(1) + Node(2) shouldEqual Node(3)
         Node(1) + Node(9) shouldEqual Node(0).linkedTo(Node(1))
+        Node(9) + Node(1) shouldEqual Node(0).linkedTo(Node(1))
 
         21.toLinkedList() + 43.toLinkedList() shouldEqual 64.toLinkedList()
         123.toLinkedList() + 456.toLinkedList() shouldEqual 579.toLinkedList()
