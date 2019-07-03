@@ -24,6 +24,7 @@ class AddTwoNumbers {
         Node(9) + Node(9) shouldEqual Node(8).linkedTo(Node(1))
 
         19.toLinkedList() + 9.toLinkedList() shouldEqual 28.toLinkedList()
+        99.toLinkedList() + 9.toLinkedList() shouldEqual 108.toLinkedList()
 
         21.toLinkedList() + 43.toLinkedList() shouldEqual 64.toLinkedList()
         123.toLinkedList() + 456.toLinkedList() shouldEqual 579.toLinkedList()
