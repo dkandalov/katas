@@ -1,7 +1,9 @@
 package katas.kotlin.leetcode.addtwonumbers
 
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.random.Random
 
 class AddTwoNumbers {
     @Test fun `convert integer to linked list`() {
@@ -31,6 +33,13 @@ class AddTwoNumbers {
         21.toLinkedList() + 43.toLinkedList() shouldEqual 64.toLinkedList()
         123.toLinkedList() + 456.toLinkedList() shouldEqual 579.toLinkedList()
         342.toLinkedList() + 465.toLinkedList() shouldEqual 807.toLinkedList()
+    }
+
+    @Test fun `add random positive numbers`() {
+        val random = Random(seed = Random.nextInt().printed("seed: "))
+        val a = random.nextInt(0, 1_000_000)
+        val b = random.nextInt(0, 1_000_000)
+        a.toLinkedList() + b.toLinkedList() shouldEqual (a + b).toLinkedList()
     }
 }
 
