@@ -11,9 +11,9 @@ class AddTwoNumbers {
 }
 
 private fun Int.toLinkedList(): ListNode {
-    val result = ListNode(this % 10)
+    val node = ListNode(this % 10)
     val n = this / 10
-    return if (n == 0) result else result.linkedTo(n.toLinkedList())
+    return if (n == 0) node else node.linkedTo(n.toLinkedList())
 }
 
 private data class ListNode(val value: Int, val next: ListNode? = null) {
