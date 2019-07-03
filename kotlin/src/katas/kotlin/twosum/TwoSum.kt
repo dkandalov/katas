@@ -22,15 +22,15 @@ class TwoSum {
     }
 
     @Test fun `find indices of numbers that add up to the target number (with binary search)`() {
-        arrayOf(2, 7, 11, 15).twoSum(target = 9) shouldEqual Pair(0, 1)
-        arrayOf(2, 9, 0, 7).twoSum(target = 9) shouldEqual Pair(2, 1)
-        arrayOf(5, 5).twoSum(target = 10) shouldEqual Pair(0, 1)
-        arrayOf(10, -15).twoSum(target = -5) shouldEqual Pair(1, 0)
-        arrayOf(-1, -2).twoSum(target = -3) shouldEqual Pair(1, 0)
+        arrayOf(2, 7, 11, 15).twoSum_bs(target = 9) shouldEqual Pair(0, 1)
+        arrayOf(2, 9, 0, 7).twoSum_bs(target = 9) shouldEqual Pair(2, 1)
+        arrayOf(5, 5).twoSum_bs(target = 10) shouldEqual Pair(0, 1)
+        arrayOf(10, -15).twoSum_bs(target = -5) shouldEqual Pair(1, 0)
+        arrayOf(-1, -2).twoSum_bs(target = -3) shouldEqual Pair(1, 0)
 
-        randomArray(seed = 123, size = 100).printed().twoSum(target = 10) shouldEqual Pair(43, 82)
+        randomArray(seed = 123, size = 100).printed().twoSum_bs(target = 10) shouldEqual Pair(43, 82)
 //        0.until(100).forEach {
-//            randomArray(seed = 123, size = 10_000_000, min = -1000, max = 1000).twoSum(target = 10)
+//            randomArray(seed = 123, size = 10_000_000, min = -1000, max = 1000).twoSum_bs(target = 10)
 //        }
     }
 
@@ -39,7 +39,7 @@ class TwoSum {
         return Array(size, { random.nextInt(min, max) })
     }
 
-    private fun Array<Int>.twoSum(target: Int): Pair<Int, Int> {
+    private fun Array<Int>.twoSum_bs(target: Int): Pair<Int, Int> {
         val sortedArray = sortedArray()
         sortedArray.indices.forEach { i1 ->
             val item1 = sortedArray[i1]
