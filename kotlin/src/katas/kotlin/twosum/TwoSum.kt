@@ -16,9 +16,9 @@ class TwoSum {
         arrayOf(-1, -2).twoSum_(target = -3) shouldEqual Pair(0, 1)
 
         randomArray(seed = 123, size = 100).printed().twoSum_(target = 10) shouldEqual Pair(0, 8)
-        0.until(100).forEach {
-            randomArray(seed = 123, size = 10_000_000, min = -1000, max = 1000).twoSum_(target = 10)
-        }
+//        0.until(100).forEach {
+//            randomArray(seed = 123, size = 10_000_000, min = -1000, max = 1000).twoSum_(target = 10)
+//        }
     }
 
     @Test fun `find indices of numbers that add up to the target number (with binary search)`() {
