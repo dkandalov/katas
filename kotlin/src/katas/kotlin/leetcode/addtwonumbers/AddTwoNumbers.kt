@@ -5,6 +5,13 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 
+/**
+ * You are given two non-empty linked lists representing two non-negative integers.
+ * The digits are stored in reverse order and each of their nodes contain a single digit.
+ * Add the two numbers and return it as a linked list.
+ *
+ * You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+ */
 class AddTwoNumbers {
     @Test fun `convert integer to linked list`() {
         0.toLinkedList() shouldEqual Node(0)
