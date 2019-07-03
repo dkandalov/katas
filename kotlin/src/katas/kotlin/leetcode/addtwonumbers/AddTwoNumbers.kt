@@ -13,6 +13,7 @@ class AddTwoNumbers {
 
     @Test fun `convert linked list to string`() {
         ListNode(2).linkedTo(ListNode(1)).toString() shouldEqual "2 -> 1"
+        ListNode(2).linkedTo(ListNode(3).linkedTo(ListNode(4))).toString() shouldEqual "2 -> 3 -> 4"
     }
 }
 
@@ -23,9 +24,8 @@ private fun Int.toLinkedList(): ListNode {
 }
 
 private data class ListNode(val value: Int, val next: ListNode? = null) {
-    fun linkedTo(that: ListNode): ListNode {
-        return copy(next = that)
-    }
+    fun linkedTo(that: ListNode) = copy(next = that)
+    fun linkedTo(n: Int) = copy(next = ListNode(n))
 
     override fun toString() = if (next == null) value.toString() else "$value -> $next"
 }
