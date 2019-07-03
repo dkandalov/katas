@@ -6,7 +6,7 @@ import org.junit.Test
 class AddTwoNumbers {
     @Test fun `convert integer to linked list`() {
         1.toLinkedList() shouldEqual ListNode(1)
-//        12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
+        12.toLinkedList() shouldEqual ListNode(2).linkedTo(ListNode(1))
     }
 }
 
