@@ -9,6 +9,7 @@ class LongestSubstring {
         "a".longestSubstring() shouldEqual 1
         "abc".longestSubstring() shouldEqual 3
         "abca".longestSubstring() shouldEqual 3
+        "aabbc".longestSubstring() shouldEqual 2
     }
 }
 
