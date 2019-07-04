@@ -10,6 +10,10 @@ class LongestSubstring {
         "abc".longestSubstring() shouldEqual 3
         "abca".longestSubstring() shouldEqual 3
         "aabbc".longestSubstring() shouldEqual 2
+
+        "abcabcbb".longestSubstring() shouldEqual 3
+        "bbbbb".longestSubstring() shouldEqual 1
+        "pwwkew".longestSubstring() shouldEqual 3
     }
 }
 
