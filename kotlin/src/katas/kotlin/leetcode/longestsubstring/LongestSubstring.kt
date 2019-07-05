@@ -20,11 +20,13 @@ class LongestSubstring {
 private fun String.longestSubstring(): Int {
     var maxSize = 0
     val chars = HashSet<Char>()
-    0.until(length).forEach { i ->
+    var i = 0
+    while (i < length) {
         var j = i
         while (j < length && chars.add(this[j])) j++
         maxSize = maxOf(maxSize, chars.size)
         chars.clear()
+        i++
     }
     return maxSize
 }
