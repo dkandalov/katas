@@ -31,7 +31,7 @@ private fun String.longestSubstring(): Int {
             }
             i++
         }
-        maxSize = maxOf(maxSize, chars.size)
+        maxSize = maxOf(maxSize, j - i + 1)
         j++
     }
     return maxSize
