@@ -21,12 +21,18 @@ private fun String.longestSubstring(): Int {
     var maxSize = 0
     val chars = HashSet<Char>()
     var i = 0
-    while (i < length) {
-        var j = i
-        while (j < length && chars.add(this[j])) j++
+    var j = 0
+    while (j < length) {
+        val added = chars.add(this[j])
         maxSize = maxOf(maxSize, chars.size)
-        chars.clear()
-        i++
+
+        if (added) j++
+        else {
+            while (this[i] != this[j]) {
+                chars.remove(this[i])
+                i++
+            }
+        }
     }
     return maxSize
 }
