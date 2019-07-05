@@ -26,13 +26,13 @@ private fun String.longestSubstring(): Int {
         val added = chars.add(this[j])
         maxSize = maxOf(maxSize, chars.size)
 
-        if (added) j++
-        else {
+        if (!added) {
             while (this[i] != this[j]) {
                 chars.remove(this[i])
                 i++
             }
         }
+        j++
     }
     return maxSize
 }
