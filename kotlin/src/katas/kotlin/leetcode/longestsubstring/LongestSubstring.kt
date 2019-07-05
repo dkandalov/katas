@@ -24,14 +24,13 @@ private fun String.longestSubstring(): Int {
     var j = 0
     while (j < length) {
         val added = chars.add(this[j])
-        maxSize = maxOf(maxSize, chars.size)
-
         if (!added) {
             while (this[i] != this[j]) {
                 chars.remove(this[i])
                 i++
             }
         }
+        maxSize = maxOf(maxSize, chars.size)
         j++
     }
     return maxSize
