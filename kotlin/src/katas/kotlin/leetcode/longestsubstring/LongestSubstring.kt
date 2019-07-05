@@ -29,6 +29,7 @@ private fun String.longestSubstring(): Int {
                 chars.remove(this[i])
                 i++
             }
+            i++
         }
         maxSize = maxOf(maxSize, chars.size)
         j++
