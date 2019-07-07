@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.longestsubstring
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/longest-substring-without-repeating-characters/
+ */
 class LongestSubstring {
     @Test fun `find the length of the longest substring without repeating characters`() {
         "".longestSubstring() shouldEqual 0

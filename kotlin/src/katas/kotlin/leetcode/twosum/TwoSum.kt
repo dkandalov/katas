@@ -7,6 +7,9 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 
+/**
+ * https://leetcode.com/problems/two-sum
+ */
 class TwoSum {
     @Test fun `find indices of numbers that add up to the target number (with loops)`() {
         arrayOf(2, 7, 11, 15).twoSum_it(target = 9) shouldEqual Pair(0, 1)
