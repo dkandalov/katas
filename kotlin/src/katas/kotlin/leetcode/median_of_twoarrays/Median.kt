@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.medianoftwoarrays
+package katas.kotlin.leetcode.median_of_twoarrays
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test

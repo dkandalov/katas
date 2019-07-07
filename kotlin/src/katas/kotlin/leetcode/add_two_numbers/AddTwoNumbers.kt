@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.addtwonumbers
+package katas.kotlin.leetcode.add_two_numbers
 
 import kotlincommon.printed
 import kotlincommon.test.shouldEqual

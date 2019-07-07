@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.longestsubstring
+package katas.kotlin.leetcode.longest_substring
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
