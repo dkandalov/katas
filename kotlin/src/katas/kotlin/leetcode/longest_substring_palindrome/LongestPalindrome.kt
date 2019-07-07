@@ -6,9 +6,10 @@ import org.junit.Test
 class LongestPalindrome {
     @Test fun `find longest palindromic substring`() {
         findLongestPalindrome("") shouldEqual ""
+        findLongestPalindrome("a") shouldEqual "a"
     }
 
     private fun findLongestPalindrome(s: String): String {
-        return ""
+        return s
     }
 }
