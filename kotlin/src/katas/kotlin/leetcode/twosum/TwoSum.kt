@@ -36,7 +36,7 @@ class TwoSum {
 
     private fun randomArray(seed: Int, size: Int, min: Int = 0, max: Int = 10): Array<Int> {
         val random = Random(seed)
-        return Array(size, { random.nextInt(min, max) })
+        return Array(size) { random.nextInt(min, max) }
     }
 
     private fun Array<Int>.twoSum_it(target: Int): Pair<Int, Int> {
