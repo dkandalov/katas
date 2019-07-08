@@ -11,7 +11,17 @@ class LongestPalindrome {
         findLongestPalindrome("c") shouldEqual "c"
     }
 
+    @Test fun `check that string is a palindrome`() {
+        "".isPalindrome() shouldEqual true
+        "a".isPalindrome() shouldEqual true
+    }
+
     private fun findLongestPalindrome(s: String): String {
         return s
+    }
+
+    private fun String.isPalindrome(): Boolean {
+        if (length < 2) return true
+        return false
     }
 }
