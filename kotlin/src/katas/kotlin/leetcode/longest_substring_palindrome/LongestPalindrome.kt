@@ -33,7 +33,9 @@ class LongestPalindrome {
             .map { start ->
                 (start..s.length).map { start..it }
             }
-            .flatMap { it.map { s.substring(it.first, it.last) } }
+            .flatMap {
+                it.map { range -> s.substring(range.first, range.last) }
+            }
             .filter { it.isPalindrome() }
             .fold("") { acc, it ->
                 if (it.length > acc.length) it else acc
