@@ -18,6 +18,7 @@ class LongestPalindrome {
         "aba".isPalindrome() shouldEqual true
         "abba".isPalindrome() shouldEqual true
         "abcba".isPalindrome() shouldEqual true
+        "abcba_".isPalindrome() shouldEqual false
     }
 
     private fun findLongestPalindrome(s: String): String {
