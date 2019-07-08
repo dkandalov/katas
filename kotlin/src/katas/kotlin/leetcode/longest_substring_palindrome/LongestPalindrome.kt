@@ -23,6 +23,11 @@ class LongestPalindrome {
         findLongestPalindrome("abaabc") shouldEqual "baab"
     }
 
+    @Test fun `longest palindrome is at the end of the string`() {
+        findLongestPalindrome("abcc") shouldEqual "cc"
+        findLongestPalindrome("abaab") shouldEqual "baab"
+    }
+
     @Test fun `check that string is a palindrome`() {
         "".isPalindrome() shouldEqual true
         "a".isPalindrome() shouldEqual true
