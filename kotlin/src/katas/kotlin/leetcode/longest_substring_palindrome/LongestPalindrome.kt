@@ -19,6 +19,7 @@ class LongestPalindrome {
 
     @Test fun `longest palindrome is in the middle of the string`() {
         findLongestPalindrome("abbc") shouldEqual "bb"
+        findLongestPalindrome("abaabc") shouldEqual "baab"
     }
 
     @Test fun `check that string is a palindrome`() {
