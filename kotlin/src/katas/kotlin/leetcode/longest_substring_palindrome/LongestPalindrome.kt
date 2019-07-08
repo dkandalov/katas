@@ -30,7 +30,8 @@ class LongestPalindrome {
 
     private fun findLongestPalindrome(s: String): String {
         return (0..s.length)
-            .map { s.substring(0, it) }
+            .map { (0..it) }
+            .map { s.substring(it.first, it.last) }
             .filter { it.isPalindrome() }
             .fold("") { acc, it ->
                 if (it.length > acc.length) it else acc
