@@ -17,14 +17,15 @@ class LongestPalindrome {
         "ab".isPalindrome() shouldEqual false
         "aba".isPalindrome() shouldEqual true
         "abba".isPalindrome() shouldEqual true
+        "abcba".isPalindrome() shouldEqual true
     }
 
     private fun findLongestPalindrome(s: String): String {
         return s
     }
 
-    private fun String.isPalindrome(): Boolean {
+    private tailrec fun String.isPalindrome(): Boolean {
         if (length < 2) return true
-        return if (first() == last()) substring(1, length - 2).isPalindrome() else false
+        return if (first() == last()) substring(1, length - 1).isPalindrome() else false
     }
 }
