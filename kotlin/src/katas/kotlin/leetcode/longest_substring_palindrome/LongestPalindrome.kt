@@ -41,12 +41,8 @@ class LongestPalindrome {
 
     private fun findLongestPalindrome(s: String): String {
         return (0..s.length)
-            .flatMap { start ->
-                (start..s.length).map { start..it }
-            }
-            .map { range ->
-                s.substring(range.first, range.last)
-            }
+            .flatMap { start -> (start..s.length).map { end -> start..end } }
+            .map { range -> s.substring(range.first, range.last) }
             .filter { it.isPalindrome() }
             .fold("") { acc, it ->
                 if (it.length > acc.length) it else acc
