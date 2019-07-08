@@ -9,6 +9,8 @@ class LongestPalindrome {
         findLongestPalindrome("a") shouldEqual "a"
         findLongestPalindrome("b") shouldEqual "b"
         findLongestPalindrome("c") shouldEqual "c"
+
+        findLongestPalindrome("abc") shouldEqual "a"
     }
 
     @Test fun `check that string is a palindrome`() {
