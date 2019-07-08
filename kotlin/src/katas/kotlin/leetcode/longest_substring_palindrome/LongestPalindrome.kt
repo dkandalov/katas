@@ -23,7 +23,12 @@ class LongestPalindrome {
     }
 
     private fun findLongestPalindrome(s: String): String {
-        return s
+        return (0..s.length)
+            .map { s.substring(0, it) }
+            .filter { it.isPalindrome() }
+            .fold("") { acc, it ->
+                if (it.length > acc.length) it else acc
+            }
     }
 
     private tailrec fun String.isPalindrome(): Boolean {
