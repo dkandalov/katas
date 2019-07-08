@@ -4,14 +4,17 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class LongestPalindrome {
-    @Test fun `find longest palindromic substring`() {
+    @Test fun `trivial examples`() {
         findLongestPalindrome("") shouldEqual ""
         findLongestPalindrome("a") shouldEqual "a"
         findLongestPalindrome("b") shouldEqual "b"
         findLongestPalindrome("c") shouldEqual "c"
+    }
 
+    @Test fun `longest palindrom is at the start of the string`() {
         findLongestPalindrome("abc") shouldEqual "a"
         findLongestPalindrome("aabc") shouldEqual "aa"
+        findLongestPalindrome("ababc") shouldEqual "aba"
     }
 
     @Test fun `check that string is a palindrome`() {
