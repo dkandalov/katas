@@ -11,7 +11,7 @@ class LongestPalindrome {
         findLongestPalindrome("c") shouldEqual "c"
     }
 
-    @Test fun `longest palindrom is at the start of the string`() {
+    @Test fun `longest palindrome is at the start of the string`() {
         findLongestPalindrome("abc") shouldEqual "a"
         findLongestPalindrome("aabc") shouldEqual "aa"
         findLongestPalindrome("ababc") shouldEqual "aba"
