@@ -40,7 +40,7 @@ class LongestPalindrome {
     }
 
     @Test fun `check that long string is a palindrome`() {
-        val chars = (0..1000).map { it.toChar() }
+        val chars = (0..100_000).map { it.toChar() }
         val longPalindrome = (chars + chars.asReversed()).joinToString("")
 
         longPalindrome.isPalindrome() shouldEqual true
