@@ -48,15 +48,18 @@ class LongestPalindrome {
                 if (it.length > acc.length) it else acc
             }
     }
-    
+
     private fun findLongestPalindrome(s: String): String {
-        return (0..s.length)
-            .flatMap { start -> (start..s.length).map { end -> start..end } }
-            .map { range -> s.substring(range.first, range.last) }
-            .filter { it.isPalindrome() }
-            .fold("") { acc, it ->
-                if (it.length > acc.length) it else acc
+        var result = ""
+        (0..s.length).forEach { i ->
+            (i..s.length).forEach { j ->
+                val substring = s.substring(i, j)
+                if (substring.isPalindrome() && substring.length > result.length) {
+                    result = substring
+                }
             }
+        }
+        return result
     }
 
     private tailrec fun String.isPalindrome(): Boolean {
