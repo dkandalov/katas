@@ -39,6 +39,13 @@ class LongestPalindrome {
         "abcba_".isPalindrome() shouldEqual false
     }
 
+    @Test fun `check that long string is a palindrome`() {
+        val chars = (0..1000).map { it.toChar() }
+        val longPalindrome = (chars + chars.asReversed()).joinToString("")
+
+        longPalindrome.isPalindrome() shouldEqual true
+    }
+
     private fun findLongestPalindrome_func(s: String): String {
         return (0..s.length)
             .flatMap { start -> (start..s.length).map { end -> start..end } }
