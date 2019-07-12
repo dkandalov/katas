@@ -2,6 +2,7 @@ package katas.kotlin.leetcode.longest_substring_palindrome
 
 import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 
 class LongestPalindromeTests {
@@ -27,6 +28,11 @@ class LongestPalindromeTests {
     @Test fun `match at the end of the string`() {
         findLongestPalindrome("abcc") shouldEqual "cc"
         findLongestPalindrome("abaab") shouldEqual "baab"
+    }
+
+    @Ignore
+    @Test fun `match long palindrome`() {
+        findLongestPalindrome(longPalindrome) shouldEqual longPalindrome
     }
 }
 
