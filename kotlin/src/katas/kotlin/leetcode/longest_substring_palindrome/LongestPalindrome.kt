@@ -75,13 +75,6 @@ class LongestPalindrome {
                     result = substring
                 }
             }
-
-            ((i+1) until s.length + 1).forEach { j ->
-                val substring = s.substring(i, j)
-                if (substring.isPalindrome() && substring.length > result.length) {
-//                    result = substring
-                }
-            }
         }
         return result
     }
