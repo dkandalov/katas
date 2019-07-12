@@ -2,7 +2,6 @@ package katas.kotlin.leetcode.longest_substring_palindrome
 
 import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
-import org.junit.Ignore
 import org.junit.Test
 
 class LongestPalindromeTests {
@@ -35,8 +34,9 @@ class LongestPalindromeTests {
     }
 }
 
-private val longChars = (0..100_000).map { it.toChar() }.joinToString("")
-private val longPalindrome = (0..100_000).map { it.toChar() }
+private val chars = (0..100_000).map { it.toChar() }
+private val longChars = chars.joinToString("")
+private val longPalindrome = chars
     .let { chars -> (chars + chars.reversed()).joinToString("") }
 
 class PalindromeTests {
