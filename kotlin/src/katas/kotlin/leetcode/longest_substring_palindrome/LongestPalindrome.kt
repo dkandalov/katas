@@ -83,4 +83,15 @@ class LongestPalindrome {
         }
         return true
     }
+    private fun String.isPalindrome_(): Boolean {
+        if (length <= 1) return true
+        var i = 0
+        var j = length - 1
+        while (i <= j) {
+            if (this[i] != this[j]) return false
+            i++
+            j--
+        }
+        return true
+    }
 }
