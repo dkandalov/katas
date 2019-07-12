@@ -30,7 +30,6 @@ class LongestPalindromeTests {
         findLongestPalindrome("abaab") shouldEqual "baab"
     }
 
-    @Ignore
     @Test fun `match long palindrome`() {
         findLongestPalindrome(longPalindrome) shouldEqual longPalindrome
     }
