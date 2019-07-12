@@ -35,9 +35,8 @@ class LongestPalindromeTests {
     }
 }
 
-private val longPalindrome = (0..100_000).map { it.toChar() }.let { chars ->
-    (chars + chars.asReversed()).joinToString("")
-}
+private val longPalindrome = (0..100_000).map { it.toChar() }
+    .let { chars -> (chars + chars.reversed()).joinToString("") }
 
 class PalindromeTests {
     @Test fun `check that string is a palindrome`() {
