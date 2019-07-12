@@ -35,6 +35,7 @@ class LongestPalindromeTests {
     }
 }
 
+private val longChars = (0..100_000).map { it.toChar() }.joinToString("")
 private val longPalindrome = (0..100_000).map { it.toChar() }
     .let { chars -> (chars + chars.reversed()).joinToString("") }
 
