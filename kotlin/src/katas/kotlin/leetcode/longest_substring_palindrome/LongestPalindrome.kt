@@ -73,6 +73,12 @@ class LongestPalindrome {
     }
 
     private fun String.isPalindrome(): Boolean {
+        val map = HashMap<Char, MutableList<Int>>()
+        0.until(length).forEach { i ->
+            val list = map.getOrPut(this[i], { ArrayList() })
+            list.add(i)
+        }
+
         if (length <= 1) return true
         var i = 0
         var j = length - 1
