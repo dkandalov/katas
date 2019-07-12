@@ -4,7 +4,7 @@ import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-class LongestPalindrome {
+class LongestPalindromeTests {
     @Test fun `trivial examples`() {
         findLongestPalindrome("") shouldEqual ""
         findLongestPalindrome("a") shouldEqual "a"
@@ -12,21 +12,27 @@ class LongestPalindrome {
         findLongestPalindrome("c") shouldEqual "c"
     }
 
-    @Test fun `longest palindrome is at the start of the string`() {
+    @Test fun `match at the beginning of the string`() {
         findLongestPalindrome("abc") shouldEqual "a"
         findLongestPalindrome("aabc") shouldEqual "aa"
         findLongestPalindrome("ababc") shouldEqual "aba"
     }
 
-    @Test fun `longest palindrome is in the middle of the string`() {
+    @Test fun `match in the middle of the string`() {
         findLongestPalindrome("abbc") shouldEqual "bb"
         findLongestPalindrome("aabbbc") shouldEqual "bbb"
         findLongestPalindrome("abaabc") shouldEqual "baab"
     }
 
-    @Test fun `longest palindrome is at the end of the string`() {
+    @Test fun `match at the end of the string`() {
         findLongestPalindrome("abcc") shouldEqual "cc"
         findLongestPalindrome("abaab") shouldEqual "baab"
+    }
+}
+
+class PalindromeTests {
+    private val longPalindrome = (0..100_000).map { it.toChar() }.let { chars ->
+        (chars + chars.asReversed()).joinToString("")
     }
 
     @Test fun `check that string is a palindrome`() {
@@ -38,10 +44,6 @@ class LongestPalindrome {
         "abcba".isPalindrome() shouldEqual true
         "abccba".isPalindrome() shouldEqual true
         "abcba_".isPalindrome() shouldEqual false
-    }
-
-    private val longPalindrome = (0..100_000).map { it.toChar() }.let { chars ->
-        (chars + chars.asReversed()).joinToString("")
     }
 
     @Test fun `check that long string is a palindrome`() {
