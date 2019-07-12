@@ -60,15 +60,15 @@ class LongestPalindrome {
     }
 
     private fun findLongestPalindrome(s: String): String {
-        val map = HashMap<Int, MutableList<Int>>()
+        val map = HashMap<Char, MutableList<Int>>()
         (0 until s.length).forEach { i ->
-            map.getOrPut(i, { ArrayList() }).add(i)
+            map.getOrPut(s[i], { ArrayList() }).add(i)
         }
 
         var result = ""
 
         (0 until s.length).forEach { i ->
-            val nextIndices = map[i]!!
+            val nextIndices = map[s[i]]!!
             ((i+1) until s.length + 1).forEach { j ->
                 val substring = s.substring(i, j)
                 if (substring.isPalindrome() && substring.length > result.length) {
