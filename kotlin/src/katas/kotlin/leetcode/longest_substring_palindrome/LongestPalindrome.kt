@@ -40,10 +40,11 @@ class LongestPalindrome {
         "abcba_".isPalindrome() shouldEqual false
     }
 
-    @Test fun `check that long string is a palindrome`() {
-        val chars = (0..100_000).map { it.toChar() }
-        val longPalindrome = (chars + chars.asReversed()).joinToString("")
+    private val longPalindrome = (0..100_000).map { it.toChar() }.let { chars ->
+        (chars + chars.asReversed()).joinToString("")
+    }
 
+    @Test fun `check that long string is a palindrome`() {
         measureDuration {
             longPalindrome.isPalindrome() shouldEqual true
         }
