@@ -69,8 +69,8 @@ class LongestPalindrome {
 
         (0 until s.length).forEach { i ->
             val nextIndices = map[s[i]]!!.dropWhile { it < i }
-            ((i+1) until s.length + 1).forEach { j ->
-                val substring = s.substring(i, j)
+            nextIndices.forEach { j ->
+                val substring = s.substring(i, j + 1)
                 if (substring.isPalindrome() && substring.length > result.length) {
                     result = substring
                 }
