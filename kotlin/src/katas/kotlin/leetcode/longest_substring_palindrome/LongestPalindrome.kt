@@ -49,58 +49,58 @@ class LongestPalindrome {
             longPalindrome.isPalindrome() shouldEqual true
         }
     }
+}
 
-    private fun findLongestPalindrome_func(s: String): String {
-        return (0..s.length)
-            .flatMap { start -> (start..s.length).map { end -> start..end } }
-            .map { range -> s.substring(range.first, range.last) }
-            .filter { it.isPalindrome() }
-            .fold("") { acc, it ->
-                if (it.length > acc.length) it else acc
-            }
+private fun findLongestPalindrome(s: String): String {
+    val map = HashMap<Char, MutableList<Int>>()
+    (0 until s.length).forEach { i ->
+        map.getOrPut(s[i], { ArrayList() }).add(i)
     }
 
-    private fun findLongestPalindrome(s: String): String {
-        val map = HashMap<Char, MutableList<Int>>()
-        (0 until s.length).forEach { i ->
-            map.getOrPut(s[i], { ArrayList() }).add(i)
-        }
+    var result = ""
 
-        var result = ""
-
-        (0 until s.length).forEach { i ->
-            val nextIndices = map[s[i]]!!.dropWhile { it < i }
-            nextIndices.forEach { j ->
-                val substring = s.substring(i, j + 1)
-                if (substring.isPalindrome() && substring.length > result.length) {
-                    result = substring
-                }
+    (0 until s.length).forEach { i ->
+        val nextIndices = map[s[i]]!!.dropWhile { it < i }
+        nextIndices.forEach { j ->
+            val substring = s.substring(i, j + 1)
+            if (substring.isPalindrome() && substring.length > result.length) {
+                result = substring
             }
         }
-        return result
     }
+    return result
+}
 
-    private fun String.isPalindrome(): Boolean {
-        if (length <= 1) return true
-        var i = 0
-        var j = length - 1
-        while (i <= j) {
-            if (this[i] != this[j]) return false
-            i++
-            j--
-        }
-        return true
+private fun String.isPalindrome(): Boolean {
+    if (length <= 1) return true
+    var i = 0
+    var j = length - 1
+    while (i <= j) {
+        if (this[i] != this[j]) return false
+        i++
+        j--
     }
+    return true
+}
 
-    private fun String.isPalindrome_(): Boolean {
-        if (length <= 1) return true
-        var i = 0
-        var j = length - 1
-        while (i <= j) {
-            if (this[i] != this[j]) return false
-            i++
-            j--
+private fun findLongestPalindrome_func(s: String): String {
+    return (0..s.length)
+        .flatMap { start -> (start..s.length).map { end -> start..end } }
+        .map { range -> s.substring(range.first, range.last) }
+        .filter { it.isPalindrome() }
+        .fold("") { acc, it ->
+            if (it.length > acc.length) it else acc
         }
-        return true
+}
+
+private fun String.isPalindrome_(): Boolean {
+    if (length <= 1) return true
+    var i = 0
+    var j = length - 1
+    while (i <= j) {
+        if (this[i] != this[j]) return false
+        i++
+        j--
     }
+    return true
 }
