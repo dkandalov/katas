@@ -62,7 +62,7 @@ private fun findLongestPalindrome(s: String): String {
     var result = ""
 
     (0 until s.length).forEach { i ->
-        val nextIndices = map[s[i]]!!.dropWhile { it < i }
+        val nextIndices = map[s[i]]!!.dropWhile { it < i }.asReversed()
         nextIndices.forEach { j ->
             val substring = s.substring(i, j + 1)
             if (substring.isPalindrome() && substring.length > result.length) {
