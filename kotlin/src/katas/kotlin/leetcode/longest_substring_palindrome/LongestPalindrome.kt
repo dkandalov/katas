@@ -70,7 +70,7 @@ class LongestPalindrome {
         (0 until s.length).forEach { i ->
             val nextIndices = map[s[i]]!!.dropWhile { it <= i }
             nextIndices.forEach { j ->
-                val substring = s.substring(i, j)
+                val substring = s.substring(i, j + 1)
                 if (substring.isPalindrome() && substring.length > result.length) {
                     result = substring
                 }
