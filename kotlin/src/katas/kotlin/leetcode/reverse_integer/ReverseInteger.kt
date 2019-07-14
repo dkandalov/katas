@@ -19,14 +19,19 @@ class ReverseInteger {
 
     @Test fun `integer overflow`() {
         Int.MAX_VALUE.reverse() shouldEqual 0
+        Int.MIN_VALUE.reverse() shouldEqual 0
     }
 }
 
 private fun Int.reverse(): Int {
-    return if (this < 0) -(absoluteValue.reverse())
-    else try {
-        toString().reversed().toInt()
-    } catch (e: NumberFormatException) {
-        0
+    return when {
+        this == Int.MIN_VALUE -> 0
+        this < 0              -> -(absoluteValue.reverse())
+        else                  ->
+            try {
+                toString().reversed().toInt()
+            } catch (e: NumberFormatException) {
+                0
+            }
     }
 }
