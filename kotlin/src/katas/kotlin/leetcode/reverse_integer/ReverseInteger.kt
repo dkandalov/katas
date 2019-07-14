@@ -48,8 +48,8 @@ private fun Int.reverse(): Int {
             var n = this
             while (n != 0) {
                 result += n.rem(10) * mult
-                mult = mult.div(10)
-                n = n.div(10)
+                mult /= 10
+                n /= 10
             }
             while (result != 0L && result.rem(10) == 0L) result /= 10
             return if (result < Int.MIN_VALUE || result > Int.MAX_VALUE) 0 else result.toInt()
