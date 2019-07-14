@@ -44,11 +44,13 @@ private fun Int.reverse(): Int {
         this < 0              -> -(absoluteValue.reverse())
         else                  -> {
             var list = mutableListOf<Int>()
+            var result = 0
             var n = this
             0.until(10).forEach {
                 list.add(n.rem(10))
                 n = n.div(10)
             }
+            result.printed("result=")
             val nn = list.dropLastWhile { it == 0 }.asReversed().foldIndexed(0, { i, acc, n ->
                 val result = acc + n * 10.pow(i)
                 if (result.sign != 0 && acc.sign != 0 && result.sign != acc.sign) return 0
