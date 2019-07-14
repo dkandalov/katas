@@ -41,7 +41,6 @@ class ReverseInteger {
 private fun Int.reverse(): Int {
     return when {
         this == Int.MIN_VALUE -> 0
-        this < 0              -> -(absoluteValue.reverse())
         else                  -> {
             var result = 0L
             var n = this
