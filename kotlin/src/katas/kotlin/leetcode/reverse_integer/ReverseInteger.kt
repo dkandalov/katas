@@ -43,11 +43,9 @@ private fun Int.reverse(): Int {
         this == Int.MIN_VALUE -> 0
         this < 0              -> -(absoluteValue.reverse())
         else                  -> {
-            var list = mutableListOf<Int>()
             var result = 0L
             var n = this
             0.until(10).forEach {
-                list.add(n.rem(10))
                 result += n.rem(10) * 10L.pow((9L - it))
                 n = n.div(10)
             }
