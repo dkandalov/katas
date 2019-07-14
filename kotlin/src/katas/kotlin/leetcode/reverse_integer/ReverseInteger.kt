@@ -52,13 +52,7 @@ private fun Int.reverse(): Int {
                 n = n.div(10)
             }
             while (result != 0L && result.rem(10) == 0L) result /= 10
-            result.printed("result=")
-            val nn = list.dropLastWhile { it == 0 }.asReversed().foldIndexed(0, { i, acc, n ->
-                val result = acc + n * 10.pow(i)
-                if (result.sign != 0 && acc.sign != 0 && result.sign != acc.sign) return 0
-                result
-            })
-            nn
+            return if (result < Int.MIN_VALUE || result > Int.MAX_VALUE) 0 else result.toInt()
         }
     }
 }
