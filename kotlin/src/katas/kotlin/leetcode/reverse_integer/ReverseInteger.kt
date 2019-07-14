@@ -49,7 +49,6 @@ private fun Int.reverse(): Int {
                 result = result * 10 + n.rem(10)
                 n /= 10
             }
-            while (result != 0L && result.rem(10) == 0L) result /= 10
             return if (result < Int.MIN_VALUE || result > Int.MAX_VALUE) 0 else result.toInt()
         }
     }
