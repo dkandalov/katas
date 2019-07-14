@@ -6,6 +6,7 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.lang.NumberFormatException
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 class ReverseInteger {
     @Test fun `positive numbers`() {
@@ -49,13 +50,11 @@ private fun Int.reverse(): Int {
                 n = n.div(10)
             }
             val nn = list.dropLastWhile { it == 0 }.asReversed().foldIndexed(0, { i, acc, n ->
-                acc + n * 10.pow(i)
+                val result = acc + n * 10.pow(i)
+                if (result.sign != 0 && acc.sign != 0 && result.sign != acc.sign) return 0
+                result
             })
-            try {
-                toString().reversed().toInt()
-            } catch (e: NumberFormatException) {
-                0
-            }
+            nn
         }
     }
 }
