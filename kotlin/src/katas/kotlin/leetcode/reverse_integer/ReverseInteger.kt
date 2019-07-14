@@ -7,6 +7,7 @@ class ReverseInteger {
     @Test fun `positive numbers`() {
         0.reverse() shouldEqual 0
         12.reverse() shouldEqual 21
+        120.reverse() shouldEqual 21
     }
 }
 
