@@ -44,9 +44,11 @@ private fun Int.reverse(): Int {
         this < 0              -> -(absoluteValue.reverse())
         else                  -> {
             var result = 0L
+            var mult = 1_000_000_000L
             var n = this
             0.until(10).forEach {
-                result += n.rem(10) * 10L.pow((9L - it))
+                result += n.rem(10) * mult
+                mult /= 10
                 n = n.div(10)
             }
             while (result != 0L && result.rem(10) == 0L) result /= 10
