@@ -9,8 +9,13 @@ class ReverseInteger {
         12.reverse() shouldEqual 21
         120.reverse() shouldEqual 21
     }
+
+    @Test fun `negative numbers`() {
+        -1.reverse() shouldEqual -1
+    }
 }
 
 private fun Int.reverse(): Int {
+    if (this < 0) -(-this).reverse()
     return this.toString().reversed().toInt()
 }
