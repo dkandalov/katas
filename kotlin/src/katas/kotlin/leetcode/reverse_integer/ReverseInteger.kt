@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.reverse_integer
 
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.lang.NumberFormatException
@@ -46,6 +47,7 @@ private fun Int.reverse(): Int {
                 list.add(n.rem(10))
                 n = n.div(10)
             }
+            list.printed()
             try {
                 toString().reversed().toInt()
             } catch (e: NumberFormatException) {
