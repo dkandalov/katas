@@ -1,12 +1,7 @@
 package katas.kotlin.leetcode.reverse_integer
 
-import kotlincommon.pow
-import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
-import java.lang.NumberFormatException
-import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 class ReverseInteger {
     @Test fun `positive numbers`() {
