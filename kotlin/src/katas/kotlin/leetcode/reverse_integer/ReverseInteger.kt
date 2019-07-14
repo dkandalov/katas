@@ -39,16 +39,12 @@ class ReverseInteger {
 }
 
 private fun Int.reverse(): Int {
-    return when {
-        else                  -> {
-            var result = 0L
-            var n = this
-            while (n != 0) {
-                result = result * 10 + n.rem(10)
-                if (result < Int.MIN_VALUE || result > Int.MAX_VALUE) return 0
-                n /= 10
-            }
-            return result.toInt()
-        }
+    var result = 0L
+    var n = this
+    while (n != 0) {
+        result = result * 10 + n.rem(10)
+        if (result < Int.MIN_VALUE || result > Int.MAX_VALUE) return 0
+        n /= 10
     }
+    return result.toInt()
 }
