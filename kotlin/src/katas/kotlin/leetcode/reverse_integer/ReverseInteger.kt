@@ -9,11 +9,13 @@ class ReverseInteger {
     @Test fun `positive numbers`() {
         0.reverse() shouldEqual 0
         12.reverse() shouldEqual 21
+        123.reverse() shouldEqual 321
         120.reverse() shouldEqual 21
     }
 
     @Test fun `negative numbers`() {
         (-1).reverse() shouldEqual -1
+        (-120).reverse() shouldEqual -21
         (-123).reverse() shouldEqual -321
     }
 
@@ -29,11 +31,12 @@ private fun Int.reverse(): Int {
     return when {
         this == Int.MIN_VALUE -> 0
         this < 0              -> -(absoluteValue.reverse())
-        else                  ->
+        else                  -> {
             try {
                 toString().reversed().toInt()
             } catch (e: NumberFormatException) {
                 0
             }
+        }
     }
 }
