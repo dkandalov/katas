@@ -48,7 +48,7 @@ private fun Int.reverse(): Int {
                 list.add(n.rem(10))
                 n = n.div(10)
             }
-            val nn = list.dropLastWhile { it == 0 }.foldIndexed(0, { i, acc, n ->
+            val nn = list.dropLastWhile { it == 0 }.asReversed().foldIndexed(0, { i, acc, n ->
                 acc + n * 10.pow(i)
             })
             try {
