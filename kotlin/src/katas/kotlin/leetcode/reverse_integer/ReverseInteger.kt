@@ -17,6 +17,6 @@ class ReverseInteger {
 }
 
 private fun Int.reverse(): Int {
-    return if (this < 0) -(this.absoluteValue.reverse())
-    else this.toString().reversed().toInt()
+    return if (this < 0) -(absoluteValue.reverse())
+    else toString().reversed().toInt()
 }
