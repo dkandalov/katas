@@ -48,7 +48,7 @@ private fun Int.reverse(): Int {
             var n = this
             0.until(10).forEach {
                 list.add(n.rem(10))
-                result += n.rem(10) * 10.pow(it)
+                result += n.rem(10) * 10.pow((10 - it))
                 n = n.div(10)
             }
             result.printed("result=")
