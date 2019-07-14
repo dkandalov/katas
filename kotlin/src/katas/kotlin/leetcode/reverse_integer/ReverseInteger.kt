@@ -40,6 +40,12 @@ private fun Int.reverse(): Int {
         this == Int.MIN_VALUE -> 0
         this < 0              -> -(absoluteValue.reverse())
         else                  -> {
+            var list = mutableListOf<Int>()
+            var n = this
+            0.until(10).forEach {
+                list.add(n.rem(10))
+                n = n.div(10)
+            }
             try {
                 toString().reversed().toInt()
             } catch (e: NumberFormatException) {
