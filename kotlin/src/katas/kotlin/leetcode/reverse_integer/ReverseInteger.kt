@@ -19,7 +19,9 @@ class ReverseInteger {
 
     @Test fun `integer overflow`() {
         Int.MAX_VALUE.reverse() shouldEqual 0
+        (Int.MAX_VALUE - 1).reverse() shouldEqual 0
         Int.MIN_VALUE.reverse() shouldEqual 0
+        (Int.MIN_VALUE + 1).reverse() shouldEqual 0
     }
 }
 
