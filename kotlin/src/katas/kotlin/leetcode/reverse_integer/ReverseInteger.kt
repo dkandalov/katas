@@ -19,9 +19,11 @@ class ReverseInteger {
 
     @Test fun `negative numbers`() {
         (-1).reverse() shouldEqual -1
+        (-12).reverse() shouldEqual -21
+        (-123).reverse() shouldEqual -321
+
         (-120).reverse() shouldEqual -21
         (-1200).reverse() shouldEqual -21
-        (-123).reverse() shouldEqual -321
     }
 
     @Test fun `integer overflow`() {
