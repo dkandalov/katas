@@ -44,7 +44,7 @@ private fun Int.reverse(): Int {
         this < 0              -> -(absoluteValue.reverse())
         else                  -> {
             var list = mutableListOf<Int>()
-            var result = 0
+            var result = 0L
             var n = this
             0.until(10).forEach {
                 list.add(n.rem(10))
