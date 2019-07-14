@@ -22,6 +22,7 @@ class ReverseInteger {
         (-12).reverse() shouldEqual -21
         (-123).reverse() shouldEqual -321
 
+        (-102).reverse() shouldEqual -201
         (-120).reverse() shouldEqual -21
         (-1200).reverse() shouldEqual -21
     }
