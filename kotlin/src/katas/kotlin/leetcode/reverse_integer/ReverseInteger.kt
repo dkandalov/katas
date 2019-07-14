@@ -13,6 +13,7 @@ class ReverseInteger {
 
     @Test fun `negative numbers`() {
         (-1).reverse() shouldEqual -1
+        (-123).reverse() shouldEqual -321
     }
 }
 
