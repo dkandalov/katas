@@ -1,8 +1,12 @@
 package katas.kotlin.leetcode.reverse_integer
 
+import kotlincommon.pow
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.lang.NumberFormatException
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 class ReverseInteger {
     @Test fun `positive numbers`() {
@@ -43,7 +47,7 @@ private fun Int.reverse(): Int {
             var mult = 1_000_000_000L
             var n = this
             while (n != 0) {
-                result += n.rem(10) * mult
+                result = result * 10 + n.rem(10)
                 mult /= 10
                 n /= 10
             }
