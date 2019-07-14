@@ -2,6 +2,7 @@ package katas.kotlin.leetcode.reverse_integer
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.math.absoluteValue
 
 class ReverseInteger {
     @Test fun `positive numbers`() {
@@ -11,11 +12,11 @@ class ReverseInteger {
     }
 
     @Test fun `negative numbers`() {
-        -1.reverse() shouldEqual -1
+        (-1).reverse() shouldEqual -1
     }
 }
 
 private fun Int.reverse(): Int {
-    if (this < 0) -(-this).reverse()
+    if (this < 0) return -(this.absoluteValue.reverse())
     return this.toString().reversed().toInt()
 }
