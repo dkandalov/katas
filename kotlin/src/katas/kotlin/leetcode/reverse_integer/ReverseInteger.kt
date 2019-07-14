@@ -8,8 +8,11 @@ import kotlin.math.absoluteValue
 class ReverseInteger {
     @Test fun `positive numbers`() {
         0.reverse() shouldEqual 0
+        1.reverse() shouldEqual 1
         12.reverse() shouldEqual 21
         123.reverse() shouldEqual 321
+
+        102.reverse() shouldEqual 201
         120.reverse() shouldEqual 21
         1200.reverse() shouldEqual 21
     }
