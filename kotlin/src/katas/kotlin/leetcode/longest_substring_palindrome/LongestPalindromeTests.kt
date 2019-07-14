@@ -59,9 +59,6 @@ class PalindromeTests {
 }
 
 private fun findLongestPalindrome(s: String): String {
-    val cache = HashMap<String, Boolean>()
-    fun isPalindrome(ss: String) = cache.getOrPut(ss, { ss.isPalindrome()})
-
     val map = HashMap<Char, MutableList<Int>>()
     (0 until s.length).forEach { i ->
         map.getOrPut(s[i], { ArrayList() }).add(i)
@@ -77,7 +74,7 @@ private fun findLongestPalindrome(s: String): String {
             val substringLength = j + 1 - i
             if (j < i || substringLength <= result.length) break
             val substring = s.substring(i, j + 1)
-            if (substring.length > result.length && isPalindrome(substring)) {
+            if (substring.length > result.length && substring.isPalindrome()) {
                 result = s.substring(i, j + 1)
             }
         }
