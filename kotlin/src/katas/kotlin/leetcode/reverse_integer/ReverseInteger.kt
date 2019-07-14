@@ -6,9 +6,10 @@ import org.junit.Test
 class ReverseInteger {
     @Test fun `positive numbers`() {
         0.reverse() shouldEqual 0
+        12.reverse() shouldEqual 21
     }
 }
 
 private fun Int.reverse(): Int {
-    return this
+    return this.toString().reversed().toInt()
 }
