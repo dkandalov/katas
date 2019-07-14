@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.reverse_integer
 
+import kotlincommon.pow
 import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
@@ -47,7 +48,9 @@ private fun Int.reverse(): Int {
                 list.add(n.rem(10))
                 n = n.div(10)
             }
-            list.printed()
+            val nn = list.dropLastWhile { it == 0 }.foldIndexed(0, { i, acc, n ->
+                acc + n * 10.pow(i)
+            })
             try {
                 toString().reversed().toInt()
             } catch (e: NumberFormatException) {
