@@ -4,6 +4,9 @@ import kotlincommon.measureDuration
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/longest-palindromic-substring
+ */
 class LongestPalindromeTests {
     @Test fun `trivial examples`() {
         findLongestPalindrome("") shouldEqual ""

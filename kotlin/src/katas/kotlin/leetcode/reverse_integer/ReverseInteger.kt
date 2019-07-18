@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.reverse_integer
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/reverse-integer
+ */
 class ReverseInteger {
     @Test fun `positive numbers`() {
         0.reverse() shouldEqual 0
