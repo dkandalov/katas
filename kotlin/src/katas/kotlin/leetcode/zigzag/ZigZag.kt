@@ -3,7 +3,7 @@ package katas.kotlin.leetcode.zigzag
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-class ZigZag {
+class ZigZagThreeRowTests {
     @Test fun `zigzag first column`() {
         "ABC".zigzag() shouldEqual "ABC"
     }
