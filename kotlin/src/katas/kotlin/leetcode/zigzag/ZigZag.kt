@@ -47,7 +47,8 @@ class ZigZagFourRowTests {
 
 class ZigZagLongStringTests {
     @Test fun `long string`() {
-        (0..100).map { it.toChar() }.joinToString("")
+        val longString = (0..7).map { (it + 'a'.toInt()).toChar() }.joinToString("")
+        longString.zigzag() shouldEqual "aebdfhcg"
     }
 }
 
