@@ -55,7 +55,7 @@ class ZigZagLongStringTests {
         }.printed()
     }
 
-    val longString = generateString(10_000_000)
+    val longString = generateString(1_000_000)
 
     private fun generateString(length: Int) = (0..length).map { (it + 'a'.toInt()).toChar() }.joinToString("")
 }
