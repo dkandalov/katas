@@ -25,7 +25,7 @@ class ZigZagThreeRowTests {
 
 class ZigZagFourRowTests {
     @Test fun `zigzag first column`() {
-        "ABCD".zigzag4() shouldEqual "ABCD"
+        "ABCD".zigzag(rows = 4) shouldEqual "ABCD"
     }
 
     @Test fun `zigzag one cycle`() {
@@ -33,7 +33,7 @@ class ZigZagFourRowTests {
         // B   F
         // C E
         // D
-        "ABCDEFG".zigzag4() shouldEqual "AGBFCED"
+        "ABCDEFG".zigzag(rows = 4) shouldEqual "AGBFCED"
     }
 
     @Test fun `zigzag two cycles`() {
@@ -41,7 +41,7 @@ class ZigZagFourRowTests {
         // B   F H   M
         // C E   J L
         // D     K
-        "ABCDEFGHJKLMN".zigzag4() shouldEqual "AGNBFHMCEJLDK"
+        "ABCDEFGHJKLMN".zigzag(rows = 4) shouldEqual "AGNBFHMCEJLDK"
     }
 }
 
@@ -57,8 +57,4 @@ private fun String.zigzag(rows: Int = 3): String {
             if (indices.any { i % 6 == it }) c else null
         }.joinToString("")
     }
-}
-
-private fun String.zigzag4(): String {
-    return zigzag(rows = 4)
 }
