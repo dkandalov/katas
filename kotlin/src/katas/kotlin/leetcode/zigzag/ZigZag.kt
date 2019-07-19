@@ -48,7 +48,7 @@ class ZigZagFourRowTests {
 class ZigZagLongStringTests {
     @Test fun `long string`() {
         generateString(7).zigzag() shouldEqual "aebdfhcg"
-        generateString(1_000_000_000).zigzag()
+        generateString(10_000_000).zigzag()
     }
 
     private fun generateString(length: Int) = (0..length).map { (it + 'a'.toInt()).toChar() }.joinToString("")
