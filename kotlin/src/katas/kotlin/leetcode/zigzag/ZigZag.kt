@@ -62,6 +62,14 @@ class ZigZagLongStringTests {
 
 private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
+    var result = ""
+    var it = 0
+    while (it <= cycle / 2) {
+        val first = it
+        val second = cycle - it
+        result += filterIndexed { i, _ -> i % cycle == first || i % cycle == second }
+        it++
+    }
     return (0..(cycle/2)).joinToString("") {
         val first = it
         val second = cycle - it
