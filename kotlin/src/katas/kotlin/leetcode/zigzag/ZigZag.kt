@@ -17,9 +17,9 @@ class ZigZag {
 
     @Test fun `zigzag two cycles`() {
         // A   E
-        // B D F
-        // C
-        "ABCDEF".zigzag() shouldEqual "AEBDFC"
+        // B D F H
+        // C   G
+        "ABCDEFGH".zigzag() shouldEqual "AEBDFHCG"
     }
 }
 
