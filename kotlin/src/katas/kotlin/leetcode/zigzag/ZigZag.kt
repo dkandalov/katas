@@ -35,6 +35,14 @@ class ZigZagFourRowTests {
         // D
         "ABCDEFG".zigzag4() shouldEqual "AGBFCED"
     }
+
+    @Test fun `zigzag two cycles`() {
+        // A     G     N
+        // B   F H   M
+        // C E   J L
+        // D     K
+        "ABCDEFGHJKLMN".zigzag4() shouldEqual "AGNBFHMCEJLDK"
+    }
 }
 
 private fun String.zigzag(): String {
