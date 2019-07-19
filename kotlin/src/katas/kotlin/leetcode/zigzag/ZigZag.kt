@@ -70,9 +70,5 @@ private fun String.zigzag(rows: Int = 3): String {
         result += filterIndexed { i, _ -> i % cycle == first || i % cycle == second }
         it++
     }
-    return (0..(cycle/2)).joinToString("") {
-        val first = it
-        val second = cycle - it
-        filterIndexed { i, _ -> i % cycle == first || i % cycle == second }
-    }
+    return result
 }
