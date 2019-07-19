@@ -67,7 +67,12 @@ private fun String.zigzag(rows: Int = 3): String {
     while (it <= cycle / 2) {
         val first = it
         val second = cycle - it
-        result += filterIndexed { i, _ -> i % cycle == first || i % cycle == second }
+        var i = it
+        while (i < length) {
+            if (i % cycle == first || i % cycle == second)
+                result += this[i]
+            i++
+        }
         it++
     }
     return result
