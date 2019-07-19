@@ -1,7 +1,9 @@
 package katas.kotlin.leetcode.zigzag
 
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.system.measureTimeMillis
 
 class ZigZagThreeRowTests {
     @Test fun `zigzag first column`() {
@@ -48,8 +50,12 @@ class ZigZagFourRowTests {
 class ZigZagLongStringTests {
     @Test fun `long string`() {
         generateString(7).zigzag() shouldEqual "aebdfhcg"
-        generateString(10_000_000).zigzag()
+        measureTimeMillis {
+            longString.zigzag()
+        }.printed()
     }
+
+    val longString = generateString(10_000_000)
 
     private fun generateString(length: Int) = (0..length).map { (it + 'a'.toInt()).toChar() }.joinToString("")
 }
