@@ -47,9 +47,10 @@ class ZigZagFourRowTests {
 
 private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
-    val indices = (0..(cycle/2)).map { Pair(it, cycle - it) }
 
-    return indices.joinToString("") { (first, second) ->
+    return (0..(cycle/2)).joinToString("") {
+        val first = it
+        val second = cycle - it
         mapIndexedNotNull { i, c ->
             if (i % cycle == first || i % cycle == second) c else null
         }.joinToString("")
