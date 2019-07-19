@@ -49,10 +49,10 @@ private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
 
     val indices = if (rows == 3) {
-        (0 until (cycle/2)).map {
+        (0..(cycle/2)).map {
             listOf(it, cycle - it)
         }
-        listOf(listOf(0), listOf(1, 3), listOf(2))
+//        listOf(listOf(0), listOf(1, 3), listOf(2))
     } else {
         listOf(listOf(0), listOf(1, 5), listOf(2, 4), listOf(3))
     }
