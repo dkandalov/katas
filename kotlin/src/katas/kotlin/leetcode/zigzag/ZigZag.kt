@@ -55,25 +55,16 @@ class ZigZagLongStringTests {
         }.printed()
     }
 
-    val longString = generateString(1_000_000)
+    val longString = generateString(10_000_000)
 
     private fun generateString(length: Int) = (0..length).map { (it + 'a'.toInt()).toChar() }.joinToString("")
 }
 
 private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
-    var result = ""
-    var it = 0
-    while (it <= cycle / 2) {
+    return (0..(cycle/2)).joinToString("") {
         val first = it
         val second = cycle - it
-        var i = it
-        while (i < length) {
-            if (i % cycle == first || i % cycle == second)
-                result += this[i]
-            i++
-        }
-        it++
+        filterIndexed { i, _ -> i % cycle == first || i % cycle == second }
     }
-    return result
 }
