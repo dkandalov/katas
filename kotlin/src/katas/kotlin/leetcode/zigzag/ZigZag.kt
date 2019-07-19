@@ -47,9 +47,10 @@ class ZigZagFourRowTests {
 
 class ZigZagLongStringTests {
     @Test fun `long string`() {
-        val longString = (0..7).map { (it + 'a'.toInt()).toChar() }.joinToString("")
-        longString.zigzag() shouldEqual "aebdfhcg"
+        generateString(7).zigzag() shouldEqual "aebdfhcg"
     }
+
+    private fun generateString(length: Int) = (0..length).map { (it + 'a'.toInt()).toChar() }.joinToString("")
 }
 
 private fun String.zigzag(rows: Int = 3): String {
