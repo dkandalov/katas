@@ -38,7 +38,7 @@ private fun String.zigzag(): String {
 }
 
 private fun String.zigzag4(): String {
-    return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
+    return listOf(listOf(0), listOf(1), listOf(2), listOf(3)).joinToString("") { indices ->
         mapIndexedNotNull { i, c ->
             if (indices.any { i % 4 == it }) c else null
         }.joinToString("")
