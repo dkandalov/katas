@@ -48,19 +48,15 @@ class ZigZagFourRowTests {
 private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
 
-    if (rows == 3) {
-        val indices = listOf(listOf(0), listOf(1, 3), listOf(2))
-        return indices.joinToString("") { indices ->
-            mapIndexedNotNull { i, c ->
-                if (indices.any { i % cycle == it }) c else null
-            }.joinToString("")
-        }
+    val indices = if (rows == 3) {
+        listOf(listOf(0), listOf(1, 3), listOf(2))
     } else {
-        val indices = listOf(listOf(0), listOf(1, 5), listOf(2, 4), listOf(3))
-        return indices.joinToString("") { indices ->
-            mapIndexedNotNull { i, c ->
-                if (indices.any { i % cycle == it }) c else null
-            }.joinToString("")
-        }
+        listOf(listOf(0), listOf(1, 5), listOf(2, 4), listOf(3))
+    }
+
+    return indices.joinToString("") { indices ->
+        mapIndexedNotNull { i, c ->
+            if (indices.any { i % cycle == it }) c else null
+        }.joinToString("")
     }
 }
