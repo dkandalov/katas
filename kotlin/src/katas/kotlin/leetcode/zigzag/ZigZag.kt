@@ -8,19 +8,18 @@ class ZigZag {
         "ABC".zigzag() shouldEqual "ABC"
     }
 
-//    @Test fun `zigzag one cycle`() {
-//        // A
-//        // B D
-//        // C
-//        "ABCD".zigzag() shouldEqual "ABDC"
-//    }
+    @Test fun `zigzag one cycle`() {
+        // A
+        // B D
+        // C
+        "ABCD".zigzag() shouldEqual "ABDC"
+    }
 }
 
 private fun String.zigzag(): String {
-    listOf(0, 1, 3, 2).joinToString("") { n ->
+    return listOf(0, 1, 3, 2).joinToString("") { n ->
         mapIndexedNotNull { i, c ->
             if (i == n) c else null
         }.joinToString("")
     }
-    return this
 }
