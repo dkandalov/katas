@@ -51,8 +51,8 @@ private fun String.zigzag(rows: Int = 3): String {
     return (0..(cycle/2)).joinToString("") {
         val first = it
         val second = cycle - it
-        mapIndexedNotNull { i, c ->
-            if (i % cycle == first || i % cycle == second) c else null
-        }.joinToString("")
+        filterIndexed { i, _ ->
+            i % cycle == first || i % cycle == second
+        }
     }
 }
