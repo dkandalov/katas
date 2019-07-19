@@ -17,9 +17,9 @@ class ZigZag {
 }
 
 private fun String.zigzag(): String {
-    (0 until 3).joinToString("") { n ->
+    listOf(0, 1, 3, 2).joinToString("") { n ->
         mapIndexedNotNull { i, c ->
-            if (i % 3 == n) c else null
+            if (i % 4 == n) c else null
         }.joinToString("")
     }
     return this
