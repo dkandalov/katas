@@ -45,18 +45,20 @@ class ZigZagFourRowTests {
     }
 }
 
-private fun String.zigzag(): String {
-    return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
+private fun String.zigzag(rows: Int = 3): String {
+    if (rows == 3)
+        return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
+            mapIndexedNotNull { i, c ->
+                if (indices.any { i % 4 == it }) c else null
+            }.joinToString("")
+        }
+    else return listOf(listOf(0), listOf(1, 5), listOf(2, 4), listOf(3)).joinToString("") { indices ->
         mapIndexedNotNull { i, c ->
-            if (indices.any { i % 4 == it }) c else null
+            if (indices.any { i % 6 == it }) c else null
         }.joinToString("")
     }
 }
 
 private fun String.zigzag4(): String {
-    return listOf(listOf(0), listOf(1, 5), listOf(2, 4), listOf(3)).joinToString("") { indices ->
-        mapIndexedNotNull { i, c ->
-            if (indices.any { i % 6 == it }) c else null
-        }.joinToString("")
-    }
+    return zigzag(rows = 4)
 }
