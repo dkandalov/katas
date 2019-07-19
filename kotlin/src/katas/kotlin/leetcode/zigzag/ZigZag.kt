@@ -27,6 +27,14 @@ class ZigZagFourRowTests {
     @Test fun `zigzag first column`() {
         "ABCD".zigzag4() shouldEqual "ABCD"
     }
+
+    @Test fun `zigzag one cycle`() {
+        // A
+        // B
+        // C E
+        // D
+        "ABCDE".zigzag4() shouldEqual "ABCED"
+    }
 }
 
 private fun String.zigzag(): String {
@@ -38,7 +46,7 @@ private fun String.zigzag(): String {
 }
 
 private fun String.zigzag4(): String {
-    return listOf(listOf(0), listOf(1), listOf(2), listOf(3)).joinToString("") { indices ->
+    return listOf(listOf(0), listOf(1), listOf(2, 4), listOf(3)).joinToString("") { indices ->
         mapIndexedNotNull { i, c ->
             if (indices.any { i % 5 == it }) c else null
         }.joinToString("")
