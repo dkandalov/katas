@@ -4,6 +4,7 @@ buildscript {
 	repositories {
 		maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
 		maven { url "http://jcenter.bintray.com" }
+//		maven { url 'https://oss.jfrog.org/oss-release-local' }
 		mavenCentral()
 	}
 	dependencies {
@@ -30,6 +31,8 @@ apply plugin:"kotlin-allopen"
 
 
 dependencies {
+//	compile "io.rsocket.kotlin:rsocket-core:0.9.6"
+//	compile "io.rsocket.kotlin:rsocket-transport-okhttp:0.9.6"
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 	compile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
