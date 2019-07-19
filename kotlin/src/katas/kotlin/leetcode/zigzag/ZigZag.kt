@@ -45,6 +45,12 @@ class ZigZagFourRowTests {
     }
 }
 
+class ZigZagLongStringTests {
+    @Test fun `long string`() {
+        (0..100).map { it.toChar() }.joinToString("")
+    }
+}
+
 private fun String.zigzag(rows: Int = 3): String {
     val cycle = rows * 2 - 2
     return (0..(cycle/2)).joinToString("") {
