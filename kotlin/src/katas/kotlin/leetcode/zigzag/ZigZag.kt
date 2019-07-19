@@ -23,7 +23,21 @@ class ZigZagThreeRowTests {
     }
 }
 
+class ZigZagFourRowTests {
+    @Test fun `zigzag first column`() {
+        "ABCD".zigzag4() shouldEqual "ABCD"
+    }
+}
+
 private fun String.zigzag(): String {
+    return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
+        mapIndexedNotNull { i, c ->
+            if (indices.any { i % 4 == it }) c else null
+        }.joinToString("")
+    }
+}
+
+private fun String.zigzag4(): String {
     return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
         mapIndexedNotNull { i, c ->
             if (indices.any { i % 4 == it }) c else null
