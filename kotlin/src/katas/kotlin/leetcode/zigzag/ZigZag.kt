@@ -17,16 +17,16 @@ class ZigZag {
 
     @Test fun `zigzag two cycles`() {
         // A   E
-        // B D
+        // B D F
         // C
-        "ABCDE".zigzag() shouldEqual "AEBDC"
+        "ABCDEF".zigzag() shouldEqual "AEBDFC"
     }
 }
 
 private fun String.zigzag(): String {
-    return listOf(0, 1, 3, 2).joinToString("") { n ->
+    return listOf(listOf(0), listOf(1, 3), listOf(2)).joinToString("") { indices ->
         mapIndexedNotNull { i, c ->
-            if (i.rem(4) == n) c else null
+            if (indices.any { i % 4 == it }) c else null
         }.joinToString("")
     }
 }
