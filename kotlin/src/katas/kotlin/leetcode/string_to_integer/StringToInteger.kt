@@ -27,6 +27,12 @@ private fun String.toInteger(): Int {
     val chars = toCharArray()
     fun hasNext() = i < chars.size
     fun next() = chars[i++]
+    fun peek() = chars[i]
+
+    if (hasNext() && peek() == '-') {
+        isNegative = true
+        next()
+    }
 
     while (hasNext()) {
         val char = next()
