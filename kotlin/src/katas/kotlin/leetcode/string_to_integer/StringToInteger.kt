@@ -15,7 +15,7 @@ class StringToIntegerTests {
 
     @Test fun `ignore trailing non-digits`() {
         "123foo".toInteger() shouldEqual 123
-        "123 123".toInteger() shouldEqual 123
+        "123 234".toInteger() shouldEqual 123
     }
 
     @Test fun `positive overflow`() {
