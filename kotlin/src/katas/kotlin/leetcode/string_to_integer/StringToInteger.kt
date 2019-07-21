@@ -8,6 +8,7 @@ class StringToIntegerTests {
         (0 until 100).forEach { it.toString().toInteger() shouldEqual it }
         (0 until 100).forEach { ("+$it").toInteger() shouldEqual it }
         "123foo".toInteger() shouldEqual 123
+        "123 123".toInteger() shouldEqual 123
     }
 
     @Test fun `-100 to 0`() {
