@@ -6,9 +6,10 @@ import org.junit.Test
 class StringToIntegerTests {
     @Test fun `it works`() {
         "0".toInteger() shouldEqual 0
+        "1".toInteger() shouldEqual 1
     }
 }
 
 private fun String.toInteger(): Int {
-    return 0
+    return first().toInt() - '0'.toInt()
 }
