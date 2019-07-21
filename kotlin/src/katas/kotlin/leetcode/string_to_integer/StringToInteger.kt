@@ -9,6 +9,10 @@ class StringToIntegerTests {
         (10 until 100).forEach { it.toString().toInteger() shouldEqual it }
     }
 
+    @Test fun `positive overflow`() {
+        "1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MAX_VALUE
+    }
+
     @Test fun `-100 to 0`() {
         (-100 until 0).forEach { it.toString().toInteger() shouldEqual it }
     }
@@ -38,7 +42,9 @@ private fun String.toInteger(): Int {
     while (hasNext()) {
         val char = next()
         if (char < '0' || char > '9') return 0
+        val prevResult = result
         result = result * 10 + (char.toInt() - '0'.toInt())
+        if (prevResult > result) return Int.MAX_VALUE
     }
 
     if (isNegative) result = -result
