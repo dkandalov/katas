@@ -16,6 +16,7 @@ class StringToIntegerTests {
     @Test fun `invalid input`() {
         "-".toInteger() shouldEqual 0
         "--".toInteger() shouldEqual 0
+        "--123".toInteger() shouldEqual 0
     }
 }
 
@@ -39,6 +40,7 @@ private fun String.toInteger(): Int {
         if (char < '0' || char > '9') return 0
         result = result * 10 + (char.toInt() - '0'.toInt())
     }
+
     if (isNegative) result = -result
     return result
 }
