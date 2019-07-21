@@ -47,9 +47,12 @@ private fun String.toInteger(): Int {
         next()
     }
 
+    var hadOneDigit = false
     while (hasNext()) {
         val char = next()
-        if (char < '0' || char > '9') return 0
+        if (char < '0' || char > '9') return if (hadOneDigit) result else 0
+        hadOneDigit = true
+        
         val prevResult = result
         result = result * 10 + (char.toInt() - '0'.toInt())
         if (prevResult > result) return if (isNegative) Int.MIN_VALUE else Int.MAX_VALUE
