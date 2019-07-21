@@ -9,16 +9,16 @@ class StringToIntegerTests {
         (0 until 100).forEach { ("+$it").toInteger() shouldEqual it }
     }
 
+    @Test fun `-100 to 0`() {
+        (-100 until 0).forEach { it.toString().toInteger() shouldEqual it }
+    }
+
     @Test fun `positive overflow`() {
         "1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MAX_VALUE
     }
 
     @Test fun `negative overflow`() {
         "-1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MIN_VALUE
-    }
-
-    @Test fun `-100 to 0`() {
-        (-100 until 0).forEach { it.toString().toInteger() shouldEqual it }
     }
 
     @Test fun `invalid input`() {
