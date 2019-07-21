@@ -15,12 +15,15 @@ class StringToIntegerTests {
 
     @Test fun `invalid input`() {
         "-".toInteger() shouldEqual 0
+        "--".toInteger() shouldEqual 0
     }
 }
 
 private fun String.toInteger(): Int {
     var result = 0
     var isNegative = false
+    var 
+
     chars().forEach { char ->
         if (char == '-'.toInt()) isNegative = true
         else result = result * 10 + (char - '0'.toInt())
