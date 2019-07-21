@@ -19,7 +19,7 @@ class StringToIntegerTests {
     }
 
     @Test fun `ignore prefix spaces`() {
-        " 123".toInteger() shouldEqual 123
+        "  123".toInteger() shouldEqual 123
         " -123".toInteger() shouldEqual -123
     }
 
