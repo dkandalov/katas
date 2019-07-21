@@ -39,7 +39,7 @@ class StringToIntegerTests {
         "-+".toInteger() shouldEqual 0
         "--123".toInteger() shouldEqual 0
         "- 123".toInteger() shouldEqual 0
-        " foo123".toInteger() shouldEqual 0
+        "foo123".toInteger() shouldEqual 0
     }
 }
 
