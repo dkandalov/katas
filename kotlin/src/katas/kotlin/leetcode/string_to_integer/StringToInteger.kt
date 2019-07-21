@@ -33,7 +33,8 @@ class StringToIntegerTests {
     @Test fun `negative overflow`() {
         "-2147483647".toInteger() shouldEqual Int.MIN_VALUE + 1
         "-2147483648".toInteger() shouldEqual Int.MIN_VALUE
-        "-1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MIN_VALUE
+        "-2147483649".toInteger() shouldEqual Int.MIN_VALUE
+        "-992147483648".toInteger() shouldEqual Int.MIN_VALUE
     }
 
     @Test fun `invalid input`() {
