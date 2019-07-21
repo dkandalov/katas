@@ -46,6 +46,8 @@ private fun String.toInteger(): Int {
     fun next() = chars[i++]
     fun peek() = chars[i]
 
+    while (hasNext() && peek() == ' ') next()
+
     val sign = if (hasNext()) peek() else -1
     if (sign == '-' || sign == '+') {
         isNegative = sign == '-'
