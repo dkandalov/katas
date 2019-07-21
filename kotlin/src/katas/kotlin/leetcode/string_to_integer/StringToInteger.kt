@@ -24,6 +24,9 @@ class StringToIntegerTests {
     @Test fun `invalid input`() {
         "-".toInteger() shouldEqual 0
         "--".toInteger() shouldEqual 0
+        "+".toInteger() shouldEqual 0
+        "++".toInteger() shouldEqual 0
+        "-+".toInteger() shouldEqual 0
         "--123".toInteger() shouldEqual 0
     }
 }
