@@ -7,6 +7,7 @@ class StringToIntegerTests {
     @Test fun `0 to 100`() {
         (0 until 100).forEach { it.toString().toInteger() shouldEqual it }
         (0 until 100).forEach { ("+$it").toInteger() shouldEqual it }
+        "123foo".toInteger() shouldEqual 123
     }
 
     @Test fun `-100 to 0`() {
@@ -52,7 +53,7 @@ private fun String.toInteger(): Int {
         val char = next()
         if (char < '0' || char > '9') return if (hadOneDigit) result else 0
         hadOneDigit = true
-        
+
         val prevResult = result
         result = result * 10 + (char.toInt() - '0'.toInt())
         if (prevResult > result) return if (isNegative) Int.MIN_VALUE else Int.MAX_VALUE
