@@ -18,6 +18,11 @@ class StringToIntegerTests {
         "123 234".toInteger() shouldEqual 123
     }
 
+    @Test fun `ignore prefix spaces`() {
+        " 123".toInteger() shouldEqual 123
+        " -123".toInteger() shouldEqual -123
+    }
+
     @Test fun `positive overflow`() {
         "1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MAX_VALUE
     }
