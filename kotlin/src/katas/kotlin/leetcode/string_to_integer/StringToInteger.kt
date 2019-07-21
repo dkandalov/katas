@@ -5,6 +5,9 @@ import org.junit.Test
 
 class StringToIntegerTests {
     @Test fun `it works`() {
+        (0 until 10).forEach {
+            it.toString().toInteger() shouldEqual it
+        }
         "0".toInteger() shouldEqual 0
         "1".toInteger() shouldEqual 1
     }
