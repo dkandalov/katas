@@ -8,11 +8,9 @@ class StringToIntegerTests {
         (0 until 10).forEach {
             it.toString().toInteger() shouldEqual it
         }
-        (10 until 20).forEach {
+        (10 until 100).forEach {
             it.toString().toInteger() shouldEqual it
         }
-        "0".toInteger() shouldEqual 0
-        "1".toInteger() shouldEqual 1
     }
 }
 
