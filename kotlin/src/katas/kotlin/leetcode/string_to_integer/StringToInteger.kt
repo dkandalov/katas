@@ -16,7 +16,7 @@ class StringToIntegerTests {
 private fun String.toInteger(): Int {
     var result = 0
     chars().forEach { char ->
-        result = char - '0'.toInt()
+        result = result * 10 + (char - '0'.toInt())
     }
     return result
 }
