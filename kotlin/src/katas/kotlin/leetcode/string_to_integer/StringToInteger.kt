@@ -38,8 +38,9 @@ private fun String.toInteger(): Int {
     fun next() = chars[i++]
     fun peek() = chars[i]
 
-    if (hasNext() && peek() == '-') {
-        isNegative = true
+    val sign = if (hasNext()) peek() else -1
+    if (sign == '-' || sign == '+') {
+        isNegative = sign == '-'
         next()
     }
 
