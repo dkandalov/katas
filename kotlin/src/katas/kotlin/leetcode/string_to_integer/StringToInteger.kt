@@ -22,7 +22,6 @@ class StringToIntegerTests {
 private fun String.toInteger(): Int {
     var result = 0
     var isNegative = false
-    var 
 
     chars().forEach { char ->
         if (char == '-'.toInt()) isNegative = true
