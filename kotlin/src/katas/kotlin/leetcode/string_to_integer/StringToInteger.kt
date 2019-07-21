@@ -5,9 +5,7 @@ import org.junit.Test
 
 class StringToIntegerTests {
     @Test fun `0 to 100`() {
-        (0 until 10).forEach {
-            it.toString().toInteger() shouldEqual it
-        }
+        (0 until 10).forEach { it.toString().toInteger() shouldEqual it }
         (10 until 100).forEach {
             it.toString().toInteger() shouldEqual it
         }
@@ -17,7 +15,8 @@ class StringToIntegerTests {
 private fun String.toInteger(): Int {
     var result = 0
     chars().forEach { char ->
-        result = result * 10 + (char - '0'.toInt())
+        if (char == '-'.toInt()) result = -result
+        else result = result * 10 + (char - '0'.toInt())
     }
     return result
 }
