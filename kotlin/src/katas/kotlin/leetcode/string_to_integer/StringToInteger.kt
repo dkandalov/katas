@@ -7,12 +7,15 @@ class StringToIntegerTests {
     @Test fun `0 to 100`() {
         (0 until 100).forEach { it.toString().toInteger() shouldEqual it }
         (0 until 100).forEach { ("+$it").toInteger() shouldEqual it }
-        "123foo".toInteger() shouldEqual 123
-        "123 123".toInteger() shouldEqual 123
     }
 
     @Test fun `-100 to 0`() {
         (-100 until 0).forEach { it.toString().toInteger() shouldEqual it }
+    }
+
+    @Test fun `ignore trailing non-digits`() {
+        "123foo".toInteger() shouldEqual 123
+        "123 123".toInteger() shouldEqual 123
     }
 
     @Test fun `positive overflow`() {
