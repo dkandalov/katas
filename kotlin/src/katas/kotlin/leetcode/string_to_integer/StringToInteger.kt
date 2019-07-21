@@ -26,7 +26,8 @@ class StringToIntegerTests {
     @Test fun `positive overflow`() {
         "2147483646".toInteger() shouldEqual Int.MAX_VALUE - 1
         "2147483647".toInteger() shouldEqual Int.MAX_VALUE
-        "1${Int.MAX_VALUE}".toInteger() shouldEqual Int.MAX_VALUE
+        "2147483648".toInteger() shouldEqual Int.MAX_VALUE
+        "992147483647".toInteger() shouldEqual Int.MAX_VALUE
     }
 
     @Test fun `negative overflow`() {
