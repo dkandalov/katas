@@ -5,8 +5,8 @@ import org.junit.Test
 
 class StringToIntegerTests {
     @Test fun `0 to 100`() {
-        (0 until 10).forEach { it.toString().toInteger() shouldEqual it }
-        (10 until 100).forEach { it.toString().toInteger() shouldEqual it }
+        (0 until 100).forEach { it.toString().toInteger() shouldEqual it }
+        (0 until 100).forEach { ("+$it").toInteger() shouldEqual it }
     }
 
     @Test fun `positive overflow`() {
