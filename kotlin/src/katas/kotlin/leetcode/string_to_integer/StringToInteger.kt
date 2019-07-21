@@ -12,6 +12,10 @@ class StringToIntegerTests {
     @Test fun `-100 to 0`() {
         (-100 until 0).forEach { it.toString().toInteger() shouldEqual it }
     }
+
+    @Test fun `invalid input`() {
+        "-".toInteger() shouldEqual 0
+    }
 }
 
 private fun String.toInteger(): Int {
