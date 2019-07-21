@@ -23,9 +23,15 @@ private fun String.toInteger(): Int {
     var result = 0
     var isNegative = false
 
-    chars().forEach { char ->
-        if (char == '-'.toInt()) isNegative = true
-        else result = result * 10 + (char - '0'.toInt())
+    var i = 0
+    val chars = toCharArray()
+    fun hasNext() = i < chars.size
+    fun next() = chars[i++]
+
+    while (hasNext()) {
+        val char = next()
+        if (char.toInt() == '-'.toInt()) isNegative = true
+        else result = result * 10 + (char.toInt() - '0'.toInt())
     }
     if (isNegative) result = -result
     return result
