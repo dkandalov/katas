@@ -14,5 +14,9 @@ class StringToIntegerTests {
 }
 
 private fun String.toInteger(): Int {
-    return first().toInt() - '0'.toInt()
+    var result = 0
+    chars().forEach { char ->
+        result = char - '0'.toInt()
+    }
+    return result
 }
