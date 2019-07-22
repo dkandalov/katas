@@ -13,7 +13,7 @@ class IntegerToRomanTests {
         500.toRoman() shouldEqual "D"
         1000.toRoman() shouldEqual "M"
 
-
+        2.toRoman() shouldEqual "II"
     }
 }
 
