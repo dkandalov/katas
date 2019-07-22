@@ -43,14 +43,13 @@ class IntegerToRomanTests {
     }
 
     @Test fun `convert numeral to number`() {
-        examples.take(10).forEach { (number, numeral) ->
+        examples.forEach { (number, numeral) ->
             numeral.romanToInt() shouldEqual number
         }
     }
 }
 
 private fun String.romanToInt(): Int {
-    if (this == "") return 0
     var s = this
     var result = 0
     while (s != "") {
