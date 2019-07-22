@@ -42,6 +42,6 @@ private fun Int.toRoman(): String {
         5 to "V", 4 to "IV",
         1 to "I"
     )
-    val entry = map.entries.find { this >= it.key } ?: return ""
-    return entry.value + (this - entry.key).toRoman()
+    val (number, numeral) = map.entries.find { this >= it.key } ?: return ""
+    return numeral + (this - number).toRoman()
 }
