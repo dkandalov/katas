@@ -38,14 +38,6 @@ class ContainerWithMostWaterTests {
             if (volume > maxVolume) maxVolume = volume
             if (this[from] < this[to - 1]) from++ else to--
         }
-
-        val maxDepth = sorted()[size - 2]
-        (1..maxDepth).forEach { depth ->
-            val from = indexOfFirst { it >= depth }
-            val to = indexOfLast { it >= depth }
-            val volume = minOf(this[from], this[to]) * (to - from)
-            if (volume > maxVolume) maxVolume = volume
-        }
         return findMaxContainer__()
     }
 
