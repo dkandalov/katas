@@ -7,12 +7,17 @@ class RegexMatchingTests {
     @Test fun `it mostly works`() {
         "".matches("") shouldEqual true
         "a".matches("a") shouldEqual true
-        "a".matches(".") shouldEqual true
         "a".matches("b") shouldEqual false
+
+        "a".matches(".") shouldEqual true
+        "ab".matches("a.") shouldEqual true
+        "ab".matches("X.") shouldEqual false
     }
 }
 
 private fun String.matches(regex: String): Boolean {
-    if (regex == ".") return true
-    return this == regex
+    regex.forEachIndexed { i, char ->
+        if (char != '.' && char != this[i]) return false
+    }
+    return true
 }
