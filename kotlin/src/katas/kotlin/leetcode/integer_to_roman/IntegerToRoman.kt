@@ -40,11 +40,17 @@ class IntegerToRomanTests {
 class RomanToIntegerTests {
     @Test fun `it mostly works`() {
         "I".romanToInt() shouldEqual 1
+        "V".romanToInt() shouldEqual 5
+        "X".romanToInt() shouldEqual 10
+        "L".romanToInt() shouldEqual 50
+        "C".romanToInt() shouldEqual 100
+        "D".romanToInt() shouldEqual 500
+        "M".romanToInt() shouldEqual 1000
     }
 }
 
 private fun String.romanToInt(): Int {
-    return 1
+    return map.entries.associate { it.value to it.key }[this]!!
 }
 
 private val map = mapOf(
