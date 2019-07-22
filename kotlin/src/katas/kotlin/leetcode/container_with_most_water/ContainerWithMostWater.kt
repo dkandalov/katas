@@ -1,10 +1,8 @@
 package katas.kotlin.leetcode.container_with_most_water
 
 import kotlincommon.listOfInts
-import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
-import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 /**
@@ -33,14 +31,8 @@ class ContainerWithMostWaterTests {
     private fun List<Int>.findMaxContainer(): Int {
         if (size < 2) error("")
         var maxVolume = 0
-        val sorted = zip(indices).sortedBy { it.first }
-        val maxDepth = sorted[size - 2].first
+        val maxDepth = sorted()[size - 2]
         (1..maxDepth).forEach { depth ->
-            var i = sorted.binarySearch { it.first.compareTo(depth) }.absoluteValue
-            while (i > 0 && sorted[i].first == depth) i--
-            var j = sorted.binarySearch { it.first.compareTo(depth) }.absoluteValue
-            while (j < sorted.size && sorted[j].first == depth) j++
-
             val from = indexOfFirst { it >= depth }
             val to = indexOfLast { it >= depth }
             val volume = minOf(this[from], this[to]) * (to - from)
