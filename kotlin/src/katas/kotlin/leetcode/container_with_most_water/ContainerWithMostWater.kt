@@ -46,8 +46,7 @@ class ContainerWithMostWaterTests {
         var maxVolume = 0
         (0..size - 2).forEach { from ->
             (from + 2..size).forEach { to ->
-                val subset = subList(from, to)
-                val volume = minOf(subset.first(), subset.last()) * (subset.size - 1)
+                val volume = minOf(this[from], this[to]) * (to - from)
                 if (volume > maxVolume) maxVolume = volume
             }
         }
