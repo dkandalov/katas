@@ -6,9 +6,11 @@ import org.junit.Test
 class RegexMatchingTests {
     @Test fun `it mostly works`() {
         "".matches("") shouldEqual true
+        "a".matches("a") shouldEqual true
+        "a".matches("b") shouldEqual false
     }
 }
 
 private fun String.matches(regex: String): Boolean {
-    return true
+    return this == regex
 }
