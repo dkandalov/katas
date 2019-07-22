@@ -11,6 +11,9 @@ class IntegerToRomanTests {
         4.toRoman() shouldEqual "IV"
         5.toRoman() shouldEqual "V"
         6.toRoman() shouldEqual "VI"
+        7.toRoman() shouldEqual "VII"
+        8.toRoman() shouldEqual "VIII"
+        9.toRoman() shouldEqual "IX"
         10.toRoman() shouldEqual "X"
         50.toRoman() shouldEqual "L"
         100.toRoman() shouldEqual "C"
@@ -26,6 +29,7 @@ private fun Int.toRoman(): String {
         100 to "C",
         50 to "L",
         10 to "X",
+        9 to "IX",
         5 to "V",
         4 to "IV",
         1 to "I"
