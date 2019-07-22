@@ -34,7 +34,8 @@ class ContainerWithMostWaterTests {
         var from = 0
         var to = size
         while (from < to) {
-            maxVolume = maxOf(maxVolume, minOf(this[from], this[to - 1]) * (to - from))
+            val volume = minOf(this[from], this[to - 1]) * (to - from)
+            if (volume > maxVolume) maxVolume = volume
             if (this[from] < this[to - 1]) from++ else to--
         }
         return findMaxContainer__()
