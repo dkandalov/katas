@@ -26,13 +26,14 @@ class RegexMatchingTests {
 
 private fun String.matches(regex: String): Boolean {
     (0 until regex.length).forEach { i ->
-        if (regex[i] == '*') {
+        val char = regex[i]
+        if (char == '*') {
             return (i .. length).any { j ->
                 substring(j).matches(regex.substring(i + 1))
             }
         }
         if (i >= length) return false
-        if (regex[i] != '.' && regex[i] != this[i]) return false
+        if (char != '.' && char != this[i]) return false
     }
     return true
 }
