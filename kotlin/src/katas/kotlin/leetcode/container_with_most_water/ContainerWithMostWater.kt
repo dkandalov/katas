@@ -36,8 +36,7 @@ class ContainerWithMostWaterTests {
         while (from < to) {
             val volume = minOf(this[from], this[to - 1]) * (to - from)
             if (volume > maxVolume) maxVolume = volume
-            from++
-            to--
+            if (this[from] < this[to - 1]) from++ else to--
         }
 
         val maxDepth = sorted()[size - 2]
