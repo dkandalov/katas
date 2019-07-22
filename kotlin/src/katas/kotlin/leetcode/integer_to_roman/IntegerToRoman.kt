@@ -50,12 +50,12 @@ class IntegerToRomanTests {
 }
 
 private fun String.romanToInt(): Int {
-    var s = this
+    var i = 0
     var result = 0
-    while (s != "") {
-        val (numeral, number) = numberByNumeral.entries.find { s.startsWith(it.key) }!!
+    while (i < length) {
+        val (numeral, number) = numberByNumeral.entries.find { startsWith(it.key, startIndex = i) }!!
         result += number
-        s = s.drop(numeral.length)
+        i += numeral.length
     }
     return result
 }
