@@ -29,8 +29,7 @@ class ContainerWithMostWaterTests {
         (1..maxDepth).forEach { depth ->
             val from = indexOfFirst { it >= depth }
             val to = indexOfLast { it >= depth }
-            val subset = subList(from, to + 1)
-            val volume = minOf(subset.first(), subset.last()) * (to - from)
+            val volume = minOf(this[from], this[to]) * (to - from)
             if (volume > maxVolume) maxVolume = volume
         }
         return maxVolume
