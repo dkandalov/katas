@@ -51,8 +51,14 @@ class IntegerToRomanTests {
 
 private fun String.romanToInt(): Int {
     if (this == "") return 0
-    val (numeral, number) = numberByNumeral.entries.find { startsWith(it.key) }!!
-    return number + drop(numeral.length).romanToInt()
+    var s = this
+    var result = 0
+    while (s != "") {
+        val (numeral, number) = numberByNumeral.entries.find { s.startsWith(it.key) }!!
+        result += number
+        s = s.drop(numeral.length)
+    }
+    return result
 }
 
 private val numeralByNumber = mapOf(
