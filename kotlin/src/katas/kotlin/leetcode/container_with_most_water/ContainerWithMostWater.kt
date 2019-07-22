@@ -38,7 +38,7 @@ class ContainerWithMostWaterTests {
             val volume = minOf(this[from], this[to]) * (to - from)
             if (volume > maxVolume) maxVolume = volume
         }
-        return maxVolume
+        return findMaxContainer__()
     }
 
     private fun List<Int>.findMaxContainer__(): Int {
