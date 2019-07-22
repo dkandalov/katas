@@ -25,7 +25,7 @@ class ContainerWithMostWaterTests {
 
     @Test fun `huge list`() {
         val hugeList = Random(seed = 123).listOfInts(size = 1_000_000, valuesRange = 0 until 1000)
-        hugeList.findMaxContainer()
+        hugeList.findMaxContainer() shouldEqual 997958043
     }
 
     private fun List<Int>.findMaxContainer(): Int {
