@@ -50,10 +50,10 @@ class RomanToIntegerTests {
 }
 
 private fun String.romanToInt(): Int {
-    return map.entries.associate { it.value to it.key }[this]!!
+    return numberByNumeral[this]!!
 }
 
-private val map = mapOf(
+private val numeralByNumber = mapOf(
     1000 to "M", 900 to "CM",
     500 to "D", 400 to "CD",
     100 to "C", 90 to "XC",
@@ -63,12 +63,14 @@ private val map = mapOf(
     1 to "I"
 )
 
+private val numberByNumeral = numeralByNumber.entries.associate { it.value to it.key }
+
 private fun Int.toRoman(): String {
     if (this <= 0) error("")
     val result = StringBuilder()
     var n = this
     while (n != 0) {
-        val (number, numeral) = map.entries.find { n >= it.key }!!
+        val (number, numeral) = numeralByNumber.entries.find { n >= it.key }!!
         result.append(numeral)
         n -= number
     }
