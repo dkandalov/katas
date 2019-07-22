@@ -26,6 +26,7 @@ class IntegerToRomanTests {
         500.toRoman() shouldEqual "D"
         900.toRoman() shouldEqual "CM"
         1000.toRoman() shouldEqual "M"
+        1994.toRoman() shouldEqual "MCMXCIV"
     }
 }
 
