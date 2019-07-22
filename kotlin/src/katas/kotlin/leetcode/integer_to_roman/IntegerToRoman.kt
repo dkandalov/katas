@@ -48,12 +48,12 @@ private val map = mapOf(
 
 private fun Int.toRoman(): String {
     if (this <= 0) error("")
-    var result = ""
+    val result = StringBuilder()
     var n = this
     while (n != 0) {
         val (number, numeral) = map.entries.find { n >= it.key }!!
-        result += numeral
+        result.append(numeral)
         n -= number
     }
-    return result
+    return result.toString()
 }
