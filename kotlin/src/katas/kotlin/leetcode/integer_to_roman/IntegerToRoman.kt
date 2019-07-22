@@ -17,7 +17,9 @@ class IntegerToRomanTests {
         10.toRoman() shouldEqual "X"
         11.toRoman() shouldEqual "XI"
         12.toRoman() shouldEqual "XII"
+        40.toRoman() shouldEqual "XL"
         50.toRoman() shouldEqual "L"
+        90.toRoman() shouldEqual "XC"
         100.toRoman() shouldEqual "C"
         500.toRoman() shouldEqual "D"
         1000.toRoman() shouldEqual "M"
@@ -28,12 +30,10 @@ private fun Int.toRoman(): String {
     val map = mapOf(
         1000 to "M",
         500 to "D",
-        100 to "C",
-        50 to "L",
-        10 to "X",
-        9 to "IX",
-        5 to "V",
-        4 to "IV",
+        100 to "C", 90 to "XC",
+        50 to "L", 40 to "XL",
+        10 to "X", 9 to "IX",
+        5 to "V", 4 to "IV",
         1 to "I"
     )
     val entry = map.entries.find { this >= it.key } ?: return ""
