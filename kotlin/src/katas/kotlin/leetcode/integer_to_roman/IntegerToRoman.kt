@@ -50,7 +50,9 @@ class RomanToIntegerTests {
 }
 
 private fun String.romanToInt(): Int {
-    return numberByNumeral[this]!!
+    if (this == "") return 0
+    val (numeral, number) = numberByNumeral.entries.find { startsWith(it.key) }!!
+    return number + drop(numeral.length).romanToInt()
 }
 
 private val numeralByNumber = mapOf(
