@@ -36,7 +36,9 @@ class ContainerWithMostWaterTests {
         val sorted = zip(indices).sortedBy { it.first }
         val maxDepth = sorted[size - 2].first
         (1..maxDepth).forEach { depth ->
-            sorted.binarySearch { it.first.compareTo(depth) }.printed().absoluteValue
+            var i = sorted.binarySearch { it.first.compareTo(depth) }.printed().absoluteValue
+            while (i > 0 && sorted[i].first == depth) i--
+
             val from = indexOfFirst { it >= depth }
             val to = indexOfLast { it >= depth }
             val volume = minOf(this[from], this[to]) * (to - from)
