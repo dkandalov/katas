@@ -9,6 +9,13 @@ import org.junit.Test
 class ContainerWithMostWaterTests {
     @Test fun `some examples`() {
         listOf(1, 1).findMaxContainer() shouldEqual 1
+
+        listOf(1, 2).findMaxContainer() shouldEqual 1
+        listOf(2, 1).findMaxContainer() shouldEqual 1
+
+        listOf(1, 2, 3).findMaxContainer() shouldEqual 2
+        listOf(2, 2, 3).findMaxContainer() shouldEqual 4
+
         listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer() shouldEqual 49
     }
 
