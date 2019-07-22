@@ -4,6 +4,7 @@ import kotlincommon.listOfInts
 import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 /**
@@ -35,7 +36,7 @@ class ContainerWithMostWaterTests {
         val sorted = zip(indices).sortedBy { it.first }
         val maxDepth = sorted[size - 2].first
         (1..maxDepth).forEach { depth ->
-            sorted.binarySearch { it.first.compareTo(depth) }.printed()
+            sorted.binarySearch { it.first.compareTo(depth) }.printed().absoluteValue
             val from = indexOfFirst { it >= depth }
             val to = indexOfLast { it >= depth }
             val volume = minOf(this[from], this[to]) * (to - from)
