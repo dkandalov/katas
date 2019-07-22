@@ -18,14 +18,14 @@ class IntegerToRomanTests {
 }
 
 private fun Int.toRoman(): String {
-    return when (this) {
-        1000 -> "M"
-        500  -> "D"
-        100  -> "C"
-        50   -> "L"
-        10   -> "X"
-        5    -> "V"
-        1    -> "I"
-        else -> ""
-    }
+    val map = mapOf(
+        1000 to "M",
+        500 to "D",
+        100 to "C",
+        50 to "L",
+        10 to "X",
+        5 to "V",
+        1 to "I"
+    )
+    return map[this] ?: ""
 }
