@@ -10,17 +10,17 @@ import kotlin.random.Random
  */
 class ContainerWithMostWaterTests {
     @Test fun `some examples`() {
-        listOf(1, 1).findMaxContainer_() shouldEqual 1
+        listOf(1, 1).findMaxContainer() shouldEqual 1
 
-        listOf(1, 2).findMaxContainer_() shouldEqual 1
-        listOf(2, 1).findMaxContainer_() shouldEqual 1
+        listOf(1, 2).findMaxContainer() shouldEqual 1
+        listOf(2, 1).findMaxContainer() shouldEqual 1
 
-        listOf(1, 2, 3).findMaxContainer_() shouldEqual 2
-        listOf(2, 2, 3).findMaxContainer_() shouldEqual 4
+        listOf(1, 2, 3).findMaxContainer() shouldEqual 2
+        listOf(2, 2, 3).findMaxContainer() shouldEqual 4
 
-        listOf(2, 7, 7, 2).findMaxContainer_() shouldEqual 7
+        listOf(2, 7, 7, 2).findMaxContainer() shouldEqual 7
 
-        listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer_() shouldEqual 49
+        listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer() shouldEqual 49
     }
 
     @Test fun `huge list`() {
