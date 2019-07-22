@@ -29,7 +29,7 @@ class IntegerToRomanTests {
         900.toRoman() shouldEqual "CM"
         1000.toRoman() shouldEqual "M"
         1994.toRoman() shouldEqual "MCMXCIV"
-        Int.MAX_VALUE.toRoman() shouldEqual "MCMXCIV"
+        100_000.toRoman() shouldEqual "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
     }
 }
 
