@@ -21,6 +21,7 @@ class IntegerToRomanTests {
         50.toRoman() shouldEqual "L"
         58.toRoman() shouldEqual "LVIII"
         59.toRoman() shouldEqual "LIX"
+        89.toRoman() shouldEqual "LXXXIX"
         90.toRoman() shouldEqual "XC"
         100.toRoman() shouldEqual "C"
         400.toRoman() shouldEqual "CD"
