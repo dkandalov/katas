@@ -22,6 +22,7 @@ class ContainerWithMostWaterTests {
     }
 
     private fun List<Int>.findMaxContainer(): Int {
+        if (size < 2) error("")
         var maxVolume = 0
         val sorted = sorted()
         val maxDepth = sorted[size - 2]
