@@ -33,7 +33,10 @@ class ContainerWithMostWaterTests {
         var maxVolume = 0
         var from = 0
         var to = size
-        wh
+        while (from < to) {
+            from++
+            to--
+        }
 
         val maxDepth = sorted()[size - 2]
         (1..maxDepth).forEach { depth ->
