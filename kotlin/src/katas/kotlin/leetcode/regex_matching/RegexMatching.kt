@@ -15,12 +15,16 @@ class RegexMatchingTests {
         "ab".matches("..") shouldEqual true
         "ab".matches("X.") shouldEqual false
         "ab".matches("...") shouldEqual false
+
+        "ab".matches("*") shouldEqual true
+        "abc".matches("a*") shouldEqual true
     }
 }
 
 private fun String.matches(regex: String): Boolean {
     (0 until regex.length).forEach { i ->
         if (i >= length) return false
+        if (regex[i] == '*') return true
         if (regex[i] != '.' && regex[i] != this[i]) return false
     }
     return true
