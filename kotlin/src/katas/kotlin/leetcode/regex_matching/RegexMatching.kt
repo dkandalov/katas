@@ -12,6 +12,7 @@ class RegexMatchingTests {
         "a".matches(".") shouldEqual true
         "ab".matches("a.") shouldEqual true
         "ab".matches(".b") shouldEqual true
+        "ab".matches("..") shouldEqual true
         "ab".matches("X.") shouldEqual false
     }
 }
