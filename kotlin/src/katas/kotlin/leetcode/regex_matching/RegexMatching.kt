@@ -19,10 +19,14 @@ class RegexMatchingTests {
         "ab".matches("*") shouldEqual true
         "ab".matches("**") shouldEqual true
         "ab".matches("***") shouldEqual true
+
         "abc".matches("a*") shouldEqual true
         "abc".matches("ab*") shouldEqual true
         "abc".matches("abc*") shouldEqual true
         "abc".matches("*c") shouldEqual true
+        "abc".matches("*bc") shouldEqual true
+        "abc".matches("*abc") shouldEqual true
+
         "abc".matches("*X") shouldEqual false
     }
 }
