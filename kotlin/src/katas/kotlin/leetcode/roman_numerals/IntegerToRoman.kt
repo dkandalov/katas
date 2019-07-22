@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.integer_to_roman
+package katas.kotlin.leetcode.roman_numerals
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
@@ -7,7 +7,7 @@ import org.junit.Test
  * https://leetcode.com/problems/integer-to-roman
  * https://leetcode.com/problems/roman-to-integer
  */
-class IntegerToRomanTests {
+class RomanNumeralsTests {
     private val examples = listOf(
         1 to "I",
         2 to "II",
