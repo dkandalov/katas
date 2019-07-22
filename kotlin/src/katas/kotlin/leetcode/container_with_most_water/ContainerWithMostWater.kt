@@ -23,6 +23,11 @@ class ContainerWithMostWaterTests {
 
     private fun List<Int>.findMaxContainer(): Int {
         val max = max()!!.downTo(1).find { depth -> count { it >= depth } >= 2 }!!
+        (1 .. max).forEach { depth ->
+            val from = indexOfFirst { it >= depth }
+            val to = indexOfLast { it >= depth }
+
+        }
         var maxVolume = 0
         (0..size - 2).forEach { from ->
             (from + 2..size).forEach { to ->
