@@ -15,6 +15,7 @@ class IntegerToRomanTests {
 
         2.toRoman() shouldEqual "II"
         3.toRoman() shouldEqual "III"
+        4.toRoman() shouldEqual "IV"
     }
 }
 
@@ -26,6 +27,7 @@ private fun Int.toRoman(): String {
         50 to "L",
         10 to "X",
         5 to "V",
+        4 to "IV",
         1 to "I"
     )
     val entry = map.entries.find { this >= it.key } ?: return ""
