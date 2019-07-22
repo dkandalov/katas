@@ -14,6 +14,7 @@ class IntegerToRomanTests {
         1000.toRoman() shouldEqual "M"
 
         2.toRoman() shouldEqual "II"
+        3.toRoman() shouldEqual "III"
     }
 }
 
