@@ -6,16 +6,16 @@ import org.junit.Test
 class IntegerToRomanTests {
     @Test fun `it mostly works`() {
         1.toRoman() shouldEqual "I"
+        2.toRoman() shouldEqual "II"
+        3.toRoman() shouldEqual "III"
+        4.toRoman() shouldEqual "IV"
         5.toRoman() shouldEqual "V"
+        6.toRoman() shouldEqual "VI"
         10.toRoman() shouldEqual "X"
         50.toRoman() shouldEqual "L"
         100.toRoman() shouldEqual "C"
         500.toRoman() shouldEqual "D"
         1000.toRoman() shouldEqual "M"
-
-        2.toRoman() shouldEqual "II"
-        3.toRoman() shouldEqual "III"
-        4.toRoman() shouldEqual "IV"
     }
 }
 
