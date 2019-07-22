@@ -12,18 +12,20 @@ class IntegerToRomanTests {
         100.toRoman() shouldEqual "C"
         500.toRoman() shouldEqual "D"
         1000.toRoman() shouldEqual "M"
+
+
     }
 }
 
 private fun Int.toRoman(): String {
     return when (this) {
-        1    -> "I"
-        5    -> "V"
-        10   -> "X"
-        50   -> "L"
-        100  -> "C"
-        500  -> "D"
         1000 -> "M"
+        500  -> "D"
+        100  -> "C"
+        50   -> "L"
+        10   -> "X"
+        5    -> "V"
+        1    -> "I"
         else -> ""
     }
 }
