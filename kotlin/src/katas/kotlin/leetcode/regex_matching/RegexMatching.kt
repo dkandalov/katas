@@ -14,12 +14,14 @@ class RegexMatchingTests {
         "ab".matches(".b") shouldEqual true
         "ab".matches("..") shouldEqual true
         "ab".matches("X.") shouldEqual false
+        "ab".matches("...") shouldEqual false
     }
 }
 
 private fun String.matches(regex: String): Boolean {
-    regex.forEachIndexed { i, char ->
-        if (char != '.' && char != this[i]) return false
+    (0 until regex.length).forEach { i ->
+        if (i >= length) return false
+        if (regex[i] != '.' && regex[i] != this[i]) return false
     }
     return true
 }
