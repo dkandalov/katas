@@ -14,7 +14,7 @@ class ContainerWithMostWaterTests {
     private fun List<Int>.findMaxContainer(): Int {
         var maxVolume = 0
         (0..size - 2).forEach { from ->
-            (2..size).forEach { to ->
+            (from + 2..size).forEach { to ->
                 val subset = subList(from, to)
                 val volume = minOf(subset.first(), subset.last()) * (subset.size - 1)
                 if (volume > maxVolume) maxVolume = volume
