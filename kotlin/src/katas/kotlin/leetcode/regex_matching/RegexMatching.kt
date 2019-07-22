@@ -19,18 +19,19 @@ class RegexMatchingTests {
         "ab".matches("*") shouldEqual true
         "abc".matches("a*") shouldEqual true
         "abc".matches("ab*") shouldEqual true
+        "abc".matches("abc*") shouldEqual true
         "abc".matches("*X") shouldEqual false
     }
 }
 
 private fun String.matches(regex: String): Boolean {
     (0 until regex.length).forEach { i ->
-        if (i >= length) return false
         if (regex[i] == '*') {
             return (i .. length).any { j ->
                 substring(j).matches(regex.substring(i + 1))
             }
         }
+        if (i >= length) return false
         if (regex[i] != '.' && regex[i] != this[i]) return false
     }
     return true
