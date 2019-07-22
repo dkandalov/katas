@@ -7,7 +7,8 @@ import org.junit.Test
  * https://leetcode.com/problems/container-with-most-water
  */
 class ContainerWithMostWaterTests {
-    @Test fun `example`() {
+    @Test fun `some examples`() {
+        listOf(1, 1).findMaxContainer() shouldEqual 1
         listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer() shouldEqual 49
     }
 
