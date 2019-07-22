@@ -15,6 +15,8 @@ class IntegerToRomanTests {
         8.toRoman() shouldEqual "VIII"
         9.toRoman() shouldEqual "IX"
         10.toRoman() shouldEqual "X"
+        11.toRoman() shouldEqual "XI"
+        12.toRoman() shouldEqual "XII"
         50.toRoman() shouldEqual "L"
         100.toRoman() shouldEqual "C"
         500.toRoman() shouldEqual "D"
