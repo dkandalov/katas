@@ -1,7 +1,9 @@
 package katas.kotlin.leetcode.container_with_most_water
 
+import kotlincommon.listOfInts
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.random.Random
 
 /**
  * https://leetcode.com/problems/container-with-most-water
@@ -19,6 +21,11 @@ class ContainerWithMostWaterTests {
         listOf(2, 7, 7, 2).findMaxContainer() shouldEqual 7
 
         listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer() shouldEqual 49
+    }
+
+    @Test fun `huge list`() {
+        val hugeList = Random(seed = 123).listOfInts(size = 100, valuesRange = 0 until 1000)
+        hugeList.findMaxContainer()
     }
 
     private fun List<Int>.findMaxContainer(): Int {
