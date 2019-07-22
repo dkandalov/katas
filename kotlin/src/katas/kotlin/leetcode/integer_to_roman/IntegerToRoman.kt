@@ -45,7 +45,7 @@ private fun Int.toRoman(): String {
     var result = ""
     var n = this
     while (n != 0) {
-        val (number, numeral) = map.entries.find { this >= it.key }!!
+        val (number, numeral) = map.entries.find { n >= it.key }!!
         result += numeral
         n -= number
     }
