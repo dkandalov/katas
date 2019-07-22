@@ -22,15 +22,17 @@ class IntegerToRomanTests {
         58.toRoman() shouldEqual "LVIII"
         90.toRoman() shouldEqual "XC"
         100.toRoman() shouldEqual "C"
+        400.toRoman() shouldEqual "CD"
         500.toRoman() shouldEqual "D"
+        900.toRoman() shouldEqual "CM"
         1000.toRoman() shouldEqual "M"
     }
 }
 
 private fun Int.toRoman(): String {
     val map = mapOf(
-        1000 to "M",
-        500 to "D",
+        1000 to "M", 900 to "CM",
+        500 to "D", 400 to "CD",
         100 to "C", 90 to "XC",
         50 to "L", 40 to "XL",
         10 to "X", 9 to "IX",
