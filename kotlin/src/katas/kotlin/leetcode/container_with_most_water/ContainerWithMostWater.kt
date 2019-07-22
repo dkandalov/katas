@@ -16,6 +16,8 @@ class ContainerWithMostWaterTests {
         listOf(1, 2, 3).findMaxContainer() shouldEqual 2
         listOf(2, 2, 3).findMaxContainer() shouldEqual 4
 
+        listOf(2, 7, 7, 2).findMaxContainer() shouldEqual 7
+
         listOf(1, 8, 6, 2, 5, 4, 8, 3, 7).findMaxContainer() shouldEqual 49
     }
 
