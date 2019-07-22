@@ -30,7 +30,7 @@ class ContainerWithMostWaterTests {
             val from = indexOfFirst { it >= depth }
             val to = indexOfLast { it >= depth }
             val subset = subList(from, to + 1)
-            val volume = minOf(subset.first(), subset.last()) * (subset.size - 1)
+            val volume = minOf(subset.first(), subset.last()) * (to - from)
             if (volume > maxVolume) maxVolume = volume
         }
         return maxVolume
