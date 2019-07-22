@@ -18,6 +18,7 @@ class RegexMatchingTests {
 
         "ab".matches("*") shouldEqual true
         "abc".matches("a*") shouldEqual true
+        "abc".matches("ab*") shouldEqual true
         "abc".matches("*X") shouldEqual false
     }
 }
