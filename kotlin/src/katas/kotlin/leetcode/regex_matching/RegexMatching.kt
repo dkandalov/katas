@@ -38,11 +38,8 @@ private class Matcher(val s: String, val regex: String) {
         while (j < regex.length) {
             when {
                 j < regex.length - 1 && regex[j + 1] == '*' -> {
-                    val char = regex[j]
-                    val mismatchIndex = if (char == '.') s.length else (i until s.length).find { s[it] != char } ?: s.length
-                    return (i..mismatchIndex)
-                        .map { Matcher(s.substring(it), regex.substring(j + 2)) }
-                        .any { it.match() }
+                    return Matcher(s.substring(i), regex.substring(j + 2)).match() ||
+                        ((s[i] == regex[j] || regex[j] == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
                 }
                 regex[j] == '.'                             -> {
                     if (i >= s.length) return false
