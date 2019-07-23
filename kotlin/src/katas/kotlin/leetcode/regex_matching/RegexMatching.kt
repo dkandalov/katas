@@ -34,7 +34,6 @@ class RegexMatchingTests {
 private class Matcher(val s: String, val regex: String) {
     fun match(): Boolean {
         if (regex.isEmpty()) return s.isEmpty()
-        val i = 0
         val j = 0
         when {
             regex.length >= 2 && regex[j + 1] == '*' -> {
@@ -42,7 +41,7 @@ private class Matcher(val s: String, val regex: String) {
                     ((s.first() == regex.first() || regex.first() == '.') && Matcher(s.substring(1), regex.substring(j)).match())
             }
             regex.first() == '.'                             -> {
-                if (i >= s.length) return false
+                if (s.isEmpty()) return false
                 return Matcher(s.substring(1), regex.substring(1)).match()
             }
             else                                        -> {
