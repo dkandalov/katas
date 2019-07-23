@@ -47,8 +47,7 @@ private class Matcher(val s: String, val regex: String) {
                 }
                 else                                        -> {
                     if (s[i] != regex[j]) return false
-                    i++
-                    j++
+                    return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
                 }
             }
         }
