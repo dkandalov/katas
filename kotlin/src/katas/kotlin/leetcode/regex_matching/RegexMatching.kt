@@ -43,11 +43,11 @@ private class Matcher(val s: String, val regex: String) {
                     i++
                     j++
                 }
-                regex[j] == '*' -> {
-                    val char = regex[j - 1]
+                j < regex.length -1 && regex[j + 1] == '*' -> {
+                    val char = regex[j]
                     return (i until s.length)
                         .takeWhile { s[it] == char }
-                        .map { Matcher(s.substring(it), regex.substring(j + 1)) }
+                        .map { Matcher(s.substring(it), regex.substring(j + 2)) }
                         .map { it.match() }
                         .any()
                 }
