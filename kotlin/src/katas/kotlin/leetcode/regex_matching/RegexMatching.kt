@@ -21,15 +21,6 @@ class RegexMatchingTests {
         "ab".matches("a*b*c*") shouldEqual true
         "ab".matches("a*") shouldEqual false
         "ab".matches("X*ab") shouldEqual true
-//
-//        "abc".matches("a*") shouldEqual true
-//        "abc".matches("ab*") shouldEqual true
-//        "abc".matches("abc*") shouldEqual true
-//        "abc".matches("*c") shouldEqual true
-//        "abc".matches("*bc") shouldEqual true
-//        "abc".matches("*abc") shouldEqual true
-//
-//        "abc".matches("*X") shouldEqual false
     }
 }
 
