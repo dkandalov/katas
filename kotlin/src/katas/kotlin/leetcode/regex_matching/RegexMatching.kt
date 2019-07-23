@@ -5,23 +5,24 @@ import org.junit.Test
 
 class RegexMatchingTests {
     @Test fun `it mostly works`() {
-        "".matches("") shouldEqual true
-        "a".matches("a") shouldEqual true
-        "a".matches("b") shouldEqual false
+//        "".matches("") shouldEqual true
+//        "a".matches("a") shouldEqual true
+//        "a".matches("b") shouldEqual false
+//
+//        "a".matches(".") shouldEqual true
+//        "ab".matches("a.") shouldEqual true
+//        "ab".matches(".b") shouldEqual true
+//        "ab".matches("..") shouldEqual true
+//        "ab".matches("X.") shouldEqual false
+//        "ab".matches("...") shouldEqual false
+//
+//        "ab".matches("a*b") shouldEqual true
+//        "ab".matches("a*b*") shouldEqual true
+//        "ab".matches("a*b*c*") shouldEqual true
+//        "ab".matches("a*") shouldEqual false
+//        "ab".matches("X*ab") shouldEqual true
 
-        "a".matches(".") shouldEqual true
-        "ab".matches("a.") shouldEqual true
-        "ab".matches(".b") shouldEqual true
-        "ab".matches("..") shouldEqual true
-        "ab".matches("X.") shouldEqual false
-        "ab".matches("...") shouldEqual false
-
-        "ab".matches("a*b") shouldEqual true
-        "ab".matches("a*b*") shouldEqual true
-        "ab".matches("a*b*c*") shouldEqual true
-        "ab".matches("a*") shouldEqual false
-
-        "ab".matches("X*ab") shouldEqual true
+        "ab".matches(".*") shouldEqual true
     }
 }
 
@@ -31,17 +32,17 @@ private class Matcher(val s: String, val regex: String) {
         var j = 0
         while (j < regex.length) {
             when {
-                regex[j] == '.'                             -> {
-                    if (i >= s.length) return false
-                    i++
-                    j++
-                }
                 j < regex.length - 1 && regex[j + 1] == '*' -> {
                     val char = regex[j]
                     val to = if (char == '.') s.length else (i until s.length).find { s[it] != char } ?: s.length
                     return (i..to)
                         .map { Matcher(s.substring(it), regex.substring(j + 2)) }
                         .any { it.match() }
+                }
+                regex[j] == '.'                             -> {
+                    if (i >= s.length) return false
+                    i++
+                    j++
                 }
                 else                                        -> {
                     if (s[i] != regex[j]) return false
