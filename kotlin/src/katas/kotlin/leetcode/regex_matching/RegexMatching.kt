@@ -35,8 +35,8 @@ private class Matcher(val s: String, val regex: String) {
             when {
                 j < regex.length - 1 && regex[j + 1] == '*' -> {
                     val char = regex[j]
-                    val to = if (char == '.') s.length else (i until s.length).find { s[it] != char } ?: s.length
-                    return (i..to)
+                    val mismatchIndex = if (char == '.') s.length else (i until s.length).find { s[it] != char } ?: s.length
+                    return (i..mismatchIndex)
                         .map { Matcher(s.substring(it), regex.substring(j + 2)) }
                         .any { it.match() }
                 }
