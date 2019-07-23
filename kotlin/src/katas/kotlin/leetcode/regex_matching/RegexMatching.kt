@@ -33,8 +33,9 @@ class RegexMatchingTests {
 
 private class Matcher(val s: String, val regex: String) {
     fun match(): Boolean {
-        var i = 0
-        var j = 0
+        val i = 0
+        val j = 0
+        if (j == regex.length) return i == s.length
         while (j < regex.length) {
             when {
                 j < regex.length - 1 && regex[j + 1] == '*' -> {
