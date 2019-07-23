@@ -58,7 +58,7 @@ private class Matcher(val s: String, val regex: String) {
                 }
             }
         }
-        return true
+        return i == s.length
     }
 }
 
