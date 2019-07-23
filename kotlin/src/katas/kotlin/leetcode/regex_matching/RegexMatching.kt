@@ -30,19 +30,19 @@ private class Matcher(val s: String, val regex: String) {
         var j = 0
         while (j < regex.length) {
             when {
-                regex[j] == '.' -> {
+                regex[j] == '.'                             -> {
                     if (i >= s.length) return false
                     i++
                     j++
                 }
-                j < regex.length -1 && regex[j + 1] == '*' -> {
+                j < regex.length - 1 && regex[j + 1] == '*' -> {
                     val char = regex[j]
                     val to = (i until s.length).find { s[it] != char } ?: s.length
-                    return (i .. to)
+                    return (i..to)
                         .map { Matcher(s.substring(it), regex.substring(j + 2)) }
                         .any { it.match() }
                 }
-                else            -> {
+                else                                        -> {
                     if (s[i] != regex[j]) return false
                     i++
                     j++
