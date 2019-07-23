@@ -5,22 +5,22 @@ import org.junit.Test
 
 class RegexMatchingTests {
     @Test fun `it mostly works`() {
-//        "".matches("") shouldEqual true
-//        "a".matches("a") shouldEqual true
-//        "a".matches("b") shouldEqual false
-//
-//        "a".matches(".") shouldEqual true
-//        "ab".matches("a.") shouldEqual true
-//        "ab".matches(".b") shouldEqual true
-//        "ab".matches("..") shouldEqual true
-//        "ab".matches("X.") shouldEqual false
-//        "ab".matches("...") shouldEqual false
-//
-//        "ab".matches("a*b") shouldEqual true
-//        "ab".matches("a*b*") shouldEqual true
-//        "ab".matches("a*b*c*") shouldEqual true
-//        "ab".matches("a*") shouldEqual false
-//        "ab".matches("X*ab") shouldEqual true
+        "".matches("") shouldEqual true
+        "a".matches("a") shouldEqual true
+        "a".matches("b") shouldEqual false
+
+        "a".matches(".") shouldEqual true
+        "ab".matches("a.") shouldEqual true
+        "ab".matches(".b") shouldEqual true
+        "ab".matches("..") shouldEqual true
+        "ab".matches("X.") shouldEqual false
+        "ab".matches("...") shouldEqual false
+
+        "ab".matches("a*b") shouldEqual true
+        "ab".matches("a*b*") shouldEqual true
+        "ab".matches("a*b*c*") shouldEqual true
+        "ab".matches("a*") shouldEqual false
+        "ab".matches("X*ab") shouldEqual true
 
         "ab".matches(".*") shouldEqual true
     }
