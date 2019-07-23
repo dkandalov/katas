@@ -39,14 +39,14 @@ private class Matcher(val s: String, val regex: String) {
         when {
             regex.length >= 2 && regex[j + 1] == '*' -> {
                 return Matcher(s.substring(i), regex.substring(j + 2)).match() ||
-                    ((s[i] == regex[j] || regex[j] == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
+                    ((s.first() == regex.first() || regex.first() == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
             }
-            regex[j] == '.'                             -> {
+            regex.first() == '.'                             -> {
                 if (i >= s.length) return false
                 return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
             }
             else                                        -> {
-                if (s[i] != regex[j]) return false
+                if (s[i] != regex.first()) return false
                 return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
             }
         }
