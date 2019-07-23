@@ -36,8 +36,8 @@ private class Matcher(val s: String, val regex: String) {
         if (regex.isEmpty()) return s.isEmpty()
         when {
             regex.length >= 2 && regex[1] == '*' -> {
-                return Matcher(s.substring(0), regex.substring(2)).match() ||
-                    ((s[0] == regex[0] || regex[0] == '.') && Matcher(s.substring(1), regex.substring(0)).match())
+                return Matcher(s, regex.substring(2)).match() ||
+                    ((s[0] == regex[0] || regex[0] == '.') && Matcher(s.substring(1), regex).match())
             }
             regex[0] == '.'                             -> {
                 if (s.isEmpty()) return false
