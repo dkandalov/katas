@@ -5,6 +5,7 @@ import org.junit.Test
 
 class LongestCommonPrefixTests {
     @Test fun `it kind of works probably`() {
+        listOf("flower", "flow").longestPrefix() shouldEqual "flow"
         listOf("flower", "flow", "flight").longestPrefix() shouldEqual "fl"
         listOf("dog", "racecar", "car").longestPrefix() shouldEqual ""
     }
