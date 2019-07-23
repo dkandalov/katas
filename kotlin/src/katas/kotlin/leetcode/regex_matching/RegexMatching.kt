@@ -23,7 +23,11 @@ class RegexMatchingTests {
         "ab".matches("a*") shouldEqual false
         "ab".matches("X*ab") shouldEqual true
 
+        "aa".matches("a") shouldEqual false
+        "aa".matches("a*") shouldEqual true
         "ab".matches(".*") shouldEqual true
+        "aab".matches("c*a*b") shouldEqual true
+        "mississippi".matches("mis*is*p*.") shouldEqual false
     }
 }
 
