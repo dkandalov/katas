@@ -32,26 +32,32 @@ class RegexMatchingTests {
     }
 }
 
-private fun String.matches(regex: String): Boolean {
-    var i = 0
-    var j = 0
-    while (j < regex.length) {
-        when {
-            regex[j] == '.' -> {
-                if (i >= length) return false
-                i++
-                j++
-            }
+private class Matcher(val s: String, val regex: String) {
+    fun match(): Boolean {
+        var i = 0
+        var j = 0
+        while (j < regex.length) {
+            when {
+                regex[j] == '.' -> {
+                    if (i >= s.length) return false
+                    i++
+                    j++
+                }
 //            regex[j] == '*' -> {
 //                val lastChar = this[j - 1]
 //                (i until regex.length).any {  }
 //            }
-            else            -> {
-                if (this[i] != regex[j]) return false
-                i++
-                j++
+                else            -> {
+                    if (s[i] != regex[j]) return false
+                    i++
+                    j++
+                }
             }
         }
+        return true
     }
-    return true
+}
+
+private fun String.matches(regex: String): Boolean {
+    return Matcher(this, regex).match()
 }
