@@ -34,18 +34,17 @@ class RegexMatchingTests {
 private class Matcher(val s: String, val regex: String) {
     fun match(): Boolean {
         if (regex.isEmpty()) return s.isEmpty()
-        val j = 0
         when {
-            regex.length >= 2 && regex[j + 1] == '*' -> {
+            regex.length >= 2 && regex[1] == '*' -> {
                 return Matcher(s.substring(0), regex.substring(2)).match() ||
-                    ((s.first() == regex.first() || regex.first() == '.') && Matcher(s.substring(1), regex.substring(j)).match())
+                    ((s[0] == regex[0] || regex[0] == '.') && Matcher(s.substring(1), regex.substring(0)).match())
             }
-            regex.first() == '.'                             -> {
+            regex[0] == '.'                             -> {
                 if (s.isEmpty()) return false
                 return Matcher(s.substring(1), regex.substring(1)).match()
             }
             else                                        -> {
-                if (s.first() != regex.first()) return false
+                if (s[0] != regex[0]) return false
                 return Matcher(s.substring(1), regex.substring(1)).match()
             }
         }
