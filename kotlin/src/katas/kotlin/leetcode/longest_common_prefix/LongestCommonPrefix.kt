@@ -5,17 +5,17 @@ import org.junit.Test
 
 class LongestCommonPrefixTests {
     @Test fun `it kind of works probably`() {
-        listOf("flower").longestPrefix() shouldEqual "flower"
-        listOf("flower", "flow").longestPrefix() shouldEqual "flow"
-        listOf("flower", "flow", "flight").longestPrefix() shouldEqual "fl"
-        listOf("dog", "racecar", "car").longestPrefix() shouldEqual ""
+        longestCommonPrefix(arrayOf("flower")) shouldEqual "flower"
+        longestCommonPrefix(arrayOf("flower", "flow")) shouldEqual "flow"
+        longestCommonPrefix(arrayOf("flower", "flow", "flight")) shouldEqual "fl"
+        longestCommonPrefix(arrayOf("dog", "racecar", "car")) shouldEqual ""
     }
 }
 
-private fun List<String>.longestPrefix(): String {
-    val commonLength = map { it.length }.min()!!
+private fun longestCommonPrefix(strings: Array<String>): String {
+    val commonLength = strings.map { it.length }.min()!!
     val i = commonLength.downTo(0).first { i ->
-        map { it.substring(0, i) }.windowed(2).all { it[0] == it[1] }
+        strings.map { it.substring(0, i) }.windowed(2).all { it[0] == it[1] }
     }
-    return first().substring(0, i)
+    return strings.first().substring(0, i)
 }
