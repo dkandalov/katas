@@ -33,11 +33,11 @@ class RegexMatchingTests {
 
 private class Matcher(val s: String, val regex: String) {
     fun match(): Boolean {
+        if (regex.isEmpty()) return s.isEmpty()
         val i = 0
         val j = 0
-        if (regex.isEmpty()) return s.isEmpty()
         when {
-            j < regex.length - 1 && regex[j + 1] == '*' -> {
+            regex.length >= 2 && regex[j + 1] == '*' -> {
                 return Matcher(s.substring(i), regex.substring(j + 2)).match() ||
                     ((s[i] == regex[j] || regex[j] == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
             }
