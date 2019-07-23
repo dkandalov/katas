@@ -35,24 +35,21 @@ private class Matcher(val s: String, val regex: String) {
     fun match(): Boolean {
         val i = 0
         val j = 0
-        if (j == regex.length) return i == s.length
-        while (j < regex.length) {
-            when {
-                j < regex.length - 1 && regex[j + 1] == '*' -> {
-                    return Matcher(s.substring(i), regex.substring(j + 2)).match() ||
-                        ((s[i] == regex[j] || regex[j] == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
-                }
-                regex[j] == '.'                             -> {
-                    if (i >= s.length) return false
-                    return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
-                }
-                else                                        -> {
-                    if (s[i] != regex[j]) return false
-                    return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
-                }
+        if (regex.isEmpty()) return s.isEmpty()
+        when {
+            j < regex.length - 1 && regex[j + 1] == '*' -> {
+                return Matcher(s.substring(i), regex.substring(j + 2)).match() ||
+                    ((s[i] == regex[j] || regex[j] == '.') && Matcher(s.substring(i + 1), regex.substring(j)).match())
+            }
+            regex[j] == '.'                             -> {
+                if (i >= s.length) return false
+                return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
+            }
+            else                                        -> {
+                if (s[i] != regex[j]) return false
+                return Matcher(s.substring(i + 1), regex.substring(j + 1)).match()
             }
         }
-        return i == s.length
     }
 }
 
