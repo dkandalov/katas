@@ -16,7 +16,7 @@ class RegexMatchingTests {
         "ab".matches("X.") shouldEqual false
         "ab".matches("...") shouldEqual false
 
-//        "ab".matches("a*b") shouldEqual true
+        "ab".matches("a*b") shouldEqual true
 //        "ab".matches("a*") shouldEqual false
 //        "ab".matches("**") shouldEqual true
 //        "ab".matches("***") shouldEqual true
