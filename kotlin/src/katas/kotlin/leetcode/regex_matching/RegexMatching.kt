@@ -45,7 +45,7 @@ private class Matcher(val s: String, val regex: String) {
                 }
                 j < regex.length -1 && regex[j + 1] == '*' -> {
                     val char = regex[j]
-                    val to = (i until s.length).takeWhile { s[it] == char }.lastOrNull() ?: s.length
+                    val to = (i until s.length).dropWhile { s[it] != char }.firstOrNull() ?: s.length
                     return (i .. to)
                         .map { Matcher(s.substring(it + 1), regex.substring(j + 2)) }
                         .any { it.match() }
