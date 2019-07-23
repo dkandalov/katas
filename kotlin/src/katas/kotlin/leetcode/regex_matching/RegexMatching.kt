@@ -47,9 +47,8 @@ private class Matcher(val s: String, val regex: String) {
                     val char = regex[j]
                     return (i until s.length)
                         .takeWhile { s[it] == char }
-                        .map { Matcher(s.substring(it), regex.substring(j + 2)) }
-                        .map { it.match() }
-                        .any()
+                        .map { Matcher(s.substring(it + 1), regex.substring(j + 2)) }
+                        .any { it.match() }
                 }
                 else            -> {
                     if (s[i] != regex[j]) return false
