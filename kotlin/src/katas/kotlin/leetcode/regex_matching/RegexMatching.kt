@@ -20,6 +20,7 @@ class RegexMatchingTests {
         "ab".matches("a*b*") shouldEqual true
         "ab".matches("a*b*c*") shouldEqual true
         "ab".matches("a*") shouldEqual false
+
         "ab".matches("X*ab") shouldEqual true
     }
 }
@@ -37,7 +38,7 @@ private class Matcher(val s: String, val regex: String) {
                 }
                 j < regex.length - 1 && regex[j + 1] == '*' -> {
                     val char = regex[j]
-                    val to = (i until s.length).find { s[it] != char } ?: s.length
+                    val to = if (char == '.') s.length else (i until s.length).find { s[it] != char } ?: s.length
                     return (i..to)
                         .map { Matcher(s.substring(it), regex.substring(j + 2)) }
                         .any { it.match() }
