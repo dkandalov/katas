@@ -21,7 +21,7 @@ class ThreeSumTests {
     }
 
     @Test fun `three sum of huge array`() {
-        Random(seed = 123).intArray(size = 100_000, valuesRange = -100..100)
+        Random(seed = 123).intArray(size = 10_000, valuesRange = -100..100).printed()
     }
 }
 
