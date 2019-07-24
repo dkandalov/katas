@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.longest_common_prefix
 
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -22,7 +23,7 @@ private fun longestCommonPrefix(strings: Array<String>): String {
         }
         index--
     }
-    strings.first().substring(0, prefixLength)
+    strings.first().substring(0, prefixLength).printed()
 
     val commonLength = strings.map { it.length }.min()!!
     val i = commonLength.downTo(0).first { i ->
