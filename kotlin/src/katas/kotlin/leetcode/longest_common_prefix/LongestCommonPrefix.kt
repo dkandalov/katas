@@ -22,6 +22,7 @@ private fun longestCommonPrefix(strings: Array<String>): String {
         }
         index--
     }
+    strings.first().substring(0, prefixLength)
 
     val commonLength = strings.map { it.length }.min()!!
     val i = commonLength.downTo(0).first { i ->
