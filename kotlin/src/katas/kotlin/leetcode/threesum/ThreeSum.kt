@@ -1,7 +1,11 @@
 package katas.kotlin.leetcode.threesum
 
+import kotlincommon.listOfInts
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * https://leetcode.com/problems/3sum/
@@ -13,6 +17,10 @@ class ThreeSumTests {
             listOf(-1, 0, 1),
             listOf(-1, -1, 2)
         )
+    }
+
+    @Test fun `three sum of huge array`() {
+        Random(seed = 123).intArray(size = 10).printed()
     }
 }
 
@@ -28,4 +36,18 @@ private fun IntArray.threeSum(): List<List<Int>> {
         }
     }
     return result.map { it.sorted() }.distinct()
+}
+
+fun Random.intArray(
+    size: Int = -1,
+    sizeRange: IntRange = IntRange.EMPTY,
+    valuesRange: IntRange = IntRange(Int.MIN_VALUE, Int.MAX_VALUE)
+): IntArray {
+    require(size != -1 || !sizeRange.isEmpty()) { "`size` or `sizeRange` must be specified (but not both)" }
+    var i = if (size != -1) size else nextInt(sizeRange)
+    val result = IntArray(i)
+    while (--i >= 0) {
+        result[i] = nextInt(valuesRange)
+    }
+    return result
 }
