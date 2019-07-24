@@ -39,6 +39,20 @@ private fun IntArray.threeSum(): List<List<Int>> {
     return result.map { it.sorted() }.distinct()
 }
 
+private fun IntArray.threeSum_loop(): List<List<Int>> {
+    val result = ArrayList<List<Int>>()
+    (0..size - 3).forEach { i ->
+        (i + 1..size - 2).forEach { j ->
+            (j + 1..size - 1).forEach { k ->
+                if (this[i] + this[j] + this[k] == 0) {
+                    result.add(listOf(this[i], this[j], this[k]))
+                }
+            }
+        }
+    }
+    return result.map { it.sorted() }.distinct()
+}
+
 fun Random.intArray(
     size: Int = -1,
     sizeRange: IntRange = IntRange.EMPTY,
