@@ -15,8 +15,8 @@ class ThreeSumTests {
         intArrayOf(-1, 0, 1).threeSum() shouldEqual listOf(listOf(-1, 0, 1))
         intArrayOf(1, 2, 3).threeSum() shouldEqual listOf()
         intArrayOf(-1, 0, 1, 2, -1, -4).threeSum() shouldEqual listOf(
-            listOf(-1, 0, 1),
-            listOf(-1, -1, 2)
+            listOf(-1, -1, 2),
+            listOf(-1, 0, 1)
         )
     }
 
@@ -26,6 +26,7 @@ class ThreeSumTests {
 }
 
 private fun IntArray.threeSum(): List<List<Int>> {
+    sort()
     val result = ArrayList<List<Int>>()
     (0..size - 3).forEach { i ->
         (i + 1..size - 2).forEach { j ->
