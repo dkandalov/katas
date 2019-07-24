@@ -20,7 +20,7 @@ class ThreeSumTests {
     }
 
     @Test fun `three sum of huge array`() {
-        Random(seed = 123).intArray(size = 10).printed()
+        Random(seed = 123).intArray(size = 10, valuesRange = -100..100).printed()
     }
 }
 
@@ -28,7 +28,7 @@ private fun IntArray.threeSum(): List<List<Int>> {
     val result = ArrayList<List<Int>>()
     (0..size - 3).forEach { i ->
         (i + 1..size - 2).forEach { j ->
-            (j + 1 .. size - 1).forEach { k ->
+            (j + 1..size - 1).forEach { k ->
                 if (this[i] + this[j] + this[k] == 0) {
                     result.add(listOf(this[i], this[j], this[k]))
                 }
