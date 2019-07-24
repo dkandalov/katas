@@ -16,7 +16,7 @@ class LongestCommonPrefixTests {
 private fun longestCommonPrefix(strings: Array<String>): String {
     var prefixLength = strings.first().length
     var index = prefixLength - 1
-    while (index > 0) {
+    while (index >= 0) {
         strings.forEach { s ->
             val match = index < s.length && s[index] == strings.first()[index]
             if (!match) prefixLength = index
