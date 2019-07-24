@@ -1,11 +1,13 @@
 package katas.kotlin.leetcode.longest_common_prefix
 
-import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/longest-common-prefix
+ */
 class LongestCommonPrefixTests {
-    @Test fun `it kind of works probably`() {
+    @Test fun `find the longest common prefix string amongst an array of strings`() {
         longestCommonPrefix(arrayOf("flower")) shouldEqual "flower"
         longestCommonPrefix(arrayOf("flower", "flow")) shouldEqual "flow"
         longestCommonPrefix(arrayOf("flower", "flow", "flight")) shouldEqual "fl"
