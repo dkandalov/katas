@@ -13,6 +13,11 @@ class LongestCommonPrefixTests {
 }
 
 private fun longestCommonPrefix(strings: Array<String>): String {
+    var index = strings.first().length - 1
+    while (index > 0) {
+        index--
+    }
+
     val commonLength = strings.map { it.length }.min()!!
     val i = commonLength.downTo(0).first { i ->
         strings.map { it.substring(0, i) }.windowed(2).all { it[0] == it[1] }
