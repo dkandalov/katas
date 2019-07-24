@@ -31,11 +31,12 @@ private fun IntArray.threeSum(): List<List<Int>> {
     (0..size - 3).forEach { i ->
         (i + 1..size - 2).forEach { j ->
             val index = binarySearch(-(this[i] + this[j]), j + 1)
-            (j + 1..size - 1).forEach { k ->
-                if (this[i] + this[j] + this[k] == 0) {
-                    result.add(listOf(this[i], this[j], this[k]))
-                }
-            }
+            if (index >= 0) result.add(listOf(this[i], this[j], this[index]))
+//            (j + 1..size - 1).forEach { k ->
+//                if (this[i] + this[j] + this[k] == 0) {
+//                    result.add(listOf(this[i], this[j], this[k]))
+//                }
+//            }
         }
     }
     return result.map { it.sorted() }.distinct()
