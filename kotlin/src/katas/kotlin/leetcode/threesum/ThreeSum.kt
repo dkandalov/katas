@@ -31,12 +31,10 @@ private fun IntArray.threeSum(): List<List<Int>> {
         var k = size - 1
         while (j < k) {
             val sum = this[i] + this[j] + this[k]
-            if (sum < 0) j++
-            else if (sum > 0) k--
-            else {
-                result.add(listOf(this[i], this[j], this[k]))
-                j++
-                k--
+            when {
+                sum < 0 -> j++
+                sum > 0 -> k--
+                else    -> result.add(listOf(this[i], this[j++], this[k--]))
             }
         }
     }
