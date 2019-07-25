@@ -27,7 +27,7 @@ private fun ListNode.removeNthFromEnd(index: Int): ListNode? {
         if (tailSize > index + 1) tail = tail.next!!
         node = node.next
     }
-    if (tail.next == null) return null
+    if (tailSize == index) return null
     tail.next = if (tailSize == 1) null else tail.next!!.next
     return this
 }
