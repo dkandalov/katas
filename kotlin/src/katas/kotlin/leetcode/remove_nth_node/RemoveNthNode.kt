@@ -13,5 +13,9 @@ class RemoveNthNodeTests {
 }
 
 private fun ListNode.removeNthFromEnd(index: Int): ListNode {
+    var node: ListNode? = this
+    while (node != null) {
+        node = node.next
+    }
     return ListNode(1, ListNode(2, ListNode(3, ListNode(5))))
 }
