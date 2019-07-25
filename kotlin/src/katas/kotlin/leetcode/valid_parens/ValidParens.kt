@@ -9,6 +9,7 @@ class ValidParensTests {
         "()".isValid() shouldEqual true
         "[]".isValid() shouldEqual true
         "{}".isValid() shouldEqual true
+        "()[]{}".isValid() shouldEqual true
     }
 }
 
