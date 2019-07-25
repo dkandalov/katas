@@ -5,7 +5,11 @@ import org.junit.Test
 class ListNode(val value: Int, var next: ListNode? = null)
 
 class RemoveNthNodeTests {
-    @Test fun `foo`() {
-        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+    @Test fun `it mostly works`() {
+        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(2)
     }
+}
+
+private fun ListNode.removeNthFromEnd(index: Int): ListNode {
+    return this
 }
