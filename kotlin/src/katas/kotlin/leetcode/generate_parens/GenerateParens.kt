@@ -18,5 +18,5 @@ private fun generateParens(n: Int): List<String> {
     return generateParens(n - 1).mapIndexed { i, it ->
         if (i == 0) listOf("()$it", "($it)")
         else listOf("()$it", "$it()", "($it)")
-    }.flatten().distinct()
+    }.flatten()
 }
