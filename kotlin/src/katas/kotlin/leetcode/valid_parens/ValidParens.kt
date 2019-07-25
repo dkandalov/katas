@@ -1,6 +1,5 @@
 package katas.kotlin.leetcode.valid_parens
 
-import katas.kotlin.coroutines.Hello2.c
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 

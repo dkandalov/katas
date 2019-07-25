@@ -3,7 +3,17 @@ package katas.kotlin.leetcode.remove_nth_node
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-private data class ListNode(val value: Int, var next: ListNode? = null)
+data class ListNode(val value: Int, var next: ListNode? = null) {
+    override fun toString(): String {
+        return ""
+    }
+}
+
+class ListNodeTests {
+    @Test fun `conversion to string`() {
+        ListNode(1).toString() shouldEqual ""
+    }
+}
 
 class RemoveNthNodeTests {
     @Test fun `it mostly works`() {
