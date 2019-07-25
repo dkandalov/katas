@@ -15,12 +15,12 @@ class RemoveNthNodeTests {
 private fun ListNode.removeNthFromEnd(index: Int): ListNode {
     var node: ListNode? = this
     var tailSize = 0
-    val tail = ArrayList<ListNode>()
+    var tail = this
     while (node != null) {
-        tail.add(node)
         tailSize++
+        if (tailSize > index + 1) tail = tail.next!!
         node = node.next
     }
-    tail[tail.size - index - 1].next = if (index == 1) null else tail[tail.size - index + 1]
+    tail.next = if (tailSize == 1) null else tail.next!!.next
     return this
 }
