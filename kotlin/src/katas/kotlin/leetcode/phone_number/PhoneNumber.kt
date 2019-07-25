@@ -18,12 +18,12 @@ class PhoneNumberTests {
 
 private fun String.letterCombinations(): List<String> {
     if (isEmpty()) return emptyList()
-    val map = mapOf(
+    val lettersByNumber = mapOf(
         '1' to emptyList(),
         '2' to listOf("a", "b", "c"),
         '3' to listOf("d", "e", "f")
     )
-    val letters = map[first()] ?: error("")
+    val letters = lettersByNumber[first()] ?: error("")
     val combinations = drop(1).letterCombinations()
     return if (combinations.isEmpty()) letters
     else letters.flatMap { letter -> combinations.map { letter + it } }
