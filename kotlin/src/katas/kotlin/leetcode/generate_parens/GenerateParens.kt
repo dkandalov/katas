@@ -5,10 +5,12 @@ import org.junit.Test
 
 class GenerateParensTests {
     @Test fun `generate all combinations of well-formed parentheses`() {
-        generateParens(1) shouldEqual "()"
+        generateParens(1) shouldEqual listOf("()")
+//        generateParens(2) shouldEqual listOf("()()", "(())")
     }
 }
 
-private fun generateParens(n: Int): String {
-    return "()"
+private fun generateParens(n: Int): List<String> {
+    if (n == 1) return listOf("()")
+    return generateParens(n - 1)
 }
