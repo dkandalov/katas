@@ -22,13 +22,8 @@ class ValidParensTests {
 
 private fun String.isValid(): Boolean {
     var s = ""
-    val map = mapOf(
-        '(' to ')',
-        '[' to ']',
-        '{' to '}'
-    )
-    (0 until length).forEach { i ->
-        val c = this[i]
+    val map = mapOf('(' to ')', '[' to ']', '{' to '}')
+    toCharArray().forEach { c ->
         if (map.keys.contains(c)) s += c
         else {
             val key = map.entries.find { it.value == c }!!.key
