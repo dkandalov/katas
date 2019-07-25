@@ -46,16 +46,15 @@ class RemoveNthNodeTests {
     @Test fun `it mostly works`() {
         ListNode(1).removeNthFromEnd(1) shouldEqual null
 
-        ListNode(1, ListNode(2)).removeNthFromEnd(1) shouldEqual ListNode(1)
-        ListNode(1, ListNode(2)).removeNthFromEnd(2) shouldEqual ListNode(2)
+        listOf(1, 2).toListNode().removeNthFromEnd(1) shouldEqual ListNode(1)
+        listOf(1, 2).toListNode().removeNthFromEnd(2) shouldEqual ListNode(2)
 
-        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
-        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
-        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(3) shouldEqual ListNode(2, ListNode(3))
+        listOf(1, 2, 3).toListNode().removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
+        listOf(1, 2, 3).toListNode().removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
+        listOf(1, 2, 3).toListNode().removeNthFromEnd(3) shouldEqual ListNode(2, ListNode(3))
 
-        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2, ListNode(3, ListNode(4))))
-        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(2) shouldEqual
-            ListNode(1, ListNode(2, ListNode(3, ListNode(5))))
+        listOf(1, 2, 3, 4, 5).toListNode().removeNthFromEnd(1) shouldEqual listOf(1, 2, 3, 4).toListNode()
+        listOf(1, 2, 3, 4, 5).toListNode().removeNthFromEnd(2) shouldEqual listOf(1, 2, 3, 5).toListNode()
     }
 }
 
