@@ -15,8 +15,8 @@ class GenerateParensTests {
 
 private fun generateParens(n: Int): List<String> {
     if (n == 1) return listOf("()")
-    return generateParens(n - 1).flatMap {
+    return generateParens(n - 1).map {
         if (n == 2) listOf("()$it", "($it)")
         else listOf("()$it", "$it()", "($it)")
-    }.distinct()
+    }.flatten().distinct()
 }
