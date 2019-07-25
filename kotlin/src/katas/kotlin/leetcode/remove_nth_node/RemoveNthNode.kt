@@ -14,6 +14,7 @@ class ListNodeTests {
     @Test fun `conversion to string`() {
         ListNode(1).toString() shouldEqual "1"
         ListNode(1, ListNode(2)).toString() shouldEqual "1->2"
+        ListNode(1, ListNode(2, ListNode(3))).toString() shouldEqual "1->2->3"
     }
 }
 
