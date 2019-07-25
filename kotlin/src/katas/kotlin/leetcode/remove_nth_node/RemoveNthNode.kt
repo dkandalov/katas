@@ -10,7 +10,7 @@ class RemoveNthNodeTests {
         ListNode(1).removeNthFromEnd(1) shouldEqual null
 
         ListNode(1, ListNode(2)).removeNthFromEnd(1) shouldEqual ListNode(1)
-//        ListNode(1, ListNode(2)).removeNthFromEnd(2) shouldEqual ListNode(2)
+        ListNode(1, ListNode(2)).removeNthFromEnd(2) shouldEqual ListNode(2)
 
 //        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
 //        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
@@ -31,7 +31,7 @@ private fun ListNode.removeNthFromEnd(index: Int): ListNode? {
         if (tailSize > index + 1) tail = tail.next!!
         node = node.next
     }
-    if (tailSize == index) return null
+    if (tailSize == index) return tail.next
     tail.next = if (tailSize == 1) null else tail.next!!.next
     return this
 }
