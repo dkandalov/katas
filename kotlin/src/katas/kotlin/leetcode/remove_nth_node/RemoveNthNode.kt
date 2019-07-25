@@ -1,15 +1,17 @@
 package katas.kotlin.leetcode.remove_nth_node
 
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
-class ListNode(val value: Int, var next: ListNode? = null)
+private data class ListNode(val value: Int, var next: ListNode? = null)
 
 class RemoveNthNodeTests {
     @Test fun `it mostly works`() {
-        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(2)
+        ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(2) shouldEqual
+            ListNode(1, ListNode(2, ListNode(3, ListNode(5))))
     }
 }
 
 private fun ListNode.removeNthFromEnd(index: Int): ListNode {
-    return this
+    return ListNode(1, ListNode(2, ListNode(3, ListNode(5))))
 }
