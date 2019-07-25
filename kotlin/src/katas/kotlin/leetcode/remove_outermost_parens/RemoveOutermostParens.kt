@@ -9,6 +9,7 @@ class RemoveOutermostParensTests {
         "()()".removeOuterParens() shouldEqual ""
         "(())".removeOuterParens() shouldEqual "()"
         "(()())(())".removeOuterParens() shouldEqual "()()()"
+        "(()())(())(()(()))".removeOuterParens() shouldEqual "()()()()(())"
     }
 }
 
