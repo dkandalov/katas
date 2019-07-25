@@ -8,6 +8,10 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
         val nextString = if (next == null) "" else "->$next"
         return value.toString() + nextString
     }
+
+    fun toList(): List<Int> {
+        return listOf(value)
+    }
 }
 
 class ListNodeTests {
@@ -15,6 +19,10 @@ class ListNodeTests {
         ListNode(1).toString() shouldEqual "1"
         ListNode(1, ListNode(2)).toString() shouldEqual "1->2"
         ListNode(1, ListNode(2, ListNode(3))).toString() shouldEqual "1->2->3"
+    }
+
+    @Test fun `conversion to list`() {
+        ListNode(1).toList() shouldEqual listOf(1)
     }
 }
 
