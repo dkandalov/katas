@@ -55,6 +55,8 @@ fun List<Int>.toListNode(): ListNode {
     return result
 }
 
+fun listNodes(vararg values: Int): ListNode = values.toList().toListNode()
+
 class ListNodeTests {
     @Test fun `conversion to string`() {
         ListNode(1).toString() shouldEqual "1"

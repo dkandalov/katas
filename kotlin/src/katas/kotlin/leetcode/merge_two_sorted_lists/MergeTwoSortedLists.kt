@@ -1,7 +1,9 @@
 package katas.kotlin.leetcode.merge_two_sorted_lists
 
 import katas.kotlin.leetcode.remove_nth_node.ListNode
+import katas.kotlin.leetcode.remove_nth_node.listNodes
 import katas.kotlin.leetcode.remove_nth_node.toListNode
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 /**
@@ -9,7 +11,7 @@ import org.junit.Test
  */
 class MergeTwoSortedListsTests {
     @Test fun `do the merge`() {
-        ListNode(1) + ListNode(2)
+        listNodes(1) + listNodes(2) shouldEqual listNodes(1, 2)
 //        listOf(1, 2, 4).toListNode() + listOf(1, 3, 4).toListNode()
     }
 }
@@ -27,5 +29,7 @@ private operator fun ListNode.plus(that: ListNode): ListNode {
     while (left != null && right != null) {
         // ...
     }
+    if (left != null) result.next = left
+    if (right != null) result.next = right
     return result
 }
