@@ -9,6 +9,7 @@ import org.junit.Test
 class PhoneNumberTests {
     @Test fun `find all possible letter combinations that a number could represent`() {
         "".letterCombinations() shouldEqual listOf()
+        "1".letterCombinations() shouldEqual listOf()
     }
 }
 
