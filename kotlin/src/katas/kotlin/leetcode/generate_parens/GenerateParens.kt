@@ -7,6 +7,9 @@ class GenerateParensTests {
     @Test fun `generate all combinations of well-formed parentheses`() {
         generateParens(1) shouldEqual listOf("()")
         generateParens(2) shouldEqual listOf("()()", "(())")
+        generateParens(3) shouldEqual listOf(
+            "()()()", "(()())", "()(())", "((()))"
+        )
     }
 }
 
