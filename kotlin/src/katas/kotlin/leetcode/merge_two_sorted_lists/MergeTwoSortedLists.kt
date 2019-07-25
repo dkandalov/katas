@@ -12,7 +12,7 @@ import org.junit.Test
 class MergeTwoSortedListsTests {
     @Test fun `do the merge`() {
         listNodes(1) + listNodes(2) shouldEqual listNodes(1, 2)
-//        listOf(1, 2, 4).toListNode() + listOf(1, 3, 4).toListNode()
+        listOf(1, 2, 4).toListNode() + listOf(1, 3, 4).toListNode()
     }
 }
 
@@ -27,7 +27,13 @@ private operator fun ListNode.plus(that: ListNode): ListNode {
         that
     }
     while (left != null && right != null) {
-        // ...
+        if (left.value <= right.value) {
+            result.next = left
+            left = left.next
+        } else {
+            result.next = right
+            right = right.next
+        }
     }
     if (left != null) result.next = left
     if (right != null) result.next = right
