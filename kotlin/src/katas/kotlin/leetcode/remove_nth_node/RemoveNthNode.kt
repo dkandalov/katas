@@ -10,7 +10,7 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
     }
 
     fun toList(): List<Int> {
-        return listOf(value)
+        return listOf(value) + (next?.toList() ?: emptyList())
     }
 }
 
@@ -23,6 +23,8 @@ class ListNodeTests {
 
     @Test fun `conversion to list`() {
         ListNode(1).toList() shouldEqual listOf(1)
+        ListNode(1, ListNode(2)).toList() shouldEqual listOf(1, 2)
+        ListNode(1, ListNode(2, ListNode(3))).toList() shouldEqual listOf(1, 2, 3)
     }
 }
 
