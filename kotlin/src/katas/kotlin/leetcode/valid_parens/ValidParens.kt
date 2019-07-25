@@ -11,6 +11,9 @@ class ValidParensTests {
         "{}".isValid() shouldEqual true
         "()[]{}".isValid() shouldEqual true
         "(]".isValid() shouldEqual false
+        "([)]".isValid() shouldEqual false
+        "{[]}".isValid() shouldEqual true
+
         "())".isValid() shouldEqual false
         "(()".isValid() shouldEqual false
     }
