@@ -4,7 +4,7 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 class RemoveOutermostParensTests {
-    @Test fun `fooo`() {
+    @Test fun `it mostly works`() {
         "()".removeOuterParens() shouldEqual ""
         "()()".removeOuterParens() shouldEqual ""
         "(())".removeOuterParens() shouldEqual "()"
