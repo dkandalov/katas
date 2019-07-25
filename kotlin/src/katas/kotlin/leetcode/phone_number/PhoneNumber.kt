@@ -22,5 +22,9 @@ private fun String.letterCombinations(): List<String> {
         '2' to listOf("a", "b", "c"),
         '3' to listOf("d", "e", "f")
     )
-    return map[first()] ?: error("")
+    val letters = map[first()] ?: error("")
+    return letters.flatMap { letter ->
+        val combinations = drop(1).letterCombinations()
+        if (combinations.isEmpty()) listOf(letter) else combinations.map { letter + it }
+    }
 }
