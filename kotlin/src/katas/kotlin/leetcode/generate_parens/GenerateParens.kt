@@ -8,7 +8,7 @@ class GenerateParensTests {
         generateParens(1) shouldEqual listOf("()")
         generateParens(2) shouldEqual listOf("()()", "(())")
         generateParens(3) shouldEqual listOf(
-            "()()()", "(()())", "()(())", "((()))"
+            "()()()", "(()())", "()(())", "(())()", "((()))"
         )
     }
 }
@@ -16,6 +16,6 @@ class GenerateParensTests {
 private fun generateParens(n: Int): List<String> {
     if (n == 1) return listOf("()")
     return generateParens(n - 1).flatMap {
-        listOf("()$it", "($it)")
-    }
+        listOf("()$it", "$it()", "($it)")
+    }.distinct()
 }
