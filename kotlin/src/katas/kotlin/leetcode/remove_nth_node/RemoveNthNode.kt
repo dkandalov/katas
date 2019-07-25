@@ -5,13 +5,14 @@ import org.junit.Test
 
 data class ListNode(val value: Int, var next: ListNode? = null) {
     override fun toString(): String {
-        return ""
+        val nextString = if (next == null) "" else " -> $next"
+        return value.toString() + nextString
     }
 }
 
 class ListNodeTests {
     @Test fun `conversion to string`() {
-        ListNode(1).toString() shouldEqual ""
+        ListNode(1).toString() shouldEqual "1"
     }
 }
 
