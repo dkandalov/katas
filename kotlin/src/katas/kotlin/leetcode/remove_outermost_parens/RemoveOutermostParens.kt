@@ -8,16 +8,23 @@ class RemoveOutermostParensTests {
         "()".removeOuterParens() shouldEqual ""
         "()()".removeOuterParens() shouldEqual ""
         "(())".removeOuterParens() shouldEqual "()"
+        "(()())(())".removeOuterParens() shouldEqual "()()()"
     }
 }
 
 private fun String.removeOuterParens(): String {
     var result = ""
-    var outerParen = false
+    var parenCount = 0
     toCharArray().forEach { char ->
         when (char) {
-            '(' -> if (outerParen) result += char else outerParen = true
-            ')' -> if (outerParen) outerParen = false else result += char
+            '(' -> {
+                if (parenCount > 0) result += char
+                parenCount++
+            }
+            ')' -> {
+                parenCount--
+                if (parenCount > 0) result += char
+            }
         }
     }
     return result
