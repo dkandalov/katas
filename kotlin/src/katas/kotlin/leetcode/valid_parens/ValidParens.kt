@@ -12,6 +12,7 @@ class ValidParensTests {
         "()[]{}".isValid() shouldEqual true
         "(]".isValid() shouldEqual false
         "())".isValid() shouldEqual false
+        "(()".isValid() shouldEqual false
     }
 }
 
@@ -25,14 +26,14 @@ private fun String.isValid(): Boolean {
                 s = s.dropLast(1)
             }
             ']'           -> {
-                if (s.last() != '[') return false
+                if (s.lastOrNull() != '[') return false
                 s = s.dropLast(1)
             }
             '}'           -> {
-                if (s.last() != '{') return false
+                if (s.lastOrNull() != '{') return false
                 s = s.dropLast(1)
             }
         }
     }
-    return true
+    return s.isEmpty()
 }
