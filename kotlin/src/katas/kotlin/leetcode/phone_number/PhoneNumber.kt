@@ -12,6 +12,7 @@ class PhoneNumberTests {
         "1".letterCombinations() shouldEqual listOf()
         "2".letterCombinations() shouldEqual listOf("a", "b", "c")
         "3".letterCombinations() shouldEqual listOf("d", "e", "f")
+        "23".letterCombinations() shouldEqual listOf("ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf")
     }
 }
 
