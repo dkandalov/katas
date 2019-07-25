@@ -37,8 +37,8 @@ class ListNodeTests {
 
     @Test fun `conversion from list`() {
         listOf(1).toListNode() shouldEqual ListNode(1)
-//        ListNode(1, ListNode(2)).toList() shouldEqual listOf(1, 2)
-//        ListNode(1, ListNode(2, ListNode(3))).toList() shouldEqual listOf(1, 2, 3)
+        ListNode(1, ListNode(2)).toList() shouldEqual listOf(1, 2)
+        ListNode(1, ListNode(2, ListNode(3))).toList() shouldEqual listOf(1, 2, 3)
     }
 }
 
