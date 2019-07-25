@@ -1,7 +1,5 @@
 package katas.kotlin.leetcode.threesum
 
-import kotlincommon.listOfInts
-import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
@@ -28,6 +26,19 @@ class ThreeSumTests {
 private fun IntArray.threeSum(): List<List<Int>> {
     sort()
     val result = ArrayList<List<Int>>()
+    (0..size - 3).forEach { i ->
+        var j = i + 1
+        var k = size - 1
+        while (j < k) {
+            val sum = this[i] + this[j] + this[k]
+            if (sum < 0) j++
+            else if (sum > 0) k--
+            else {
+                j++
+                k--
+            }
+        }
+    }
     (0..size - 3).forEach { i ->
         (i + 1..size - 2).forEach { j ->
             val index = binarySearch(-(this[i] + this[j]), j + 1)
