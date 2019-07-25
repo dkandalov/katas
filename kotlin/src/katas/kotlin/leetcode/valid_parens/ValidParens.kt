@@ -30,19 +30,10 @@ private fun String.isValid(): Boolean {
     (0 until length).forEach { i ->
         val c = this[i]
         if (map.keys.contains(c)) s += c
-        when (c) {
-            ')' -> {
-                if (s.lastOrNull() != '(') return false
-                s = s.dropLast(1)
-            }
-            ']' -> {
-                if (s.lastOrNull() != '[') return false
-                s = s.dropLast(1)
-            }
-            '}' -> {
-                if (s.lastOrNull() != '{') return false
-                s = s.dropLast(1)
-            }
+        else {
+            val key = map.entries.find { it.value == c }!!.key
+            if (s.lastOrNull() != key) return false
+            s = s.dropLast(1)
         }
     }
     return s.isEmpty()
