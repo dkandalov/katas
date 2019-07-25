@@ -6,6 +6,7 @@ import org.junit.Test
 class RemoveOutermostParensTests {
     @Test fun `fooo`() {
         "()".removeOuterParens() shouldEqual ""
+        "()()".removeOuterParens() shouldEqual ""
     }
 }
 
