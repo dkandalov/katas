@@ -9,10 +9,23 @@ import org.junit.Test
  */
 class MergeTwoSortedListsTests {
     @Test fun `do the merge`() {
-        listOf(1, 2, 4).toListNode() + listOf(1, 3, 4).toListNode()
+        ListNode(1) + ListNode(2)
+//        listOf(1, 2, 4).toListNode() + listOf(1, 3, 4).toListNode()
     }
 }
 
-private operator fun ListNode.plus(listNode: ListNode): ListNode {
-    return this
+private operator fun ListNode.plus(that: ListNode): ListNode {
+    var left: ListNode? = this
+    var right: ListNode? = that
+    val result = if (value <= that.value) {
+        left = left?.next
+        this
+    } else {
+        right = right?.next
+        that
+    }
+    while (left != null && right != null) {
+        // ...
+    }
+    return result
 }
