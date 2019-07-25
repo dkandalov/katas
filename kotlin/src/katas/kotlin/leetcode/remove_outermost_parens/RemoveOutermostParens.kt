@@ -18,14 +18,8 @@ private fun String.removeOuterParens(): String {
     var parenCount = 0
     toCharArray().forEach { char ->
         when (char) {
-            '(' -> {
-                if (parenCount > 0) result += char
-                parenCount++
-            }
-            ')' -> {
-                parenCount--
-                if (parenCount > 0) result += char
-            }
+            '(' -> if (parenCount++ > 0) result += char
+            ')' -> if (--parenCount > 0) result += char
         }
     }
     return result
