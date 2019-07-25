@@ -6,6 +6,9 @@ import org.junit.Test
 class ValidParensTests {
     @Test fun `determine if the input string is valid`() {
         "".isValid() shouldEqual true
+        "()".isValid() shouldEqual true
+        "[]".isValid() shouldEqual true
+        "{}".isValid() shouldEqual true
     }
 }
 
