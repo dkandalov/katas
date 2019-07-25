@@ -12,9 +12,9 @@ class RemoveNthNodeTests {
         ListNode(1, ListNode(2)).removeNthFromEnd(1) shouldEqual ListNode(1)
         ListNode(1, ListNode(2)).removeNthFromEnd(2) shouldEqual ListNode(2)
 
-//        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
-//        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
-//        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(3) shouldEqual ListNode(2, ListNode(3))
+        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
+        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
+        ListNode(1, ListNode(2, ListNode(3))).removeNthFromEnd(3) shouldEqual ListNode(2, ListNode(3))
 
         ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2, ListNode(3, ListNode(4))))
         ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))).removeNthFromEnd(2) shouldEqual
