@@ -10,15 +10,15 @@ class RemoveNthNodeTests {
     @Test fun `it mostly works`() {
         listNodes(1).removeNthFromEnd(1) shouldEqual null
 
-        listNodes(1, 2).removeNthFromEnd(1) shouldEqual ListNode(1)
-        listNodes(1, 2).removeNthFromEnd(2) shouldEqual ListNode(2)
+        listNodes(1, 2).removeNthFromEnd(1) shouldEqual listNodes(1)
+        listNodes(1, 2).removeNthFromEnd(2) shouldEqual listNodes(2)
 
-        listNodes(1, 2, 3).removeNthFromEnd(1) shouldEqual ListNode(1, ListNode(2))
-        listNodes(1, 2, 3).removeNthFromEnd(2) shouldEqual ListNode(1, ListNode(3))
-        listNodes(1, 2, 3).removeNthFromEnd(3) shouldEqual ListNode(2, ListNode(3))
+        listNodes(1, 2, 3).removeNthFromEnd(1) shouldEqual listNodes(1, 2)
+        listNodes(1, 2, 3).removeNthFromEnd(2) shouldEqual listNodes(1, 3)
+        listNodes(1, 2, 3).removeNthFromEnd(3) shouldEqual listNodes(2, 3)
 
         listNodes(1, 2, 3, 4, 5).removeNthFromEnd(1) shouldEqual listNodes(1, 2, 3, 4)
-        listNodes(1, 2, 3, 4, 5).removeNthFromEnd(2) shouldEqual listOf(1, 2, 3, 5).toListNode()
+        listNodes(1, 2, 3, 4, 5).removeNthFromEnd(2) shouldEqual listNodes(1, 2, 3, 5)
     }
 }
 
