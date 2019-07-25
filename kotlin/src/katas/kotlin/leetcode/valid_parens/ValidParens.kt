@@ -21,6 +21,11 @@ class ValidParensTests {
 
 private fun String.isValid(): Boolean {
     var s = ""
+    val map = mapOf(
+        '(' to ')',
+        '[' to ']',
+        '{' to '}'
+    )
     (0 until length).forEach { i ->
         when (val c = this[i]) {
             '(', '[', '{' -> s += c
