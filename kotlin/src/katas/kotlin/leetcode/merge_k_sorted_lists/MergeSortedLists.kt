@@ -9,6 +9,8 @@ class MergeSortedListsTests {
     @Test fun `merge k sorted linked lists`() {
         merge(arrayOf(listNodes(1))) shouldEqual listNodes(1)
         merge(arrayOf(listNodes(1, 2))) shouldEqual listNodes(1, 2)
+        merge(arrayOf(listNodes(1), listNodes(2))) shouldEqual listNodes(1, 2)
+
 //        merge(arrayOf(listNodes(1, 4, 5), listNodes(1, 3, 4), listNodes(2, 6)))
     }
 }
@@ -19,8 +21,7 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
         var index = 0
         forEachIndexed { i, node ->
             if (node != null) {
-                if (result == null) result = node
-                else if (node.value < result!!.value) {
+                if (result == null || node.value < result!!.value) {
                     result = node
                     index = i
                 }
@@ -31,12 +32,12 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
     fun Array<ListNode?>.hasNodes() = any { it != null }
 
     var (result, i) = listNodes.min()
-    listNodes[i] = result?.next
+    listNodes[i] = result!!.next
     while (listNodes.hasNodes()) {
         listNodes.min().let { (node, index) ->
+            listNodes[i] = node!!.next
             result!!.next = node
             i = index
-            listNodes[i] = node!!.next
         }
     }
     return result!!
