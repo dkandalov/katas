@@ -15,10 +15,8 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
 }
 
 fun List<Int>.toListNode(): ListNode {
-    if (isEmpty()) error("")
-    val result = ListNode(first())
-    drop(1).forEach { result.next = ListNode(it) }
-    return result
+    if (isEmpty()) error("List must be non-empty to convert it to ListNode")
+    return foldRight(null as ListNode?, { n, result -> ListNode(n, result) })!!
 }
 
 fun listNodes(vararg values: Int): ListNode = values.toList().toListNode()
@@ -39,6 +37,6 @@ class ListNodeTests {
     @Test fun `conversion from list`() {
         listOf(1).toListNode() shouldEqual ListNode(1)
         listOf(1, 2).toListNode() shouldEqual ListNode(1, ListNode(2))
-        listOf(1, 2, 3).toListNode() shouldEqual listNodes(1, 2, 3)
+        listOf(1, 2, 3).toListNode() shouldEqual ListNode(1, ListNode(2, ListNode(3)))
     }
 }
