@@ -12,6 +12,10 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
     fun toList(): List<Int> {
         return listOf(value) + (next?.toList() ?: emptyList())
     }
+
+    fun reversed(): ListNode {
+        return this
+    }
 }
 
 fun List<Int>.toListNode(): ListNode {
@@ -38,5 +42,10 @@ class ListNodeTests {
         listOf(1).toListNode() shouldEqual ListNode(1)
         listOf(1, 2).toListNode() shouldEqual ListNode(1, ListNode(2))
         listOf(1, 2, 3).toListNode() shouldEqual ListNode(1, ListNode(2, ListNode(3)))
+    }
+
+    @Test fun `reverse nodes`() {
+        listNodes(1).reversed() shouldEqual listNodes(1)
+//        listNodes(1, 2, 3).reversed() shouldEqual listNodes(3, 2, 1)
     }
 }
