@@ -6,10 +6,10 @@ import org.junit.Test
 
 class MergeSortedListsTests {
     @Test fun `merge k sorted linked lists`() {
-        merge(listOf(listNodes(1, 4, 5), listNodes(1, 3, 4), listNodes(2, 6)))
+        merge(arrayOf(listNodes(1, 4, 5), listNodes(1, 3, 4), listNodes(2, 6)))
     }
 }
 
-private fun merge(nodesList: List<ListNode>): ListNode {
+private fun merge(nodesList: Array<ListNode>): ListNode {
     return ListNode(1)
 }
