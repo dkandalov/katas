@@ -2,6 +2,7 @@ package katas.kotlin.leetcode.merge_k_sorted_lists
 
 import katas.kotlin.leetcode.ListNode
 import katas.kotlin.leetcode.listNodes
+import katas.kotlin.leetcode.toListNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -19,7 +20,7 @@ class MergeSortedListsTests {
 }
 
 private fun merge(listNodes: Array<ListNode?>): ListNode? {
-    fun Array<ListNode?>.min(): Pair<ListNode?, Int> {
+    fun Array<ListNode?>.removeMin(): ListNode? {
         var result: ListNode? = null
         var index = 0
         forEachIndexed { i, node ->
@@ -30,18 +31,17 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
                 }
             }
         }
-        return result to index
+        listNodes[index] = result!!.next
+        return result
     }
+
     fun Array<ListNode?>.hasNodes() = any { it != null }
 
-    var (result, i) = listNodes.min()
-    listNodes[i] = result!!.next
+    val result = ArrayList<Int>()
     while (listNodes.hasNodes()) {
-        listNodes.min().let { (node, index) ->
-            listNodes[i] = node!!.next
-            result!!.next = node
-            i = index
+        listNodes.removeMin().let { node ->
+            result.add(node!!.value)
         }
     }
-    return result!!
+    return result.toListNode()
 }
