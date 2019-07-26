@@ -1,8 +1,8 @@
 package katas.kotlin.leetcode.merge_two_sorted_lists
 
-import katas.kotlin.leetcode.remove_nth_node.ListNode
-import katas.kotlin.leetcode.remove_nth_node.listNodes
-import katas.kotlin.leetcode.remove_nth_node.toListNode
+import katas.kotlin.leetcode.ListNode
+import katas.kotlin.leetcode.listNodes
+import katas.kotlin.leetcode.toListNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
