@@ -11,6 +11,9 @@ class MergeSortedListsTests {
         merge(arrayOf(listNodes(1, 2))) shouldEqual listNodes(1, 2)
         merge(arrayOf(listNodes(1), listNodes(2))) shouldEqual listNodes(1, 2)
 
+        merge(arrayOf(listNodes(1, 2), listNodes(3))) shouldEqual listNodes(1, 2, 3)
+//        merge(arrayOf(listNodes(1, 3), listNodes(2))) shouldEqual listNodes(1, 2, 3)
+
 //        merge(arrayOf(listNodes(1, 4, 5), listNodes(1, 3, 4), listNodes(2, 6)))
     }
 }
