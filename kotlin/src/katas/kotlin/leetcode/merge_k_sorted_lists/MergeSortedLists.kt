@@ -33,7 +33,7 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
     listNodes[i] = result?.next
     while (listNodes.hasNodes()) {
         listNodes.min().let {
-            result = it.first
+            result!!.next = it.first
             i = it.second
         }
         listNodes[i] = result?.next
