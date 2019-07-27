@@ -37,6 +37,8 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
 
     fun Array<ListNode?>.hasNodes() = any { it != null }
 
+    if (!listNodes.hasNodes()) return null
+
     val result = ArrayList<Int>()
     while (listNodes.hasNodes()) {
         result.add(listNodes.removeMin()!!.value)
