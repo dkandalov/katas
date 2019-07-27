@@ -14,7 +14,10 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
     }
 
     fun reversed(): ListNode {
-        return this
+        if (next == null) return this
+        next!!.next = this
+        next = null
+        return next!!
     }
 }
 
@@ -46,6 +49,7 @@ class ListNodeTests {
 
     @Test fun `reverse nodes`() {
         listNodes(1).reversed() shouldEqual listNodes(1)
+        listNodes(1, 2).reversed() shouldEqual listNodes(2, 1)
 //        listNodes(1, 2, 3).reversed() shouldEqual listNodes(3, 2, 1)
     }
 }
