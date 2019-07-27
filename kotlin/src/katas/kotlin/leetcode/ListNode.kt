@@ -13,12 +13,16 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
         return listOf(value) + (next?.toList() ?: emptyList())
     }
 
-    fun reversed(prev: ListNode? = null): ListNode {
-        if (next == null) return this
-        next!!.next = this
-        val result = next
-        next = prev
-        return result!!
+    fun reversed(): ListNode {
+        return doReverse().first
+    }
+
+    private fun doReverse(): Pair<ListNode, ListNode> {
+        if (next == null) return Pair(this, this)
+        val (first, last) = next!!.doReverse()
+        last.next = this
+        next = null
+        return Pair(first, this)
     }
 }
 
