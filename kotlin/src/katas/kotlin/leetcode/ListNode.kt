@@ -15,9 +15,10 @@ data class ListNode(val value: Int, var next: ListNode? = null) {
 
     fun reversed(): ListNode {
         if (next == null) return this
+        val result = next
         next!!.next = this
         next = null
-        return next!!
+        return result!!
     }
 }
 
