@@ -55,6 +55,6 @@ class ListNodeTests {
     @Test fun `reverse nodes`() {
         listNodes(1).reversed() shouldEqual listNodes(1)
         listNodes(1, 2).reversed() shouldEqual listNodes(2, 1)
-//        listNodes(1, 2, 3).reversed() shouldEqual listNodes(3, 2, 1)
+        listNodes(1, 2, 3).reversed() shouldEqual listNodes(3, 2, 1)
     }
 }
