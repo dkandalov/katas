@@ -2,7 +2,6 @@ package katas.kotlin.leetcode.merge_k_sorted_lists
 
 import katas.kotlin.leetcode.ListNode
 import katas.kotlin.leetcode.listNodes
-import katas.kotlin.leetcode.toListNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -39,12 +38,12 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
 
     if (!listNodes.hasNodes()) return null
 
-    var r = listNodes.removeMin()
-    r.next = null
+    var result = listNodes.removeMin()
+    result.next = null
     while (listNodes.hasNodes()) {
         val node = listNodes.removeMin()
-        node.next = r
-        r = node
+        node.next = result
+        result = node
     }
-    return r.reverse()
+    return result.reverse()
 }
