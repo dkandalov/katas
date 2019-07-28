@@ -1,5 +1,8 @@
 package katas.kotlin.leetcode.swap_nodes_in_pairs
 
+import katas.kotlin.leetcode.ListNode
+import katas.kotlin.leetcode.listNodes
+import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 /**
@@ -7,6 +10,10 @@ import org.junit.Test
  */
 class SwapNodesInPairsTests {
     @Test fun `swap every two adjacent nodes`() {
-        
+        listNodes(1, 2).swapPairs() shouldEqual listNodes(2, 1)
     }
+}
+
+private fun ListNode.swapPairs(): ListNode {
+    return reverse()
 }
