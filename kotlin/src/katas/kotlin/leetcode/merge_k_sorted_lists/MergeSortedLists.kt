@@ -20,7 +20,7 @@ class MergeSortedListsTests {
 }
 
 private fun merge(listNodes: Array<ListNode?>): ListNode? {
-    fun Array<ListNode?>.removeMin(): ListNode? {
+    fun Array<ListNode?>.removeMin(): ListNode {
         var result: ListNode? = null
         var index = 0
         forEachIndexed { i, node ->
@@ -32,7 +32,7 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
             }
         }
         listNodes[index] = result!!.next
-        return result
+        return result!!
     }
 
     fun Array<ListNode?>.hasNodes() = any { it != null }
@@ -41,7 +41,7 @@ private fun merge(listNodes: Array<ListNode?>): ListNode? {
 
     val result = ArrayList<Int>()
     while (listNodes.hasNodes()) {
-        result.add(listNodes.removeMin()!!.value)
+        result.add(listNodes.removeMin().value)
     }
     return result.toListNode()
 }
