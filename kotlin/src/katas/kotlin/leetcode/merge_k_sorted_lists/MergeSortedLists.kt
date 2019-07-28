@@ -5,6 +5,9 @@ import katas.kotlin.leetcode.listNodes
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/merge-k-sorted-lists
+ */
 class MergeSortedListsTests {
     @Test fun `merge k sorted linked lists`() {
         merge(arrayOf(listNodes(1))) shouldEqual listNodes(1)
