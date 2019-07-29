@@ -17,13 +17,13 @@ class SwapNodesInPairsTests {
 }
 
 private fun ListNode.swapPairs(): ListNode {
-    var first = this
-    var second = first.next!!
-    var third = first.next!!.next
+    var first: ListNode? = this
+    var second = first?.next
+    var third = first?.next?.next
     val head = second
 
-    second.next = first
-    first.next = third?.next
+    second?.next = first
+    first?.next = third?.next
 
     while (third != null) {
         first = third
@@ -34,5 +34,5 @@ private fun ListNode.swapPairs(): ListNode {
         first.next = third?.next
     }
 
-    return head
+    return head!!
 }
