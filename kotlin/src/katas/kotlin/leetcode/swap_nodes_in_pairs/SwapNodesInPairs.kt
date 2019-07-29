@@ -27,10 +27,10 @@ private fun ListNode.swapPairs(): ListNode {
 
     while (third != null) {
         first = third
-        second = first.next!!
-        third  = second.next
+        second = first.next
+        third  = second?.next
 
-        second.next = first
+        second?.next = first
         first.next = third?.next
     }
 
