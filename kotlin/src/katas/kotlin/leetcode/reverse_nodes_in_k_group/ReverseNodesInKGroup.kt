@@ -8,8 +8,8 @@ import org.junit.Test
 class ReverseNodesInKGroupTests {
     @Test fun `reverse the nodes of a linked list k at a time`() {
 //        listNodes(1, 2, 3).reverseGroup(1) shouldEqual listNodes(1, 2, 3)
-        listNodes(1, 2, 3).reverseGroup(2) shouldEqual listNodes(2, 1, 3)
-//        listNodes(1, 2, 3).reverseGroup(3) shouldEqual listNodes(3, 2, 1)
+//        listNodes(1, 2, 3).reverseGroup(2) shouldEqual listNodes(2, 1, 3)
+        listNodes(1, 2, 3).reverseGroup(3) shouldEqual listNodes(3, 2, 1)
     }
 }
 
@@ -18,10 +18,9 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     window[0] = this
     (1 until size).forEach { i -> window[i] = window[i - 1]?.next }
 
-    val first = this
-    val second = first.next
-    val third = second?.next
-    second?.next = first
-    first.next = third
-    return second!!
+    window[0]?.next = null
+    window[1]?.next = window[0]
+    window[2]?.next = window[1]
+
+    return window.last()!!
 }
