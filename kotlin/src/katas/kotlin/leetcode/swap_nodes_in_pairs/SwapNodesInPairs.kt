@@ -33,9 +33,10 @@ private fun ListNode.swapPairs(): ListNode {
         first = third
         second = first.next
         third  = second?.next
+        fourth = third?.next
 
         second?.next = first
-        first.next = third?.next
+        first.next = fourth
     }
 
     return head
