@@ -12,6 +12,7 @@ class SwapNodesInPairsTests {
     @Test fun `swap every two adjacent nodes`() {
         listNodes(1).swapPairs() shouldEqual listNodes(1)
         listNodes(1, 2).swapPairs() shouldEqual listNodes(2, 1)
+        listNodes(1, 2, 3).swapPairs() shouldEqual listNodes(2, 1, 3)
         listNodes(1, 2, 3, 4).swapPairs() shouldEqual listNodes(2, 1, 4, 3)
         listNodes(1, 2, 3, 4, 5, 6).swapPairs() shouldEqual listNodes(2, 1, 4, 3, 6, 5)
         listNodes(1, 2, 3, 4, 5, 6, 7, 8).swapPairs() shouldEqual listNodes(2, 1, 4, 3, 6, 5, 8, 7)
@@ -27,7 +28,7 @@ private fun ListNode.swapPairs(): ListNode {
     val head = second
 
     second?.next = first
-    first?.next = fourth
+    first?.next = if (fourth == null) third  else fourth
 
     while (third != null) {
         first = third
@@ -36,7 +37,7 @@ private fun ListNode.swapPairs(): ListNode {
         fourth = third?.next
 
         second?.next = first
-        first.next = fourth
+        first?.next = if (fourth == null) third  else fourth
     }
 
     return head
