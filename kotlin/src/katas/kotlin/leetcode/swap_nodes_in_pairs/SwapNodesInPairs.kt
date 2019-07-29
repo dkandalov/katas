@@ -29,8 +29,8 @@ private fun ListNode.swapPairs(): ListNode {
     if (second == null) return first!!
     val head = second
 
-    second?.next = first
-    first?.next = if (fourth == null) third  else fourth
+    second.next = first
+    first?.next = fourth ?: third
 
     while (third != null) {
         first = third
@@ -39,7 +39,7 @@ private fun ListNode.swapPairs(): ListNode {
         fourth = third?.next
 
         second?.next = first
-        first?.next = if (fourth == null) third  else fourth
+        first.next = fourth ?: third
     }
 
     return head
