@@ -37,20 +37,20 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
 
     var node: ListNode? = this
     var head: ListNode? = null
-    var newLast: ListNode? = null
+    var lastTip: ListNode? = null
 
     while (node != null) {
         writeToWindow(node)
         node = window.last()?.next
         if (head == null) head = window.last()
         if (window.any { it == null }) {
-            newLast?.next = window[0]
+            lastTip?.next = window[0]
             break
         }
 
         reverseWindow()
-        newLast?.next = window.last()
-        newLast = window[0]
+        lastTip?.next = window.last()
+        lastTip = window[0]
     }
 
     return head!!
