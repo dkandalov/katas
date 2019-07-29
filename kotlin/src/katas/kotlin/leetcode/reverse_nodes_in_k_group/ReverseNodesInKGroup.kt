@@ -44,19 +44,21 @@ private inline fun slidingWindow(listNode: ListNode, size: Int, f: (Array<ListNo
 }
 
 private fun ListNode.reverseGroup(size: Int): ListNode {
-    var head: ListNode? = null
+    var result: ListNode? = null
     var lastTip: ListNode? = null
 
     slidingWindow(this, size) { window ->
-        if (head == null) head = window.last()
+        if (result == null) result = window.last()
         if (window.any { it == null }) {
             lastTip?.next = window[0]
-            return head!!
+            return result!!
         }
+
         window.reverseListNodes()
+
         lastTip?.next = window.last()
         lastTip = window[0]
     }
 
-    return head!!
+    return result!!
 }
