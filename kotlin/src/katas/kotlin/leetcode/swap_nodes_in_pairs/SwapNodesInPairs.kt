@@ -30,7 +30,7 @@ private fun ListNode.swapPairs(): ListNode {
         third  = second.next
 
         second.next = first
-        first.next = third
+        first.next = third?.next
     }
 
     return head
