@@ -17,15 +17,21 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     val window = arrayOfNulls<ListNode?>(size)
     window[0] = this
     (1 until window.size).forEach { window[it] = window[it - 1]?.next }
-    var after = window.last()?.next
+    var afterWindow = window.last()?.next
 
     window[0]?.next = null
     (1 until size).forEach { window[it]?.next = window[it - 1] }
+    var newLast = window[0]
 
-    if (after != null) {
-        window[0] = after
+    if (afterWindow != null) {
+        window[0] = afterWindow
         (1 until window.size).forEach { window[it] = window[it - 1]?.next }
-        after = window.last()?.next
+        afterWindow = window.last()?.next
+
+        window[0]?.next = null
+        (1 until size).forEach { window[it]?.next = window[it - 1] }
+        newLast?.next = window.last()
+        newLast = window[0]
     }
 
     return window.last()!!
