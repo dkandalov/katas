@@ -33,9 +33,10 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
         window[0]?.next = null
         (1 until size).forEach { window[it]?.next = window[it - 1] }
     }
+    var afterWindow: ListNode? = this
 
-    writeToWindow(this)
-    var afterWindow = window.last()?.next
+    writeToWindow(afterWindow!!)
+    afterWindow = window.last()?.next
     val head = window.last()
 
     reverseWindow()
