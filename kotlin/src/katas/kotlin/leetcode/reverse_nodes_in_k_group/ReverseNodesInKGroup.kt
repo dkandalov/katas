@@ -7,7 +7,9 @@ import org.junit.Test
 
 class ReverseNodesInKGroupTests {
     @Test fun `reverse the nodes of a linked list k at a time`() {
-//        listNodes(1, 2, 3).reverseGroup(1) shouldEqual listNodes(1, 2, 3)
+        listNodes(1).reverseGroup(1) shouldEqual listNodes(1)
+        listNodes(1, 2).reverseGroup(1) shouldEqual listNodes(1, 2)
+        listNodes(1, 2, 3).reverseGroup(1) shouldEqual listNodes(1, 2, 3)
 
         listNodes(1, 2).reverseGroup(2) shouldEqual listNodes(2, 1)
         listNodes(1, 2, 3).reverseGroup(2) shouldEqual listNodes(2, 1, 3)
