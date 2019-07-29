@@ -10,6 +10,7 @@ import org.junit.Test
  */
 class SwapNodesInPairsTests {
     @Test fun `swap every two adjacent nodes`() {
+        listNodes(1).swapPairs() shouldEqual listNodes(1)
         listNodes(1, 2).swapPairs() shouldEqual listNodes(2, 1)
         listNodes(1, 2, 3, 4).swapPairs() shouldEqual listNodes(2, 1, 4, 3)
         listNodes(1, 2, 3, 4, 5, 6).swapPairs() shouldEqual listNodes(2, 1, 4, 3, 6, 5)
@@ -21,6 +22,7 @@ private fun ListNode.swapPairs(): ListNode {
     var first: ListNode? = this
     var second = first?.next
     var third = first?.next?.next
+    if (second == null) return first!!
     val head = second
 
     second?.next = first
@@ -35,5 +37,5 @@ private fun ListNode.swapPairs(): ListNode {
         first.next = third?.next
     }
 
-    return head!!
+    return head
 }
