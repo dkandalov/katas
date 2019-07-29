@@ -24,12 +24,14 @@ private fun ListNode.swapPairs(): ListNode {
     second.next = first
     first.next = third?.next
 
-    first = third ?: return head
-    second = first.next!!
-    third  = second.next
+    while (third != null) {
+        first = third
+        second = first.next!!
+        third  = second.next
 
-    second.next = first
-    first.next = third
+        second.next = first
+        first.next = third
+    }
 
     return head
 }
