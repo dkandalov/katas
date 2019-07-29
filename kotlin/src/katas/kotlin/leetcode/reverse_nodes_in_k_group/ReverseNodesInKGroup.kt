@@ -25,8 +25,12 @@ class ReverseNodesInKGroupTests {
 
 private fun ListNode.reverseGroup(size: Int): ListNode {
     val window = arrayOfNulls<ListNode?>(size)
-    window[0] = this
-    (1 until window.size).forEach { window[it] = window[it - 1]?.next }
+    fun writeToWindow(listNode: ListNode) {
+        window[0] = listNode
+        (1 until window.size).forEach { window[it] = window[it - 1]?.next }
+    }
+
+    writeToWindow(this)
     var afterWindow = window.last()?.next
     val head = window.last()
 
