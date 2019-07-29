@@ -11,7 +11,7 @@ import org.junit.Test
 class SwapNodesInPairsTests {
     @Test fun `swap every two adjacent nodes`() {
         listNodes(1, 2).swapPairs() shouldEqual listNodes(2, 1)
-//        listNodes(1, 2, 3, 4).swapPairs() shouldEqual listNodes(2, 1, 4, 3)
+        listNodes(1, 2, 3, 4).swapPairs() shouldEqual listNodes(2, 1, 4, 3)
     }
 }
 
