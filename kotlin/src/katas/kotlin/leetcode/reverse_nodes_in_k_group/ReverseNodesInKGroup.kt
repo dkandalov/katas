@@ -28,7 +28,7 @@ private fun Array<ListNode?>.writeListNodes(listNode: ListNode) {
     (1 until size).forEach { this[it] = this[it - 1]?.next }
 }
 
-private fun Array<ListNode?>.reverse() {
+private fun Array<ListNode?>.reverseListNodes() {
     this[0]?.next = null
     (1 until size).forEach { this[it]?.next = this[it - 1] }
 }
@@ -53,7 +53,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
             lastTip?.next = window[0]
             return head!!
         }
-        window.reverse()
+        window.reverseListNodes()
         lastTip?.next = window.last()
         lastTip = window[0]
     }
