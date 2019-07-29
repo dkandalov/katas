@@ -18,6 +18,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     window[0] = this
     (1 until window.size).forEach { window[it] = window[it - 1]?.next }
     var afterWindow = window.last()?.next
+    val head = window.last()
 
     window[0]?.next = null
     (1 until size).forEach { window[it]?.next = window[it - 1] }
@@ -34,5 +35,5 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
         newLast = window[0]
     }
 
-    return window.last()!!
+    return head!!
 }
