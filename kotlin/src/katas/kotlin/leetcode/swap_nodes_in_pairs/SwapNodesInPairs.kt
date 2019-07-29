@@ -26,8 +26,7 @@ private fun ListNode.swapPairs(): ListNode {
     var second = first?.next
     var third = second?.next
     var fourth = third?.next
-    if (second == null) return first!!
-    val head = second
+    val head = second ?: return first!!
 
     second.next = first
     first?.next = fourth ?: third
