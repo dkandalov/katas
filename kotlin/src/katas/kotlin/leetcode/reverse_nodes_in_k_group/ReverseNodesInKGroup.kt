@@ -46,6 +46,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     while (afterWindow != null) {
         writeToWindow(afterWindow)
         afterWindow = window.last()?.next
+        if (head == null) head = window.last()
         if (window.any { it == null }) {
             newLast?.next = window[0]
             break
