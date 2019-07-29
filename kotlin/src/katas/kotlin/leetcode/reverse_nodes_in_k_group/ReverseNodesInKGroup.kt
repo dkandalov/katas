@@ -11,6 +11,7 @@ class ReverseNodesInKGroupTests {
 //        listNodes(1, 2, 3).reverseGroup(2) shouldEqual listNodes(2, 1, 3)
         listNodes(1, 2, 3).reverseGroup(3) shouldEqual listNodes(3, 2, 1)
         listNodes(1, 2, 3, 4, 5, 6).reverseGroup(3) shouldEqual listNodes(3, 2, 1, 6, 5, 4)
+        listNodes(1, 2, 3, 4, 5, 6, 7, 8, 9).reverseGroup(3) shouldEqual listNodes(3, 2, 1, 6, 5, 4, 9 ,8 ,7)
     }
 }
 
@@ -25,7 +26,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     (1 until size).forEach { window[it]?.next = window[it - 1] }
     var newLast = window[0]
 
-    if (afterWindow != null) {
+    while (afterWindow != null) {
         window[0] = afterWindow
         (1 until window.size).forEach { window[it] = window[it - 1]?.next }
         afterWindow = window.last()?.next
