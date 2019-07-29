@@ -31,15 +31,15 @@ private fun ListNode.swapPairs(): ListNode {
     second.next = first
     first?.next = fourth ?: third
 
-    while (third != null) {
+    do {
         first = third
-        second = first.next
+        second = first?.next
         third  = second?.next
         fourth = third?.next
 
         second?.next = first
-        first.next = fourth ?: third
-    }
+        first?.next = fourth ?: third
+    } while (third != null)
 
     return head
 }
