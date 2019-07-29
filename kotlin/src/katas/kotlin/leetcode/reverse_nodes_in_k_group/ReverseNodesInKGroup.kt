@@ -10,6 +10,7 @@ class ReverseNodesInKGroupTests {
 //        listNodes(1, 2, 3).reverseGroup(1) shouldEqual listNodes(1, 2, 3)
 //        listNodes(1, 2, 3).reverseGroup(2) shouldEqual listNodes(2, 1, 3)
         listNodes(1, 2, 3).reverseGroup(3) shouldEqual listNodes(3, 2, 1)
+        listNodes(1, 2, 3, 4, 5, 6).reverseGroup(3) shouldEqual listNodes(3, 2, 1, 6, 5, 4)
     }
 }
 
