@@ -33,6 +33,10 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
         window[0] = afterWindow
         (1 until window.size).forEach { window[it] = window[it - 1]?.next }
         afterWindow = window.last()?.next
+        if (window.any { it == null }) {
+            newLast?.next = window.last()
+            break
+        }
 
         window[0]?.next = null
         (1 until size).forEach { window[it]?.next = window[it - 1] }
