@@ -22,11 +22,11 @@ private fun ListNode.swapPairs(): ListNode {
     val head = second
 
     second.next = first
-    first.next = third
+    first.next = third?.next
 
     first = third ?: return head
     second = first.next!!
-    third  = second.next!!
+    third  = second.next
 
     second.next = first
     first.next = third
