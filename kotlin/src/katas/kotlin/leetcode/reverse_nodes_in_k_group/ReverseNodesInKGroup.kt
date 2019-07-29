@@ -28,6 +28,11 @@ private fun Array<ListNode?>.writeListNodes(listNode: ListNode) {
     (1 until size).forEach { this[it] = this[it - 1]?.next }
 }
 
+private fun Array<ListNode?>.reverse() {
+    this[0]?.next = null
+    (1 until size).forEach { this[it]?.next = this[it - 1] }
+}
+
 private inline fun slidingWindow(listNode: ListNode, size: Int, f: (Array<ListNode?>) -> Unit) {
     val window = arrayOfNulls<ListNode?>(size)
     var node: ListNode? = listNode
@@ -40,11 +45,6 @@ private inline fun slidingWindow(listNode: ListNode, size: Int, f: (Array<ListNo
 
 private fun ListNode.reverseGroup(size: Int): ListNode {
     val window = arrayOfNulls<ListNode?>(size)
-
-    fun reverseWindow() {
-        window[0]?.next = null
-        (1 until size).forEach { window[it]?.next = window[it - 1] }
-    }
 
     var node: ListNode? = this
     var head: ListNode? = null
@@ -59,7 +59,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
             break
         }
 
-        reverseWindow()
+        window.reverse()
         lastTip?.next = window.last()
         lastTip = window[0]
     }
