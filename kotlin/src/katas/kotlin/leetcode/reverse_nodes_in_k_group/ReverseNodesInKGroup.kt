@@ -23,12 +23,23 @@ class ReverseNodesInKGroupTests {
     }
 }
 
+private fun Array<ListNode?>.writeListNodes(listNode: ListNode) {
+    this[0] = listNode
+    (1 until size).forEach { this[it] = this[it - 1]?.next }
+}
+
+private inline fun slidingWindow(listNode: ListNode, size: Int, f: (Array<ListNode?>) -> Unit) {
+    val window = arrayOfNulls<ListNode?>(size)
+    var node: ListNode? = listNode
+    while (node != null) {
+        window.writeListNodes(node)
+        node = window.last()?.next
+        f(window)
+    }
+}
+
 private fun ListNode.reverseGroup(size: Int): ListNode {
     val window = arrayOfNulls<ListNode?>(size)
-    fun writeToWindow(listNode: ListNode) {
-        window[0] = listNode
-        (1 until window.size).forEach { window[it] = window[it - 1]?.next }
-    }
 
     fun reverseWindow() {
         window[0]?.next = null
@@ -40,7 +51,7 @@ private fun ListNode.reverseGroup(size: Int): ListNode {
     var lastTip: ListNode? = null
 
     while (node != null) {
-        writeToWindow(node)
+        window.writeListNodes(node)
         node = window.last()?.next
         if (head == null) head = window.last()
         if (window.any { it == null }) {
