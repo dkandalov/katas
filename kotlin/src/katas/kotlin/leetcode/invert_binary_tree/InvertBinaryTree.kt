@@ -7,6 +7,15 @@ class InvertBinaryTreeTests {
     @Test fun `invert a binary tree`() {
         TreeNode(1).invert() shouldEqual TreeNode(1)
         TreeNode(2, TreeNode(1), TreeNode(3)).invert() shouldEqual TreeNode(2, TreeNode(3), TreeNode(1))
+
+        TreeNode(4,
+            TreeNode(2, TreeNode(1), TreeNode(3)),
+            TreeNode(7, TreeNode(6), TreeNode(9))
+        ).invert() shouldEqual
+            TreeNode(4,
+                TreeNode(7, TreeNode(9), TreeNode(6)),
+                TreeNode(2, TreeNode(3), TreeNode(1))
+            )
     }
 }
 
