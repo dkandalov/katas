@@ -9,6 +9,7 @@ class UniqueBSTsTests {
         numberOfBSTs(2) shouldEqual 2
         numberOfBSTs(3) shouldEqual 5
         numberOfBSTs(4) shouldEqual 14
+        numberOfBSTs(5) shouldEqual 42
     }
 
     private fun numberOfBSTs(n: Int): Int {
