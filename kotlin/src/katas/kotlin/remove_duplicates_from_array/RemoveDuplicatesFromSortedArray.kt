@@ -5,7 +5,10 @@ import org.junit.Test
 
 class RemoveDuplicatesFromSortedArrayTests {
     @Test fun `remove the duplicates in-place such that each element appear only once`() {
-        intArrayOf().removeDuplicates() shouldEqual 0
+        intArrayOf().let {
+            it.removeDuplicates() shouldEqual 0
+            it shouldEqual intArrayOf()
+        }
         intArrayOf(1).removeDuplicates() shouldEqual 1
         intArrayOf(1, 1).removeDuplicates() shouldEqual 1
         intArrayOf(1, 2).removeDuplicates() shouldEqual 2
