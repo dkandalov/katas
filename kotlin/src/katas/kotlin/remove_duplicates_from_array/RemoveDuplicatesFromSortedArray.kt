@@ -8,6 +8,7 @@ class RemoveDuplicatesFromSortedArrayTests {
         intArrayOf(1).removeDuplicates() shouldEqual 1
         intArrayOf(1, 1).removeDuplicates() shouldEqual 1
         intArrayOf(1, 2).removeDuplicates() shouldEqual 2
+        intArrayOf(1, 2, 2).removeDuplicates() shouldEqual 2
     }
 }
 
@@ -17,6 +18,7 @@ private fun IntArray.removeDuplicates(): Int {
     var j = 1
     if (this[i] == this[j]) j++ else i++
     if (j == size) return i + 1
+    if (this[i] == this[j]) j++ else i++
 
     return i + 1
 }
