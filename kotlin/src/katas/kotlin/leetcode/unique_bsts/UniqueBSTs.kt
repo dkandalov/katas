@@ -12,7 +12,6 @@ class UniqueBSTsTests {
 
     private fun numberOfBSTs(n: Int): Int {
         return when (n) {
-            0    -> 0
             1    -> 1
             2    -> 2
             else -> (0 until n).sumBy { i ->
