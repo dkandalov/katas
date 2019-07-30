@@ -19,8 +19,9 @@ class UniqueBSTsTests {
             1    -> 1
             2    -> 2
             else -> (0 until n).sumBy { i ->
+                val less = i
                 val greater = n - i - 1
-                numberOfBSTs(i) * numberOfBSTs(greater)
+                numberOfBSTs(less) * numberOfBSTs(greater)
             }
         }
     }
