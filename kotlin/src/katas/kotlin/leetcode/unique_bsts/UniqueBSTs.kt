@@ -14,11 +14,12 @@ class UniqueBSTsTests {
 
     private fun numberOfBSTs(n: Int): Int {
         return when (n) {
+            0    -> 1
             1    -> 1
             2    -> 2
             else -> (0 until n).sumBy { i ->
-                val less = maxOf(1, i)
-                val greater = maxOf(1, n - i - 1)
+                val less = i
+                val greater = n - i - 1
                 numberOfBSTs(less) * numberOfBSTs(greater)
             }
         }
