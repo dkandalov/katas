@@ -36,12 +36,11 @@ private fun IntArray.removeDuplicates(): Int {
     var j = 1
 
     while (j < size) {
-        if (this[i] == this[j]) j++
-        else {
+        if (this[i] != this[j]) {
             if (i + 1 != j) this[i + 1] = this[j]
             i++
-            j++
         }
+        j++
     }
 
     return i + 1
