@@ -32,6 +32,7 @@ private fun IntArray.removeDuplicates(): Int {
     while (j < size) {
         if (this[i] == this[j]) j++
         else {
+            if (i + 1 != j) this[i + 1] = this[j]
             i++
             j++
         }
