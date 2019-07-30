@@ -10,7 +10,11 @@ class RemoveDuplicatesFromSortedArrayTests {
         intArrayOf(1, 1).removeDuplicates() shouldEqual 1
         intArrayOf(1, 2).removeDuplicates() shouldEqual 2
         intArrayOf(1, 2, 2).removeDuplicates() shouldEqual 2
+
         intArrayOf(1, 2, 3).removeDuplicates() shouldEqual 3
+        intArrayOf(1, 1, 2, 3).removeDuplicates() shouldEqual 3
+        intArrayOf(1, 2, 2, 3).removeDuplicates() shouldEqual 3
+        intArrayOf(1, 2, 3, 3).removeDuplicates() shouldEqual 3
     }
 }
 
