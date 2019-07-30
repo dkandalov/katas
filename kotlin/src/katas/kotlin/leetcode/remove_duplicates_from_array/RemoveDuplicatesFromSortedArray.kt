@@ -1,8 +1,11 @@
-package katas.kotlin.remove_duplicates_from_array
+package katas.kotlin.leetcode.remove_duplicates_from_array
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+ */
 class RemoveDuplicatesFromSortedArrayTests {
     @Test fun `remove the duplicates in-place such that each element appear only once`() {
         intArrayOf().removeDuplicatesToList() shouldEqual emptyList()
