@@ -12,7 +12,7 @@ class RemoveDuplicatesFromSortedArrayTests {
         intArrayOf(1, 2).removeDuplicatesToList() shouldEqual listOf(1, 2)
         intArrayOf(1, 2, 2).removeDuplicatesToList() shouldEqual listOf(1, 2)
 
-        intArrayOf(1, 2, 3).removeDuplicates() shouldEqual 3
+        intArrayOf(1, 2, 3).removeDuplicatesToList() shouldEqual listOf(1, 2, 3)
         intArrayOf(1, 1, 2, 3).removeDuplicates() shouldEqual 3
         intArrayOf(1, 2, 2, 3).removeDuplicates() shouldEqual 3
         intArrayOf(1, 2, 3, 3).removeDuplicates() shouldEqual 3
