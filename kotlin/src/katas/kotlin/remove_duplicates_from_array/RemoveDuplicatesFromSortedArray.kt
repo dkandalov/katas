@@ -16,9 +16,14 @@ private fun IntArray.removeDuplicates(): Int {
     if (size <= 1) return size
     var i = 0
     var j = 1
-    if (this[i] == this[j]) j++ else i++
-    if (j == size) return i + 1
-    if (this[i] == this[j]) j++ else i++
+
+    while (j < size) {
+        if (this[i] == this[j]) j++
+        else {
+            i++
+            j++
+        }
+    }
 
     return i + 1
 }
