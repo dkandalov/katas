@@ -15,6 +15,9 @@ private fun TreeNode.invert(): TreeNode {
     right?.value?.let { left?.value = it }
     tmp?.let { right?.value = it }
 
+    left?.invert()
+    right?.invert()
+
     return this
 }
 
