@@ -11,6 +11,8 @@ import kotlin.Int.Companion.MIN_VALUE
  * https://leetcode.com/problems/validate-binary-search-tree
  */
 class ValidateBSTTests {
+    private fun TreeNode.isValid() = isValid_1()
+
     @Test fun `shallow trees`() {
         TreeNode(1).isValid() shouldEqual true
         TreeNode(1, TreeNode(0)).isValid() shouldEqual true
@@ -65,12 +67,12 @@ class ValidateBSTTests {
 }
 
 fun isValidBST(root: TreeNode?): Boolean {
-    return root?.isValid() ?: true // ✅
+    return root?.isValid_1() ?: true // ✅
 //    return root?.isValid_() ?: true // ✅
 //    return root?.isValid__() ?: true // ✅
 }
 
-private fun TreeNode.isValid(): Boolean {
+private fun TreeNode.isValid_1(): Boolean {
     val stack = LinkedList<TreeNode>()
     var node: TreeNode? = this
     var prevNode: TreeNode? = null
@@ -107,7 +109,7 @@ private fun TreeNode.isValid__(min: Int? = null, max: Int? = null): Boolean {
     if (min != null && value <= min) return false
     if (max != null && value > max) return false
 
-    if (left != null && left!!.value > value) return false
+    if (left != null && left!!.value >= value) return false
     if (right != null && right!!.value <= value) return false
 
     return left?.isValid__(min = min, max = value) ?: true &&
