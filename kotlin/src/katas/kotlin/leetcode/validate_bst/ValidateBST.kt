@@ -3,6 +3,7 @@ package katas.kotlin.leetcode.validate_bst
 import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.util.*
 import kotlin.Int.Companion.MAX_VALUE
 import kotlin.Int.Companion.MIN_VALUE
 
@@ -63,26 +64,46 @@ class ValidateBSTTests {
     }
 }
 
-class Ref<T>(var value: T? = null)
+private fun TreeNode.isValid(): Boolean {
+    val stack = LinkedList<TreeNode>()
+    var node: TreeNode? = this
+    var lastValue: Int? = null
 
-private fun TreeNode.isValid(last: Ref<TreeNode> = Ref()): Boolean {
-    if (left != null && !left!!.isValid(last)) return false
+    while (stack.isNotEmpty() || node != null) {
+        while (node != null) {
+            stack.addLast(node)
+            node = node.left
+        }
+        node = stack.removeLast()
+        if (lastValue != null && node!!.value < lastValue) return false
+        lastValue = node!!.value
 
-    if (last.value != null && last.value!!.value > value) return false
-    last.value = this
-
-    if (right != null && !right!!.isValid(last)) return false
+        node = node.right
+    }
 
     return true
 }
 
-private fun TreeNode.isValid_(min: Int? = null, max: Int? = null): Boolean {
+private class Ref<T>(var value: T? = null)
+
+private fun TreeNode.isValid_(last: Ref<TreeNode> = Ref()): Boolean {
+    if (left != null && !left!!.isValid_(last)) return false
+
+    if (last.value != null && last.value!!.value > value) return false
+    last.value = this
+
+    if (right != null && !right!!.isValid_(last)) return false
+
+    return true
+}
+
+private fun TreeNode.isValid__(min: Int? = null, max: Int? = null): Boolean {
     if (min != null && value <= min) return false
     if (max != null && value > max) return false
 
     if (left != null && left!!.value > value) return false
     if (right != null && right!!.value <= value) return false
 
-    return left?.isValid_(min = min, max = value) ?: true &&
-           right?.isValid_(min = value, max = max) ?: true
+    return left?.isValid__(min = min, max = value) ?: true &&
+           right?.isValid__(min = value, max = max) ?: true
 }
