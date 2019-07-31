@@ -11,10 +11,12 @@ class ValidateBSTTests {
         TreeNode(1, null, TreeNode(2)).isValid() shouldEqual true
 
         TreeNode(1, TreeNode(2)).isValid() shouldEqual false
+        TreeNode(1, null, TreeNode(0)).isValid() shouldEqual false
     }
 }
 
 private fun TreeNode.isValid(): Boolean {
     if (left != null && left!!.value > value) return false
+    if (right != null && right!!.value < value) return false
     return true
 }
