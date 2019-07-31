@@ -67,7 +67,7 @@ class ValidateBSTTests {
 private fun TreeNode.isValid(): Boolean {
     val stack = LinkedList<TreeNode>()
     var node: TreeNode? = this
-    var lastValue: Int? = null
+    var prevNode: TreeNode? = null
 
     while (stack.isNotEmpty() || node != null) {
         while (node != null) {
@@ -75,8 +75,8 @@ private fun TreeNode.isValid(): Boolean {
             node = node.left
         }
         node = stack.removeLast()
-        if (lastValue != null && node!!.value < lastValue) return false
-        lastValue = node!!.value
+        if (prevNode != null && node!!.value < prevNode.value) return false
+        prevNode = node
 
         node = node.right
     }
