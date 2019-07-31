@@ -20,6 +20,14 @@ class InvertBinaryTreeTests {
 }
 
 private fun TreeNode.invert(): TreeNode {
+    return TreeNode(
+        value = value,
+        left = right?.invert(),
+        right = left?.invert()
+    )
+}
+
+private fun TreeNode.invert_mutating(): TreeNode {
     val tmp = left
     left = right
     right = tmp
