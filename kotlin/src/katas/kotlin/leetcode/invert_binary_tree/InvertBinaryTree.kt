@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.invert_binary_tree
 
+import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -37,9 +38,3 @@ private fun TreeNode.invert_mutating(): TreeNode {
 
     return this
 }
-
-data class TreeNode(
-    var value: Int,
-    var left: TreeNode? = null,
-    var right: TreeNode? = null
-)
