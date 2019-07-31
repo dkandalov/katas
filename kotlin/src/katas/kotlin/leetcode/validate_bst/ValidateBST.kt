@@ -68,8 +68,8 @@ class ValidateBSTTests {
 
 fun isValidBST(root: TreeNode?): Boolean {
     return root?.isValid_1() ?: true // ✅
-//    return root?.isValid_() ?: true // ✅
-//    return root?.isValid__() ?: true // ✅
+//    return root?.isValid_2() ?: true // ✅
+//    return root?.isValid_3() ?: true // ✅
 }
 
 private fun TreeNode.isValid_1(): Boolean {
