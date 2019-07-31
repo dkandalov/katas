@@ -39,7 +39,7 @@ class ValidateBSTTests {
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(1), TreeNode(7))
         ).isValid() shouldEqual false
-        
+
         TreeNode(4,
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(4), TreeNode(7))
@@ -63,13 +63,15 @@ class ValidateBSTTests {
     }
 }
 
-private fun TreeNode.isValid(nodes: MutableList<TreeNode> = ArrayList()): Boolean {
-    if (left != null && !left!!.isValid(nodes)) return false
+class Ref<T>(var value: T? = null)
 
-    if (nodes.isNotEmpty() && nodes.last().value > value) return false
-    nodes.add(this)
+private fun TreeNode.isValid(last: Ref<TreeNode> = Ref()): Boolean {
+    if (left != null && !left!!.isValid(last)) return false
 
-    if (right != null && !right!!.isValid(nodes)) return false
+    if (last.value != null && last.value!!.value > value) return false
+    last.value = this
+
+    if (right != null && !right!!.isValid(last)) return false
 
     return true
 }
