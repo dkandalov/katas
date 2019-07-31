@@ -6,6 +6,9 @@ import org.junit.Test
 import kotlin.Int.Companion.MAX_VALUE
 import kotlin.Int.Companion.MIN_VALUE
 
+/**
+ * https://leetcode.com/problems/validate-binary-search-tree
+ */
 class ValidateBSTTests {
     @Test fun `determine if binary search tree is valid`() {
         TreeNode(1).isValid() shouldEqual true
@@ -18,15 +21,11 @@ class ValidateBSTTests {
         TreeNode(1, TreeNode(1)).isValid() shouldEqual true
         TreeNode(1, null, TreeNode(1)).isValid() shouldEqual false
 
-        TreeNode(4,
-            left = TreeNode(2, TreeNode(1), TreeNode(3)),
-            right = TreeNode(6)
-        ).isValid() shouldEqual true
-        TreeNode(4,
-            left = TreeNode(2, TreeNode(3), TreeNode(1)),
-            right = TreeNode(6)
-        ).isValid() shouldEqual false
+        TreeNode(0, TreeNode(MIN_VALUE), TreeNode(MAX_VALUE)).isValid() shouldEqual true
+        TreeNode(0, TreeNode(MAX_VALUE), TreeNode(MIN_VALUE)).isValid() shouldEqual false
+    }
 
+    @Test fun `right subtree has value less than or equal to root`() {
         TreeNode(4,
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(5), TreeNode(7))
@@ -36,11 +35,6 @@ class ValidateBSTTests {
             right = TreeNode(6, TreeNode(7), TreeNode(5))
         ).isValid() shouldEqual false
 
-        TreeNode(0, TreeNode(MIN_VALUE), TreeNode(MAX_VALUE)).isValid() shouldEqual true
-        TreeNode(0, TreeNode(MAX_VALUE), TreeNode(MIN_VALUE)).isValid() shouldEqual false
-    }
-
-    @Test fun `right subtree has value less than or equal to root`() {
         TreeNode(4,
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(1), TreeNode(7))
@@ -52,6 +46,15 @@ class ValidateBSTTests {
     }
 
     @Test fun `left subtree has value greater than root`() {
+        TreeNode(4,
+            left = TreeNode(2, TreeNode(1), TreeNode(3)),
+            right = TreeNode(6)
+        ).isValid() shouldEqual true
+        TreeNode(4,
+            left = TreeNode(2, TreeNode(3), TreeNode(1)),
+            right = TreeNode(6)
+        ).isValid() shouldEqual false
+
         TreeNode(4,
             left = TreeNode(2, TreeNode(1), TreeNode(5)),
             right = TreeNode(6)
