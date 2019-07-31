@@ -3,6 +3,8 @@ package katas.kotlin.leetcode.validate_bst
 import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import kotlin.Int.Companion.MAX_VALUE
+import kotlin.Int.Companion.MIN_VALUE
 
 class ValidateBSTTests {
     @Test fun `determine if binary search tree is valid`() {
@@ -34,7 +36,8 @@ class ValidateBSTTests {
             right = TreeNode(6, TreeNode(7), TreeNode(5))
         ).isValid() shouldEqual false
 
-        TreeNode(0, TreeNode(Int.MIN_VALUE), TreeNode(Int.MAX_VALUE)).isValid() shouldEqual true
+        TreeNode(0, TreeNode(MIN_VALUE), TreeNode(MAX_VALUE)).isValid() shouldEqual true
+        TreeNode(0, TreeNode(MAX_VALUE), TreeNode(MIN_VALUE)).isValid() shouldEqual false
     }
 
     @Test fun `right subtree has value less than or equal to root`() {
