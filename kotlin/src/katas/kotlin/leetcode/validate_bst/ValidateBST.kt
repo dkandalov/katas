@@ -36,7 +36,7 @@ class ValidateBSTTests {
 
         TreeNode(4,
             left = TreeNode(2),
-            right = TreeNode(6, TreeNode(1), TreeNode(5))
+            right = TreeNode(6, TreeNode(1), TreeNode(7))
         ).isValid() shouldEqual false
     }
 }
