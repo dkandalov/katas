@@ -33,6 +33,8 @@ class ValidateBSTTests {
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(7), TreeNode(5))
         ).isValid() shouldEqual false
+
+        TreeNode(0, TreeNode(Int.MIN_VALUE), TreeNode(Int.MAX_VALUE)).isValid() shouldEqual true
     }
 
     @Test fun `right subtree has value less than or equal to root`() {
