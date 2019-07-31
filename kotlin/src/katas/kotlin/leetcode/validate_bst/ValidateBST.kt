@@ -19,8 +19,8 @@ class ValidateBSTTests {
         TreeNode(1, TreeNode(2)).isValid() shouldEqual false
         TreeNode(1, null, TreeNode(0)).isValid() shouldEqual false
 
-        TreeNode(1, TreeNode(1)).isValid() shouldEqual true
-        TreeNode(1, null, TreeNode(1)).isValid() shouldEqual true
+        TreeNode(1, TreeNode(1)).isValid() shouldEqual false
+        TreeNode(1, null, TreeNode(1)).isValid() shouldEqual false
 
         TreeNode(0, TreeNode(MIN_VALUE), TreeNode(MAX_VALUE)).isValid() shouldEqual true
         TreeNode(0, TreeNode(MAX_VALUE), TreeNode(MIN_VALUE)).isValid() shouldEqual false
@@ -44,7 +44,7 @@ class ValidateBSTTests {
         TreeNode(4,
             left = TreeNode(2),
             right = TreeNode(6, TreeNode(4), TreeNode(7))
-        ).isValid() shouldEqual true
+        ).isValid() shouldEqual false
     }
 
     @Test fun `left subtree has value greater than one of its parents`() {
@@ -64,6 +64,12 @@ class ValidateBSTTests {
     }
 }
 
+fun isValidBST(root: TreeNode?): Boolean {
+    return root?.isValid() ?: true // ✅
+//    return root?.isValid_() ?: true // ✅
+//    return root?.isValid__() ?: true // ✅
+}
+
 private fun TreeNode.isValid(): Boolean {
     val stack = LinkedList<TreeNode>()
     var node: TreeNode? = this
@@ -75,7 +81,7 @@ private fun TreeNode.isValid(): Boolean {
             node = node.left
         }
         node = stack.removeLast()
-        if (prevNode != null && node!!.value < prevNode.value) return false
+        if (prevNode != null && node!!.value <= prevNode.value) return false
         prevNode = node
 
         node = node.right
@@ -89,7 +95,7 @@ private class Ref<T>(var value: T? = null)
 private fun TreeNode.isValid_(last: Ref<TreeNode> = Ref()): Boolean {
     if (left != null && !left!!.isValid_(last)) return false
 
-    if (last.value != null && last.value!!.value > value) return false
+    if (last.value != null && last.value!!.value >= value) return false
     last.value = this
 
     if (right != null && !right!!.isValid_(last)) return false
