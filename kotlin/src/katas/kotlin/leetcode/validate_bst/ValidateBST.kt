@@ -94,24 +94,24 @@ private fun TreeNode.isValid_1(): Boolean {
 
 private class Ref<T>(var value: T? = null)
 
-private fun TreeNode.isValid_(last: Ref<TreeNode> = Ref()): Boolean {
-    if (left != null && !left!!.isValid_(last)) return false
+private fun TreeNode.isValid_2(last: Ref<TreeNode> = Ref()): Boolean {
+    if (left != null && !left!!.isValid_2(last)) return false
 
     if (last.value != null && last.value!!.value >= value) return false
     last.value = this
 
-    if (right != null && !right!!.isValid_(last)) return false
+    if (right != null && !right!!.isValid_2(last)) return false
 
     return true
 }
 
-private fun TreeNode.isValid__(min: Int? = null, max: Int? = null): Boolean {
+private fun TreeNode.isValid_3(min: Int? = null, max: Int? = null): Boolean {
     if (min != null && value <= min) return false
     if (max != null && value > max) return false
 
     if (left != null && left!!.value >= value) return false
     if (right != null && right!!.value <= value) return false
 
-    return left?.isValid__(min = min, max = value) ?: true &&
-           right?.isValid__(min = value, max = max) ?: true
+    return left?.isValid_3(min = min, max = value) ?: true &&
+           right?.isValid_3(min = value, max = max) ?: true
 }
