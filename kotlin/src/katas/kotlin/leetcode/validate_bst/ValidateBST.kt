@@ -3,6 +3,7 @@ package katas.kotlin.leetcode.validate_bst
 import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.util.*
 import kotlin.Int.Companion.MAX_VALUE
 import kotlin.Int.Companion.MIN_VALUE
 
@@ -60,6 +61,13 @@ class ValidateBSTTests {
             right = TreeNode(6)
         ).isValid() shouldEqual false
     }
+}
+
+private fun TreeNode.isValid_(last: Int? = null): Boolean {
+    if (left != null && !left!!.isValid_()) return false
+    if (left != null && value < left!!.value) return false
+    if (right != null && !right!!.isValid_(value)) return false
+    return true
 }
 
 private fun TreeNode.isValid(min: Int? = null, max: Int? = null): Boolean {
