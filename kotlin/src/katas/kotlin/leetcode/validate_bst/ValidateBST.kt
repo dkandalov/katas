@@ -12,6 +12,13 @@ class ValidateBSTTests {
 
         TreeNode(1, TreeNode(2)).isValid() shouldEqual false
         TreeNode(1, null, TreeNode(0)).isValid() shouldEqual false
+
+        // TODO TreeNode(1, TreeNode(1), TreeNode(1)).isValid() shouldEqual ?
+
+        TreeNode(4,
+            left = TreeNode(2, TreeNode(1), TreeNode(3)),
+            right = TreeNode(6)
+        ).isValid() shouldEqual true
     }
 }
 
