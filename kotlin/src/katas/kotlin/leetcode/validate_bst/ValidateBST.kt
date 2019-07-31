@@ -61,6 +61,6 @@ private fun TreeNode.isValid(min: Int? = null, max: Int? = null): Boolean {
     if (left != null && left!!.value > value) return false
     if (right != null && right!!.value <= value) return false
 
-    return (left?.isValid(min = min, max = value) ?: true) &&
-        (right?.isValid(min = value, max = max) ?: true)
+    return left?.isValid(min = min, max = value) ?: true &&
+           right?.isValid(min = value, max = max) ?: true
 }
