@@ -41,11 +41,22 @@ class ValidateBSTTests {
             right = TreeNode(6, TreeNode(1), TreeNode(7))
         ).isValid() shouldEqual false
     }
+
+    @Test fun `left subtree has value greater than root`() {
+        TreeNode(4,
+            left = TreeNode(2, TreeNode(1), TreeNode(5)),
+            right = TreeNode(6)
+        ).isValid() shouldEqual false
+    }
 }
 
-private fun TreeNode.isValid(min: Int? = null): Boolean {
+private fun TreeNode.isValid(min: Int? = null, max: Int? = null): Boolean {
     if (min != null && value <= min) return false
+    if (max != null && value > max) return false
+
     if (left != null && left!!.value > value) return false
     if (right != null && right!!.value <= value) return false
-    return (left?.isValid(min = min) ?: true) && (right?.isValid(min = value) ?: true)
+
+    return (left?.isValid(min = min, max = value) ?: true) &&
+        (right?.isValid(min = value, max = max) ?: true)
 }
