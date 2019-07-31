@@ -7,6 +7,8 @@ import org.junit.Test
 class ValidateBSTTests {
     @Test fun `determine if binary search tree is valid`() {
         TreeNode(1).isValid() shouldEqual true
+        TreeNode(1, TreeNode(0)).isValid() shouldEqual true
+        TreeNode(1, null, TreeNode(2)).isValid() shouldEqual true
     }
 }
 
