@@ -41,7 +41,8 @@ class ValidateBSTTests {
     }
 }
 
-private fun TreeNode.isValid(): Boolean {
+private fun TreeNode.isValid(min: Int? = null): Boolean {
+    if (min != null && value <= min) return false
     if (left != null && left!!.value > value) return false
     if (right != null && right!!.value <= value) return false
     return (left?.isValid() ?: true) && (right?.isValid() ?: true)
