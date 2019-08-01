@@ -17,11 +17,13 @@ class SameTreeTests {
         (TreeNode(0) equalTo TreeNode(1)) shouldEqual false
 
         (TreeNode(1, TreeNode(0)) equalTo TreeNode(1, TreeNode(0))) shouldEqual true
+        (TreeNode(1, TreeNode(0)) equalTo TreeNode(1, TreeNode(-1))) shouldEqual false
     }
 }
 
 private infix fun TreeNode?.equalTo(that: TreeNode?): Boolean {
     if (this == null && that == null) return true
     if (this?.value != that?.value) return false
-    return true
+    if (this?.left.equalTo(that?.left)) return true
+    return false
 }
