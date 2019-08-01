@@ -22,7 +22,7 @@ class SameTreeTests {
 
         (TreeNode(1, right = TreeNode(2)) equalTo TreeNode(1, right = TreeNode(2))) shouldEqual true
         (TreeNode(1, right = TreeNode(2)) equalTo TreeNode(1, right = TreeNode(3))) shouldEqual false
-
+        (TreeNode(1, right = TreeNode(2)) equalTo TreeNode(1, right = null)) shouldEqual false
     }
 }
 
