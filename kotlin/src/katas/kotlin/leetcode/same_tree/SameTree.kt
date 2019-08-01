@@ -10,6 +10,7 @@ import org.junit.Test
 class SameTreeTests {
     @Test fun `check is binary trees are equal`() {
         (TreeNode(0) equalTo null) shouldEqual false
+        (null equalTo TreeNode(0)) shouldEqual false
 
         (TreeNode(0) equalTo TreeNode(0)) shouldEqual true
         (TreeNode(0) equalTo TreeNode(1)) shouldEqual false
@@ -18,8 +19,8 @@ class SameTreeTests {
     }
 }
 
-private infix fun TreeNode.equalTo(that: TreeNode?): Boolean {
-    if (that == null) return false
-    if (this.value != that.value) return false
+private infix fun TreeNode?.equalTo(that: TreeNode?): Boolean {
+    if (this == null && that == null) return true
+    if (this?.value != that?.value) return false
     return true
 }
