@@ -19,6 +19,9 @@ class SameTreeTests {
         (TreeNode(1, TreeNode(0)) equalTo TreeNode(1, TreeNode(0))) shouldEqual true
         (TreeNode(1, TreeNode(0)) equalTo TreeNode(1, TreeNode(-1))) shouldEqual false
         (TreeNode(1, TreeNode(0)) equalTo TreeNode(1)) shouldEqual false
+
+        (TreeNode(1, right = TreeNode(0)) equalTo TreeNode(1, right = TreeNode(0))) shouldEqual true
+
     }
 }
 
