@@ -25,6 +25,6 @@ class SameTreeTests {
 private infix fun TreeNode?.equalTo(that: TreeNode?): Boolean {
     if (this == null && that == null) return true
     if (this?.value != that?.value) return false
-    if (this?.left.equalTo(that?.left)) return true
-    return false
+    return this?.left.equalTo(that?.left) &&
+           this?.right.equalTo(that?.right)
 }
