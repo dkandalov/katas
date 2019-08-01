@@ -10,6 +10,11 @@ class BstLevelOrderTraversal {
     @Test fun `level order traversal`() {
         TreeNode(1).levelOrder() shouldEqual listOf(listOf(1))
         TreeNode(1, TreeNode(0), TreeNode(2)).levelOrder() shouldEqual listOf(listOf(1), listOf(0, 2))
+
+        TreeNode(3,
+            TreeNode(9),
+            TreeNode(20, TreeNode(15), TreeNode(7))
+        ).levelOrder() shouldEqual listOf(listOf(3), listOf(9, 20), listOf(15, 7))
     }
 }
 
