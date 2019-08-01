@@ -8,7 +8,7 @@ import kotlin.Int.Companion.MAX_VALUE
 import kotlin.Int.Companion.MIN_VALUE
 
 /**
- * https://leetcode.com/problems/validate-binary-search-tree
+ * ✅ https://leetcode.com/problems/validate-binary-search-tree
  */
 class ValidateBSTTests {
     private fun TreeNode.isValid() = isValid_3()
