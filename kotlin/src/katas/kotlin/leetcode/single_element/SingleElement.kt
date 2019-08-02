@@ -16,10 +16,16 @@ class SingleElementTests {
     }
 }
 
+private inline fun Array<Int>.slidingWindow(f: (Int, Int?) -> Unit) {
+    var i1 = 0
+    while (i1 < size) {
+        val i2 = i1 + 1
+        f(this[i1], if (i2 == size) null else this[i2])
+        i1 += 2
+    }
+}
 private fun Array<Int>.findSingleElement(): Int {
-    asIterable().windowed(size = 2, step = 2, partialWindows = true).forEach {
-        val n1 = it[0]
-        val n2 = if (it.size > 1) it[1] else null
+    slidingWindow { n1, n2 ->
         if (n1 != n2) return n1
     }
     error("")
