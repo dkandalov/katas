@@ -8,7 +8,7 @@ import org.junit.Test
  */
 class SingleElementTests {
 //    private fun Array<Int>.findSingleElement() = this.slidingFind()
-    private fun Array<Int>.findSingleElement() = find(this)
+    private fun Array<Int>.findSingleElement() = binaryFind(this)
 
     @Test fun `find single element that appears alone in an array of pairs`() {
         arrayOf(1, 2, 2).findSingleElement() shouldEqual 1
@@ -19,7 +19,7 @@ class SingleElementTests {
     }
 }
 
-private fun find(a: Array<Int>): Int {
+private fun binaryFind(a: Array<Int>): Int {
     if (a[a.size - 1] != a[a.size - 2]) return a[a.size - 1]
     val size = a.size / 2
     var from = 0
