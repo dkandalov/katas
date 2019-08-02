@@ -16,6 +16,11 @@ class SingleElementTests {
     }
 }
 
+private fun Array<Int>.findSingleElement(): Int {
+    slidingWindow { n1, n2 -> if (n1 != n2) return n1 }
+    error("")
+}
+
 private inline fun Array<Int>.slidingWindow(f: (Int, Int?) -> Unit) {
     var i1 = 0
     while (i1 < size) {
@@ -23,10 +28,4 @@ private inline fun Array<Int>.slidingWindow(f: (Int, Int?) -> Unit) {
         f(this[i1], if (i2 == size) null else this[i2])
         i1 += 2
     }
-}
-private fun Array<Int>.findSingleElement(): Int {
-    slidingWindow { n1, n2 ->
-        if (n1 != n2) return n1
-    }
-    error("")
 }
