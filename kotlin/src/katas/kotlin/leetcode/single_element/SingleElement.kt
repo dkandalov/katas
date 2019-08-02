@@ -9,7 +9,7 @@ import org.junit.Test
 class SingleElementTests {
     @Test fun `find single element that appears alone in an array of pairs`() {
         arrayOf(1, 2, 2).findSingleElement() shouldEqual 1
-        arrayOf(2, 1, 2).findSingleElement() shouldEqual 1
+        arrayOf(2, 2, 1, 2, 2).findSingleElement() shouldEqual 1
         arrayOf(2, 2, 1).findSingleElement() shouldEqual 1
     }
 }
