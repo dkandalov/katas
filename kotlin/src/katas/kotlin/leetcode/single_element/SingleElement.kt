@@ -16,6 +16,25 @@ class SingleElementTests {
     }
 }
 
+private fun find(a: Array<Int>): Int {
+    if (a[a.size - 1] != a[a.size - 2]) return a[a.size - 1]
+    val size = a.size / 2
+    var from = 0
+    var to = size - 1
+    while (true) {
+        val mid = (from + to) / 2
+        when {
+            a.isDiffAt(from) -> return a.firstAt(from)
+            a.isDiffAt(mid)  -> to = mid
+            else             -> from = mid + 1
+        }
+    }
+}
+
+private fun Array<Int>.firstAt(index: Int) = this[index * 2]
+private fun Array<Int>.secondAt(index: Int) = this[index * 2 + 1]
+private fun Array<Int>.isDiffAt(index: Int) = firstAt(index) != secondAt(index)
+
 private fun Array<Int>.findSingleElement(): Int {
     slidingWindow { n1, n2 -> if (n1 != n2) return n1 }
     error("")
