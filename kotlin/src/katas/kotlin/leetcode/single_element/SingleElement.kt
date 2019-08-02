@@ -7,6 +7,8 @@ import org.junit.Test
  * https://leetcode.com/discuss/interview-question/346626/google-phone-screen-single-element
  */
 class SingleElementTests {
+    private fun Array<Int>.findSingleElement() = this.slidingFind()
+
     @Test fun `find single element that appears alone in an array of pairs`() {
         arrayOf(1, 2, 2).findSingleElement() shouldEqual 1
         arrayOf(2, 2, 1, 2, 2).findSingleElement() shouldEqual 1
@@ -35,7 +37,7 @@ private fun Array<Int>.firstAt(index: Int) = this[index * 2]
 private fun Array<Int>.secondAt(index: Int) = this[index * 2 + 1]
 private fun Array<Int>.isDiffAt(index: Int) = firstAt(index) != secondAt(index)
 
-private fun Array<Int>.findSingleElement(): Int {
+private fun Array<Int>.slidingFind(): Int {
     slidingWindow { n1, n2 -> if (n1 != n2) return n1 }
     error("")
 }
