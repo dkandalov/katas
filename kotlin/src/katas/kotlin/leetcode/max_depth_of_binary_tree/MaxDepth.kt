@@ -21,7 +21,7 @@ class MaxDepthTests {
     }
 }
 
-private fun TreeNode?.maxDepth(depth: Int = 0): Int {
-    if (this == null) return depth
-    return maxOf(left.maxDepth(depth + 1), right.maxDepth(depth + 1))
+private fun TreeNode?.maxDepth(): Int {
+    if (this == null) return 0
+    return maxOf(left.maxDepth() + 1, right.maxDepth() + 1)
 }
