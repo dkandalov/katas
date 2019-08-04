@@ -20,6 +20,11 @@ class ArrayToBSTTests {
                 TreeNode(3, TreeNode(2, TreeNode(1))),
                 TreeNode(5, null, TreeNode(6))
             )
+        arrayOf(1, 2, 3, 4, 5, 6, 7).toBST_() shouldEqual
+            TreeNode(4,
+                TreeNode(3, TreeNode(2, TreeNode(1))),
+                TreeNode(5, null, TreeNode(6, null, TreeNode(7)))
+            )
     }
 
     @Test fun `convert sorted array to filled balanced BST`() {
