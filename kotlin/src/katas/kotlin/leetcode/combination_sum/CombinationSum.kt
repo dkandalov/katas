@@ -24,3 +24,13 @@ private fun List<Int>.combinations(target: Int): List<List<Int>> =
     else if (target < 0 || isEmpty()) emptyList()
     else combinations(target - first()).map { listOf(first()) + it } +
         subList(1, size).combinations(target)
+
+private fun List<Int>.combinations_(target: Int): List<List<Int>> {
+    return mapIndexed { index, n ->
+        when {
+            n == target -> listOf(listOf(n))
+            n < target  -> subList(index, size).combinations(target - n).map { listOf(n) + it }
+            else        -> emptyList()
+        }
+    }.flatten()
+}
