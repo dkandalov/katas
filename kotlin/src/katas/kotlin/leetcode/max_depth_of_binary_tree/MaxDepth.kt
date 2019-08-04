@@ -14,10 +14,14 @@ class MaxDepthTests {
             TreeNode(0, TreeNode(-1)),
             TreeNode(2)
         ).maxDepth() shouldEqual 3
+        TreeNode(1,
+            TreeNode(0),
+            TreeNode(2, TreeNode(3))
+        ).maxDepth() shouldEqual 3
     }
 }
 
 private fun TreeNode?.maxDepth(depth: Int = 0): Int {
     if (this == null) return depth
-    return left.maxDepth(depth + 1)
+    return maxOf(left.maxDepth(depth + 1), right.maxDepth(depth + 1))
 }
