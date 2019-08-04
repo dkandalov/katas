@@ -10,6 +10,10 @@ class MaxDepthTests {
         TreeNode(1).maxDepth() shouldEqual 1
         TreeNode(1, TreeNode(0)).maxDepth() shouldEqual 2
         TreeNode(1, TreeNode(0), TreeNode(2)).maxDepth() shouldEqual 2
+        TreeNode(1,
+            TreeNode(0, TreeNode(-1)),
+            TreeNode(2)
+        ).maxDepth() shouldEqual 3
     }
 }
 
