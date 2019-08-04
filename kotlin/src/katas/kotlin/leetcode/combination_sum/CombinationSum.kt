@@ -15,7 +15,7 @@ class CombinationSumTests {
         listOf(2, 3, 6, 7).combinations(target = 7) shouldEqual listOf(listOf(2, 2, 3), listOf(7))
         listOf(2, 3, 5).combinations(target = 8) shouldEqual listOf(listOf(2, 2, 2, 2), listOf(2, 3, 3), listOf(3, 5))
 
-//        listOf(100).combinations(target = 1) shouldEqual emptyList()
+        listOf(100).combinations(target = 1) shouldEqual emptyList()
     }
 }
 
