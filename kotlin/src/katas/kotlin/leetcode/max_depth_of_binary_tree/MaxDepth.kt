@@ -25,3 +25,8 @@ private fun TreeNode?.maxDepth(): Int {
     if (this == null) return 0
     return maxOf(left.maxDepth() + 1, right.maxDepth() + 1)
 }
+
+private fun TreeNode?.maxDepth_(): Int {
+    if (this == null) return 0
+    return maxOf(left.maxDepth() + 1, right.maxDepth() + 1)
+}
