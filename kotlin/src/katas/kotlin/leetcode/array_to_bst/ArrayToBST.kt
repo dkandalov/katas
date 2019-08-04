@@ -10,6 +10,7 @@ class ArrayToBSTTests {
         arrayOf(1, 2).toBST() shouldEqual TreeNode(2, TreeNode(1))
         arrayOf(1, 2, 3).toBST() shouldEqual TreeNode(2, TreeNode(1), TreeNode(3))
         arrayOf(1, 2, 3, 4).toBST() shouldEqual TreeNode(3, TreeNode(2, TreeNode(1)), TreeNode(4))
+        arrayOf(1, 2, 3, 4, 5).toBST() shouldEqual TreeNode(3, TreeNode(2, TreeNode(1)), TreeNode(4, null, TreeNode(5)))
     }
 }
 
@@ -26,6 +27,7 @@ private fun TreeNode.add(value: Int) {
         if (left == null) left = TreeNode(value)
         else left!!.add(value)
     } else {
-        right = TreeNode(value)
+        if (right == null) right = TreeNode(value)
+        else right!!.add(value)
     }
 }
