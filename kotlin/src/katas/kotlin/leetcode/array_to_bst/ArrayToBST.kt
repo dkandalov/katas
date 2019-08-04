@@ -27,6 +27,11 @@ class ArrayToBSTTests {
                 TreeNode(2, TreeNode(1)),
                 TreeNode(5, TreeNode(4))
             )
+        arrayOf(1, 2, 3, 4, 5, 6).toBST() shouldEqual
+            TreeNode(4,
+                TreeNode(2, TreeNode(1), TreeNode(3)),
+                TreeNode(6, TreeNode(5))
+            )
     }
 }
 
