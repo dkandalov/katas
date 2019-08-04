@@ -17,10 +17,14 @@ private fun Array<Int>.toBST(): TreeNode {
     val midIndex = size / 2
     val node = TreeNode(this[midIndex])
     (0 until midIndex).forEach { i ->
-        node.left = TreeNode(this[i])
+        node.add(this[i])
     }
     (midIndex + 1 until size).forEach { i ->
         node.right = TreeNode(this[i])
     }
     return node
+}
+
+private fun TreeNode.add(value: Int) {
+    left = TreeNode(value)
 }
