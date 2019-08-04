@@ -16,12 +16,8 @@ class ArrayToBSTTests {
 private fun Array<Int>.toBST(): TreeNode {
     val midIndex = size / 2
     val node = TreeNode(this[midIndex])
-    (0 until midIndex).forEach { i ->
-        node.add(this[i])
-    }
-    (midIndex + 1 until size).forEach { i ->
-        node.add(this[i])
-    }
+    (0 until midIndex).forEach { i -> node.add(this[i]) }
+    (midIndex + 1 until size).forEach { i -> node.add(this[i]) }
     return node
 }
 
