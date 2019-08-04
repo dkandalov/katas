@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package katas.kotlin.leetcode.invert_binary_tree
 
 import katas.kotlin.leetcode.TreeNode

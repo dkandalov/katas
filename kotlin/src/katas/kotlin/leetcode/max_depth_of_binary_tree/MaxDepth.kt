@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package katas.kotlin.leetcode.max_depth_of_binary_tree
 
 import katas.kotlin.leetcode.TreeNode
@@ -5,6 +7,9 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 
+/**
+ * https://leetcode.com/problems/maximum-depth-of-binary-tree/
+ */
 class MaxDepthTests {
     @Test fun `find max depth of a binary tree`() {
         null.maxDepth() shouldEqual 0
