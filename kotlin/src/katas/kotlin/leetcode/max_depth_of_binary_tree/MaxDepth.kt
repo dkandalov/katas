@@ -8,10 +8,11 @@ class MaxDepthTests {
     @Test fun `find max depth of a binary tree`() {
         null.maxDepth() shouldEqual 0
         TreeNode(1).maxDepth() shouldEqual 1
+        TreeNode(1, TreeNode(0)).maxDepth() shouldEqual 2
     }
 }
 
 private fun TreeNode?.maxDepth(depth: Int = 0): Int {
     if (this == null) return depth
-    return 1
+    return left.maxDepth(depth + 1)
 }
