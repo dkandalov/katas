@@ -20,7 +20,7 @@ private fun Array<Int>.toBST(): TreeNode {
         node.add(this[i])
     }
     (midIndex + 1 until size).forEach { i ->
-        node.right = TreeNode(this[i])
+        node.add(this[i])
     }
     return node
 }
@@ -28,5 +28,7 @@ private fun Array<Int>.toBST(): TreeNode {
 private fun TreeNode.add(value: Int) {
     if (value <= this.value) {
         left = TreeNode(value)
+    } else {
+        right = TreeNode(value)
     }
 }
