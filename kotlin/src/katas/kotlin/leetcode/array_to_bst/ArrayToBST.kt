@@ -4,6 +4,9 @@ import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/
+ */
 class ArrayToBSTTests {
     @Test fun `convert sorted array to balanced BST`() {
         arrayOf(1).toBST_() shouldEqual TreeNode(1)
