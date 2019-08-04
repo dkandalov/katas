@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.max_depth_of_bst
+package katas.kotlin.leetcode.max_depth_of_binary_tree
 
 import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
