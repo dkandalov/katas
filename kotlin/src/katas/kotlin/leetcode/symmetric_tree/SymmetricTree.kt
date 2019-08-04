@@ -21,6 +21,7 @@ class SymmetricTreeTests {
             TreeNode(2, TreeNode(3)),
             TreeNode(2, TreeNode(3))
         ).isSymmetric() shouldEqual false
+        TreeNode(1, TreeNode(2, TreeNode(3))).isSymmetric() shouldEqual false
     }
 }
 
