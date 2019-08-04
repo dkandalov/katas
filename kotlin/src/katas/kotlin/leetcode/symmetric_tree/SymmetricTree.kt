@@ -23,9 +23,8 @@ class SymmetricTreeTests {
     }
 }
 
-private fun TreeNode.isSymmetric(): Boolean {
-    return inverted() == this
-}
+private fun TreeNode.isSymmetric() = inverted() == this
+private fun TreeNode.isSymmetric() = inverted() == this
 
 private fun TreeNode.inverted(): TreeNode =
     TreeNode(value, left = right?.inverted(), right = left?.inverted())
