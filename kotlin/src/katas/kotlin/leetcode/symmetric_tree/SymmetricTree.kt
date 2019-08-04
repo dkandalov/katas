@@ -12,6 +12,10 @@ class SymmetricTreeTests {
         TreeNode(1).isSymmetric() shouldEqual true
         TreeNode(1, TreeNode(0), TreeNode(0)).isSymmetric() shouldEqual true
         TreeNode(1, TreeNode(0), TreeNode(2)).isSymmetric() shouldEqual false
+        TreeNode(1,
+            TreeNode(2, TreeNode(3)),
+            TreeNode(2, null, TreeNode(3))
+        ).isSymmetric() shouldEqual true
     }
 }
 
