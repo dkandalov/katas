@@ -19,9 +19,8 @@ class CombinationSumTests {
     }
 }
 
-private fun List<Int>.combinations(target: Int): List<List<Int>> {
-    if (target == 0) return listOf(emptyList())
-    if (target < 0 || isEmpty()) return emptyList()
-    return combinations(target - first()).map { listOf(first()) + it } +
-           subList(1, size).combinations(target)
-}
+private fun List<Int>.combinations(target: Int): List<List<Int>> =
+    if (target == 0) listOf(emptyList())
+    else if (target < 0 || isEmpty()) emptyList()
+    else combinations(target - first()).map { listOf(first()) + it } +
+        subList(1, size).combinations(target)
