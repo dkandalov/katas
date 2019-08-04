@@ -16,6 +16,27 @@ class ArrayToBSTTests {
                 TreeNode(4, null, TreeNode(5))
             )
     }
+
+    @Test fun `convert sorted array to filled balanced BST`() {
+        arrayOf(1).toBST() shouldEqual TreeNode(1)
+        arrayOf(1, 2).toBST() shouldEqual TreeNode(2, TreeNode(1))
+        arrayOf(1, 2, 3).toBST() shouldEqual TreeNode(2, TreeNode(1), TreeNode(3))
+        arrayOf(1, 2, 3, 4).toBST() shouldEqual TreeNode(3, TreeNode(2, TreeNode(1)), TreeNode(4))
+        arrayOf(1, 2, 3, 4, 5).toBST() shouldEqual
+            TreeNode(3,
+                TreeNode(2, TreeNode(1)),
+                TreeNode(5, TreeNode(4))
+            )
+    }
+}
+
+private fun Array<Int>.toBST(from: Int = 0, to: Int = size): TreeNode? {
+    if (to <= from) return null
+    val mid = (from + to) / 2
+    val node = TreeNode(this[mid])
+    node.left = toBST(from, mid)
+    node.right = toBST(mid + 1, to)
+    return node
 }
 
 private fun Array<Int>.toBST_(): TreeNode {
