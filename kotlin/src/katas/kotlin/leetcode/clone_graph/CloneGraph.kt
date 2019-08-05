@@ -14,6 +14,10 @@ class CloneGraphTests {
     }
 }
 
+private fun GraphNode.cloneGraph(): GraphNode {
+    return this
+}
+
 class GraphNodeTests {
     @Test fun `convert to map`() {
         GraphNode(1).toMap() shouldEqual mapOf(1 to emptySet())
@@ -33,10 +37,6 @@ class GraphNodeTests {
             3 to setOf(1, 2)
         )
     }
-}
-
-private fun GraphNode.cloneGraph(): GraphNode {
-    return this
 }
 
 private fun GraphNode.toMap(result: HashMap<Int, Set<Int>> = HashMap()): Map<Int, Set<Int>> {
