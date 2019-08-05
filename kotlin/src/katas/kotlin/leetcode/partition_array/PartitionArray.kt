@@ -24,12 +24,10 @@ class PartitionArrayTests {
 
 private fun Array<Int>.nonZeroFirst(): Array<Int> {
     var i = 0
-    var j = size
+    var j = size - 1
     while (i < j) {
         if (this[i] == 0) {
-            while (i < j) {
-                if (this[--j] != 0) break
-            }
+            while (i < j && this[j] == 0) j--
             if (i >= j) return this
             swap(i, j)
         }
