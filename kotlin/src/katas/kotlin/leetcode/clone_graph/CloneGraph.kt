@@ -15,7 +15,7 @@ class CloneGraphTests {
         )
     }
 
-    @Test fun `clone two nodes in sequence`() {
+    @Test fun `clone three nodes in sequence`() {
         UndirectedGraph.parse("1-2,2-3").nodes.first().cloneGraph().toMap() shouldEqual mapOf(
             1 to setOf(2),
             2 to setOf(1, 3),
@@ -23,7 +23,7 @@ class CloneGraphTests {
         )
     }
 
-    @Test fun `clone two nodes loop`() {
+    @Test fun `clone three nodes loop`() {
         UndirectedGraph.parse("1-2,2-3,3-1").nodes.first().cloneGraph().toMap() shouldEqual mapOf(
             1 to setOf(2, 3),
             2 to setOf(1, 3),
