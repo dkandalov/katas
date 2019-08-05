@@ -30,6 +30,15 @@ class CloneGraphTests {
             3 to setOf(2, 1)
         )
     }
+
+    @Test fun `clone four nodes square`() {
+        UndirectedGraph.parse("1-2,2-3,3-4,4-1").nodes.first().cloneGraph().toMap() shouldEqual mapOf(
+            1 to setOf(2, 4),
+            2 to setOf(1, 3),
+            3 to setOf(2, 4),
+            4 to setOf(1, 3)
+        )
+    }
 }
 
 private fun GraphNode.cloneGraph(): GraphNode {
