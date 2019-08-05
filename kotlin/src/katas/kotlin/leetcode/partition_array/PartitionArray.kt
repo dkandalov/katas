@@ -6,6 +6,7 @@ import org.junit.Test
 
 class PartitionArrayTests {
     @Test fun `partition an array such that all non-zero values are at the beginning`() {
+        arrayOf<Int>().nonZeroFirst() shouldEqual arrayOf()
         arrayOf(0).nonZeroFirst() shouldEqual arrayOf(0)
         arrayOf(1).nonZeroFirst() shouldEqual arrayOf(1)
 
