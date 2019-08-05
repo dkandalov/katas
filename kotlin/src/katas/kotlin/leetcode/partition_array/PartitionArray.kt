@@ -29,7 +29,7 @@ private fun Array<Int>.nonZeroFirst(): Array<Int> {
     while (i < j) {
         if (this[i] == 0) {
             while (i < j && this[j] == 0) j--
-            if (i == j) return this
+            if (i == j) break
             swap(i, j)
         }
         i++
