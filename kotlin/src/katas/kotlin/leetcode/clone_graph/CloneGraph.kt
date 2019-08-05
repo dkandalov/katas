@@ -29,6 +29,11 @@ class CloneGraphTests {
 class GraphNodeTests {
     @Test fun `convert to map`() {
         GraphNode(1).toMap() shouldEqual mapOf(1 to emptySet())
+
+        UndirectedGraph().connect(1, 2).nodes.first().toMap() shouldEqual mapOf(
+            1 to setOf(2),
+            2 to setOf(1)
+        )
     }
 }
 
