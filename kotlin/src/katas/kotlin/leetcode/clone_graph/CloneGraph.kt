@@ -42,6 +42,16 @@ class CloneGraphTests {
 }
 
 private fun GraphNode.cloneGraph(): GraphNode {
+    val nodeClones = HashMap<Int, GraphNode>()
+
+    fun GraphNode.depthFirstTraversal(prevNode: GraphNode? = null, f: (GraphNode, GraphNode?) -> Unit) {
+        val visited = nodeClones.containsKey(value)
+        f(this, prevNode)
+        if (!visited) neighbors.forEach { node ->
+            node.depthFirstTraversal(this, f)
+        }
+    }
+
     return this
 }
 
