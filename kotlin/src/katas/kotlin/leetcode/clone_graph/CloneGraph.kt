@@ -9,7 +9,7 @@ class CloneGraphTests {
     }
 
     @Test fun `clone two nodes`() {
-        val graph = UndirectedGraph().connect(1, 2)
+        val graph = UndirectedGraph.parse("1-2")
         graph.nodes.first().cloneGraph() shouldEqual graph.nodes.first()
     }
 }
