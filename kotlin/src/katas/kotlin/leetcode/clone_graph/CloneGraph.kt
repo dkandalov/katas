@@ -9,10 +9,17 @@ class CloneGraphTests {
     }
 
     @Test fun `clone two nodes`() {
-        val graph = UndirectedGraph.parse("1-2")
-        graph.nodes.first().cloneGraph().toMap() shouldEqual mapOf(
+        UndirectedGraph.parse("1-2").nodes.first().cloneGraph().toMap() shouldEqual mapOf(
             1 to setOf(2),
             2 to setOf(1)
+        )
+    }
+
+    @Test fun `clone two nodes in sequence`() {
+        UndirectedGraph.parse("1-2,2-3").nodes.first().cloneGraph().toMap() shouldEqual mapOf(
+            1 to setOf(2),
+            2 to setOf(1, 3),
+            3 to setOf(2)
         )
     }
 }
