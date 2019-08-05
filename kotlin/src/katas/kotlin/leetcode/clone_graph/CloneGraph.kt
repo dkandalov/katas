@@ -39,7 +39,10 @@ class GraphNodeTests {
     }
     
     @Test fun `create graph from string`() {
-        UndirectedGraph.parse("1-2")
+        UndirectedGraph.parse("1-2").nodes.first().toMap() shouldEqual mapOf(
+            1 to setOf(2),
+            2 to setOf(1)
+        )
     }
 }
 
