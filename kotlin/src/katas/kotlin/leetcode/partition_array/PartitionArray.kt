@@ -9,6 +9,7 @@ class PartitionArrayTests {
         arrayOf(1).nonZeroFirst() shouldEqual arrayOf(1)
         arrayOf(1, 0).nonZeroFirst() shouldEqual arrayOf(1, 0)
         arrayOf(0, 1).nonZeroFirst() shouldEqual arrayOf(1, 0)
+        arrayOf(2, 0, 1).nonZeroFirst() shouldEqual arrayOf(2, 1, 0)
     }
 }
 
