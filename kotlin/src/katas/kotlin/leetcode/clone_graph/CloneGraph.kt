@@ -37,6 +37,10 @@ class GraphNodeTests {
             3 to setOf(1, 2)
         )
     }
+    
+    @Test fun `create graph from string`() {
+        UndirectedGraph.parse("1-2")
+    }
 }
 
 private fun GraphNode.toMap(result: HashMap<Int, Set<Int>> = HashMap()): Map<Int, Set<Int>> {
@@ -55,5 +59,16 @@ data class UndirectedGraph(val nodes: MutableSet<GraphNode> = LinkedHashSet()) {
         node1.neighbors.add(node2)
         node2.neighbors.add(node1)
         return this
+    }
+
+    companion object {
+        fun parse(s: String): UndirectedGraph {
+            val graph = UndirectedGraph()
+            s.split(",").forEach { token ->
+                val list = token.split("-")
+                graph.connect(list[0].toInt(), list[1].toInt())
+            }
+            return graph
+        }
     }
 }
