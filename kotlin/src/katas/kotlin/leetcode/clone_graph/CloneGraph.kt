@@ -52,6 +52,13 @@ private fun GraphNode.cloneGraph(): GraphNode {
         }
     }
 
+    depthFirstTraversal { node, prevNode ->
+        val nodeClone = nodeClones.getOrPut(node.value, { GraphNode(node.value) })
+        if (prevNode != null) {
+
+        }
+    }
+
     return this
 }
 
