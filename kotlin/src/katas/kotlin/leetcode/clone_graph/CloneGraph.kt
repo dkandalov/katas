@@ -34,6 +34,11 @@ class GraphNodeTests {
             1 to setOf(2),
             2 to setOf(1)
         )
+        UndirectedGraph().connect(1, 2).connect(2, 3).nodes.first().toMap() shouldEqual mapOf(
+            1 to setOf(2),
+            2 to setOf(1, 3),
+            3 to setOf(2)
+        )
     }
 }
 
