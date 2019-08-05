@@ -59,7 +59,7 @@ private fun GraphNode.cloneGraph(): GraphNode {
         }
     }
 
-    return this
+    return nodeClones[value]!!
 }
 
 class GraphNodeTests {
