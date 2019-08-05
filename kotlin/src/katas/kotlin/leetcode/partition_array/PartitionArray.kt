@@ -17,6 +17,8 @@ class PartitionArrayTests {
         arrayOf(1, 2, 0).nonZeroFirst() shouldEqual arrayOf(1, 2, 0)
         arrayOf(1, 0, 2).nonZeroFirst() shouldEqual arrayOf(1, 2, 0)
         arrayOf(0, 1, 2).nonZeroFirst() shouldEqual arrayOf(2, 1, 0)
+
+        arrayOf(5, 0, 1, 2, 0, -4).nonZeroFirst() shouldEqual arrayOf(5, -4, 1, 2, 0, 0)
     }
 }
 
