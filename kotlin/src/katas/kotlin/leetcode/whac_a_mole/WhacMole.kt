@@ -10,5 +10,14 @@ class WhacMoleTests {
 }
 
 private fun hit(moles: Array<Int>, width: Int): Pair<Int, Int> {
-    return Pair(1, 4)
+    var max = -1
+    var maxIndex = -1
+    moles.toList().windowed(size = width, step = 1).forEachIndexed { i, window ->
+        val sum = window.sum()
+        if (sum > max) {
+            max = sum
+            maxIndex = i
+        }
+    }
+    return Pair(maxIndex, max)
 }
