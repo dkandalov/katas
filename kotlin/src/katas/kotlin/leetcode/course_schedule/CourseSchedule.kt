@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.course_schedule
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/course-schedule/
+ */
 class CourseScheduleTests {
     @Test fun `determine if it's possible to finish all courses`() {
         canFinish(n = 0, deps = emptyList()) shouldEqual true
