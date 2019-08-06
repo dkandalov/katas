@@ -8,8 +8,10 @@ class CourseScheduleTests {
         canFinish(n = 0, deps = emptyList()) shouldEqual true
         canFinish(n = 1, deps = emptyList()) shouldEqual true
         canFinish(n = 2, deps = emptyList()) shouldEqual true
-        canFinish(n = 2, deps = listOf(Pair(1, 0))) shouldEqual true
-        canFinish(n = 2, deps = listOf(Pair(1, 0), Pair(0, 1))) shouldEqual false
+        canFinish(n = 2, deps = listOf(Pair(0, 1))) shouldEqual true
+        canFinish(n = 2, deps = listOf(Pair(0, 1), Pair(1, 0))) shouldEqual false
+        canFinish(n = 7,
+            deps = listOf(Pair(0, 1), Pair(1, 3), Pair(3, 2), Pair(3, 4), Pair(5, 6))) shouldEqual true
     }
 }
 
