@@ -12,6 +12,8 @@ class CourseScheduleTests {
         canFinish(n = 2, deps = listOf(Pair(0, 1), Pair(1, 0))) shouldEqual false
         canFinish(n = 7,
             deps = listOf(Pair(0, 1), Pair(1, 3), Pair(3, 2), Pair(3, 4), Pair(5, 6))) shouldEqual true
+        canFinish(n = 7,
+            deps = listOf(Pair(0, 1), Pair(1, 3), Pair(3, 2), Pair(2, 0), Pair(3, 4), Pair(5, 6))) shouldEqual false
     }
 }
 
