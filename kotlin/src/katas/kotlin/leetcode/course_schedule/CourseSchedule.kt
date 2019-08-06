@@ -8,6 +8,7 @@ class CourseScheduleTests {
         canFinish(n = 0, deps = emptyList()) shouldEqual true
         canFinish(n = 1, deps = emptyList()) shouldEqual true
         canFinish(n = 2, deps = emptyList()) shouldEqual true
+        canFinish(n = 2, deps = listOf(Pair(1, 0))) shouldEqual true
     }
 }
 
