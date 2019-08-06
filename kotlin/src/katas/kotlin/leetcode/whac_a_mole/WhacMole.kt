@@ -5,6 +5,7 @@ import org.junit.Test
 
 class WhacMoleTests {
     @Test fun `hit max amount of moles`() {
+        hit(arrayOf(0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0), width = 4) shouldEqual Pair(1, 3)
         hit(arrayOf(0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0), width = 5) shouldEqual Pair(1, 4)
     }
 }
