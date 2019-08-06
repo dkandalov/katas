@@ -5,6 +5,8 @@ import org.junit.Test
 
 class CourseScheduleTests {
     @Test fun `determine if it's possible to finish all courses`() {
+        canFinish(n = 0, deps = emptyList()) shouldEqual true
+        canFinish(n = 1, deps = emptyList()) shouldEqual true
         canFinish(n = 2, deps = emptyList()) shouldEqual true
     }
 }
