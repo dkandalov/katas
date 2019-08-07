@@ -26,6 +26,7 @@ class FruitIntoBasketsTests {
                 count = 2
             }
         }
-        return tree.size
+        maxCount = maxOf(maxCount, count)
+        return maxCount
     }
 }
