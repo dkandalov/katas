@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.fruit_into_baskets
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/fruit-into-baskets/
+ */
 class FruitIntoBasketsTests {
     @Test fun `count amount of fruit collected into baskets`() {
         totalFruit(intArrayOf()) shouldEqual 0
