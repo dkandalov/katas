@@ -25,9 +25,11 @@ class LicenseKeyFormattingTests {
     private fun licenseKeyFormatting(s: String, width: Int): String {
         var i = s.length
         var result = ""
+        var count = 0
         while (--i >= 0) {
             if (s[i] == '-') continue
             result += s[i].toUpperCase()
+            if (++count % width == 0) result += "-"
         }
 
         return s.reversed().split("-")
