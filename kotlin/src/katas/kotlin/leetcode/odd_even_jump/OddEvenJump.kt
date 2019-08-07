@@ -10,5 +10,9 @@ class OddEvenJumpTests {
 }
 
 private fun oddEvenJumps(a: IntArray): Int {
-    return 0
+    return a.indices.count { canReachEnd(it, a) }
+}
+
+fun canReachEnd(i: Int, a: IntArray): Boolean {
+    return true
 }
