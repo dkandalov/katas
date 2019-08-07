@@ -16,6 +16,7 @@ class LicenseKeyFormattingTests {
         licenseKeyFormatting("ABCDE", width = 2) shouldEqual "A-BC-DE"
 
         licenseKeyFormatting("5F3Z-2e-9-w", width = 4) shouldEqual "5F3Z-2E9W"
+        licenseKeyFormatting("2-5g-3-J", width = 2) shouldEqual "2-5G-3J"
     }
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
