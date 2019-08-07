@@ -4,7 +4,6 @@ package katas.kotlin.leetcode.license_key_formatting
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
-import java.lang.StringBuilder
 
 class LicenseKeyFormattingTests {
     @Test fun `format license key`() {
