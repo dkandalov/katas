@@ -11,6 +11,12 @@ class FruitIntoBasketsTests {
     }
 
     private fun totalFruit(tree: IntArray): Int {
+        var maxCount = 0
+        var count = 0
+        val bucket = HashSet<Int>()
+        (0 until tree.size).forEach { i ->
+            if ()
+        }
         return tree.size
     }
 }
