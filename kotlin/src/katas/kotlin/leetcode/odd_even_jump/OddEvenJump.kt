@@ -4,7 +4,7 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 /**
- * https://leetcode.com/problems/odd-even-jump/
+ * ✅ https://leetcode.com/problems/odd-even-jump/
  */
 class OddEvenJumpTests {
     @Test fun `find number of starting indices that can reach the end of array`() {
