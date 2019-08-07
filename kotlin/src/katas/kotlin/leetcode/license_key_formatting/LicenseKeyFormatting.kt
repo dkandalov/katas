@@ -9,6 +9,7 @@ import java.lang.StringBuilder
 class LicenseKeyFormattingTests {
     @Test fun `format license key`() {
         licenseKeyFormatting("ABCD", width = 4) shouldEqual "ABCD"
+        licenseKeyFormatting("ABCD", width = 5) shouldEqual "ABCD"
 
         licenseKeyFormatting("ABCD", width = 1) shouldEqual "A-B-C-D"
         licenseKeyFormatting("AB-CD", width = 1) shouldEqual "A-B-C-D"
