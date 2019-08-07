@@ -6,9 +6,11 @@ import org.junit.Test
 class LicenseKeyFormattingTests {
     @Test fun `format license key`() {
         licenseKeyFormatting("ABCD", width = 4) shouldEqual "ABCD"
+        licenseKeyFormatting("ABCD", width = 1) shouldEqual "A-B-C-D"
+        licenseKeyFormatting("AB-CD", width = 1) shouldEqual "A-B-C-D"
     }
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
-        return "ABCD"
+        return s.split("-").joinToString("").windowed(size = width, step = width).joinToString("-")
     }
 }
