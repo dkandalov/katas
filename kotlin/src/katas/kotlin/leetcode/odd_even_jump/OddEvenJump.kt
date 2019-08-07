@@ -50,5 +50,15 @@ fun doOddJump(i: Int, a: IntArray): Int {
 }
 
 fun doEvenJump(i: Int, a: IntArray): Int {
-    return i + 1
+    var j = i + 1
+    var max = Int.MIN_VALUE
+    var maxIndex = i
+    while (j < a.size) {
+        if (a[i] >= a[j] && a[j] > max) {
+            max = a[j]
+            maxIndex = j
+        }
+        j++
+    }
+    return maxIndex
 }
