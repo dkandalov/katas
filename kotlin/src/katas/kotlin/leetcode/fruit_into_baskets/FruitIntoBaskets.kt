@@ -8,6 +8,7 @@ class FruitIntoBasketsTests {
         totalFruit(intArrayOf()) shouldEqual 0
         totalFruit(intArrayOf(1)) shouldEqual 1
         totalFruit(intArrayOf(1, 2)) shouldEqual 2
+        totalFruit(intArrayOf(1, 2, 3)) shouldEqual 2
     }
 
     private fun totalFruit(tree: IntArray): Int {
