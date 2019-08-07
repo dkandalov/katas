@@ -4,6 +4,7 @@ package katas.kotlin.leetcode.license_key_formatting
 
 import kotlincommon.test.shouldEqual
 import org.junit.Test
+import java.lang.StringBuilder
 
 class LicenseKeyFormattingTests {
     @Test fun `format license key`() {
@@ -23,8 +24,10 @@ class LicenseKeyFormattingTests {
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
         var i = s.length - 1
-        while (i > 0) {
-
+        var result = ""
+        while (i >= 0) {
+            if (s[i] == '-') continue
+            result += s[i].toUpperCase()
             i--
         }
 
