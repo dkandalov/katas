@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package katas.kotlin.leetcode.license_key_formatting
 
 import kotlincommon.test.shouldEqual
@@ -20,6 +22,13 @@ class LicenseKeyFormattingTests {
     }
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
+        return s.reversed().split("-")
+            .joinToString("").windowed(size = width, step = width, partialWindows = true)
+            .joinToString("-").reversed()
+            .toUpperCase()
+    }
+
+    private fun licenseKeyFormatting_(s: String, width: Int): String {
         return s.reversed().split("-")
             .joinToString("").windowed(size = width, step = width, partialWindows = true)
             .joinToString("-").reversed()
