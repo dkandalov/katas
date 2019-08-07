@@ -29,13 +29,10 @@ class LicenseKeyFormattingTests {
         while (--i >= 0) {
             if (s[i] == '-') continue
             result += s[i].toUpperCase()
-            if (++count % width == 0) result += "-"
+            if (++count % width == 0 && i != 0) result += "-"
         }
 
-        return s.reversed().split("-")
-            .joinToString("").windowed(size = width, step = width, partialWindows = true)
-            .joinToString("-").reversed()
-            .toUpperCase()
+        return result.reversed()
     }
 
     private fun licenseKeyFormatting_(s: String, width: Int): String {
