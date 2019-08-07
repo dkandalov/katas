@@ -7,7 +7,9 @@ class OddEvenJumpTests {
     @Test fun `find number of starting indices that can reach the end of array`() {
         oddEvenJumps(intArrayOf()) shouldEqual 0
         oddEvenJumps(intArrayOf(1)) shouldEqual 1
+
         oddEvenJumps(intArrayOf(1, 1)) shouldEqual 2
+        oddEvenJumps(intArrayOf(1, 2)) shouldEqual 2
     }
 }
 
