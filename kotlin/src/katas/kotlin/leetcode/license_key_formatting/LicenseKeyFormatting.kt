@@ -5,6 +5,9 @@ package katas.kotlin.leetcode.license_key_formatting
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/license-key-formatting/
+ */
 class LicenseKeyFormattingTests {
     @Test fun `format license key`() {
         licenseKeyFormatting("ABCD", width = 4) shouldEqual "ABCD"
