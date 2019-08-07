@@ -15,7 +15,16 @@ class FruitIntoBasketsTests {
         var count = 0
         val bucket = HashSet<Int>()
         (0 until tree.size).forEach { i ->
-            if ()
+            if (bucket.size <= 2) {
+                bucket.add(tree[i])
+                count++
+            } else {
+                maxCount = maxOf(maxCount, count)
+                bucket.clear()
+                bucket.add(tree[i - 1])
+                bucket.add(tree[i])
+                count = 2
+            }
         }
         return tree.size
     }
