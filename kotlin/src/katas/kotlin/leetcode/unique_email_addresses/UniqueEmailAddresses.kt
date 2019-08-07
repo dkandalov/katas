@@ -6,9 +6,10 @@ import org.junit.Test
 class UniqueEmailAddressesTests {
     @Test fun `check how many different addresses receive mails`() {
         numUniqueEmails(arrayOf("foo@gmail.com")) shouldEqual 1
+        numUniqueEmails(arrayOf("foo@gmail.com", "bar@gmail.com")) shouldEqual 2
     }
 }
 
 private fun numUniqueEmails(emails: Array<String>): Int {
-    return 1
+    return emails.size
 }
