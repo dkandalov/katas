@@ -13,9 +13,11 @@ class LicenseKeyFormattingTests {
         licenseKeyFormatting("A-BCD", width = 2) shouldEqual "AB-CD"
         licenseKeyFormatting("AB-CD", width = 2) shouldEqual "AB-CD"
         licenseKeyFormatting("ABC-D", width = 2) shouldEqual "AB-CD"
+        licenseKeyFormatting("ABCDE", width = 2) shouldEqual "A-BC-DE"
     }
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
-        return s.split("-").joinToString("").windowed(size = width, step = width).joinToString("-")
+        return s.reversed().split("-")
+            .joinToString("").windowed(size = width, step = width, partialWindows = true).joinToString("-").reversed()
     }
 }
