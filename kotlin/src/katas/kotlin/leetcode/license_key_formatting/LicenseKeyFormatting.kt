@@ -22,6 +22,12 @@ class LicenseKeyFormattingTests {
     }
 
     private fun licenseKeyFormatting(s: String, width: Int): String {
+        var i = s.length - 1
+        while (i > 0) {
+
+            i--
+        }
+
         return s.reversed().split("-")
             .joinToString("").windowed(size = width, step = width, partialWindows = true)
             .joinToString("-").reversed()
