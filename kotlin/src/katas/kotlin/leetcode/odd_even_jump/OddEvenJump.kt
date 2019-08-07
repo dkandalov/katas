@@ -14,6 +14,20 @@ private fun oddEvenJumps(a: IntArray): Int {
     return a.indices.count { canReachEnd(it, a) }
 }
 
-fun canReachEnd(i: Int, a: IntArray): Boolean {
+fun canReachEnd(index: Int, a: IntArray): Boolean {
+    var oddJump = true
+    var i = index
+    while (i < a.size - 1) {
+        val j = if (oddJump) doOddJump(i, a) else doEvenJump(i, a)
+        if (i == j) return false
+    }
     return true
+}
+
+fun doOddJump(i: Int, a: IntArray): Int {
+    return i + 1
+}
+
+fun doEvenJump(i: Int, a: IntArray): Int {
+    return i + 1
 }
