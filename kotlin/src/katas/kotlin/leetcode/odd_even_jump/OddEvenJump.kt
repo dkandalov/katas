@@ -27,7 +27,7 @@ private fun oddEvenJumps(a: IntArray): Int {
     return a.indices.count { canReachEnd(it, a) }
 }
 
-fun canReachEnd(index: Int, a: IntArray): Boolean {
+private fun canReachEnd(index: Int, a: IntArray): Boolean {
     var oddJump = true
     var i = index
     while (i < a.size - 1) {
@@ -39,7 +39,7 @@ fun canReachEnd(index: Int, a: IntArray): Boolean {
     return true
 }
 
-fun doOddJump(i: Int, a: IntArray): Int {
+private fun doOddJump(i: Int, a: IntArray): Int {
     var j = i + 1
     var min = Int.MAX_VALUE
     var minIndex = i
@@ -53,7 +53,7 @@ fun doOddJump(i: Int, a: IntArray): Int {
     return minIndex
 }
 
-fun doEvenJump(i: Int, a: IntArray): Int {
+private fun doEvenJump(i: Int, a: IntArray): Int {
     var j = i + 1
     var max = Int.MIN_VALUE
     var maxIndex = i
