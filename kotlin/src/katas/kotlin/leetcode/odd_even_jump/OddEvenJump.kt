@@ -16,6 +16,8 @@ class OddEvenJumpTests {
         oddEvenJumps(intArrayOf(1, 0)) shouldEqual 1
         oddEvenJumps(intArrayOf(1, 0, 1)) shouldEqual 3
         oddEvenJumps(intArrayOf(1, 0, 0)) shouldEqual 2
+
+        oddEvenJumps(intArrayOf(10, 13, 12, 14, 15)) shouldEqual 2
     }
 }
 
