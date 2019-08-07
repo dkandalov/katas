@@ -20,6 +20,8 @@ fun canReachEnd(index: Int, a: IntArray): Boolean {
     while (i < a.size - 1) {
         val j = if (oddJump) doOddJump(i, a) else doEvenJump(i, a)
         if (i == j) return false
+        i = j
+        oddJump = !oddJump
     }
     return true
 }
