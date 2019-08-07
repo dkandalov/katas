@@ -9,6 +9,8 @@ class UniqueEmailAddressesTests {
         numUniqueEmails(arrayOf("foo@gmail.com", "bar@gmail.com")) shouldEqual 2
         numUniqueEmails(arrayOf("foo@gmail.com", "f.o.o@gmail.com", "bar@gmail.com")) shouldEqual 2
         numUniqueEmails(arrayOf("foo@gmail.com", "foo+name@gmail.com", "bar@gmail.com")) shouldEqual 2
+
+        numUniqueEmails(arrayOf("test.email+alex@leetcode.com","test.e.mail+bob.cathy@leetcode.com","testemail+david@lee.tcode.com")) shouldEqual 2
     }
 }
 
