@@ -7,6 +7,7 @@ class OddEvenJumpTests {
     @Test fun `find number of starting indices that can reach the end of array`() {
         oddEvenJumps(intArrayOf()) shouldEqual 0
         oddEvenJumps(intArrayOf(1)) shouldEqual 1
+        oddEvenJumps(intArrayOf(1, 1)) shouldEqual 2
     }
 }
 
@@ -27,7 +28,17 @@ fun canReachEnd(index: Int, a: IntArray): Boolean {
 }
 
 fun doOddJump(i: Int, a: IntArray): Int {
-    return i + 1
+    var j = i + 1
+    var min = Int.MAX_VALUE
+    var minIndex = i
+    while (j < a.size) {
+        if (a[i] <= a[j] && a[j] < min) {
+            min = a[j]
+            minIndex = j
+        }
+        j++
+    }
+    return minIndex
 }
 
 fun doEvenJump(i: Int, a: IntArray): Int {
