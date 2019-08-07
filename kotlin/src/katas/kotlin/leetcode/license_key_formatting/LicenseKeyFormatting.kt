@@ -10,6 +10,7 @@ class LicenseKeyFormattingTests {
         licenseKeyFormatting("ABCD", width = 1) shouldEqual "A-B-C-D"
         licenseKeyFormatting("AB-CD", width = 1) shouldEqual "A-B-C-D"
 
+        licenseKeyFormatting("A-BCD", width = 2) shouldEqual "AB-CD"
         licenseKeyFormatting("AB-CD", width = 2) shouldEqual "AB-CD"
     }
 
