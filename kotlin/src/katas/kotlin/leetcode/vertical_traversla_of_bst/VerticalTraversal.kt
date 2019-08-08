@@ -26,7 +26,7 @@ class VerticalTraversalTests {
     }
 }
 
-fun verticalTraversal(root: Node): List<List<Int>> {
+private fun verticalTraversal(root: Node): List<List<Int>> {
     val valuesByColumn = java.util.TreeMap<Int, ArrayList<Int>>()
     root.traverse { node, column ->
         val values = valuesByColumn.getOrPut(column, { ArrayList() })
@@ -35,13 +35,13 @@ fun verticalTraversal(root: Node): List<List<Int>> {
     return valuesByColumn.values.map { it }
 }
 
-fun Node.traverse(column: Int = 0, f: (Node, Int) -> Unit) {
+private fun Node.traverse(column: Int = 0, f: (Node, Int) -> Unit) {
     f(this, column)
     left?.traverse(column - 1, f)
     right?.traverse(column + 1, f)
 }
 
-data class Node(
+private data class Node(
     val value: Int,
     val left: Node? = null,
     val right: Node? = null
