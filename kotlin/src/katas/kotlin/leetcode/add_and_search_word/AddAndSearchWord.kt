@@ -39,11 +39,9 @@ private class WordDictionary {
     }
 
     /**
-     * A word can contain the dot character '.' to represent any single letter.
+     * A pattern can contain the dot character '.' to represent any single letter.
      */
-    fun search(word: String): Boolean {
-        return root.search(word)
-    }
+    fun search(pattern: String): Boolean = root.search(pattern)
 
     private fun Node.search(pattern: String): Boolean {
         var node = this
