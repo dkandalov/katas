@@ -41,11 +41,15 @@ private class WordDictionary {
     /**
      * A word can contain the dot character '.' to represent any single letter.
      */
-    fun search(word: String, startNode: Node = root): Boolean {
-        var node = startNode
-        word.toCharArray().forEachIndexed { i, char ->
+    fun search(word: String): Boolean {
+        return root.search(word)
+    }
+
+    private fun Node.search(pattern: String): Boolean {
+        var node = this
+        pattern.toCharArray().forEachIndexed { i, char ->
             if (char == '.') {
-                return node.children.values.any { search(word.substring(i + 1), it) }
+                return node.children.values.any { it.search(pattern.substring(i + 1)) }
             } else {
                 node = node.children[char] ?: return false
             }
