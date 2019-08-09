@@ -37,6 +37,8 @@ private class WordDictionary {
         word.toCharArray().forEachIndexed { i, char ->
             if (char != '.') {
                 node = node.children[char] ?: return false
+            } else {
+                return node.children.values.any { search(word.substring(i + 1), it) }
             }
         }
         return true
