@@ -34,7 +34,7 @@ private class WordDictionary {
      */
     fun search(word: String, startNode: Node = root): Boolean {
         var node = startNode
-        word.toCharArray().forEach { char ->
+        word.toCharArray().forEachIndexed { i, char ->
             if (char != '.') {
                 node = node.children[char] ?: return false
             }
