@@ -29,7 +29,7 @@ class AddAndSearchWordTests {
 private class WordDictionary {
     private data class Node(val char: Char, val children: MutableMap<Char, Node> = HashMap())
 
-    private val root = Node('.')
+    private val root = Node(0.toChar())
 
     fun addWord(word: String) {
         var node = root
