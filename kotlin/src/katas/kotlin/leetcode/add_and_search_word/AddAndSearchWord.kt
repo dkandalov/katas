@@ -16,7 +16,15 @@ class AddAndSearchWordTests {
 }
 
 private class WordDictionary {
+    private data class Node(val char: Char, val children: MutableMap<Char, Node> = HashMap())
+
+    private val root = Node('.')
+
     fun addWord(word: String) {
+        var node = root
+        word.toCharArray().forEach { char ->
+            node = node.children.getOrPut(char, { Node(char) })
+        }
     }
 
     /**
