@@ -11,6 +11,7 @@ class AddAndSearchWordTests {
         val dictionary = WordDictionary()
         dictionary.addWord("foo")
         dictionary.search("foo") shouldEqual true
+        dictionary.search("fo.") shouldEqual true
     }
 }
 
