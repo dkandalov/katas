@@ -11,6 +11,7 @@ class AddAndSearchWordTests {
         val dictionary = WordDictionary()
         dictionary.addWord("foo")
         dictionary.search("foo") shouldEqual true
+        dictionary.search("bar") shouldEqual true
         dictionary.search("fo.") shouldEqual true
     }
 }
@@ -25,7 +26,6 @@ private class WordDictionary {
         word.toCharArray().forEach { char ->
             node = node.children.getOrPut(char, { Node(char) })
         }
-        println(root)
     }
 
     /**
