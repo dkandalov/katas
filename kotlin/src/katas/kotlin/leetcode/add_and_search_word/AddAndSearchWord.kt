@@ -17,6 +17,7 @@ class AddAndSearchWordTests {
         dictionary.search("fo.") shouldEqual true
         dictionary.search("f.o") shouldEqual true
         dictionary.search(".oo") shouldEqual true
+        dictionary.search("...") shouldEqual true
         dictionary.search("fo..") shouldEqual false
     }
 }
