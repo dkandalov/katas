@@ -12,12 +12,14 @@ class AddAndSearchWordTests {
         dictionary.addWord("foo")
         dictionary.addWord("foz")
         dictionary.addWord("bar")
+
         dictionary.search("foo") shouldEqual true
         dictionary.search("fooo") shouldEqual false
 
         dictionary.search("fo.") shouldEqual true
         dictionary.search("f.o") shouldEqual true
         dictionary.search(".oo") shouldEqual true
+        dictionary.search(".o.") shouldEqual true
         dictionary.search("...") shouldEqual true
         dictionary.search("....") shouldEqual false
         dictionary.search("fo..") shouldEqual false
