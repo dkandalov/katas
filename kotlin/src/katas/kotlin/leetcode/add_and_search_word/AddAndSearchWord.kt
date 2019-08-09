@@ -45,7 +45,7 @@ private class WordDictionary {
 
     private fun Node.search(pattern: String): Boolean {
         var node = this
-        pattern.toCharArray().forEachIndexed { i, char ->
+        pattern.forEachIndexed { i, char ->
             when (char) {
                 '.'  -> return node.children.values.any { it.search(pattern.substring(i + 1)) }
                 else -> node = node.children[char] ?: return false
