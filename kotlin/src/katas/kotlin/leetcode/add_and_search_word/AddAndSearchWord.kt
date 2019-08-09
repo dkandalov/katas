@@ -35,10 +35,10 @@ private class WordDictionary {
     fun search(word: String, startNode: Node = root): Boolean {
         var node = startNode
         word.toCharArray().forEachIndexed { i, char ->
-            if (char != '.') {
-                node = node.children[char] ?: return false
-            } else {
+            if (char == '.') {
                 return node.children.values.any { search(word.substring(i + 1), it) }
+            } else {
+                node = node.children[char] ?: return false
             }
         }
         return true
