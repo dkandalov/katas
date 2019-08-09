@@ -10,8 +10,8 @@ class AddAndSearchWordTests {
     @Test fun `add and search words`() {
         val dictionary = WordDictionary()
         dictionary.addWord("foo")
+        dictionary.addWord("bar")
         dictionary.search("foo") shouldEqual true
-        dictionary.search("bar") shouldEqual true
         dictionary.search("fo.") shouldEqual true
     }
 }
