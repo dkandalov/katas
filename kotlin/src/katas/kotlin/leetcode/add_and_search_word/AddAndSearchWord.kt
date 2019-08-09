@@ -7,6 +7,7 @@ import org.junit.Test
  * https://leetcode.com/problems/add-and-search-word-data-structure-design/
  */
 class AddAndSearchWordTests {
+
     @Test fun `add and search words`() {
         val dictionary = WordDictionary()
         dictionary.addWord("foo")
