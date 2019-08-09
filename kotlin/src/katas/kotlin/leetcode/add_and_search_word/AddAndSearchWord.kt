@@ -30,10 +30,15 @@ private class WordDictionary {
     }
 
     /**
-     * Returns if the word is in the data structure.
-     * A word could contain the dot character '.' to represent any one letter.
+     * A word can contain the dot character '.' to represent any single letter.
      */
     fun search(word: String): Boolean {
+        var node = root
+        word.toCharArray().forEach { char ->
+            if (char != '.') {
+                node = node.children[char] ?: return false
+            }
+        }
         return true
     }
 }
