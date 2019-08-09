@@ -40,21 +40,23 @@ private class WordDictionary {
      */
     fun search(pattern: String): Boolean = root.search(pattern)
 
-    private fun Node.add(word: String) {
-        var node = this
-        word.toCharArray().forEach { char ->
-            node = node.children.getOrPut(char, { Node(char) })
-        }
-    }
-
-    private fun Node.search(pattern: String): Boolean {
-        var node = this
-        pattern.forEachIndexed { i, char ->
-            when (char) {
-                '.'  -> return node.children.values.any { it.search(pattern.substring(i + 1)) }
-                else -> node = node.children[char] ?: return false
+    companion object {
+        private fun Node.add(word: String) {
+            var node = this
+            word.toCharArray().forEach { char ->
+                node = node.children.getOrPut(char, { Node(char) })
             }
         }
-        return true
+
+        private fun Node.search(pattern: String): Boolean {
+            var node = this
+            pattern.forEachIndexed { i, char ->
+                when (char) {
+                    '.'  -> return node.children.values.any { it.search(pattern.substring(i + 1)) }
+                    else -> node = node.children[char] ?: return false
+                }
+            }
+            return true
+        }
     }
 }
