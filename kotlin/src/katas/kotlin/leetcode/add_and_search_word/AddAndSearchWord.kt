@@ -32,8 +32,8 @@ private class WordDictionary {
     /**
      * A word can contain the dot character '.' to represent any single letter.
      */
-    fun search(word: String): Boolean {
-        var node = root
+    fun search(word: String, startNode: Node = root): Boolean {
+        var node = startNode
         word.toCharArray().forEach { char ->
             if (char != '.') {
                 node = node.children[char] ?: return false
