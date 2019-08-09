@@ -32,16 +32,20 @@ private class WordDictionary {
     private val root = Node(0.toChar())
 
     fun addWord(word: String) {
-        var node = root
-        word.toCharArray().forEach { char ->
-            node = node.children.getOrPut(char, { Node(char) })
-        }
+        root.add(word)
     }
 
     /**
      * A pattern can contain the dot character '.' to represent any single letter.
      */
     fun search(pattern: String): Boolean = root.search(pattern)
+
+    private fun Node.add(word: String) {
+        var node = this
+        word.toCharArray().forEach { char ->
+            node = node.children.getOrPut(char, { Node(char) })
+        }
+    }
 
     private fun Node.search(pattern: String): Boolean {
         var node = this
