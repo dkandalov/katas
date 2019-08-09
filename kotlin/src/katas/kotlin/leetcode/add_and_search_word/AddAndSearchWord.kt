@@ -25,6 +25,7 @@ private class WordDictionary {
         word.toCharArray().forEach { char ->
             node = node.children.getOrPut(char, { Node(char) })
         }
+        println(root)
     }
 
     /**
