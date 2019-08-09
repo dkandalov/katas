@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode", "unused")
+
 package katas.kotlin.leetcode.longest_substring_palindrome
 
 import kotlincommon.measureDuration

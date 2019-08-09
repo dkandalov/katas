@@ -22,20 +22,20 @@ class LongestSubstring {
 
 private fun String.longestSubstring(): Int {
     var maxSize = 0
-    val chars = HashSet<Char>()
-    var i = 0
-    var j = 0
-    while (j < length) {
-        val added = chars.add(this[j])
+    val visited = HashSet<Char>()
+    var from = 0
+    var to = 0
+    while (to < length) {
+        val added = visited.add(this[to])
         if (!added) {
-            while (this[i] != this[j]) {
-                chars.remove(this[i])
-                i++
+            while (this[from] != this[to]) {
+                visited.remove(this[from])
+                from++
             }
-            i++
+            from++
         }
-        maxSize = maxOf(maxSize, j - i + 1)
-        j++
+        maxSize = maxOf(maxSize, to - from + 1)
+        to++
     }
     return maxSize
 }

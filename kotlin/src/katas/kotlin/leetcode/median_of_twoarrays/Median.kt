@@ -13,9 +13,7 @@ class Median {
         val ints = array1 + array2
         ints.sort()
         val midIndex = ints.size / 2
-        if (ints.size % 2 == 0) {
-            return (ints[midIndex - 1] + ints[midIndex]) / 2.0
-        }
-        else return ints[midIndex].toDouble()
+        return if (ints.size % 2 == 0) (ints[midIndex - 1] + ints[midIndex]) / 2.0
+        else ints[midIndex].toDouble()
     }
 }
