@@ -9,6 +9,10 @@ class MostCommonWordTests {
             paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.",
             banned = arrayOf("hit")
         ) shouldEqual "ball"
+        mostCommonWord(
+            paragraph = "Bob hit a ball, the hit BALL flew far after it was hit.",
+            banned = arrayOf("ball")
+        ) shouldEqual "hit"
     }
 }
 
