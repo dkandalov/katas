@@ -45,7 +45,6 @@ private fun prisonAfterNDays(cells: Int, days: Int): Int {
 
 private tailrec fun prisonAfterNDays_(cells: IntArray, days: Int): IntArray {
     if (days == 0) return cells
-
     val newCells = IntArray(8) { i ->
         when {
             i == 0 || i == 7             -> 0
