@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.compare_strings
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/discuss/interview-question/352458/Google-or-OA-Fall-Internship-2019-or-Compare-Strings
+ */
 class CompareStringsTests {
     @Test fun `count smaller strings examples`() {
         countSmallerStrings("abcd,aabc,bd", "aaa,aa") shouldEqual listOf(3, 2)

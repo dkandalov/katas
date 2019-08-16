@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.largest_subarray_length_k
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/discuss/interview-question/352459/Google-or-OA-Fall-Internship-2019-or-Largest-Subarray-Length-K
+ */
 class LargestSubarrayLengthKTests {
     @Test fun examples() {
         largestSubarray(emptyArray(), k = 0) shouldEqual emptyArray()
