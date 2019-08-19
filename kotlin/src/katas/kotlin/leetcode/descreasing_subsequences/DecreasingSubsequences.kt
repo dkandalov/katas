@@ -14,7 +14,33 @@ class DecreasingSubsequencesTests {
             listOf(2), listOf(9, 4), listOf(12, 7, 6, 5), listOf(13, 10)
         )
         split(arrayOf(1, 1, 1)).printed() shouldEqual listOf(listOf(1), listOf(1), listOf(1))
+
+        leastSubsequences(5, 2, 4, 3, 1, 6) shouldEqual 3
+        leastSubsequences(2, 9, 12, 13, 4, 7, 6, 5, 10) shouldEqual 4
+        leastSubsequences(1, 1, 1) shouldEqual 3
     }
+}
+
+private fun leastSubsequences(vararg nums: Int): Int {
+    val piles = IntArray(nums.size)
+    var size = 0
+    for (n in nums) {
+        val pile = binarySearch(piles, size, n)
+        piles[pile] = n
+        if (pile == size) size++
+    }
+    return size
+}
+
+private fun binarySearch(nums: IntArray, size: Int, target: Int): Int {
+    var from = 0
+    var to = size
+    while (from < to) {
+        val mid = (from + to) / 2
+        if (target < nums[mid]) to = mid
+        else from = mid + 1
+    }
+    return from
 }
 
 private fun split(array: Array<Int>): List<List<Int>> {
