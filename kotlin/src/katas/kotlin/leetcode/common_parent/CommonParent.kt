@@ -24,14 +24,14 @@ fun main() {
     println("done")
 }
 
-fun Node.traverse(path: List<Node> = emptyList(), f: (Node, List<Node>) -> Boolean) {
+private fun Node.traverse(path: List<Node> = emptyList(), f: (Node, List<Node>) -> Boolean) {
     val shouldContinue = f(this, path)
     if (!shouldContinue) return
-    l?.traverse(path + this, f)
-    r?.traverse(path + this, f)
+    left?.traverse(path + this, f)
+    right?.traverse(path + this, f)
 }
 
-fun find(r: Node, c1: String, c2: String): Node? {
+private fun find(r: Node, c1: String, c2: String): Node? {
     val noList = emptyList<Node>()
     var c1Path: List<Node> = noList
     var c2Path: List<Node> = noList
@@ -57,9 +57,9 @@ fun find(r: Node, c1: String, c2: String): Node? {
     return c1Path[i]
 }
 
-data class Node(
+private data class Node(
     val name: String,
-    val l: Node? = null,
-    val r: Node? = null
+    val left: Node? = null,
+    val right: Node? = null
 )
 
