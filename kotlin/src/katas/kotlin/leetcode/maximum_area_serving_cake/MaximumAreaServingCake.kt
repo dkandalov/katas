@@ -1,12 +1,13 @@
 package katas.kotlin.leetcode.maximum_area_serving_cake
 
-import kotlincommon.pow
-import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 import kotlin.math.PI
 import kotlin.math.abs
 
+/**
+ * https://leetcode.com/discuss/interview-question/348510
+ */
 class MaximumAreaServingCakeTests {
     @Test fun examples() {
         findLargestPiece(radii = arrayOf(1, 1, 1, 2, 2, 3), numberOfGuests = 6).roundTo(digits = 4) shouldEqual "7.0686"
@@ -19,7 +20,7 @@ private fun findLargestPiece(radii: Array<Int>, numberOfGuests: Int): Double {
     return findLargestPiece(radii.map { it * it * PI }, numberOfGuests)
 }
 
-fun findLargestPiece(cakes: List<Double>, numberOfGuests: Int): Double {
+private fun findLargestPiece(cakes: List<Double>, numberOfGuests: Int): Double {
     fun feed(piece: Double): Double {
         val cc = ArrayList(cakes)
         var i = 0
