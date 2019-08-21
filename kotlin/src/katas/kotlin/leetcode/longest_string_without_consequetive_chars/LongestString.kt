@@ -9,6 +9,7 @@ import java.util.*
  */
 class LongestStringTests {
     @Test fun examples() {
+        findMaxLengthString(a = 0, b = 0, c = 0) shouldEqual ""
         findMaxLengthString(a = 1, b = 0, c = 0) shouldEqual "a"
         findMaxLengthString(a = 0, b = 1, c = 0) shouldEqual "b"
         findMaxLengthString(a = 0, b = 0, c = 1) shouldEqual "c"
@@ -24,15 +25,14 @@ class LongestStringTests {
 
 private fun findMaxLengthString(a: Int, b: Int, c: Int): String {
     val heap = PriorityQueue<Pair<Int, Char>>(Comparator { o1, o2 -> -o1.first.compareTo(o2.first) })
-    heap.add(Pair(a, 'a'))
-    heap.add(Pair(b, 'b'))
-    heap.add(Pair(c, 'c'))
+    if (a > 0) heap.add(Pair(a, 'a'))
+    if (b > 0) heap.add(Pair(b, 'b'))
+    if (c > 0) heap.add(Pair(c, 'c'))
 
     var onHold: Pair<Int, Char>? = null
     var result = ""
     while (heap.isNotEmpty()) {
         val (count, char) = heap.remove()
-        if (count <= 0) continue
 
         result += char
 
@@ -41,12 +41,12 @@ private fun findMaxLengthString(a: Int, b: Int, c: Int): String {
             onHold = null
         }
 
-        val pair = Pair(count - 1, char)
-        if (pair.first > 0) {
-            if (result.length >= 2 && result[result.length - 2] == pair.second) {
-                onHold = pair
+        val updatedCount = count - 1
+        if (updatedCount > 0) {
+            if (result.length >= 2 && result[result.length - 2] == char) {
+                onHold = Pair(updatedCount, char)
             } else {
-                heap.add(pair)
+                heap.add(Pair(updatedCount, char))
             }
         }
     }
