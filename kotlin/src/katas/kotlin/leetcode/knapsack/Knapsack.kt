@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.knapsack
 
+import kotlincommon.printed
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
@@ -31,43 +32,60 @@ class KnapsackTests {
     }
 
     @Test fun `caching results`() {
-        data class Item(val value: Int, val weight: Int)
-
-        val items = listOf(
-            Item(value = 10, weight = 5),
-            Item(value = 40, weight = 4),
-            Item(value = 30, weight = 6),
-            Item(value = 50, weight = 3)
-        )
-        val maxCapacity = 10
-        val maxValues = Array(items.size + 1) { IntArray(maxCapacity + 1) }
-
-        items.forEachIndexed { itemIndex, (value, weight) ->
-            (1..maxCapacity).forEach { capacity ->
-                val maxValueWithoutItem = maxValues[itemIndex][capacity]
-                val maxValueWithItem = if (capacity < weight) 0 else {
-                    val remainingCapacity = capacity - weight
-                    value + maxValues[itemIndex][remainingCapacity]
-                }
-                maxValues[itemIndex + 1][capacity] = maxOf(maxValueWithoutItem, maxValueWithItem)
-            }
+        findMaxValue(
+            maxCapacity = 10,
+            items = listOf(
+                Item(size = 5, value = 10),
+                Item(size = 4, value = 40),
+                Item(size = 6, value = 30),
+                Item(size = 3, value = 50)
+            )
+        ).let { (maxValues, maxValue) ->
+            maxValues.joinToString("\n") { it.toList().toString() } shouldEqual """
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10]
+                [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 50]
+                [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 70]
+                [0, 0, 0, 50, 50, 50, 50, 90, 90, 90, 90]
+            """.trimIndent()
+            maxValue shouldEqual 90
         }
 
-        maxValues.joinToString("\n") { it.toList().toString() } shouldEqual """
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10]
-            [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 50]
-            [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 70]
-            [0, 0, 0, 50, 50, 50, 50, 90, 90, 90, 90]
-        """.trimIndent()
-        maxValues[items.size][maxCapacity] shouldEqual 90
+        findMaxValue(
+            maxCapacity = 9,
+            items = listOf(
+                Item(size = 5, value = 1),
+                Item(size = 4, value = 1),
+                Item(size = 8, value = 1)
+            )
+        ).let { (maxValues, maxValue) ->
+            maxValues.joinToString("\n") { it.toList().toString() }.printed()/* shouldEqual """
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10]
+                [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 50]
+                [0, 0, 0, 0, 40, 40, 40, 40, 40, 50, 70]
+                [0, 0, 0, 50, 50, 50, 50, 90, 90, 90, 90]
+            """.trimIndent()*/
+//            maxValue shouldEqual 90
+        }
     }
+}
 
-//               1   2   3   4   5   6
-//    meeting1   1   1   1   1   1   1
-//    meeting2   0   1   2   2   2   2
-//    meeting3   0   0   1   2   2   3
+private data class Item(val size: Int, val value: Int)
 
+private fun findMaxValue(maxCapacity: Int, items: List<Item>): Pair<Array<IntArray>, Int> {
+    val maxValues = Array(items.size + 1) { IntArray(maxCapacity + 1) }
+    items.forEachIndexed { itemIndex, (weight, value) ->
+        (1..maxCapacity).forEach { capacity ->
+            val maxValueWithoutItem = maxValues[itemIndex][capacity]
+            val maxValueWithItem = if (capacity < weight) 0 else {
+                val remainingCapacity = capacity - weight
+                value + maxValues[itemIndex][remainingCapacity]
+            }
+            maxValues[itemIndex + 1][capacity] = maxOf(maxValueWithoutItem, maxValueWithItem)
+        }
+    }
+    return Pair(maxValues, maxValues[items.size][maxCapacity])
 }
 
 private fun optimise2(meetings: Set<Meeting>, hours: Int): List<Set<Meeting>> {
