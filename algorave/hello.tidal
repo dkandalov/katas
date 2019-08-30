@@ -1,0 +1,173 @@
+-- Some sounds are still playing after "hush" 🤔
+-- Is there a way to start playback from the beginning?
+-- Is there a way to visialise cycles, e.g.: d1 $ e 5 8 $ sound "bd" ?
+-- How does Atom plugin work? (how do I write a similar plugin for IJ?)
+-- How oscillations work 🤔?
+-- What are the most useful effects in practice?
+-- How do you "compose" a song?
+-- Is there a way to make sound "less digital"?
+-- Why super collider?
+-- How OSC protocol works? Is there a good (human-understanbl) tutorial?
+
+
+d1 $ sound "bd sd:1"
+d1 $ sound "bd sd:1 bd sd:1"
+d2 $ sound "hh hh hh hh hh hh"
+d3 $ sound "arpy arpy arpy"
+
+-- Pattern Groups
+d1 $ sound "[bd bd ~ sd] cp"
+d1 $ sound "[bd bd] [bd [sd [sd sd] sd] sd]"
+d1 $ sound "bd bd . sd sd sd . bd sd"
+d1 $ sound "[bd bd bd, sd ~ sd ~]"
+d1 $ sound "[bd bd bd, sd cp sd cp, arpy arpy, odx]"
+d1 $ sound "bd <arpy:1 arpy:2 arpy:3>"
+
+-- Repetition
+d1 $ sound "[bd sn]*2 cp"
+d1 $ sound "[bd sn] cp/2"
+d1 $ sound "[[bd sn] cp]*2" -- speeds up the entire pattern
+
+-- Transformation
+d1 $ every 4 (fast 3) $ sound "bd*2 [bd [sn sn*2 sn] sn]"
+
+-- Effects
+d1 $ sound "bd*4" # crush "4" # speed "2"
+d1 $ sound "bd*4" # gain (every 3 (rev) $ "1 0.8 0.5 0.7")
+d1 $ every 2 (|=| speed "2") $ sound "arpy*4" |=| speed "1"
+d1 $ every 2 (|+| speed "1") $ sound "arpy*4" |=| speed "1"
+--  gain (changes volume, values from 0 to 1)
+-- pan (pans sound right and left, values from 0 to 1)
+-- shape (a type of amplifier, values from 0 to 1)
+-- vowel (a vowel formant filter, values include a, e, i, o, and u)
+-- speed (changes playback speed of a sample, see below)
+
+-- Shorthand
+d1 $ sound "arpy(3,8)" # n 2
+d1 $ n "[0..7] [3..1]" # sound "supergong"
+d1 $ n "[0 1 2 3 4 5 6 7] [3 2 1]" # sound "sn"
+
+-- Playback Speed (and Pitch)
+d1 $ sound "arpy" # speed "0.5"
+d1 $ speed "1 0.5 2 1.5" # sound "arpy"
+d1 $ speed "-1 -0.5 -2 -1.5" # sound "arpy"
+d1 $ speed "[1 0.5, 1.5 2 3 4]" # sound "arpy"
+d1 $ up "0 1 2 3 4 5 6 7 8 9 10 11" # sound "arpy"
+
+-- Bjorklund
+-- If you give two numbers in parenthesis after an element in a pattern, then Tidal will distribute the first number of sounds equally across the second number of steps:
+d1 $ sound "bd(5,8)"
+d1 $ e 5 8 $ sound "bd"
+d1 $ sound "bd(3,8) sn*2"
+d1 $ sound "bd(5,8,2)"
+-- As a bonus, it is possible to pattern the parameters within the parenthesis, for example to alternate between 3 and 5 elements:
+d1 $ sound "bd([5 3]/2,8)"
+
+-- Tempo
+cps 1.5
+cps 0.15
+cps (140/60/4) -- 140 bpm
+
+-- The Run Function
+d1 $ sound "arpy*8" # up (run 8)
+
+-- Sample Selection
+d1 $ sound "arpy:0 arpy:2 arpy:3"
+d1 $ n "0 2 3" # s "arpy"
+d1 $ sound $ samples "arpy*3" "0 2 3"
+d1 $ n (run 4) # s "arpy"
+
+d1 $ s "drum arpy cp hh" # n (run 10)
+d1 $ n (run 10) # s "drum arpy cp hh"
+
+-- Continuous Patterns
+d1 $ sound "bd*16" # pan sine
+d1 $ sound "bd*8 sn*8" # fast 1.75 $ tri
+d1 $ sound "bd*8 sn*8" # pan (fast 1.75 $ tri)
+d1 $ sound "bd*8 sn*8" # speed (fast 2 $ tri)
+
+-- Polymeter
+d1 $ sound "{bd hh sn cp, arpy bass2 drum notes can}"
+d1 $ sound "{arpy bass2 drum notes can, bd hh sn cp}"
+d1 $ sound "{~ ~ ~ ~, arpy bass2 drum notes can}"
+d1 $ sound "{arpy bass2 drum notes can}%4"
+-- polymeter vs polyrithm
+d1 $ sound "{sn hh sn, bd bd bd bd}"
+d1 $ sound "[sd hh sd, bd bd]"
+
+-- Shifting Time
+d1 $ every 3 (0.25 <~) $ sound "bd*2 cp*2 hh sn"
+d1 $ "[0 0.25]/4" <~ (sound "bd*2 cp*2 hh sn")
+
+-- Randomness
+d1 $ sound "arpy*4" # pan (scale 0.25 0.75 $ rand)
+d1 $ s "arpy*8" # n (irand 30)
+d1 $ sound "bd? sd? sd? sd?"
+d1 $ degradeBy 0.25 $ sound "bd*16"
+d1 $ sometimesBy 0.75 (# crush 4) $ sound "bd arpy sn ~"
+
+-- Variation
+d1 $ every 5 (|+| speed "0.5") $ every 4 (0.25 <~) $ every 3 (rev) $
+   sound "bd sn arpy*2 cp"
+   # speed "[1 1.25 0.75 -1.5]/3"
+-- the following will play a pattern normally for cycles 1-6, then play it in reverse for cycles 7-8. Then normally again for six cycles, then in reverse for two, and so on:
+d1 $ whenmod 8 6 (rev) $ sound "bd*2 arpy*2 cp hh*4"
+
+-- Fills
+d1 $ const (sound "arpy*3") $ sound "bd sn cp hh"
+d1 $ every 3 (const $ sound "bd*4 sn*2") $ sound "bd sn bass2 sn"
+
+-- Composing_patterns
+d1 $ fastcat [
+  sound "bd sn:2" # vowel "[a o]/2",
+  sound "casio casio:1 casio:2*2"
+]
+
+d1 $ cat [
+  sound "bd sn:2" # vowel "[a o]/2",
+  sound "casio casio:1 casio:2*2",
+  sound "drum drum:2 drum:3 drum:4*2"
+]
+
+d1 $ stack [
+  sound "bd bd*2" # gain 2.5,
+  sound "hh*2 [sn cp] cp future*4",
+  sound (samples "arpy*8" (run 16))
+]
+
+d1 $ every 4 (slow 2) $ whenmod 5 3 (# speed "0.75 1.5") $ stack [
+  sound "bd bd*2",
+  sound "hh*2 [sn cp] cp future*4",
+  sound (samples "arpy*8" (run 16))
+] # speed "[[1 0.8], [1.5 2]*2]/3"
+
+-- Cut
+d1 $ sound (samples "arpy*8" (run 8)) # speed "0.25"
+d1 $ sound (samples "arpy*8" (run 8)) # speed "0.25" # cut "1"
+
+d1 $ stack [
+   sound (samples "arpy*8" (run 8)) # speed "0.25" # cut "1",
+   sound (samples "bass2*6" (run 6)) # speed "0.5" # cut "2" # gain 0.9 ]
+
+-- Transitions
+d1 $ sound (samples "hc*8" (iter 4 $ run 4))
+t1 anticipate $ sound (samples "bd(3,8)" (run 3))
+t1 (xfadeIn 16) $ sound "bd(5,8)"
+
+-- Synths
+d1 $ midinote "60 62*2" # s "supersaw"
+d1 $ n "c5 d5*2" # s "supersaw"
+d1 $ n "<[a5,cs5,e5,g5]*3 [d5,fs5,g5,c5]>" # s "supersquare" # gain "0.7"
+
+
+
+
+
+
+
+
+
+
+
+
+hush
