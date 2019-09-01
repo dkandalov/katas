@@ -1,0 +1,51 @@
+**********EUCLIDIAN PATTERNS**********
+
+-- Euclidean patterns are great building blocks for rhythm, and built
+-- into the mini-notation (we met them briefly earlier).
+-- E.g. play 3 kick drums over 8 steps:
+
+d1 $ sound "bd(3,8)"
+d1 $ sound "bd(9,17)"
+d1 $ slow 2 $ s "bd(9,17)" # gain 2
+d1 $ slow 2 $ s "bd(7,16)" # gain 2 # room 0.05
+d3 $ s "cpu2*2" # gain 2 # room 0.05
+d2 $ s "cp" # room 0.1
+d4 $ s "ade*0" # room 0.1
+d4 $ s "arpy" # gain 1.3 # note 22 # room 0.05
+d4 $ s "midi2" # gain 3.0 # note "-20"-- up "2" -- # lpq 0.2
+
+d3 $ ply 12 $ n "0 2 [~ 3] 4" # s "cpu2" # room 0.05
+d2 $ s "sd"
+d1 $ ply 12 $ 0.25 ~> n "0 2 [~ 3] 4" # sound "cpu2"
+d2 $ 0.25 <~ sound "cp" # room "0.1"
+
+d4 $ off 0.25 (|+ n 7) $ n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>" # s "supersiren" # gain 1
+d4 $ off 0.125 (|+ n 12) $ off 0.25 (|+ n 7) $ n "<c(3,8) e(3,8,2) f(3,8) g(3,8)>" # s "supersiren"
+d3 $ silence
+
+-- The `deconstruct` function lets us see what is happening.
+-- Lets deconstruct those eight steps
+
+deconstruct 8 $ "bd(3,8)"
+deconstruct 17 $ "bd(7,16)"
+deconstruct 17 $ "bd(9,17)"
+
+
+
+-- It'll return this:
+-- "bd ~ ~ bd ~ ~ bd ~"
+
+-- It shows how the 'euclidean algorithm' tries to arrange the kicks
+-- evenly, but can't do it perfectly, so you get a lilting rhythm
+
+-- You can also shift the pattern a number of steps:
+
+deconstruct 8 $ "bd(3,8,2)"
+
+-- "~ bd ~ ~ bd ~ bd ~"
+
+-- You can see that's the same pattern, offset by two steps.
+
+-- You can quickly create variety by patterning the euclidean pattern:
+
+d1 $ sound "bd(<3 5>,8,<0 2 4>)"

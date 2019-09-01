@@ -1,0 +1,13 @@
+
+import VisCycle
+import VisPart
+import VisGradient
+
+render :: Show a => Pattern a -> IO ()
+render = renderPartPDF "/tmp/out"
+
+renderNum :: Pattern Int -> IO ()
+renderNum = renderPartPDF "/tmp/out"
+
+renderCycle = renderCyclePDF "/tmp/out" ""
+renderColour = renderGradientPDF "/tmp/out" 

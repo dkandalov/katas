@@ -34,7 +34,7 @@ d1 $ every 4 (fast 3) $ sound "bd*2 [bd [sn sn*2 sn] sn]"
 -- Effects
 d1 $ sound "bd*4" # crush "4" # speed "2"
 d1 $ sound "bd*4" # gain (every 3 (rev) $ "1 0.8 0.5 0.7")
-d1 $ every 2 (|=| speed "2") $ sound "arpy*4" |=| speed "1"
+d1 $ every 2 (|> speed "2") $ sound "arpy*4" |> speed "1"
 d1 $ every 2 (|+| speed "1") $ sound "arpy*4" |=| speed "1"
 --  gain (changes volume, values from 0 to 1)
 -- pan (pans sound right and left, values from 0 to 1)
@@ -64,9 +64,8 @@ d1 $ sound "bd(5,8,2)"
 d1 $ sound "bd([5 3]/2,8)"
 
 -- Tempo
-cps 1.5
-cps 0.15
-cps (140/60/4) -- 140 bpm
+setcps 0.15
+setcps (140/60/4) -- 140 bpm
 
 -- The Run Function
 d1 $ sound "arpy*8" # up (run 8)
@@ -110,6 +109,7 @@ d1 $ sometimesBy 0.75 (# crush 4) $ sound "bd arpy sn ~"
 d1 $ every 5 (|+| speed "0.5") $ every 4 (0.25 <~) $ every 3 (rev) $
    sound "bd sn arpy*2 cp"
    # speed "[1 1.25 0.75 -1.5]/3"
+
 -- the following will play a pattern normally for cycles 1-6, then play it in reverse for cycles 7-8. Then normally again for six cycles, then in reverse for two, and so on:
 d1 $ whenmod 8 6 (rev) $ sound "bd*2 arpy*2 cp hh*4"
 

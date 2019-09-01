@@ -1,0 +1,83 @@
+
+
+renderColour "red blue"
+
+Wifi:
+Name: DINAVenue
+Password: DigitalNative
+
+setcps 0.5
+
+
+d1 $ n "0 1 2*2 [~ 4]" # sound "drum arpy"
+
+d1 $ sound "drum:0 drum:1"
+
+d2 $ n "c e f6 g"
+  # sound "supermandolin"
+
+
+d1 $ sound "bd sn:2"
+
+d2 $ sound "arpy(3,8)"
+
+d1 $ chunk 4 (hurry "2 4") $ sound "[{bd sn:2 [sd clap] sd:4, sn:2 ~ cpu:2*2}, cpu2:3(3,8,<0 2>)]"
+  # crush "4 5 2 1"
+  # speed "1 2 3 4"
+
+
+hush
+
+
+d1 $ sound "cpu2:3"
+
+d1 $ sound "bd clap"
+
+d2 $ sound "{arpy arpy:2 arpy:3}%4"
+
+setcps 0.8
+
+d3 $ sound "{drum drum:2, bd sn:2*2 cp} [clap:4 bd:2]"
+  # speed 2
+
+d3 $ sound "{drum drum:1, arpy [arpy:2 [arpy:4 [arpy:5 arpy:6] arpy:6]] arpy:3}"
+  # speed 2
+
+
+d1 $ chunk 4 (hurry 2)
+  $ n "[0 1 2 3] [3 5 5]" # sound "drum" # speed 2
+
+d2 $ every 3 (hurry 2)
+  $ sound "[kick:6 clap:4]*2" # speed 2
+
+
+d1 $ n ("0 5*2 7" + "[0,5,7]")
+  # sound "supermandolin"
+
+d1 $ every 3 rev $ n (off (1/4) (+12)
+        $ off (1/8) (+7) "<c(3,8) e(3,8,2) f*2 g(3,8)>")
+  # sound "supermandolin"
+  # legato 4
+
+d1 $ striateBy 32 (1/4) $ sound "newnotes newnotes:2"
+
+d1 $ striate 16 $ sound "bd sn:2"
+
+d1 $ slow 4 $ chop 4 $ sound "sax sax:2"
+
+d1 $ slow 4 $ striate 32 $ sound "sax sax:2"
+
+d1 $ chunk 4 (hurry 2) $ (slow 2 $ jux rev $ chop 8 $
+       sound "alphabet alphabet:1")
+  # speed (sine + 1)
+
+d1 $ slow 2 $ striate "16 8" $ sound "alphabet alphabet:1"
+
+d1 $ degrade $ jux (rev . (# n 4)) $ chunk  4 (hurry 2) $ every 2 (0.25 <~) $ loopAt "2" $ chop 16 $ sound "break:6"
+
+d2 $ sometimes (hurry 2) $ off 0.25 (|+ note 12) $ jux rev $ slow 2 $ (off 0.25 (|+ note 7) $ sound "dsynth:1 dsynth(3,8)"
+  # legato 1)
+  # djf (slow 4 $ range 0.8 0.9 sine) # room 0.5
+
+d3 $ degradeBy 0.8 $ chunk 4 (hurry 2) $ every 2 (# crush 4) $ chunk 4 (hurry 2) $ iter 4 $ sound "phkick*2 [~ phkick:1]"
+  # gain 1 # speed 2
