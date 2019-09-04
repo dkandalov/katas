@@ -1,6 +1,8 @@
 package katas.kotlin.leetcode.vertical_traversla_of_bst
 
 import org.junit.Test
+import java.util.*
+import kotlin.collections.ArrayList
 
 class VerticalTraversalTests {
     @Test fun `vertical order traversal`() {
@@ -27,7 +29,7 @@ class VerticalTraversalTests {
 }
 
 private fun verticalTraversal(root: Node): List<List<Int>> {
-    val valuesByColumn = java.util.TreeMap<Int, ArrayList<Int>>()
+    val valuesByColumn = TreeMap<Int, ArrayList<Int>>()
     root.traverse { node, column ->
         val values = valuesByColumn.getOrPut(column, { ArrayList() })
         values.add(node.value)
