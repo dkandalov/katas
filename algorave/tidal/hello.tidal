@@ -1,13 +1,12 @@
 -- Some sounds are still playing after "hush" 🤔
 -- Is there a way to start playback from the beginning?
--- Is there a way to visialise cycles, e.g.: d1 $ e 5 8 $ sound "bd" ?
--- How does Atom plugin work? (how do I write a similar plugin for IJ?)
+-- Is there a way to visualise cycles, e.g.: d1 $ e 5 8 $ sound "bd" ?
 -- How oscillations work 🤔?
 -- What are the most useful effects in practice?
 -- How do you "compose" a song?
 -- Is there a way to make sound "less digital"?
--- Why super collider?
--- How OSC protocol works? Is there a good (human-understanbl) tutorial?
+-- Why supercollider?
+-- How OSC protocol works? Is there a good (human-understandable) tutorial?
 
 
 d1 $ sound "bd sd:1"
