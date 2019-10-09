@@ -58,6 +58,6 @@ object MyInterceptor : ContinuationInterceptor, AbstractCoroutineContextElement(
     override fun <T> interceptContinuation(continuation: Continuation<T>) = continuation
 }
 
-fun main(args: Array<String>) {
+fun main() {
     Hello.main()
 }

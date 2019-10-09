@@ -11,7 +11,7 @@ import org.junit.Assert.assertTrue
  * The code below is translation from Ruby to Kotlin of this blog post
  * https://blog.jcoglan.com/2017/07/06/introduction-to-parser-combinators
  */
-fun main(args: Array<String>) {
+fun main() {
     `hello parser`()
     `str parser`()
     `chr parser`()

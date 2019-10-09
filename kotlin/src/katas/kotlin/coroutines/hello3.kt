@@ -44,6 +44,6 @@ object Hello3 {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     Hello3.main()
 }

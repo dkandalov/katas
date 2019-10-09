@@ -7,7 +7,7 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
 
-fun main(args: Array<String>) {
+fun main() {
     CoGameUI.build(GameSwingUI()) {
         startGame()
         var game = Game.create(50, 50)

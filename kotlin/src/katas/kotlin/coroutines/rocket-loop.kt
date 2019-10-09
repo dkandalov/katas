@@ -3,7 +3,6 @@ import katas.kotlin.coroutines.MyContinuation
 import katas.kotlin.coroutines.MyEmptyCoroutineContext
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.createCoroutine
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
 
@@ -11,7 +10,7 @@ fun createCoroutine(block: suspend Unit.() -> Unit) {
     block.createCoroutine(Unit, completion = MyContinuation(MyEmptyCoroutineContext)).resume(Unit)
 }
 
-fun main(args: Array<String>) {
+fun main() {
     var count = 0
     var savedContinuation: Continuation<Int>? = null
 

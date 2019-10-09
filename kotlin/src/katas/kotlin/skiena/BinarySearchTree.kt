@@ -74,7 +74,7 @@ fun <T: Comparable<T>> List<T>.toBST(): Node<T> =
     }
 
 
-fun main(args: Array<String>) {
+fun main() {
     listOf(1, 2, 3, 4, 5).toBST().printed().let { bst ->
         bst.traverseTree { println(it) }
     }

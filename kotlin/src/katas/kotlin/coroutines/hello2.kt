@@ -73,6 +73,6 @@ object Hello2 {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     Hello2.main()
 }

@@ -7,7 +7,7 @@ import java.util.*
 /**
  * https://www.hackerrank.com/challenges/new-year-chaos
  */
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     main(generateSequence { scanner.nextLine() })
 }

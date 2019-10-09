@@ -11,7 +11,7 @@ import java.awt.event.WindowEvent
 import javax.swing.*
 
 
-fun main(args: Array<String>) {
+fun main() {
     val gameUI = GameSwingUI()
     gameUI.init(object: GameUI.Observer {
         lateinit var game: Game

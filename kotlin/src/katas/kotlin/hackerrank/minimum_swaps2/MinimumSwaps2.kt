@@ -12,7 +12,7 @@ import java.util.*
 /**
  * https://www.hackerrank.com/challenges/minimum-swaps-2
  */
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     main(generateSequence { scanner.nextLine() })
 }

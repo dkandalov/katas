@@ -12,7 +12,7 @@ import org.http4k.server.asServer
 import java.awt.Robot
 import java.awt.event.KeyEvent.*
 
-fun main(args: Array<String>) {
+fun main() {
     val robot = Robot()
     val app = routes(
         "/" bind Method.GET to { request: Request ->

@@ -29,7 +29,7 @@ class HammingDistance {
             var s = ""
             var i = n
             0.until(width).forEach {
-                if (i.and(1) == 1) s = "1" + s else s = "0" + s
+                s = if (i.and(1) == 1) "1$s" else "0$s"
                 i = i.shr(1)
             }
             return s

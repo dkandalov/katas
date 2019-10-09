@@ -7,7 +7,7 @@ import java.io.File
 import java.util.*
 
 // https://www.hackerrank.com/challenges/ctci-contacts
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     main(lines = generateSequence { scanner.nextLine() })
 }

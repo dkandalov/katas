@@ -20,7 +20,7 @@ import kotlin.collections.LinkedHashSet
 /**
  * See https://www.hackerrank.com/challenges/dijkstrashortreach
  */
-fun main(args: Array<String>) {
+fun main() {
     val reader = System.`in`.bufferedReader()
     main({ reader.readLine() })
 }

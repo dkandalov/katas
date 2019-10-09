@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 val events = ArrayList<String>()
 fun log(it: Any?) = events.add(it.toString())
 
-fun main(args: Array<String>) {
+fun main() {
     val f = ResumableFunction.create {
         log(1)
         foo(this)

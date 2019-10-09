@@ -5,7 +5,7 @@ import java.awt.event.*
 import javax.swing.*
 
 
-fun main(args: Array<String>) {
+fun main() {
     val gameUI = GameSwingUI()
     gameUI.init(object : GameUI.Listener {
         lateinit var game: Game

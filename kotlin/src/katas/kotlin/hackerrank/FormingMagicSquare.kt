@@ -7,7 +7,7 @@ import java.util.*
 /**
  * https://www.hackerrank.com/challenges/magic-square-forming
  */
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     val i = generateSequence { scanner.nextLine() }.iterator()
     main({ i.next() })

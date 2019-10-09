@@ -4,7 +4,7 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 import java.util.*
 
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     main(generateSequence { scanner.nextLine() })
 }

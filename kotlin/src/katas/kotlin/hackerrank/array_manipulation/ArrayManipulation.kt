@@ -8,7 +8,7 @@ import java.util.*
 /**
  * https://www.hackerrank.com/challenges/crush
  */
-fun main(args: Array<String>) {
+fun main() {
     main(System.`in`, System.out)
 }
 

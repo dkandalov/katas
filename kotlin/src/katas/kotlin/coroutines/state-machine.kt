@@ -27,7 +27,7 @@ class InvitationSender {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val invitationSender = InvitationSender()
     val id = invitationSender.generateInvitation()
     invitationSender.sendInvitation(id)

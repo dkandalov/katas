@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 /**
  * https://www.hackerrank.com/challenges/matrix-rotation-algo
  */
-fun main(args: Array<String>) {
+fun main() {
     val scanner = Scanner(System.`in`)
     val i = generateSequence { scanner.nextLine() }.iterator()
     main({ i.next() })

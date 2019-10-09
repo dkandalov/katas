@@ -7,7 +7,7 @@ import kotlin.coroutines.createCoroutine
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
 
-fun main(args: Array<String>) {
+fun main() {
     ResumableFunction.create {
         val value = amb(mutableListOf(1, 2, 3), "value")
         val value2 = amb(mutableListOf(1, 2, 3), "value2")

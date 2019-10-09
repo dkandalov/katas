@@ -4,18 +4,14 @@ package katas.kotlin.coroutines.steps.step2
 
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.resume
 
 /**
  * Send/receive values from coroutine
  */
-fun main(args: Array<String>) {
+fun main() {
     val events = ArrayList<String>()
     fun log(it: Any?) = events.add(it.toString())
 

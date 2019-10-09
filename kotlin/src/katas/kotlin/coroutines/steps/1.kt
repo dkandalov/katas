@@ -11,7 +11,7 @@ import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 /**
  * Yield coroutine execution
  */
-fun main(args: Array<String>) {
+fun main() {
     val events = ArrayList<String>()
     fun log(it: Any?) = events.add(it.toString())
 
