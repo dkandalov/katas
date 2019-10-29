@@ -3,6 +3,8 @@ package katas.kotlin.knapsack
 import kotlincommon.test.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
+import java.util.*
+import kotlin.collections.HashSet
 
 class Knapsack0Tests {
     @Test fun `single item`() {
@@ -104,10 +106,26 @@ private fun pack(bag: Bag, items: Set<Item>): Bag {
     return backtrack(Solution(bag, items.toList())).firstOrNull()?.bag ?: bag
 }
 
-private fun backtrack(solution: Solution?): List<Solution> {
+private fun backtrack(solution: Solution): List<Solution> {
+    val result = ArrayList<Solution>()
+    val queue = LinkedList<Solution?>()
+    queue.addLast(solution)
+    while (queue.isNotEmpty()) {
+        val s = queue.removeFirst()
+        if (s == null) continue
+        else if (s.isComplete()) result.add(s)
+        else {
+            queue.add(s.next())
+            queue.add(s.skip())
+        }
+    }
+    return result
+}
+
+private fun backtrack_(solution: Solution?): List<Solution> {
     if (solution == null) return emptyList()
     if (solution.isComplete()) return listOf(solution)
-    return backtrack(solution.next()) + backtrack(solution.skip())
+    return backtrack_(solution.next()) + backtrack_(solution.skip())
 }
 
 private data class Bag(
