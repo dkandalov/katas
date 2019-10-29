@@ -1,6 +1,7 @@
 package katas.kotlin.knapsack
 
 import kotlincommon.test.shouldEqual
+import org.junit.Ignore
 import org.junit.Test
 
 class Knapsack0Tests {
@@ -40,8 +41,21 @@ class Knapsack0Tests {
                 |01
                 """
         )
+
+        checkPacking(
+            Bag(width = 2, height = 2),
+            items = setOf(
+                Item(Cell(0, 0)),
+                Item(Cell(0, 0), Cell(0, 1), Cell(1, 0))
+            ),
+            output = """
+                |00
+                |01
+                """
+        )
     }
 
+    @Ignore
     @Test fun `conflicting items`() {
         checkPacking(
             Bag(width = 2, height = 2),
@@ -62,30 +76,51 @@ class Knapsack0Tests {
     }
 }
 
+private data class Solution(
+    val bag: Bag,
+    val items: List<Item>,
+    val itemIndex: Int = 0,
+    val column: Int = 0,
+    val row: Int = 0
+) {
+    fun isComplete() = bag.originalItems.containsAll(items)
+
+    fun skip(): Solution? =
+        when {
+            itemIndex < items.size - 1 -> copy(itemIndex = itemIndex + 1)
+            column < bag.width - 1     -> copy(column = column + 1, itemIndex = 0)
+            row < bag.height - 1       -> copy(row = row + 1, column = 0, itemIndex = 0)
+            else                       -> null
+        }
+
+    fun next(): Solution? {
+        val item = items[itemIndex]
+        val updatedBag = bag.add(item, at = Cell(column, row)) ?: return null
+        return copy(bag = updatedBag)
+    }
+}
+
 private fun pack(bag: Bag, items: Set<Item>): Bag {
-    return pack(bag, items, x = 0, y = 0)
-        .maxBy { item -> item.items.sumBy { it.cells.size } }!!
+    return backtrack(Solution(bag, items.toList())).firstOrNull()?.bag ?: bag
 }
 
-private fun pack(bag: Bag, items: Set<Item>, x: Int = 0, y: Int = 0, result: HashSet<Bag> = HashSet()): Set<Bag> {
-    if (items.isEmpty() || y == bag.height) return setOf(bag)
-    if (x == bag.width) return pack(bag, items, 0, y + 1, result)
-
-    return items
-        .map { it.moveTo(Cell(x, y)) }
-        .flatMap { item ->
-            val updatedBag = bag.add(item)
-            if (updatedBag != null) pack(updatedBag, items - item, x + 1, y + 1, result) +
-                pack(bag, items - item, x + 1, y + 1, result)
-            else pack(bag, items - item, x + 1, y + 1, result)
-        }.toSet()
+private fun backtrack(solution: Solution?): List<Solution> {
+    if (solution == null) return emptyList()
+    if (solution.isComplete()) return listOf(solution)
+    return backtrack(solution.next()) + backtrack(solution.skip())
 }
 
-private data class Bag(val width: Int, val height: Int, val items: Set<Item> = emptySet()) {
-    fun add(newItem: Item): Bag? {
-        if (items.any { item -> item.cells.any { newItem.cells.contains(it) } }) return null
-        if (newItem.cells.any { it.x !in 0.until(width) || it.y !in 0.until(height) }) return null
-        return copy(items = items + newItem)
+private data class Bag(
+    val width: Int,
+    val height: Int,
+    val items: Set<Item> = emptySet(),
+    val originalItems: Set<Item> = emptySet()
+) {
+    fun add(item: Item, at: Cell): Bag? {
+        val movedItem = item.moveTo(cell = at)
+        if (items.any { it.cells.any { cell -> movedItem.cells.contains(cell) } }) return null
+        if (movedItem.cells.any { it.x !in 0.until(width) || it.y !in 0.until(height) }) return null
+        return copy(items = items + movedItem, originalItems = originalItems + item)
     }
 }
 
