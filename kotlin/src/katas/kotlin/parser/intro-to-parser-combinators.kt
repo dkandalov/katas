@@ -238,7 +238,7 @@ object `ref combinator`: () -> Unit {
     val whitespace = rep(str(" "))
 
     val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
-        val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
+        val s = (payload as Rep).values.joinToString("") { (it as Chr).s }
         IntValue(s.toInt())
     }
 
