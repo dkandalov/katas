@@ -56,29 +56,29 @@ class WildcardMatching {
 private data class Match(val s: String, val offset: Int = 0, val isComplete: Boolean = offset >= s.length)
 private typealias Matcher = (match: Match) -> Sequence<Match>
 
-private data class CharMatcher(val char: Char) : Matcher {
+private data class CharMatcher(val char: Char): Matcher {
     override fun invoke(match: Match) =
         when {
-            match.isComplete -> emptySequence()
+            match.isComplete              -> emptySequence()
             match.s[match.offset] == char -> sequenceOf(Match(match.s, match.offset + 1))
-            else -> emptySequence()
+            else                          -> emptySequence()
         }
 }
 
-private data class SeqMatcher(val matchers: List<Matcher>) : Matcher {
+private data class SeqMatcher(val matchers: List<Matcher>): Matcher {
     override fun invoke(match: Match) =
         matchers.fold(sequenceOf(match)) { matches, matcher ->
             matches.flatMap { matcher.invoke(it) }
         }
 }
 
-private class QuestionMatcher : Matcher {
+private class QuestionMatcher: Matcher {
     override fun invoke(match: Match) =
         if (match.isComplete) emptySequence()
         else sequenceOf(Match(match.s, match.offset + 1))
 }
 
-private class StarMatcher : Matcher {
+private class StarMatcher: Matcher {
     override fun invoke(match: Match) =
         (match.offset..match.s.length).asSequence().map { offset ->
             Match(match.s, offset)
@@ -88,8 +88,8 @@ private class StarMatcher : Matcher {
 private fun isMatch(s: String, pattern: String): Boolean {
     val matcher = SeqMatcher(pattern.map {
         when (it) {
-            '*' -> StarMatcher()
-            '?' -> QuestionMatcher()
+            '*'  -> StarMatcher()
+            '?'  -> QuestionMatcher()
             else -> CharMatcher(it)
         }
     })
