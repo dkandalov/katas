@@ -25,12 +25,12 @@ private fun TreeNode.levelOrder(): List<List<Int>> {
     val result = ArrayList<List<Int>>()
     while (q1.isNotEmpty()) {
         val subResult = ArrayList<Int>()
-        while (q1.isNotEmpty()) {
+        do {
             val node = q1.removeLast()
             if (node.left != null) q2.addFirst(node.left)
             if (node.right != null) q2.addFirst(node.right)
             subResult.add(node.value)
-        }
+        } while (q1.isNotEmpty())
         result.add(subResult)
         val tmp = q1
         q1 = q2

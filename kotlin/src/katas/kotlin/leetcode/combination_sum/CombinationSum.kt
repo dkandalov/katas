@@ -20,10 +20,13 @@ class CombinationSumTests {
 }
 
 private fun List<Int>.combinations(target: Int): List<List<Int>> =
-    if (target == 0) listOf(emptyList())
-    else if (target < 0 || isEmpty()) emptyList()
-    else combinations(target - first()).map { listOf(first()) + it } +
-        subList(1, size).combinations(target)
+        when {
+            target == 0             -> listOf(emptyList())
+            target < 0 || isEmpty() -> emptyList()
+            else                    ->
+                combinations(target - first()).map { listOf(first()) + it } +
+                drop(1).combinations(target)
+        }
 
 private fun List<Int>.combinations_(target: Int): List<List<Int>> {
     return mapIndexed { index, n ->

@@ -7,7 +7,6 @@ import org.junit.Test
  * https://leetcode.com/problems/add-and-search-word-data-structure-design/
  */
 class AddAndSearchWordTests {
-
     @Test fun `add and search words`() {
         val dictionary = WordDictionary()
         dictionary.addWord("foo")
@@ -44,8 +43,8 @@ private class WordDictionary {
     companion object {
         private fun Node.add(word: String) {
             var node = this
-            word.toCharArray().forEach { char ->
-                node = node.children.getOrPut(char, { Node(char) })
+            word.forEach { char ->
+                node = node.children.getOrPut(char, defaultValue = { Node(char) })
             }
         }
 

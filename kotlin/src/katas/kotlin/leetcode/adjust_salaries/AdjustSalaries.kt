@@ -3,6 +3,14 @@ package katas.kotlin.leetcode.adjust_salaries
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * Give an array of salaries. The total salary has a budget.
+ * At the beginning, the total salary of employees is larger than the budget.
+ * It is required to find the number k, and reduce all the salaries larger than k to k,
+ * such that the total salary is exactly equal to the budget.
+ *
+ * https://leetcode.com/discuss/interview-question/351313/Google-or-Phone-Screen-or-Salary-Adjustment
+ */
 class AdjustSalariesTests {
     @Test fun `it works`() {
         adjustSalaries(arrayOf(10, 30, 20, 40), budget = 80) shouldEqual arrayOf(10, 20, 25, 25)

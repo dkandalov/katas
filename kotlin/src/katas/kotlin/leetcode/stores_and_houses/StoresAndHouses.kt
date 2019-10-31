@@ -6,6 +6,11 @@ import kotlin.math.abs
 
 /**
  * https://leetcode.com/discuss/interview-question/350248/Google-or-Summer-Intern-OA-2019-or-Stores-and-Houses
+ *
+ * You are given 2 arrays representing integer locations of stores and houses (each location in this problem is one-dimentional). For each house, find the store closest to it.
+ * Return an integer array result where result[i] should denote the location of the store closest to the i-th house.
+ * If many stores are equidistant from a particular house, choose the store with the smallest numerical location.
+ * Note that there may be multiple stores and houses at the same location.
  */
 class StoresAndHousesTests {
     @Test fun examples() {

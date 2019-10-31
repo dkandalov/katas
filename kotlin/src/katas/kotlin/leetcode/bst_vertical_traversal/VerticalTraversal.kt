@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.vertical_traversla_of_bst
+package katas.kotlin.leetcode.bst_vertical_traversal
 
 import org.junit.Test
 import java.util.*
@@ -34,7 +34,7 @@ private fun verticalTraversal(root: Node): List<List<Int>> {
         val values = valuesByColumn.getOrPut(column, { ArrayList() })
         values.add(node.value)
     }
-    return valuesByColumn.values.map { it }
+    return valuesByColumn.values.toList()
 }
 
 private fun Node.traverse(column: Int = 0, f: (Node, Int) -> Unit) {

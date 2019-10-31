@@ -1,4 +1,4 @@
-package katas.kotlin.leetcode.validate_bst
+package katas.kotlin.leetcode.bst_validation
 
 import katas.kotlin.leetcode.TreeNode
 import kotlincommon.test.shouldEqual
