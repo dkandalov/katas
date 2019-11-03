@@ -32,6 +32,7 @@ class WildcardMatching3 {
 }
 
 private fun match(s: String, pattern: String): Boolean {
+    if (s.isEmpty() && pattern.isEmpty()) return true
     return s.length == pattern.length &&
         s.zip(pattern).all {
             it.second == '?' || it.first == it.second
