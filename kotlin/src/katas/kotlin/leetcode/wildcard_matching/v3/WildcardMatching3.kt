@@ -12,6 +12,7 @@ class WildcardMatching3 {
         match("a", "a") shouldEqual true
         match("a", "b") shouldEqual false
         match("a", "aa") shouldEqual false
+        match("aa", "a") shouldEqual false
     }
 }
 
