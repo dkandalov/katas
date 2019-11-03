@@ -54,6 +54,14 @@ private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
     if (pattern.isEmpty()) return false
 
+    val matchers = pattern.map {
+        when (it) {
+            '*'  -> star()
+            '?'  -> questionMark()
+            else -> char(it)
+        }
+    }
+
     val matcher = when (val c = pattern.first()) {
         '*'  -> star()
         '?'  -> questionMark()
