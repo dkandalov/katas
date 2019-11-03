@@ -13,9 +13,17 @@ class WildcardMatching3 {
         match("a", "b") shouldEqual false
         match("a", "aa") shouldEqual false
         match("aa", "a") shouldEqual false
+
+        match("", "?") shouldEqual false
+        match("a", "?") shouldEqual true
+        match("ab", "?") shouldEqual false
+        match("ab", "??") shouldEqual true
     }
 }
 
 private fun match(s: String, pattern: String): Boolean {
-    return s == pattern
+    return s.length == pattern.length &&
+        s.zip(pattern).all {
+            it.second == '?' || it.first == it.second
+        }
 }
