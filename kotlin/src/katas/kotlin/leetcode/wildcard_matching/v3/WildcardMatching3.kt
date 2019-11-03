@@ -5,6 +5,10 @@ import org.junit.*
 
 class WildcardMatching3 {
     @Test fun `some examples`() {
+        match("", "") shouldEqual true
+        match("", "a") shouldEqual false
+        match("a", "") shouldEqual false
+
         match("abc", "a") shouldEqual false
         match("abc", "abc") shouldEqual true
     }
