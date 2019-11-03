@@ -59,13 +59,5 @@ private fun match(s: String, pattern: String): Boolean {
         '?'  -> questionMark()
         else -> char(c)
     }
-
-    if (s.isEmpty() || pattern.isEmpty()) return false
-    return when (pattern.first()) {
-        '*'  -> (0..s.length)
-            .map { s.substring(it, s.length) }
-            .any { match(it, pattern.drop(1)) }
-        '?'  -> match(s.drop(1), pattern.drop(1))
-        else -> if (s.first() == pattern.first()) match(s.drop(1), pattern.drop(1)) else return false
-    }
+    return matcher(s).any { match(it, pattern.drop(1)) }
 }
