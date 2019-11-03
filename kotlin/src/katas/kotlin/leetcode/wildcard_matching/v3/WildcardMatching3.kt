@@ -21,14 +21,14 @@ class WildcardMatching3 {
         match("ab", "???") shouldEqual false
         match("abc", "??") shouldEqual false
 
-//        match("", "*") shouldEqual true
+        match("", "*") shouldEqual true
         match("abc", "*") shouldEqual true
         match("abc", "a*") shouldEqual true
         match("abc", "*c") shouldEqual true
         match("abc", "a*c") shouldEqual true
         match("abc", "*a") shouldEqual false
         match("abc", "b*") shouldEqual false
-//        match("abc", "****") shouldEqual false
+        match("abc", "****") shouldEqual true
     }
 }
 
@@ -45,9 +45,8 @@ private fun questionMark(): Matcher = { input ->
 }
 
 private fun star(): Matcher = { input ->
-    (0..input.length).map {
-        input.substring(it, input.length)
-    }
+    if (input.isEmpty()) listOf(input)
+    else input.indices.map { input.substring(it + 1, input.length) }
 }
 
 private fun match(s: String, pattern: String): Boolean {
@@ -64,11 +63,4 @@ private fun match(s: String, pattern: String): Boolean {
     return matchers
         .fold(listOf(s)) { inputs, matcher -> inputs.flatMap { matcher(it) } }
         .any { input -> input.isEmpty() }
-
-    val matcher = when (val c = pattern.first()) {
-        '*'  -> star()
-        '?'  -> questionMark()
-        else -> char(c)
-    }
-    return matcher(s).any { match(it, pattern.drop(1)) }
 }
