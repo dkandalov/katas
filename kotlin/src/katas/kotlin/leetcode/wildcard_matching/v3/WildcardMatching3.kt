@@ -35,7 +35,10 @@ private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
     if (s.isEmpty() || pattern.isEmpty()) return false
     return when (pattern.first()) {
-        '?' -> match(s.drop(1), pattern.drop(1))
+        '*'  -> (0..s.length)
+            .map { s.substring(it, s.length) }
+            .any { match(it, pattern.drop(1)) }
+        '?'  -> match(s.drop(1), pattern.drop(1))
         else -> if (s.first() == pattern.first()) match(s.drop(1), pattern.drop(1)) else return false
     }
 }
