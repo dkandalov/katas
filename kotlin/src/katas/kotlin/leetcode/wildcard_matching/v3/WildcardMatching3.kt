@@ -49,9 +49,6 @@ private fun star(): Matcher = { input ->
 }
 
 private fun match(s: String, pattern: String): Boolean {
-    if (s.isEmpty() && pattern.isEmpty()) return true
-    if (pattern.isEmpty()) return false
-
     val matchers = pattern.map {
         when (it) {
             '*'  -> star()
