@@ -20,6 +20,14 @@ class WildcardMatching3 {
         match("ab", "??") shouldEqual true
         match("ab", "???") shouldEqual false
         match("abc", "??") shouldEqual false
+
+//        match("", "*") shouldEqual true
+//        match("abc", "*") shouldEqual true
+//        match("abc", "a*") shouldEqual true
+//        match("abc", "*c") shouldEqual true
+//        match("abc", "a*c") shouldEqual true
+//        match("abc", "*a") shouldEqual false
+//        match("abc", "b*") shouldEqual false
     }
 }
 
