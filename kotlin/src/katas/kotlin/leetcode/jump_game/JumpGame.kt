@@ -3,6 +3,9 @@ package katas.kotlin.leetcode.jump_game
 import kotlincommon.test.shouldEqual
 import org.junit.Test
 
+/**
+ * https://leetcode.com/problems/jump-game-ii/
+ */
 class JumpGame {
     @Test fun `some examples`() {
         jump() shouldEqual emptyList()
