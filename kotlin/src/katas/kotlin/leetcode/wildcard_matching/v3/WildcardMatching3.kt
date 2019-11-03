@@ -34,8 +34,8 @@ class WildcardMatching3 {
 private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
     if (s.isEmpty() || pattern.isEmpty()) return false
-    return s.length == pattern.length &&
-        s.zip(pattern).all {
-            it.second == '?' || it.first == it.second
-        }
+    return when (pattern.first()) {
+        '?' -> match(s.drop(1), pattern.drop(1))
+        else -> if (s.first() == pattern.first()) match(s.drop(1), pattern.drop(1)) else return false
+    }
 }
