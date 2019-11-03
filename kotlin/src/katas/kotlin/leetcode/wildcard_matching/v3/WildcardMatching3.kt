@@ -22,12 +22,12 @@ class WildcardMatching3 {
         match("abc", "??") shouldEqual false
 
 //        match("", "*") shouldEqual true
-//        match("abc", "*") shouldEqual true
-//        match("abc", "a*") shouldEqual true
-//        match("abc", "*c") shouldEqual true
-//        match("abc", "a*c") shouldEqual true
-//        match("abc", "*a") shouldEqual false
-//        match("abc", "b*") shouldEqual false
+        match("abc", "*") shouldEqual true
+        match("abc", "a*") shouldEqual true
+        match("abc", "*c") shouldEqual true
+        match("abc", "a*c") shouldEqual true
+        match("abc", "*a") shouldEqual false
+        match("abc", "b*") shouldEqual false
     }
 }
 
