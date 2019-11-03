@@ -2,7 +2,6 @@
 <project version="4">
   <component name="LimitedWIPSettings">
     <option name="notificationIntervalInMinutes" value="2147483647" />
-    <option name="tcrActionOnPassedTest" value="AmendCommit" />
     <option name="tcrEnabled" value="true" />
   </component>
   <component name="NullableNotNullManager">
