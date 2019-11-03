@@ -32,20 +32,20 @@ class WildcardMatching3 {
     }
 }
 
-private typealias Matcher = (input: String) -> List<String>
+private typealias Matcher = (input: String) -> Sequence<String>
 
 private fun char(c: Char): Matcher = { input ->
-    if (input.isEmpty() || input.first() != c) emptyList()
-    else listOf(input.drop(1))
+    if (input.isEmpty() || input.first() != c) emptySequence()
+    else sequenceOf(input.drop(1))
 }
 
 private val questionMark: Matcher = { input ->
-    if (input.isEmpty()) emptyList()
-    else listOf(input.drop(1))
+    if (input.isEmpty()) emptySequence()
+    else sequenceOf(input.drop(1))
 }
 
 private val star: Matcher = { input ->
-    (0..input.length).map { input.substring(it, input.length) }
+    (0..input.length).asSequence().map { input.substring(it, input.length) }
 }
 
 private fun match(s: String, pattern: String): Boolean {
@@ -57,6 +57,6 @@ private fun match(s: String, pattern: String): Boolean {
         }
     }
     return matchers
-        .fold(listOf(s)) { inputs, matcher -> inputs.flatMap { matcher(it) } }
+        .fold(sequenceOf(s)) { inputs, matcher -> inputs.flatMap { matcher(it) } }
         .any { input -> input.isEmpty() }
 }
