@@ -61,7 +61,7 @@ private fun match(s: String, pattern: String): Boolean {
             else -> char(it)
         }
     }
-    matchers
+    return matchers
         .fold(listOf(s)) { inputs, matcher -> inputs.flatMap { matcher(it) } }
         .any { input -> input.isEmpty() }
 
