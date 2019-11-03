@@ -9,8 +9,9 @@ class WildcardMatching3 {
         match("", "a") shouldEqual false
         match("a", "") shouldEqual false
 
-        match("abc", "a") shouldEqual false
-        match("abc", "abc") shouldEqual true
+        match("a", "a") shouldEqual true
+        match("a", "b") shouldEqual false
+        match("a", "aa") shouldEqual false
     }
 }
 
