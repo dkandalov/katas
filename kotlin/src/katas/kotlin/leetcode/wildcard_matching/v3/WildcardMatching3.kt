@@ -39,20 +39,20 @@ private fun char(c: Char): Matcher = { input ->
     else listOf(input.drop(1))
 }
 
-private fun questionMark(): Matcher = { input ->
+private val questionMark: Matcher = { input ->
     if (input.isEmpty()) emptyList()
     else listOf(input.drop(1))
 }
 
-private fun star(): Matcher = { input ->
+private val star: Matcher = { input ->
     (0..input.length).map { input.substring(it, input.length) }
 }
 
 private fun match(s: String, pattern: String): Boolean {
     val matchers = pattern.map {
         when (it) {
-            '*'  -> star()
-            '?'  -> questionMark()
+            '*'  -> star
+            '?'  -> questionMark
             else -> char(it)
         }
     }
