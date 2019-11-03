@@ -61,6 +61,9 @@ private fun match(s: String, pattern: String): Boolean {
             else -> char(it)
         }
     }
+    matchers
+        .fold(listOf(s)) { inputs, matcher -> inputs.flatMap { matcher(it) } }
+        .any { input -> input.isEmpty() }
 
     val matcher = when (val c = pattern.first()) {
         '*'  -> star()
