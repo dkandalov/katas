@@ -39,6 +39,11 @@ private fun char(c: Char): Matcher = { input ->
     else listOf(input.drop(1))
 }
 
+private fun questionMark(): Matcher = { input ->
+    if (input.isEmpty()) emptyList()
+    else listOf(input.drop(1))
+}
+
 private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
     if (s.isEmpty() || pattern.isEmpty()) return false
