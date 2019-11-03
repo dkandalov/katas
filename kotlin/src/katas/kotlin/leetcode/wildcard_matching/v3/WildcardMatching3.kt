@@ -28,7 +28,15 @@ class WildcardMatching3 {
         match("abc", "a*c") shouldEqual true
         match("abc", "*a") shouldEqual false
         match("abc", "b*") shouldEqual false
+//        match("abc", "****") shouldEqual false
     }
+}
+
+private typealias Matcher = (input: String) -> List<String>
+
+private fun char(c: Char): Matcher = { input ->
+    if (input.isEmpty() || input.first() != c) emptyList()
+    else listOf(input.drop(1))
 }
 
 private fun match(s: String, pattern: String): Boolean {
