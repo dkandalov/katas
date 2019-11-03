@@ -44,6 +44,12 @@ private fun questionMark(): Matcher = { input ->
     else listOf(input.drop(1))
 }
 
+private fun star(): Matcher = { input ->
+    (0..input.length).map {
+        input.substring(it, input.length)
+    }
+}
+
 private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
     if (s.isEmpty() || pattern.isEmpty()) return false
