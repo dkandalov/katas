@@ -52,6 +52,14 @@ private fun star(): Matcher = { input ->
 
 private fun match(s: String, pattern: String): Boolean {
     if (s.isEmpty() && pattern.isEmpty()) return true
+    if (pattern.isEmpty()) return false
+
+    val matcher = when (val c = pattern.first()) {
+        '*'  -> star()
+        '?'  -> questionMark()
+        else -> char(c)
+    }
+
     if (s.isEmpty() || pattern.isEmpty()) return false
     return when (pattern.first()) {
         '*'  -> (0..s.length)
