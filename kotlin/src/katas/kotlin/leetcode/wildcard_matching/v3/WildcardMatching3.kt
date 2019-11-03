@@ -19,6 +19,7 @@ class WildcardMatching3 {
         match("ab", "?") shouldEqual false
         match("ab", "??") shouldEqual true
         match("ab", "???") shouldEqual false
+        match("abc", "??") shouldEqual false
     }
 }
 
