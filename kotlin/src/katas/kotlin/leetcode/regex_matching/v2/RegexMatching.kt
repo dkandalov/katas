@@ -11,6 +11,7 @@ class RegexMatching {
         match("aa", "a") shouldEqual false
 
         match("aa", "a*") shouldEqual true
+        match("aaa", "a*") shouldEqual true
     }
 }
 
@@ -30,7 +31,9 @@ private fun sequenceMatcher(matchers: List<Matcher>): Matcher = { input ->
 private fun zeroOrMore(matcher: Matcher): Matcher = { input ->
     sequence {
         yield(input)
-        if (matcher(input).any { it != input }) yield(input.drop(1))
+        matcher(input)
+            .flatMap { zeroOrMore(matcher)(it) }
+            .forEach { if (it != input) yield(it) }
     }.toList()
 }
 
