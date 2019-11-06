@@ -15,7 +15,11 @@ class RegexMatching {
         match("ba", "a*") shouldEqual false
 
         match("a", ".") shouldEqual true
+        match("ab", ".") shouldEqual false
         match("ab", "..") shouldEqual true
+        match("abc", "ab.") shouldEqual true
+        match("abc", "a.c") shouldEqual true
+        match("abc", ".bc") shouldEqual true
         match("ab", "b.") shouldEqual false
 
         match("abcdef", ".*") shouldEqual true
