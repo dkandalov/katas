@@ -27,17 +27,20 @@ private fun sequenceMatcher(matchers: List<Matcher>): Matcher = { input ->
     }
 }
 
-private fun zeroOrMore(char: Char): Matcher = { input ->
+private fun zeroOrMore(matcher: Matcher): Matcher = { input ->
     sequence {
         yield(input)
-        if (input.first() == char) yield(input.drop(1))
+        if (matcher(input).any { it != input }) yield(input.drop(1))
     }.toList()
 }
 
 private fun match(input: String, regex: String): Boolean {
     val matchers = regex.toCharArray().fold(emptyList<Matcher>()) { matchers, char ->
-        if (matchers.isEmpty()) listOf(charMatcher(char))
-        else matchers + charMatcher(char)
+        when {
+            matchers.isEmpty() -> listOf(charMatcher(char))
+            char == '*'        -> matchers + zeroOrMore(matchers.last())
+            else               -> matchers + charMatcher(char)
+        }
     }
     val regexMatcher = sequenceMatcher(matchers)
     return regexMatcher(input).any { it.isEmpty() }
