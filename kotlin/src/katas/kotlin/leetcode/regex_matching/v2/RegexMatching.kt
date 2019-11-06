@@ -17,10 +17,12 @@ class RegexMatching {
         match("a", ".") shouldEqual true
         match("ab", ".") shouldEqual false
         match("ab", "..") shouldEqual true
-        match("abc", "ab.") shouldEqual true
-        match("abc", "a.c") shouldEqual true
-        match("abc", ".bc") shouldEqual true
         match("ab", "b.") shouldEqual false
+        match("abc", "...") shouldEqual true
+        match("abc", ".bc") shouldEqual true
+        match("abc", "a.c") shouldEqual true
+        match("abc", "ab.") shouldEqual true
+        match("abc", ".bc") shouldEqual true
 
         match("abcdef", ".*") shouldEqual true
         match("aab", "c*a*b") shouldEqual true
