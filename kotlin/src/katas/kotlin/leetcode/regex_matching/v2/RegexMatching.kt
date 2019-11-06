@@ -12,6 +12,7 @@ class RegexMatching {
 
         match("aa", "a*") shouldEqual true
         match("aaa", "a*") shouldEqual true
+        match("ba", "a*") shouldEqual false
     }
 }
 
