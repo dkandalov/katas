@@ -13,6 +13,8 @@ class RegexMatching {
         match("aa", "a*") shouldEqual true
         match("aaa", "a*") shouldEqual true
         match("ba", "a*") shouldEqual false
+
+        match("a", ".") shouldEqual true
     }
 }
 
@@ -44,11 +46,10 @@ private fun anyChar(): Matcher = { input ->
 
 private fun match(input: String, regex: String): Boolean {
     val matchers = regex.toCharArray().fold(emptyList<Matcher>()) { matchers, char ->
-        when {
-            matchers.isEmpty() -> listOf(charMatcher(char))
-            char == '.'        -> matchers + anyChar()
-            char == '*'        -> matchers + zeroOrMore(matchers.last())
-            else               -> matchers + charMatcher(char)
+        when (char) {
+            '.'  -> matchers + anyChar()
+            '*'  -> matchers + zeroOrMore(matchers.last())
+            else -> matchers + charMatcher(char)
         }
     }
     val regexMatcher = sequenceMatcher(matchers)
