@@ -10,7 +10,7 @@ class RegexMatching {
         match("a", "aa") shouldEqual false
         match("aa", "a") shouldEqual false
 
-        // match("aa", "a*") shouldEqual true
+        match("aa", "a*") shouldEqual true
     }
 }
 
