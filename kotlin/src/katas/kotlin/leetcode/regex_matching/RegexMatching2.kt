@@ -6,9 +6,10 @@ import org.junit.*
 class RegexMatching2 {
     @Test fun `some examples`() {
         match("a", "a") shouldEqual true
+        match("aa", "a") shouldEqual false
     }
 }
 
 private fun match(input: String, regex: String): Boolean {
-    return true
+    return input == regex
 }
