@@ -15,6 +15,8 @@ class RegexMatching {
         match("ba", "a*") shouldEqual false
 
         match("a", ".") shouldEqual true
+        match("ab", "..") shouldEqual true
+        match("ab", "b.") shouldEqual false
     }
 }
 
