@@ -5,8 +5,10 @@ import org.junit.*
 
 class RegexMatching2 {
     @Test fun `some examples`() {
+        match("", "") shouldEqual true
         match("a", "a") shouldEqual true
         match("aa", "a") shouldEqual false
+        match("a", "aa") shouldEqual false
     }
 }
 
