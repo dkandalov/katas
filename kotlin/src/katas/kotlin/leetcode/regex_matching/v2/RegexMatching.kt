@@ -17,6 +17,8 @@ class RegexMatching {
         match("a", ".") shouldEqual true
         match("ab", "..") shouldEqual true
         match("ab", "b.") shouldEqual false
+
+        match("abcdef", ".*") shouldEqual true
     }
 }
 
