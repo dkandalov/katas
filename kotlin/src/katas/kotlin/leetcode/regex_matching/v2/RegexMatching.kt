@@ -22,5 +22,9 @@ private fun str(char: Char): Matcher = { input ->
 }
 
 private fun match(input: String, regex: String): Boolean {
-    return input == regex
+    val output = regex
+        .map { str(it) }
+        .fold(input) { s, matcher -> matcher(s) ?: return false }
+
+    return output.isEmpty()
 }
