@@ -29,10 +29,9 @@ private fun zeroOrMore(char: Char): Matcher = { input ->
 }
 
 private fun match(input: String, regex: String): Boolean {
-    return regex
-        .map { str(it) }
-        .fold(listOf(input)) { inputs, matcher ->
-            inputs.flatMap(matcher)
-        }
+    val matchers = regex.map { str(it) }
+
+    return matchers
+        .fold(listOf(input)) { inputs, matcher -> inputs.flatMap(matcher) }
         .any { it.isEmpty() }
 }
