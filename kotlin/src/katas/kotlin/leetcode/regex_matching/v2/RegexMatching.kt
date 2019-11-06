@@ -46,6 +46,7 @@ private fun match(input: String, regex: String): Boolean {
     val matchers = regex.toCharArray().fold(emptyList<Matcher>()) { matchers, char ->
         when {
             matchers.isEmpty() -> listOf(charMatcher(char))
+            char == '.'        -> matchers + anyChar()
             char == '*'        -> matchers + zeroOrMore(matchers.last())
             else               -> matchers + charMatcher(char)
         }
