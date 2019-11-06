@@ -19,7 +19,7 @@ class RegexMatching {
         match("ab", "b.") shouldEqual false
 
         match("abcdef", ".*") shouldEqual true
-//        match("aab", "c*a*b") shouldEqual true
+        match("aab", "c*a*b") shouldEqual true
         match("mississippi", "mis*is*p*.") shouldEqual false
     }
 }
@@ -54,7 +54,7 @@ private fun match(input: String, regex: String): Boolean {
     val matchers = regex.toCharArray().fold(emptyList<Matcher>()) { matchers, char ->
         when (char) {
             '.'  -> matchers + anyChar()
-            '*'  -> matchers + zeroOrMore(matchers.last())
+            '*'  -> matchers.dropLast(1) + zeroOrMore(matchers.last())
             else -> matchers + charMatcher(char)
         }
     }
