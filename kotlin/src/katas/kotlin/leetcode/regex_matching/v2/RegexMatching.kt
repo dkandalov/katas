@@ -14,18 +14,25 @@ class RegexMatching {
     }
 }
 
-private typealias Matcher = (String) -> String?
+private typealias Matcher = (String) -> List<String>
 
 private fun str(char: Char): Matcher = { input ->
-    if (input.isEmpty() || input.first() != char) null
-    else input.drop(1)
+    if (input.isEmpty() || input.first() != char) emptyList()
+    else listOf(input.drop(1))
+}
+
+private fun zeroOrMore(char: Char): Matcher = { input ->
+    sequence {
+        yield(input)
+        if (input.first() == char) yield(input.drop(1))
+    }.toList()
 }
 
 private fun match(input: String, regex: String): Boolean {
     return regex
         .map { str(it) }
-        .fold(input) { s, matcher ->
-            matcher(s) ?: return false
+        .fold(listOf(input)) { inputs, matcher ->
+            inputs.flatMap(matcher)
         }
-        .isEmpty()
+        .any { it.isEmpty() }
 }
