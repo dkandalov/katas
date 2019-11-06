@@ -32,8 +32,8 @@ private fun zeroOrMore(matcher: Matcher): Matcher = { input ->
     sequence {
         yield(input)
         matcher(input)
-            .flatMap { zeroOrMore(matcher)(it) }
-            .forEach { if (it != input) yield(it) }
+            .flatMap { output -> zeroOrMore(matcher)(output) }
+            .forEach { output -> if (output != input) yield(output) }
     }.toList()
 }
 
