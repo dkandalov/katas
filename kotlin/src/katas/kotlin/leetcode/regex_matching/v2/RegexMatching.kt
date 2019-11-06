@@ -19,6 +19,8 @@ class RegexMatching {
         match("ab", "b.") shouldEqual false
 
         match("abcdef", ".*") shouldEqual true
+//        match("aab", "c*a*b") shouldEqual true
+        match("mississippi", "mis*is*p*.") shouldEqual false
     }
 }
 
