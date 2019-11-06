@@ -35,6 +35,6 @@ private fun zeroOrMore(char: Char): Matcher = { input ->
 }
 
 private fun match(input: String, regex: String): Boolean {
-    val matchers = regex.map { charMatcher(it) }
-    return sequenceMatcher(matchers)(input).any { it.isEmpty() }
+    val regexMatcher = sequenceMatcher(regex.map { charMatcher(it) })
+    return regexMatcher(input).any { it.isEmpty() }
 }
