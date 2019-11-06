@@ -16,7 +16,7 @@ class RegexMatching {
 
 private typealias Matcher = (String) -> List<String>
 
-private fun str(char: Char): Matcher = { input ->
+private fun matchChar(char: Char): Matcher = { input ->
     if (input.isEmpty() || input.first() != char) emptyList()
     else listOf(input.drop(1))
 }
@@ -29,7 +29,7 @@ private fun zeroOrMore(char: Char): Matcher = { input ->
 }
 
 private fun match(input: String, regex: String): Boolean {
-    val matchers = regex.map { str(it) }
+    val matchers = regex.map { matchChar(it) }
 
     return matchers
         .fold(listOf(input)) { inputs, matcher -> inputs.flatMap(matcher) }
