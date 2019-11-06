@@ -38,6 +38,10 @@ private fun zeroOrMore(matcher: Matcher): Matcher = { input ->
     }.toList()
 }
 
+private fun anyChar(): Matcher = { input ->
+    if (input.isEmpty()) emptyList() else listOf(input.drop(1))
+}
+
 private fun match(input: String, regex: String): Boolean {
     val matchers = regex.toCharArray().fold(emptyList<Matcher>()) { matchers, char ->
         when {
