@@ -7,7 +7,9 @@ class ParserTests {
     @Test fun `number addition`() {
         str("hello")(Input("hello")) shouldEqual Output("hello", Input("hello", offset = 5))
         str("hello")(Input("world")) shouldEqual null
+        
         seq(str("hello"), str(" "), str("world"))(Input("hello world"))?.payload shouldEqual listOf("hello", " ", "world")
+        seq(str("hello"), str(" "), str("world"))(Input("hello"))?.payload shouldEqual null
 
         eval("1 + 2") shouldEqual 3
     }
