@@ -6,6 +6,7 @@ import org.junit.*
 class ParserTests {
     @Test fun `number addition`() {
         str("hello")(Input("hello")) shouldEqual Output("hello", Input("hello", offset = 5))
+        str("hello")(Input("world")) shouldEqual null
 
         eval("1 + 2") shouldEqual 3
     }
