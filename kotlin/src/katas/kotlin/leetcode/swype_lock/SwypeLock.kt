@@ -12,6 +12,10 @@ class SwypeLock {
         validate((1..10).toList()) shouldEqual false
         validate(listOf(1, 1)) shouldEqual false
         validate(listOf(1, 2, 3)) shouldEqual true
+
+        validate(listOf(1, 2)) shouldEqual true
+        validate(listOf(1, 5)) shouldEqual true
+        validate(listOf(1, 4)) shouldEqual true
     }
 }
 
