@@ -23,7 +23,10 @@ class SwypeLock {
 
 private fun validate(swypeLock: List<Int>): Boolean {
     if (swypeLock.size !in 1..9 || swypeLock.distinct().size != swypeLock.size) return false
-    return swypeLock.windowed(size = 2).all { (digit1, digit2) ->
-        (digit1 - digit2).absoluteValue == 1
-    }
+    return swypeLock.windowed(size = 2)
+        .all { (digit1, digit2) -> areNeighbours(digit1, digit2) }
+}
+
+private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
+    return (digit1 - digit2).absoluteValue == 1
 }
