@@ -9,13 +9,13 @@ class SwypeLock {
         // 1 2 3
         // 4 5 6
         // 7 8 9
-        
+
         validate(emptyList()) shouldEqual false
         validate((1..10).toList()) shouldEqual false
         validate(listOf(1, 1)) shouldEqual false
         validate(listOf(0)) shouldEqual false
         validate(listOf(10)) shouldEqual false
-        
+
         validate(listOf(1, 2)) shouldEqual true
         validate(listOf(1, 3)) shouldEqual false
         validate(listOf(1, 4)) shouldEqual true
@@ -23,7 +23,7 @@ class SwypeLock {
 
         validate(listOf(2, 1)) shouldEqual true
         validate(listOf(2, 3)) shouldEqual true
-        // validate(listOf(2, 4)) shouldEqual true
+        validate(listOf(2, 4)) shouldEqual true
         validate(listOf(2, 5)) shouldEqual true
         validate(listOf(2, 6)) shouldEqual true
 
