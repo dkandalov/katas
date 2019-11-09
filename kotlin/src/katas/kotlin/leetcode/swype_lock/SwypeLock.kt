@@ -2,6 +2,7 @@ package katas.kotlin.leetcode.swype_lock
 
 import kotlincommon.test.*
 import org.junit.*
+import kotlin.math.*
 
 class SwypeLock {
     @Test fun `some examples`() {
@@ -14,12 +15,15 @@ class SwypeLock {
         validate(listOf(1, 2, 3)) shouldEqual true
 
         validate(listOf(1, 2)) shouldEqual true
-        validate(listOf(1, 5)) shouldEqual true
-        validate(listOf(1, 4)) shouldEqual true
+        validate(listOf(1, 3)) shouldEqual false
+//        validate(listOf(1, 4)) shouldEqual true
+//        validate(listOf(1, 5)) shouldEqual true
     }
 }
 
 private fun validate(swypeLock: List<Int>): Boolean {
     if (swypeLock.size !in 1..9 || swypeLock.distinct().size != swypeLock.size) return false
-    return true
+    return swypeLock.windowed(size = 2).all { (digit1, digit2) ->
+        (digit1 - digit2).absoluteValue == 1
+    }
 }
