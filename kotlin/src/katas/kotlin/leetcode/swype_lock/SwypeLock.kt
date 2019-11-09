@@ -21,6 +21,12 @@ class SwypeLock {
         validate(listOf(1, 4)) shouldEqual true
         validate(listOf(1, 5)) shouldEqual true
 
+        validate(listOf(2, 1)) shouldEqual true
+        validate(listOf(2, 3)) shouldEqual true
+//        validate(listOf(2, 4)) shouldEqual true
+        validate(listOf(2, 5)) shouldEqual true
+        validate(listOf(2, 6)) shouldEqual true
+
         validate(listOf(1, 2, 3)) shouldEqual true
         validate(listOf(3, 2, 1)) shouldEqual true
 
