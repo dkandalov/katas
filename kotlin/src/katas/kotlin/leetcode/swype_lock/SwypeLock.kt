@@ -23,16 +23,21 @@ class SwypeLock {
 
         validate(listOf(1, 2, 3)) shouldEqual true
         validate(listOf(3, 2, 1)) shouldEqual true
+
+//        validate(listOf(1, 2, 3, 4)) shouldEqual false
     }
 }
 
 private fun validate(swypeLock: List<Int>): Boolean {
     if (swypeLock.size !in 1..9 || swypeLock.distinct().size != swypeLock.size) return false
-    return swypeLock.all { it in 1..9 } && 
+    return swypeLock.all { it in 1..9 } &&
         swypeLock.windowed(size = 2).all { (digit1, digit2) -> areNeighbours(digit1, digit2) }
 }
 
 private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
     val absDiff = (digit1 - digit2).absoluteValue
-    return absDiff == 1 || absDiff == 3 || absDiff == 4
+    val spanTheEdge = digit1.row != digit2.row
+    return (absDiff == 1 && !spanTheEdge) || absDiff == 3 || absDiff == 4
 }
+
+private val Int.row: Int get() = (this - 1) / 3
