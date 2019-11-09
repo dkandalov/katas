@@ -45,7 +45,7 @@ private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
     val absDiff = (digit1 - digit2).absoluteValue
     val isHorizontal = absDiff == 1 && digit1.row == digit2.row
     val isVertical = absDiff == 3
-    val isDiagonal = absDiff == 4 && digit1.row != digit2.row
+    val isDiagonal = (absDiff == 2 || absDiff == 4) && digit1.row != digit2.row
     return isHorizontal || isVertical || isDiagonal
 }
 
