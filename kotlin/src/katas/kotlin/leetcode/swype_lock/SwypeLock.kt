@@ -15,7 +15,6 @@ class SwypeLock {
 }
 
 private fun validate(swypeLock: List<Int>): Boolean {
-    if (swypeLock.isEmpty()) return false
-    if (swypeLock.size > 9) return false
+    if (swypeLock.size !in 1..9) return false
     return true
 }
