@@ -9,11 +9,13 @@ class SwypeLock {
         // 4 5 6
         // 7 8 9
         validate(emptyList()) shouldEqual false
+        validate((1..10).toList()) shouldEqual false
         validate(listOf(1, 2, 3)) shouldEqual true
     }
 }
 
 private fun validate(swypeLock: List<Int>): Boolean {
     if (swypeLock.isEmpty()) return false
+    if (swypeLock.size > 9) return false
     return true
 }
