@@ -64,8 +64,14 @@ class SwypeLock {
     }
 
     private fun check(digit: Int, validMoves: List<Int>, invalidMoves: List<Int>) {
-        validMoves.forEach { validate(listOf(digit, it)) shouldEqual true }
-        invalidMoves.forEach { validate(listOf(digit, it)) shouldEqual false }
+        validMoves.forEach {
+            validate(listOf(digit, it)) shouldEqual true
+            validate(listOf(it, digit)) shouldEqual true
+        }
+        invalidMoves.forEach {
+            validate(listOf(digit, it)) shouldEqual false
+            validate(listOf(it, digit)) shouldEqual false
+        }
     }
 }
 
