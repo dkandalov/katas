@@ -55,6 +55,11 @@ class SwypeLock {
             listOf(1, 2, 3).forEach { validate(listOf(n, it)) shouldEqual false }
         }
 
+        9.let { n ->
+            listOf(5, 6, 8).forEach { validate(listOf(n, it)) shouldEqual true }
+            listOf(1, 2, 3, 4, 7).forEach { validate(listOf(n, it)) shouldEqual false }
+        }
+
         validate(listOf(1, 2, 3)) shouldEqual true
         validate(listOf(3, 2, 1)) shouldEqual true
 
