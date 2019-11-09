@@ -43,9 +43,10 @@ private fun validate(swypeLock: List<Int>): Boolean {
 
 private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
     val absDiff = (digit1 - digit2).absoluteValue
-    val isLeftOrRight = absDiff == 1 && digit1.row == digit2.row
-    val isUpOrDown = absDiff == 3
-    return isLeftOrRight || isUpOrDown || absDiff == 4
+    val isHorizontal = absDiff == 1 && digit1.row == digit2.row
+    val isVertical = absDiff == 3
+    val isDiagonal = absDiff == 4
+    return isHorizontal || isVertical || isDiagonal
 }
 
 private val Int.row: Int get() = (this - 1) / 3
