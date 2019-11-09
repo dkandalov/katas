@@ -18,13 +18,13 @@ class SwypeLock {
 
         check(digit = 1, validMoves = listOf(2, 4, 5), invalidMoves = listOf(1, 3, 6, 7, 8, 9))
         check(digit = 2, validMoves = listOf(1, 3, 4, 5, 6), invalidMoves = listOf(2, 7, 8, 9))
-        check(digit = 3, validMoves = listOf(2, 5, 6), invalidMoves = listOf(1, 4, 7, 8, 9))
-        check(digit = 4, validMoves = listOf(1, 2, 5, 8, 7), invalidMoves = listOf(3, 6, 9))
+        check(digit = 3, validMoves = listOf(2, 5, 6), invalidMoves = listOf(1, 3, 4, 7, 8, 9))
+        check(digit = 4, validMoves = listOf(1, 2, 5, 8, 7), invalidMoves = listOf(3, 4, 6, 9))
         check(digit = 5, validMoves = listOf(1, 2, 3, 4, 6, 7, 8, 9), invalidMoves = listOf(5))
-        check(digit = 6, validMoves = listOf(2, 3, 5, 8, 9), invalidMoves = listOf(1, 4, 7))
-        check(digit = 7, validMoves = listOf(4, 5, 8), invalidMoves = listOf(1, 2, 3, 6, 9))
-        check(digit = 8, validMoves = listOf(4, 5, 6, 7, 9), invalidMoves = listOf(1, 2, 3))
-        check(digit = 9, validMoves = listOf(5, 6, 8), invalidMoves = listOf(1, 2, 3, 4, 7))
+        check(digit = 6, validMoves = listOf(2, 3, 5, 8, 9), invalidMoves = listOf(1, 4, 6, 7))
+        check(digit = 7, validMoves = listOf(4, 5, 8), invalidMoves = listOf(1, 2, 3, 6, 7, 9))
+        check(digit = 8, validMoves = listOf(4, 5, 6, 7, 9), invalidMoves = listOf(1, 2, 3, 8))
+        check(digit = 9, validMoves = listOf(5, 6, 8), invalidMoves = listOf(1, 2, 3, 4, 7, 9))
 
         validate(listOf(1, 2, 3)) shouldEqual true
         validate(listOf(3, 2, 1)) shouldEqual true
