@@ -16,7 +16,7 @@ class SwypeLock {
 
         validate(listOf(1, 2)) shouldEqual true
         validate(listOf(1, 3)) shouldEqual false
-//        validate(listOf(1, 4)) shouldEqual true
+        validate(listOf(1, 4)) shouldEqual true
 //        validate(listOf(1, 5)) shouldEqual true
     }
 }
@@ -28,5 +28,5 @@ private fun validate(swypeLock: List<Int>): Boolean {
 }
 
 private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
-    return (digit1 - digit2).absoluteValue == 1
+    return (digit1 - digit2).absoluteValue == 1 || (digit1 - digit2).absoluteValue == 3
 }
