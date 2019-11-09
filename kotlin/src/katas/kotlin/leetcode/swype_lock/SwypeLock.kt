@@ -35,6 +35,9 @@ class SwypeLock {
         validate(listOf(3, 4)) shouldEqual false
         validate(listOf(3, 5)) shouldEqual true
         validate(listOf(3, 6)) shouldEqual true
+        validate(listOf(3, 7)) shouldEqual false
+        validate(listOf(3, 8)) shouldEqual false
+        validate(listOf(3, 9)) shouldEqual false
 
         validate(listOf(1, 2, 3)) shouldEqual true
         validate(listOf(3, 2, 1)) shouldEqual true
@@ -54,7 +57,7 @@ private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
     val absDiff = (digit1 - digit2).absoluteValue
     val isHorizontal = absDiff == 1 && digit1.row == digit2.row
     val isVertical = absDiff == 3
-    val isDiagonal = (absDiff == 2 || absDiff == 4) && digit1.row != digit2.row
+    val isDiagonal = (absDiff == 2 || absDiff == 4) && (digit1.row - digit2.row).absoluteValue == 1
     return isHorizontal || isVertical || isDiagonal
 }
 
