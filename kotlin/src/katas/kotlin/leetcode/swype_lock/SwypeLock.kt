@@ -16,10 +16,7 @@ class SwypeLock {
         validate(listOf(0)) shouldEqual false
         validate(listOf(10)) shouldEqual false
 
-        1.let { n ->
-            listOf(2, 4, 5).forEach { validate(listOf(n, it)) shouldEqual true }
-            listOf(3, 6, 7, 8, 9).forEach { validate(listOf(n, it)) shouldEqual false }
-        }
+        check(digit = 1, validMoves = listOf(2, 4, 5), invalidMoves = listOf(3, 6, 7, 8, 9))
 
         2.let { n ->
             listOf(1, 3, 4, 5, 6).forEach { validate(listOf(n, it)) shouldEqual true }
@@ -64,6 +61,11 @@ class SwypeLock {
         validate(listOf(3, 2, 1)) shouldEqual true
         validate(listOf(1, 2, 3, 4)) shouldEqual false
         validate(listOf(4, 3, 2, 1)) shouldEqual false
+    }
+
+    private fun check(digit: Int, validMoves: List<Int>, invalidMoves: List<Int>) {
+        validMoves.forEach { validate(listOf(digit, it)) shouldEqual true }
+        invalidMoves.forEach { validate(listOf(digit, it)) shouldEqual false }
     }
 }
 
