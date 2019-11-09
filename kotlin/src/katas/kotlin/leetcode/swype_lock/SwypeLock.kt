@@ -32,7 +32,8 @@ private fun validate(swypeLock: List<Int>): Boolean {
 }
 
 private fun areNeighbours(digit1: Int, digit2: Int): Boolean {
-    return (digit1 - digit2).absoluteValue == 1 ||
-        (digit1 - digit2).absoluteValue == 3 ||
-        (digit1 - digit2).absoluteValue == 4
+    val diff = digit1 - digit2
+    return diff.absoluteValue == 1 ||
+        diff.absoluteValue == 3 ||
+        diff.absoluteValue == 4
 }
