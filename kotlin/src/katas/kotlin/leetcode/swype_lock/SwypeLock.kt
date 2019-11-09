@@ -50,8 +50,8 @@ class SwypeLock {
 }
 
 private fun validate(swypeLock: List<Int>): Boolean {
-    if (swypeLock.distinct().size != swypeLock.size) return false
     return swypeLock.size in 1..9 &&
+        swypeLock.distinct().size == swypeLock.size &&
         swypeLock.all { it in 1..9 } &&
         swypeLock.windowed(size = 2).all { (digit1, digit2) -> areNeighbours(digit1, digit2) }
 }
