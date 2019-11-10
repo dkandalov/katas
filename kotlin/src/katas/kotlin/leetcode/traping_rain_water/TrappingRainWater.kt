@@ -10,7 +10,7 @@ import org.junit.*
  * compute how much water it is able to trap after raining.
  */
 class TrappingRainWater {
-    private val trap = ::trap_1
+    private val trap = ::trap_with_lookahead
 
     @Test fun `some examples`() {
         trap(listOf(0)) shouldEqual 0
@@ -38,7 +38,7 @@ class TrappingRainWater {
     }
 }
 
-private fun trap_1(elevationMap: List<Int>): Int {
+private fun trap_with_lookahead(elevationMap: List<Int>): Int {
     fun volumeTillNextWall(fromIndex: Int, height: Int): Int {
         val volume = elevationMap.subList(fromIndex + 1, elevationMap.size).takeWhile { it < height }.size
         val doesNotSpillFromRight = volume < elevationMap.size - (fromIndex + 1)
