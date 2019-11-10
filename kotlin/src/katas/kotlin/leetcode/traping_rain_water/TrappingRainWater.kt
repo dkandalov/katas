@@ -38,7 +38,7 @@ private fun trap(map: List<Int>): Int {
     }
 
     var sum = 0
-    map.forEachIndexed { index, wallHeight ->
+    map.indices.zip(map).forEach { (index, wallHeight) ->
         sum += (1..wallHeight).sumBy { height ->
             sumVolumeAhead(index, height)
         }
