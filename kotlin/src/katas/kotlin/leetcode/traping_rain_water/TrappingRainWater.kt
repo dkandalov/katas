@@ -2,6 +2,7 @@ package katas.kotlin.leetcode.traping_rain_water
 
 import kotlincommon.test.*
 import org.junit.*
+import java.util.*
 
 /**
  * https://leetcode.com/problems/trapping-rain-water
@@ -35,6 +36,18 @@ class TrappingRainWater {
         trap(listOf(2, 0, 0, 2)) shouldEqual 4
 
         trap(listOf(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)) shouldEqual 6
+    }
+}
+
+private fun trap_with_lookback(elevationMap: List<Int>): Int {
+    val prevIndexByHeight = TreeMap<Int, Int>()
+    return elevationMap.indices.zip(elevationMap).sumBy { (index, wallHeight) ->
+        (1..wallHeight).sumBy { height ->
+            val prevIndex = prevIndexByHeight.ceilingEntry(height)?.value ?: index
+            val volume = index - prevIndex - 1
+            prevIndexByHeight[height] = index
+            volume
+        }
     }
 }
 
