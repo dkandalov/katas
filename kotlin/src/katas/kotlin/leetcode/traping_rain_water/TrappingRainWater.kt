@@ -31,15 +31,15 @@ class TrappingRainWater {
 }
 
 private fun trap(map: List<Int>): Int {
-    fun sumVolumeAhead(index: Int, height: Int): Int {
-        val volumeTillNextWall = map.subList(index + 1, map.size).takeWhile { it < height }.size
-        val doesNotSpillFromRight = volumeTillNextWall < map.size - (index + 1)
-        return if (doesNotSpillFromRight) volumeTillNextWall else 0
+    fun volumeTillNextWall(index: Int, height: Int): Int {
+        val result = map.subList(index + 1, map.size).takeWhile { it < height }.size
+        val doesNotSpillFromRight = result < map.size - (index + 1)
+        return if (doesNotSpillFromRight) result else 0
     }
 
     return map.indices.zip(map).sumBy { (index, wallHeight) ->
         (1..wallHeight).sumBy { height ->
-            sumVolumeAhead(index, height)
+            volumeTillNextWall(index, height)
         }
     }
 }
