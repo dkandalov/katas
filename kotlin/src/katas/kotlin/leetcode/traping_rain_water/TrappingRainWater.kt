@@ -1,6 +1,5 @@
 package katas.kotlin.leetcode.traping_rain_water
 
-import org.hamcrest.*
 import org.hamcrest.CoreMatchers.*
 import org.junit.*
 import org.junit.Assert.*
@@ -17,7 +16,7 @@ class TrappingRainWater {
 private fun trap(map: List<Int>): Int {
     var sum = 0
     map.forEachIndexed { index, value ->
-        (0..value).forEach { height ->
+        (1..value).forEach { height ->
             sum += (index + 1).until(map.size).takeWhile { map[it] <= height }.size
         }
     }
