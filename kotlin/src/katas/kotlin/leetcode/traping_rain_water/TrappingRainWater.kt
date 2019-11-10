@@ -26,7 +26,7 @@ class TrappingRainWater {
         assertThat(trap(listOf(2, 0, 1)), equalTo(1))
 
         assertThat(trap(listOf(2, 0, 2)), equalTo(2))
-        //assertThat(trap(listOf(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)), equalTo(6))
+        assertThat(trap(listOf(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)), equalTo(6))
     }
 }
 
