@@ -32,7 +32,7 @@ class TrappingRainWater {
 
 private fun trap(map: List<Int>): Int {
     fun sumVolumeAhead(index: Int, height: Int): Int {
-        val volumeTillNextWall = (index + 1).until(map.size).takeWhile { map[it] < height }.size
+        val volumeTillNextWall = map.subList(index + 1, map.size).takeWhile { it < height }.size
         val doesNotSpillFromRight = volumeTillNextWall < map.size - (index + 1)
         return if (doesNotSpillFromRight) volumeTillNextWall else 0
     }
