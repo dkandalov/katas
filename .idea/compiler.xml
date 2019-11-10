@@ -22,19 +22,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="java" />
-        <module name="java-katas" />
         <module name="katas" />
-        <module name="katas-java" />
-        <module name="kotlin" />
         <module name="kotlin-katas-and-stuff" />
+        <module name="java-katas" />
         <module name="morestuff" />
-        <module name="scala" />
-        <module name="scala-katas" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="java" target="1.8" />
+      <module name="java" target="1.10" />
       <module name="java-katas" target="1.8" />
       <module name="katas" target="1.8" />
       <module name="katas-java" target="1.10" />

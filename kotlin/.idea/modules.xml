@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-katas.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-katas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-katas.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-katas.iml" group="kotlin-katas" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-katas_main.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-katas_main.iml" group="kotlin-katas" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin-katas_test.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin-katas_test.iml" group="kotlin-katas" />
     </modules>

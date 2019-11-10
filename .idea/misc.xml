@@ -32,8 +32,6 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/kotlin/pom.xml" />
-        <option value="$PROJECT_DIR$/scala/pom.xml" />
-        <option value="$PROJECT_DIR$/java/pom.xml" />
       </list>
     </option>
   </component>

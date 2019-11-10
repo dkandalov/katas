@@ -2,6 +2,13 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/haskell/LambdaWars" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/diaspora" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/enki" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/eventmachine" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/mercuryapp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/pry" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/rspec" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ruby/codehistorymining/data/rubinius" vcs="Git" />
   </component>
 </project>
-
