@@ -11,7 +11,7 @@ import java.util.*
  * compute how much water it is able to trap after raining.
  */
 class TrappingRainWater {
-    private val trap = ::trap_with_lookahead
+    private val trap = ::trap_with_lookback
 
     @Test fun `some examples`() {
         trap(listOf(0)) shouldEqual 0
@@ -43,7 +43,7 @@ private fun trap_with_lookback(elevationMap: List<Int>): Int {
     val prevIndexByHeight = TreeMap<Int, Int>()
     return elevationMap.indices.zip(elevationMap).sumBy { (index, wallHeight) ->
         (1..wallHeight).sumBy { height ->
-            val prevIndex = prevIndexByHeight.ceilingEntry(height)?.value ?: index
+            val prevIndex = prevIndexByHeight.ceilingEntry(height)?.value ?: index - 1
             val volume = index - prevIndex - 1
             prevIndexByHeight[height] = index
             volume
