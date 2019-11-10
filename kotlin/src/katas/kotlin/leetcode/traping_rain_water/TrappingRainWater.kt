@@ -44,9 +44,9 @@ private fun trap_with_lookback(elevationMap: List<Int>): Int {
     return elevationMap.indices.zip(elevationMap).sumBy { (index, wallHeight) ->
         (1..wallHeight).sumBy { height ->
             val prevIndex = prevIndexByHeight.ceilingEntry(height)?.value ?: index - 1
-            val volume = index - prevIndex - 1
-            prevIndexByHeight[height] = index
-            volume
+            (index - prevIndex - 1).also {
+                prevIndexByHeight[height] = index
+            }
         }
     }
 }
