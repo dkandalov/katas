@@ -6,8 +6,13 @@ import org.junit.Assert.*
 
 /**
  * https://leetcode.com/problems/trapping-rain-water
+ * 
+ * Given n non-negative integers representing an elevation map where the width of each bar is 1,
+ * compute how much water it is able to trap after raining.
  */
 class TrappingRainWater {
+    private val trap = ::trap_1
+
     @Test fun `some examples`() {
         assertThat(trap(listOf(0)), equalTo(0))
         assertThat(trap(listOf(1)), equalTo(0))
@@ -34,7 +39,7 @@ class TrappingRainWater {
     }
 }
 
-private fun trap(map: List<Int>): Int {
+private fun trap_1(map: List<Int>): Int {
     fun volumeTillNextWall(index: Int, height: Int): Int {
         val result = map.subList(index + 1, map.size).takeWhile { it < height }.size
         val doesNotSpillFromRight = result < map.size - (index + 1)
