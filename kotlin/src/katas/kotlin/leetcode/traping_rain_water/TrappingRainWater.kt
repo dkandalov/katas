@@ -34,10 +34,9 @@ private fun trap(map: List<Int>): Int {
     var sum = 0
     map.forEachIndexed { index, wallHeight ->
         (1..wallHeight).forEach { height ->
-            val size = (index + 1).until(map.size).takeWhile { map[it] < height }.size
-            if (size < map.size - (index + 1)) {
-                sum += size
-            }
+            val volumeTillNextWall = (index + 1).until(map.size).takeWhile { map[it] < height }.size
+            val doesNotSpillFromRight = volumeTillNextWall < map.size - (index + 1)
+            if (doesNotSpillFromRight) sum += volumeTillNextWall
         }
     }
     return sum
