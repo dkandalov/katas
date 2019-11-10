@@ -37,11 +37,9 @@ private fun trap(map: List<Int>): Int {
         return if (doesNotSpillFromRight) volumeTillNextWall else 0
     }
 
-    var sum = 0
-    map.indices.zip(map).forEach { (index, wallHeight) ->
-        sum += (1..wallHeight).sumBy { height ->
+    return map.indices.zip(map).sumBy { (index, wallHeight) ->
+        (1..wallHeight).sumBy { height ->
             sumVolumeAhead(index, height)
         }
     }
-    return sum
 }
