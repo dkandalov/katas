@@ -20,6 +20,8 @@ import org.junit.*
  */
 class WordLadderTests {
     @Test fun `some examples`() {
+        findLadders(beginWord = "hit", endWord = "cog", wordList = emptyList()) shouldEqual emptyList()
+
         findLadders(
             beginWord = "hit",
             endWord = "cog",
