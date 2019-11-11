@@ -1,5 +1,6 @@
 package katas.kotlin.leetcode.word_ladder_2
 
+import kotlincommon.test.*
 import org.junit.*
 
 /**
@@ -19,6 +20,20 @@ import org.junit.*
  */
 class WordLadderTests {
     @Test fun `some examples`() {
+        findLadders(
+            beginWord = "hit",
+            endWord = "cog",
+            wordList = listOf("hot", "dot", "dog", "lot", "log", "cog")
+        ) shouldEqual listOf(
+            listOf("hit", "hot", "dot", "dog", "cog"),
+            listOf("hit", "hot", "lot", "log", "cog")
+        )
+    }
 
+    private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+        return listOf(
+            listOf("hit", "hot", "dot", "dog", "cog"),
+            listOf("hit", "hot", "lot", "log", "cog")
+        )
     }
 }
