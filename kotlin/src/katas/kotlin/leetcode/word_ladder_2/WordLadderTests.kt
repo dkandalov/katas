@@ -20,19 +20,19 @@ import org.junit.*
  */
 class WordLadderTests {
     @Test fun `some examples`() {
-        findLadders(beginWord = "hit", endWord = "cog", wordList = emptyList()) shouldEqual emptyList()
+        findLadders(beginWord = "hit", endWord = "cog", wordList = emptyList()) shouldEqual emptySet()
 
         findLadders(
             beginWord = "hit",
             endWord = "cog",
             wordList = listOf("hot", "dot", "dog", "lot", "log")
-        ) shouldEqual emptyList()
+        ) shouldEqual emptySet()
 
 //        findLadders(
 //            beginWord = "hit",
 //            endWord = "cog",
 //            wordList = listOf("hot", "dot", "dog", "lot", "log", "cog")
-//        ) shouldEqual listOf(
+//        ) shouldEqual setOf(
 //            listOf("hit", "hot", "dot", "dog", "cog"),
 //            listOf("hit", "hot", "lot", "log", "cog")
 //        )
@@ -41,13 +41,13 @@ class WordLadderTests {
 
 private typealias Solution = List<String>
 
-private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<Solution> {
-    if (beginWord == endWord) return listOf(listOf(endWord))
+private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): Set<Solution> {
+    if (beginWord == endWord) return setOf(listOf(endWord))
 
     val nextWords = wordList.filter { it.diff(beginWord) == 1 }
     return nextWords
         .flatMap { findLadders(it, endWord, wordList - it) }
-        .map { listOf(beginWord) + it }
+        .mapTo(HashSet()) { listOf(beginWord) + it }
 }
 
 private fun String.diff(that: String) =
