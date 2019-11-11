@@ -40,8 +40,12 @@ class WordLadderTests {
 private typealias Solution = List<String>
 
 private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<Solution> {
-    wordList.filter { it.diff(beginWord) == 1 }
-    return emptyList()
+    if (beginWord == endWord) return listOf(listOf(endWord))
+
+    val nextWords = wordList.filter { it.diff(beginWord) == 1 }
+    return nextWords
+        .flatMap { findLadders(it, endWord, wordList - it) }
+        .map { listOf(beginWord) + it }
 }
 
 private fun String.diff(that: String) =
