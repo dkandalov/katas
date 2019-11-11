@@ -28,14 +28,14 @@ class WordLadderTests {
             wordList = listOf("hot", "dot", "dog", "lot", "log")
         ) shouldEqual emptySet()
 
-//        findLadders(
-//            beginWord = "hit",
-//            endWord = "cog",
-//            wordList = listOf("hot", "dot", "dog", "lot", "log", "cog")
-//        ) shouldEqual setOf(
-//            listOf("hit", "hot", "dot", "dog", "cog"),
-//            listOf("hit", "hot", "lot", "log", "cog")
-//        )
+        findLadders(
+            beginWord = "hit",
+            endWord = "cog",
+            wordList = listOf("hot", "dot", "dog", "lot", "log", "cog")
+        ) shouldEqual setOf(
+            listOf("hit", "hot", "dot", "dog", "cog"),
+            listOf("hit", "hot", "lot", "log", "cog")
+        )
     }
 }
 
