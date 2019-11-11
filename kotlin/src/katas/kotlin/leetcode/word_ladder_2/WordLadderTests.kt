@@ -35,8 +35,12 @@ class WordLadderTests {
 //            listOf("hit", "hot", "lot", "log", "cog")
 //        )
     }
-
-    private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
-        return emptyList()
-    }
 }
+
+private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+    wordList.filter { it.diff(beginWord) == 1 }
+    return emptyList()
+}
+
+private fun String.diff(that: String) =
+    zip(that).sumBy { if (it.first != it.second) 1 else 0 }
