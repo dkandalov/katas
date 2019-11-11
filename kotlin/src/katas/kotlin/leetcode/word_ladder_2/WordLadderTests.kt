@@ -37,7 +37,9 @@ class WordLadderTests {
     }
 }
 
-private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<List<String>> {
+private typealias Solution = List<String>
+
+private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): List<Solution> {
     wordList.filter { it.diff(beginWord) == 1 }
     return emptyList()
 }
