@@ -61,6 +61,7 @@ private fun largestSubarray(array: Array<Int>, k: Int): Array<Int> {
     return max
 }
 
+@Suppress("unused")
 private fun largestSubarray_(array: Array<Int>, k: Int): Array<Int> {
     if (k == 0) return emptyArray()
     if (k < 0 || k > array.size) error("")

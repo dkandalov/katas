@@ -4,7 +4,8 @@ import kotlincommon.test.shouldEqual
 import org.junit.Test
 
 /**
- * Given a string with punctuations, upper case and lower case letters, check if it can be read the same from the start and from the end by ignoring punctuations and capitalization.
+ * Given a string with punctuations, upper case and lower case letters,
+ * check if it can be read the same from the start and from the end by ignoring punctuations and capitalization.
  */
 class NoPunctuationPalindromeTests {
     private val isPalindrome: (String) -> Boolean = ::isPalindrome

@@ -1,8 +1,8 @@
 package katas.kotlin.leetcode.knapsack
 
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
-import org.junit.Test
+import kotlincommon.*
+import kotlincommon.test.*
+import org.junit.*
 
 
 /**
@@ -58,7 +58,7 @@ class KnapsackTests {
                 Item(size = 4, value = 1),
                 Item(size = 8, value = 1)
             )
-        ).let { (maxValues, maxValue) ->
+        ).let { (maxValues, _) ->
             maxValues.joinToString("\n") { it.toList().toString() }.printed()/* shouldEqual """
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 [0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 10]

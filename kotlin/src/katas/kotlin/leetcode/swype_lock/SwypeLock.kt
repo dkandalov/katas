@@ -4,6 +4,9 @@ import kotlincommon.test.*
 import org.junit.*
 import kotlin.math.*
 
+/**
+ * By Dmitry Buykin.
+ */
 class SwypeLock {
     @Test fun `some examples`() {
         // 1 2 3

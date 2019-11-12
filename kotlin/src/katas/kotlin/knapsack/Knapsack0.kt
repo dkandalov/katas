@@ -1,8 +1,7 @@
 package katas.kotlin.knapsack
 
-import kotlincommon.test.shouldEqual
-import org.junit.Ignore
-import org.junit.Test
+import kotlincommon.test.*
+import org.junit.*
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -122,6 +121,7 @@ private fun backtrack(solution: Solution): List<Solution> {
     return result
 }
 
+@Suppress("unused")
 private fun backtrack_(solution: Solution?): List<Solution> {
     if (solution == null) return emptyList()
     if (solution.isComplete()) return listOf(solution)

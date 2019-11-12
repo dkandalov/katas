@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.fruit_into_baskets
 
-import kotlincommon.test.shouldEqual
-import org.junit.Test
+import kotlincommon.test.*
+import org.junit.*
 
 /**
  * https://leetcode.com/problems/fruit-into-baskets/
@@ -27,7 +27,7 @@ class FruitIntoBasketsTests {
         var maxCount = 0
         var count = 0
         val bucket = HashSet<Int>()
-        (0 until tree.size).forEach { i ->
+        tree.indices.forEach { i ->
             bucket.add(tree[i])
             if (bucket.size <= 2) {
                 count++
