@@ -1,11 +1,8 @@
 package katas.kotlin.permutation
 
-import kotlincommon.join
-import kotlincommon.longFactorial
-import kotlincommon.printed
-import kotlincommon.swap
-import kotlincommon.test.shouldEqual
-import org.junit.Test
+import kotlincommon.*
+import kotlincommon.test.*
+import org.junit.*
 import java.util.*
 
 class AllPermutationTypes {
@@ -104,9 +101,9 @@ class AllPermutationTypes {
         private fun List<Int>.permutations_remove(): List<List<Int>> =
             if (size <= 1) listOf(this)
             else flatMap { item ->
-                (this - item).permutations_remove().map { permutation ->
-                    permutation + item
-                }
+                (this - item)
+                    .permutations_remove()
+                    .map { permutation -> permutation + item }
             }
 
         private fun List<Int>.permutations_remove_sequence(): Sequence<List<Int>> {
@@ -114,21 +111,21 @@ class AllPermutationTypes {
             val list = this
             return sequence {
                 list.forEach { item ->
-                    yieldAll((list - item).permutations_remove_sequence().map { permutation ->
-                        permutation + item
-                    })
+                    val permutations = (list - item)
+                        .permutations_remove_sequence()
+                        .map { permutation -> permutation + item }
+                    yieldAll(permutations)
                 }
             }
         }
 
         private fun MutableList<Int>.permutations_add(): List<List<Int>> {
             if (size <= 1) return listOf(this)
-            val item = first()
+            val firstItem = first()
             val subPermutations = drop(1).toMutableList().permutations_add()
             return subPermutations.flatMap { subPermutation ->
-                IntRange(0, subPermutation.size).map { i ->
-                    ArrayList(subPermutation).apply { add(i, item) }
-                }
+                (0..subPermutation.size)
+                    .map { i -> ArrayList(subPermutation).apply { add(i, firstItem) } }
             }
         }
 
@@ -137,9 +134,8 @@ class AllPermutationTypes {
             val item = first()
             val subPermutations = drop(1).toMutableList().permutations_add_min_change()
             return subPermutations.mapIndexed { index, subPermutation ->
-                val permutation = IntRange(0, subPermutation.size).map { i ->
-                    ArrayList(subPermutation).apply { add(i, item) }
-                }
+                val permutation = (0..subPermutation.size)
+                    .map { i -> ArrayList(subPermutation).apply { add(i, item) } }
                 if (index % 2 != 0) permutation.reversed() else permutation
             }.flatten()
         }
