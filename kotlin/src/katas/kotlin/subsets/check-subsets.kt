@@ -1,13 +1,13 @@
 package katas.kotlin.subsets
 
-import kotlincommon.pow
-import kotlincommon.test.shouldEqual
-import org.junit.Test
-import kotlin.random.Random
+import kotlincommon.*
+import kotlincommon.test.*
+import org.junit.*
+import kotlin.random.*
 
-abstract class SubsetTests(private val subsetsOf: (Collection<Int>) -> Set<Set<Int>>) {
+abstract class SubsetTests(private val subsetsOf: (Set<Int>) -> Set<Set<Int>>) {
     @Test fun `find all subsets`() {
-        subsetsOf(emptyList()) shouldEqual setOf(emptySet())
+        subsetsOf(emptySet()) shouldEqual setOf(emptySet())
         subsetsOf(setOf(1)) shouldEqual setOf(setOf(1), emptySet())
 
         subsetsOf(setOf(1, 2)) shouldEqual setOf(
@@ -23,9 +23,9 @@ abstract class SubsetTests(private val subsetsOf: (Collection<Int>) -> Set<Set<I
     }
 
     @Test fun `amount of subsets`() {
-        checkAmountOfSubsets(subsets = subsetsOf(IntRange(0, 7).toList()), setSize = 8)
+        checkAmountOfSubsets(subsets = subsetsOf(IntRange(0, 7).toSet()), setSize = 8)
 
-        val randomSet = Array(10, { Random.nextInt(0, 99) }).toSet()
+        val randomSet = Array(10) { Random.nextInt(0, 99) }.toSet()
         checkAmountOfSubsets(subsets = subsetsOf(randomSet), setSize = randomSet.size)
     }
 

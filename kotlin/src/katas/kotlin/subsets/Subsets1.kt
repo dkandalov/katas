@@ -1,7 +1,7 @@
 package katas.kotlin.subsets
 
-import kotlincommon.test.shouldEqual
-import org.junit.Test
+import kotlincommon.test.*
+import org.junit.*
 
 class Subsets1 : SubsetTests({ it.subsets() }) {
     @Test fun `generate indices of subset elements`() {
@@ -16,24 +16,22 @@ class Subsets1 : SubsetTests({ it.subsets() }) {
             setOf(2)
         )
     }
+}
 
-    companion object {
-        private fun <E> Collection<E>.subsets(): Set<Set<E>> {
-            return generateIndices(size).mapTo(HashSet<Set<E>>()) { indices ->
-                this.filterIndexedTo(HashSet()) { index, _ ->
-                    indices.contains(index)
-                }
-            }
+private fun <E> Set<E>.subsets(): Set<Set<E>> {
+    return generateIndices(size).mapTo(HashSet<Set<E>>()) { indices ->
+        this.filterIndexedTo(HashSet()) { index, _ ->
+            indices.contains(index)
         }
+    }
+}
 
-        private fun generateIndices(size: Int, from: Int = 0, indices: Set<Int> = emptySet()): Sequence<Set<Int>> {
-            return sequence {
-                yield(emptySet())
-                from.until(size).forEach { i ->
-                    yield(indices + i)
-                    yieldAll(generateIndices(size, i + 1, indices + i))
-                }
-            }
+private fun generateIndices(size: Int, from: Int = 0, indices: Set<Int> = emptySet()): Sequence<Set<Int>> {
+    return sequence {
+        yield(emptySet())
+        from.until(size).forEach { i ->
+            yield(indices + i)
+            yieldAll(generateIndices(size, i + 1, indices + i))
         }
     }
 }
