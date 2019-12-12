@@ -1,0 +1,27 @@
+
+array3<array3<int>> square;
+int sum;
+
+sum = 15;
+
+square.each(function(row) {
+    row.each(function(item) {
+        invariant item > 0;
+    });
+});
+
+square.each(function^(row) {
+    invariant sum == row.sum;
+});
+
+square.transpose.each(function^(column) {
+    invariant sum == column.sum;
+});
+
+diagonal = square.map(function^(row, index) { return row[index]; });
+invariant sum == diagonal.sum;
+
+diagonal2 = square.map(function^(row, index) { return row.reverse[index]; });
+invariant sum == diagonal2.sum;
+
+expose square;

@@ -1,0 +1,19 @@
+#!/usr/bin/env sentient -m lingeling
+
+# There is an anagram of 12345 whose square is an anagram of 123456789.
+
+array5<int5> anagram1;
+array9<int5> anagram2;
+
+1.upto(5, function^(digit) { invariant anagram1.include?(digit); });
+1.upto(9, function^(digit) { invariant anagram2.include?(digit); });
+
+function toNumber(anagram) {
+    return anagram.reduce(0, function(sum, digit) {
+        return sum * 10 + digit;
+    });
+};
+
+invariant anagram1.toNumber.square == anagram2.toNumber;
+
+expose anagram1, anagram2;

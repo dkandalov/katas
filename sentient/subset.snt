@@ -1,0 +1,15 @@
+array5<int> set;
+array5<bool> isInSubset;
+
+set = [-7, -3, -2, 5, 8];
+
+sum = 0;
+set.each(function^(element, index) {
+    sum += isInSubset[index] ? element : 0;
+});
+
+invariant sum == 0;
+invariant isInSubset.countBy(function(it) { return it; }) > 0;
+
+expose set;
+expose isInSubset;

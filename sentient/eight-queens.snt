@@ -1,0 +1,28 @@
+#!/usr/bin/env -S sentient --number 0
+
+array4<array4<bool>> board;
+
+function queen(it) {
+    return it;
+};
+
+board.each(function(row) {
+    invariant row.one?(*queen);
+});
+
+board.transpose.each(function(column) {
+    invariant column.one?(*queen);
+});
+
+[-2, -1, 0, 1, 2].each(function^(shift) {
+    diagonal = board.map(function^(row, index) {
+        return row.get(index + shift);
+    });
+    reverseDiagonal = board.map(function^(row, index) {
+        return row.reverse.get(index + shift);
+    });
+    invariant diagonal.countBy(*queen) <= 1;
+    invariant reverseDiagonal.countBy(*queen) <= 1;
+});
+
+expose board;
