@@ -1,0 +1,55 @@
+#!/usr/bin/env -S sentient --number 0
+
+array5<array5<int3>> diamond;
+
+# Values range
+diamond.each(function(row) {
+    row.each(function(letter) {
+        invariant letter.between?(0, 3);
+    });
+});
+
+# Vertical symmetry
+diamond.each(function(row) {
+    0.upto(3, function^(index) {
+        invariant row[index] == row[row.size - index - 1];
+    });
+});
+
+# Horizontal symmetry
+diamond.transpose.each(function(column) {
+    0.upto(3, function^(index) {
+        invariant column[index] == column[column.size - index - 1];
+    });
+});
+
+## Each row contains the right amount of the right letters
+diamond.each(function(row, index) {
+    letter = index <= row.size / 2 ? index + 1 : row.size - index;
+    letterCount = row.countBy(function^(it) { return it == letter; });
+    emptySpaceCount = row.countBy(function(it) { return it == 0; });
+    invariant letterCount.between?(1, 2);
+    invariant emptySpaceCount == row.size - letterCount;
+});
+
+# Each letter is at the right position
+diamond.each(function(row) {
+    row.each(function(letter, index) {
+        invariant index >= 3 ? true : letter == 0 || letter == 3 - index;
+    });
+});
+
+expose diamond;
+
+#00100
+#02020
+#30003
+#02020
+#00100
+
+#--A--
+#-B-B-
+#C---C
+#-B-B-
+#--A--
+
