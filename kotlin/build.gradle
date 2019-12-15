@@ -51,6 +51,7 @@ dependencies {
 
 sourceSets {
 	main.kotlin.srcDir "src"
+	main.java.srcDir "src"
 }
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
