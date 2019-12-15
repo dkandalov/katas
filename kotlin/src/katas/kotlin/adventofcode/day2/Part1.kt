@@ -34,7 +34,7 @@ private fun toCommands(tokens: List<Int>, shift: Int = 0): List<Command> {
             output = tokens[shift + 3]
         )) + toCommands(tokens, shift + 4)
         99 -> listOf(Halt) + toCommands(tokens, shift + 1)
-        else -> error("Unexpected command ${tokens[0]}")
+        else -> error("Unexpected command ${tokens[shift]}")
     }
 }
 
