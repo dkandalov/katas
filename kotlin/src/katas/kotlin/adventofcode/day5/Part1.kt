@@ -15,6 +15,14 @@ fun main() {
 
 
 fun execute(program: MutableList<Int>, io: IO) {
+    execute(
+        program,
+        read = { io.read() },
+        write = { io.write(it) }
+    )
+}
+
+inline fun execute(program: MutableList<Int>, read: () -> Int, write: (Int) -> Unit) {
     var address = 0
     while (address < program.size) {
         val opCode = program[address].toString().takeLast(2).toInt()
@@ -24,8 +32,8 @@ fun execute(program: MutableList<Int>, io: IO) {
             .map { if (it == 0) PositionMode else ImmediateMode }
             .reversed()
 
-        fun param(index: Int) = paramModes[index - 1].read(address + index, program)
-        fun paramValue(index: Int) = ImmediateMode.read(address + index, program)
+        val param = { index: Int -> paramModes[index - 1].read(address + index, program) }
+        val paramValue = { index: Int -> ImmediateMode.read(address + index, program) }
 
         when (opCode) {
             1    -> {
@@ -37,11 +45,11 @@ fun execute(program: MutableList<Int>, io: IO) {
                 address += 4
             }
             3    -> {
-                program[paramValue(1)] = io.read()
+                program[paramValue(1)] = read()
                 address += 2
             }
             4    -> {
-                io.write(param(1))
+                write(param(1))
                 address += 2
             }
             5    -> address = if (param(1) != 0) param(2) else address + 3
