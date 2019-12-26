@@ -86,9 +86,7 @@ chop 16 $ sound "cp" # pan sine
 d1 $ (chop 16 $ sound "cp") # pan sine
 
 -- Then each sound grain will get a different pan value.
-
 -- What happens when you have more than one sound?
-
 -- With chop, the grains of each sound are grouped together:
 
 d1 $ chop 8 "bd sn:2"

@@ -43,3 +43,11 @@ d1 $ s "{cpu1:4*6 cpu1:5*2 cpu1:4 cpu1:6, cpu1:0 cpu1:8*2 cpu1:4*3} [cpu1:2 cpu1
 
 d1 $ n "{4*6 5*2 4 6, 9 8*2 4*3} [2 3, 0(3,8)]"
   # s "cpu1"
+
+
+-- My attempt to somehow summarise the above
+d1 $ s "[bd bd] [cp]"
+d1 $ s "bd bd . cp"
+d1 $ s "[bd bd, cp]"
+d1 $ s "{bd bd, cp}"
+d1 $ s "{bd bd, cp cp cp cp}"

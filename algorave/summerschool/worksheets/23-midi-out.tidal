@@ -8,7 +8,7 @@
 -- that we defined in SuperCollider earlier
 
 -- NB we specify the midi channel using # midichan
--- But watch out, tidal starts countin from 0
+-- But watch out, tidal starts counting from 0
 -- so midichan 0 in tidal will be midi channel 1 on your synth :)
 -- This can also be patterned
 -- e.g. if you want to send to different voices
