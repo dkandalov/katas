@@ -1,16 +1,17 @@
 snare = sound "midi1" # midichan "0"
 kick = sound "midi1" # midichan "1"
-keys = sound "midi1" # midichan "2"
+base = sound "midi1" # midichan "2"
+keys = sound "midi1" # midichan "3"
 xxx = sound "midi2" # midichan "0"
 
 d1 $ midinote "4 ~ 4 ~" # snare
 d2 $ midinote "~ 5 ~ 5" # kick
-d3 $ midinote "53 50 53 55" # keys
+d3 $ midinote "53 50 55 55" # base
+d4 $ midinote "53 ~ 51 ~" # keys
 
 d5 $ ccv 50 # ccn 3 # xxx
 once $ control "0" # ctlNum 3 # midicmd "control" # xxx
 
--- happy birthday tune
 
 happy_b = "[\
  \[c~c] [d~~] [c~~] [f~~] [e~~~~~]\

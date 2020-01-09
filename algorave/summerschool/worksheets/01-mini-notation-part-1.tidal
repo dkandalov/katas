@@ -28,21 +28,21 @@ d1 $ s "cp(3,8)"
 -- You can fit more than one subpattern into a step by separating them
 -- with a comma:
 
-d1 $ s "[sd cp bd, cpu1:3*2 cpu1:2]"
+d1 $ s "[sd cp bd, cpu:3*2 cpu:2]"
 
 -- You can align the patterns step-wise to create polyrhythms:
 
-d1 $ s "{sd cp bd, cpu1:3*2 cpu1:2}"
+d1 $ s "{sd cp bd, cpu:3*2 cpu:2}"
 
 -- This is already enough to do some complex sequences:
 
-d1 $ s "{cpu1:4*6 cpu1:5*2 cpu1:4 cpu1:6, cpu1:0 cpu1:8*2 cpu1:4*3} [cpu1:2 cpu1:3, cpu1:0(3,8)]"
+d1 $ s "{cpu:4*6 cpu:5*2 cpu:4 cpu:6, cpu:0 cpu:8*2 cpu:4*3} [cpu:2 cpu:3, cpu:0(3,8)]"
 
 -- It often is easier to pattern the sampleset separately from the sample number.
 -- Here's an example (note how the structure is formed from the left)
 
 d1 $ n "{4*6 5*2 4 6, 9 8*2 4*3} [2 3, 0(3,8)]"
-  # s "cpu1"
+  # s "cpu"
 
 
 -- My attempt to somehow summarise the above
