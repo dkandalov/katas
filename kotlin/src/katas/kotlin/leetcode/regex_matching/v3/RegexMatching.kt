@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 class RegexMatching {
     @Test fun `some examples`() {
         "".matchesRegex("")
+        "a".matchesRegex("a")
     }
 }
 
