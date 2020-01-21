@@ -11,10 +11,14 @@ class RegexMatching {
         "a".matchesRegex("") shouldEqual false
         "a".matchesRegex("a") shouldEqual true
 
-//        "a".matchesRegex(".") shouldEqual true
+        "a".matchesRegex(".") shouldEqual true
+        "a".matchesRegex("..") shouldEqual false
     }
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
-    return this == regex
+    if (this.length != regex.length) return false
+    return this.zip(regex).all { 
+        it.first == it.second || it.second == '.'
+    }
 }
