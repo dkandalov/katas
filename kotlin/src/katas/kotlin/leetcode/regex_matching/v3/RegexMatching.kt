@@ -13,12 +13,15 @@ class RegexMatching {
 
         "a".matchesRegex(".") shouldEqual true
         "a".matchesRegex("..") shouldEqual false
+        "ab".matchesRegex("..") shouldEqual true
+        "ab".matchesRegex("a.") shouldEqual true
+        "ab".matchesRegex(".b") shouldEqual true
     }
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
     if (this.length != regex.length) return false
-    return this.zip(regex).all { 
+    return this.zip(regex).all {
         it.first == it.second || it.second == '.'
     }
 }
