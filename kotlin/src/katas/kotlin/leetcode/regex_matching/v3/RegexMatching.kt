@@ -1,11 +1,12 @@
 package katas.kotlin.leetcode.regex_matching.v3
 
+import kotlincommon.test.shouldEqual
 import org.junit.jupiter.api.Test
 
 class RegexMatching {
     @Test fun `some examples`() {
-        "".matchesRegex("")
-        "a".matchesRegex("a")
+        "".matchesRegex("") shouldEqual true
+        "a".matchesRegex("a") shouldEqual true
     }
 }
 
