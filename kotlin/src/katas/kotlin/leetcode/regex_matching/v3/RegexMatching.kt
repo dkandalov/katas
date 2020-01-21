@@ -6,11 +6,15 @@ import org.junit.jupiter.api.Test
 class RegexMatching {
     @Test fun `some examples`() {
         "".matchesRegex("") shouldEqual true
+
+        "".matchesRegex("a") shouldEqual false
+        "a".matchesRegex("") shouldEqual false
         "a".matchesRegex("a") shouldEqual true
-        "a".matchesRegex(".") shouldEqual true
+
+//        "a".matchesRegex(".") shouldEqual true
     }
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
-    return true
+    return this == regex
 }
