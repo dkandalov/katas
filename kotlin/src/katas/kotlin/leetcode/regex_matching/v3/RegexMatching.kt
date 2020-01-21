@@ -7,6 +7,7 @@ class RegexMatching {
     @Test fun `some examples`() {
         "".matchesRegex("") shouldEqual true
         "a".matchesRegex("a") shouldEqual true
+        "a".matchesRegex(".") shouldEqual true
     }
 }
 
