@@ -34,6 +34,12 @@ fun anyChar(): Matcher = { input ->
 }
 
 private fun String.matchRegex(regex: String): Boolean {
-    if (this.length != regex.length) return false
-    return this.zip(regex).all { it.first == it.second || it.second == '.' }
+    val matchers = regex.fold(emptyList<Matcher>()) { acc, c ->
+        acc + (if (c == '.') anyChar() else char(c))
+    }
+    return matchers
+        .fold(listOf(this)) { inputs, matcher ->
+            inputs.flatMap(matcher).distinct()
+        }
+        .any { it.isEmpty() }
 }
