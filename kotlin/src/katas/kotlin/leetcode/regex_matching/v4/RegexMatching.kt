@@ -18,24 +18,32 @@ class RegexMatching {
         "abc".matchRegex("..") shouldEqual false
         "abc".matchRegex("b..") shouldEqual false
 
-//        "".matchRegex("a?") shouldEqual true
-//        "a".matchRegex("a?") shouldEqual true
+        "".matchRegex("a?") shouldEqual true
+        "a".matchRegex("a?") shouldEqual true
     }
 }
 
 typealias Matcher = (String) -> List<String>
 
 fun char(c: Char): Matcher = { input ->
-    if (input.first() == c) listOf(input.drop(1)) else emptyList()
+    if (input.firstOrNull() == c) listOf(input.drop(1)) else emptyList()
 }
 
 fun anyChar(): Matcher = { input ->
     if (input.isNotEmpty()) listOf(input.drop(1)) else emptyList()
 }
 
+fun zeroOrOne(matcher: Matcher): Matcher = { input ->
+    listOf(input) + matcher(input)
+}
+
 private fun String.matchRegex(regex: String): Boolean {
     val matchers = regex.fold(emptyList<Matcher>()) { acc, c ->
-        acc + (if (c == '.') anyChar() else char(c))
+        when (c) {
+            '.'  -> acc + anyChar()
+            '?'  -> acc.dropLast(1) + zeroOrOne(acc.last())
+            else -> acc + char(c)
+        }
     }
     return matchers
         .fold(listOf(this)) { inputs, matcher ->
