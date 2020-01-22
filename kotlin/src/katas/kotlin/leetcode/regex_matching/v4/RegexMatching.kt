@@ -39,7 +39,7 @@ private fun String.matchRegex(regex: String): Boolean {
     }
     return matchers
         .fold(listOf(this)) { inputs, matcher ->
-            inputs.flatMap(matcher).distinct()
+            inputs.flatMap(matcher)
         }
         .any { it.isEmpty() }
 }
