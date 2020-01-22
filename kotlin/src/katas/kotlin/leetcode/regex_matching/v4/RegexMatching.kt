@@ -8,9 +8,11 @@ class RegexMatching {
         "".matchRegex("") shouldEqual true
         "a".matchRegex("a") shouldEqual true
         "ab".matchRegex("ab") shouldEqual true
+        "a".matchRegex("b") shouldEqual false
+        "ab".matchRegex("a") shouldEqual false
     }
 }
 
 private fun String.matchRegex(regex: String): Boolean {
-    return true
+    return this == regex
 }
