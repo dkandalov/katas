@@ -26,6 +26,7 @@ class RegexMatching {
         "a".matchRegex("a*") shouldEqual true
         "aaa".matchRegex("a*") shouldEqual true
         "b".matchRegex("a*") shouldEqual false
+        "abc".matchRegex(".*") shouldEqual true
     }
 }
 
