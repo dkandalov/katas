@@ -20,6 +20,7 @@ class RegexMatching {
 
         "".matchRegex("a?") shouldEqual true
         "a".matchRegex("a?") shouldEqual true
+        "b".matchRegex("a?") shouldEqual false
     }
 }
 
