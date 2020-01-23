@@ -23,6 +23,7 @@ class RegexMatching {
         "aa".matchesRegex("a?") shouldEqual false
         "".matchesRegex(".?") shouldEqual true
         "a".matchesRegex(".?") shouldEqual true
+        "ab".matchesRegex(".?") shouldEqual false
     }
 }
 
