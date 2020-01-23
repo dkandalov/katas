@@ -53,5 +53,5 @@ private fun String.matchesRegex(regex: String): Boolean {
         .fold(listOf(this)) { inputs, matcher ->
             inputs.flatMap(matcher).distinct()
         }
-        .any { it.isEmpty() }
+        .any { input -> input.isEmpty() }
 }
