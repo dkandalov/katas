@@ -26,6 +26,16 @@ class RegexMatching {
     }
 }
 
+typealias Matcher = (String) -> List<String>
+
+fun char(c: Char): Matcher = { input ->
+    if (input.firstOrNull() == c) listOf(input.drop(1)) else emptyList()
+}
+
+fun anyChar(): Matcher = { input ->
+    if (input.isNotEmpty()) listOf(input.drop(1)) else emptyList()
+}
+
 private fun String.matchesRegex(regex: String): Boolean {
     if (this.length != regex.length) return false
     return this.zip(regex)
