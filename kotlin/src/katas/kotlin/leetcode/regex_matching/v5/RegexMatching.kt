@@ -24,6 +24,13 @@ class RegexMatching {
         "".matchesRegex(".?") shouldEqual true
         "a".matchesRegex(".?") shouldEqual true
         "ab".matchesRegex(".?") shouldEqual false
+
+        "".matchesRegex("a*") shouldEqual true
+        "a".matchesRegex("a*") shouldEqual true
+        "aa".matchesRegex("a*") shouldEqual true
+        "ba".matchesRegex("a*") shouldEqual false
+        "ab".matchesRegex("a*") shouldEqual false
+        "abc".matchesRegex(".*") shouldEqual true
     }
 }
 
@@ -37,15 +44,20 @@ fun anyChar(): Matcher = { input ->
     if (input.isNotEmpty()) listOf(input.drop(1)) else emptyList()
 }
 
-fun zeroOrMore(matcher: Matcher): Matcher = { input ->
+fun zeroOrOne(matcher: Matcher): Matcher = { input ->
     listOf(input) + matcher(input)
+}
+
+fun zeroOrMore(matcher: Matcher): Matcher = { input ->
+    listOf(input) + matcher(input).flatMap(zeroOrMore(matcher))
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
     val matchers = regex.fold(emptyList<Matcher>()) { matchers, c ->
         when (c) {
             '.'  -> matchers + anyChar()
-            '?'  -> matchers.dropLast(1) + zeroOrMore(matchers.last())
+            '?'  -> matchers.dropLast(1) + zeroOrOne(matchers.last())
+            '*'  -> matchers.dropLast(1) + zeroOrMore(matchers.last())
             else -> matchers + char(c)
         }
     }
