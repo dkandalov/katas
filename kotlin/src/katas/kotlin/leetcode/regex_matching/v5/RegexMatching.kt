@@ -17,6 +17,12 @@ class RegexMatching {
         "ab".matchesRegex("a.") shouldEqual true
         "ab".matchesRegex(".b") shouldEqual true
         "ab".matchesRegex("c.") shouldEqual false
+
+//        "".matchesRegex("a?") shouldEqual true
+//        "a".matchesRegex("a?") shouldEqual true
+//        "aa".matchesRegex("a?") shouldEqual false
+//        "".matchesRegex(".?") shouldEqual true
+//        "a".matchesRegex(".?") shouldEqual true
     }
 }
 
