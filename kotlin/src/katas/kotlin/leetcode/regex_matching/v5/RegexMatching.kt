@@ -37,7 +37,11 @@ fun anyChar(): Matcher = { input ->
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
+    val matchers = regex.fold(emptyList<Matcher>()) { matchers, c ->
+        matchers + (if (c == '.') anyChar() else char(c))
+    }
+
     if (this.length != regex.length) return false
-    return this.zip(regex)
-        .all { it.second == '.' || it.first == it.second }
+    return this.toCharArray().zip(matchers)
+        .all { it.second(it.first.toString()).isNotEmpty() }
 }
