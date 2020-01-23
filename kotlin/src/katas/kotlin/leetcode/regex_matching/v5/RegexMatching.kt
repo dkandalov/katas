@@ -50,6 +50,8 @@ private fun String.matchesRegex(regex: String): Boolean {
     }
 
     return matchers
-        .fold(listOf(this)) { inputs, matcher -> inputs.flatMap(matcher) }
+        .fold(listOf(this)) { inputs, matcher ->
+            inputs.flatMap(matcher)
+        }
         .any { it.isEmpty() }
 }
