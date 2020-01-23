@@ -10,9 +10,18 @@ class RegexMatching {
         "a".matchesRegex("") shouldEqual false
         "a".matchesRegex("a") shouldEqual true
         "ab".matchesRegex("ab") shouldEqual true
+
+        "a".matchesRegex(".") shouldEqual true
+        "b".matchesRegex(".") shouldEqual true
+        "".matchesRegex(".") shouldEqual false
+        "ab".matchesRegex("a.") shouldEqual true
+        "ab".matchesRegex(".b") shouldEqual true
+        "ab".matchesRegex("c.") shouldEqual false
     }
 }
 
 private fun String.matchesRegex(regex: String): Boolean {
-    return this == regex
+    if (this.length != regex.length) return false
+    return this.zip(regex)
+        .all { it.second == '.' || it.first == it.second }
 }
