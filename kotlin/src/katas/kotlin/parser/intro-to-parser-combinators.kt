@@ -53,15 +53,15 @@ fun `str parser`() {
     hello(input).printed() shouldEqual Output(Str("hello"), Input("hello world", offset = 5))
 }
 
-typealias Parser = (Input) -> Output?
+typealias Parser<T> = (Input) -> Output<out T>?
 
-data class Output(val payload: Any, val input: Input)
+data class Output<T>(val payload: T, val input: Input)
 
 data class Str(val s: String) {
     override fun toString() = "Str($s)"
 }
 
-fun str(s: String): Parser = { input: Input ->
+fun str(s: String): Parser<Str> = { input: Input ->
     if (input.complete) null
     else {
         val chunk = input.peek(s.length)
@@ -85,7 +85,7 @@ data class Chr(val s: String) {
     override fun toString() = "Chr($s)"
 }
 
-fun chr(regex: String): Parser = { input: Input ->
+fun chr(regex: String): Parser<Chr> = { input: Input ->
     if (input.complete) null
     else {
         val chunk = input.peek(1)
@@ -114,13 +114,13 @@ fun `seq combinator`() {
     ))
 }
 
-data class Seq(val values: List<Any>) {
+data class Seq<T>(val values: List<T>) {
     override fun toString() = "Seq(${values.joinToString()})"
 }
 
-fun seq(vararg parsers: Parser) = object: Parser {
-    override fun invoke(input: Input): Output? {
-        val seqPayload = ArrayList<Any>()
+fun <T> seq(vararg parsers: Parser<out T>) = object: Parser<Seq<T>> {
+    override fun invoke(input: Input): Output<Seq<T>>? {
+        val seqPayload = ArrayList<T>()
         var lastInput = input
 
         parsers.forEach { parser ->
@@ -151,13 +151,13 @@ fun `rep combinator`() {
     )
 }
 
-data class Rep(val values: List<Any>) {
+data class Rep<T>(val values: List<T>) {
     override fun toString() = "Rep(${values.joinToString()})"
 }
 
-fun rep(parser: Parser, atLeast: Int = 0) = object: Parser {
-    override fun invoke(input: Input): Output? {
-        val repPayload = ArrayList<Any>()
+fun <T> rep(parser: Parser<T>, atLeast: Int = 0) = object: Parser<Rep<T>> {
+    override fun invoke(input: Input): Output<Rep<T>>? {
+        val repPayload = ArrayList<T>()
         var lastInput: Input? = input
 
         while (lastInput != null) {
@@ -183,9 +183,9 @@ fun `alt combinator`() {
     expression(Input("34 + 567")).printed()?.input?.complete shouldEqual true
 }
 
-fun alt(vararg parsers: Parser) = object: Parser {
-    override fun invoke(input: Input): Output? {
-        parsers.forEach { parser: Parser ->
+fun <T> alt(vararg parsers: Parser<out T>) = object: Parser<T> {
+    override fun invoke(input: Input): Output<out T>? {
+        parsers.forEach { parser ->
             val output = parser(input)
             if (output != null) return output
         }
@@ -202,9 +202,9 @@ fun `mapping output`() {
     val number = alt(str("0"), seq(chr("[1-9]"), rep(chr("[0-9]")))).map { payload ->
         if (payload is Str) 0
         else {
-            val seqValues = (payload as Seq).values
+            val seqValues = (payload as Seq<*>).values
             val seqChr = seqValues[0] as Chr
-            val repChars = (seqValues[1] as Rep).values as List<Chr>
+            val repChars = (seqValues[1] as Rep<*>).values as List<Chr>
             val chars = (listOf(seqChr) + repChars).map { it.s }
             chars.joinToString("").toInt()
         }
@@ -213,7 +213,7 @@ fun `mapping output`() {
     val whitespace = rep(str(" "))
 
     val addition = seq(number, whitespace, str("+"), whitespace, number).map { payload ->
-        val seqValues = (payload as Seq).values
+        val seqValues = (payload as Seq<*>).values
         Addition(seqValues[0] as Int, seqValues[4] as Int)
     }
 
@@ -221,7 +221,7 @@ fun `mapping output`() {
     addition(Input("34 + 567")).printed() shouldEqual Output(Addition(34, 567), Input("34 + 567", 8))
 }
 
-fun <T: Any> Parser.map(f: (Any) -> T): Parser = { input: Input ->
+fun <T: Any, R> Parser<T>.map(f: (T) -> R): Parser<R> = { input: Input ->
     val output = this(input)
     if (output == null) null
     else Output(f(output.payload), output.input)
@@ -238,12 +238,12 @@ object `ref combinator`: () -> Unit {
     val whitespace = rep(str(" "))
 
     val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
-        val s = (payload as Rep).values.joinToString("") { (it as Chr).s }
+        val s = payload.values.joinToString("") { it.s }
         IntValue(s.toInt())
     }
 
-    val addition: Parser = seq(number, whitespace, str("+"), whitespace, ref { expression }).map { payload ->
-        val seqValues = (payload as Seq).values
+    val addition: Parser<*> = seq(number, whitespace, str("+"), whitespace, ref { expression }).map { payload ->
+        val seqValues = payload.values
         Add(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
     }
 
@@ -258,7 +258,7 @@ object `ref combinator`: () -> Unit {
     }
 }
 
-fun ref(f: () -> Parser): Parser = { input -> f()(input) }
+fun <T> ref(f: () -> Parser<T>): Parser<T> = { input -> f()(input) }
 
 interface Expression<out T> {
     fun eval(): T
@@ -277,7 +277,7 @@ data class IntValue(val n: Int): Expression<Int> {
 
 
 object `matching parens`: () -> Unit {
-    val expression: Parser = rep(seq(str("("), ref{ e }, str(")")))
+    val expression: Parser<*> = rep(seq(str("("), ref{ e }, str(")")))
     val e = expression
 
     override fun invoke() {
@@ -309,17 +309,17 @@ object `multiplication precedence`: () -> Unit {
     val ` ` = rep(str(" "))
 
     val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
-        val s = (payload as Rep).values.map { (it as Chr).s }.joinToString("")
+        val s = payload.values.map { it.s }.joinToString("")
         IntValue(s.toInt())
     }
 
-    val addition: Parser = seq(ref { terminalExpr }, ` `, str("+"), ` `, ref { expression }).map { payload ->
-        val seqValues = (payload as Seq).values
+    val addition: Parser<*> = seq(ref { terminalExpr }, ` `, str("+"), ` `, ref { expression }).map { payload ->
+        val seqValues = payload.values
         Add(seqValues[0] as Expression<Int>, seqValues[4] as Expression<Int>)
     }
 
-    val multiply: Parser = seq(number, ` `, str("*"), ` `, ref { terminalExpr }).map { payload ->
-        val seqValues = (payload as Seq).values
+    val multiply: Parser<*> = seq(number, ` `, str("*"), ` `, ref { terminalExpr }).map { payload ->
+        val seqValues = payload.values
         Mult(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
     }
 
