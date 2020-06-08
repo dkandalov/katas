@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.bst_validation
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.Int.Companion.MAX_VALUE

@@ -1,10 +1,10 @@
 package katas.kotlin.sort
 
+import datsok.shouldEqual
 import io.kotlintest.fail
-import kotlincommon.listOfInts
-import kotlincommon.permutations
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.listOfInts
+import nonstdlib.permutations
+import nonstdlib.printed
 import org.junit.Test
 import kotlin.random.Random
 

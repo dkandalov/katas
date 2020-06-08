@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.regex_matching.v4
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.jupiter.api.Test
 
 class RegexMatching {

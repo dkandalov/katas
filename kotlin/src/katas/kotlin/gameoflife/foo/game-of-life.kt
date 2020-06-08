@@ -1,6 +1,6 @@
 package katas.kotlin.gameoflife.foo
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.math.absoluteValue
 

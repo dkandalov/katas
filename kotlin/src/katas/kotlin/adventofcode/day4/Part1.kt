@@ -1,6 +1,6 @@
 package katas.kotlin.adventofcode.day4
 
-import kotlincommon.*
+import nonstdlib.*
 
 fun main() {
     (372304..847060).count { n ->

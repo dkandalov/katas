@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.knapsack
 
-import kotlincommon.*
-import kotlincommon.test.*
+import nonstdlib.*
+import datsok.*
 import org.junit.*
 
 

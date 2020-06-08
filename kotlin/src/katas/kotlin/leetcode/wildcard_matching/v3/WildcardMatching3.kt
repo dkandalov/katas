@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.wildcard_matching.v3
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 class WildcardMatching3 {

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.jump_game
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 /**

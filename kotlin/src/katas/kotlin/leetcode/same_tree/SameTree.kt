@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.same_tree
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

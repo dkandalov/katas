@@ -1,7 +1,7 @@
 package katas.kotlin.permutation
 
-import kotlincommon.*
-import kotlincommon.test.*
+import nonstdlib.*
+import datsok.*
 import org.junit.*
 import java.util.*
 

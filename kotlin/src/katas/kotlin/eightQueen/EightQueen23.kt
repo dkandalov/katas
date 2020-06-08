@@ -1,6 +1,6 @@
 package katas.kotlin.eightQueen
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class EightQueen23 {

@@ -3,7 +3,7 @@
 package katas.kotlin.leetcode.invert_binary_tree
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class InvertBinaryTreeTests {

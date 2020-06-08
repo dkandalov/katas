@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.regex_matching.v2
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 class RegexMatching {

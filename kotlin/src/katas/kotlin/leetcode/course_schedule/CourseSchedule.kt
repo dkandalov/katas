@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.course_schedule
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

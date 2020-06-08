@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.most_common_word
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class MostCommonWordTests {

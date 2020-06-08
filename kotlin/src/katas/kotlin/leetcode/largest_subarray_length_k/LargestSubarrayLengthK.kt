@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.largest_subarray_length_k
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

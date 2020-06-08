@@ -1,7 +1,7 @@
 package katas.kotlin.adventofcode.day7
 
 import katas.kotlin.adventofcode.day5.*
-import kotlincommon.*
+import nonstdlib.*
 import java.io.*
 import java.util.*
 

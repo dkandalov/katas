@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.rotate_image
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class RotateImageTests {

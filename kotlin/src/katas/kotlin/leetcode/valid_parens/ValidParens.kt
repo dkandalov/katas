@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.valid_parens
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class ValidParensTests {

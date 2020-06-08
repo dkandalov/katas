@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.phone_number
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

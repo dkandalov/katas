@@ -2,9 +2,9 @@ package katas.kotlin.skiena.graphs
 
 import katas.kotlin.skiena.graphs.DirectedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.DirectedGraphs.meshGraph
-import kotlincommon.join
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.join
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.HashMap

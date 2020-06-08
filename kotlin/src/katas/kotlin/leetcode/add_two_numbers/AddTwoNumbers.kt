@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.add_two_numbers
 
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

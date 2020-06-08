@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.stores_and_houses
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.math.abs
 

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.subtree_with_max_average
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 

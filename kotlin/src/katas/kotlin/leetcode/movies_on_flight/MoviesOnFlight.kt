@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.movies_on_flight
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

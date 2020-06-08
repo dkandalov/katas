@@ -1,7 +1,7 @@
 package katas.kotlin.graph
 
 import katas.kotlin.graph.Graph.Node
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 

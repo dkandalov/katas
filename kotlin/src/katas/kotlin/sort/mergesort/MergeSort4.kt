@@ -1,9 +1,9 @@
 package katas.kotlin.sort.mergesort
 
-import kotlincommon.listOfInts
-import kotlincommon.permutations
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.listOfInts
+import nonstdlib.permutations
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList

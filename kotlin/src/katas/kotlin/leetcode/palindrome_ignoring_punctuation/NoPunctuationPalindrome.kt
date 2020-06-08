@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.palindrome_ignoring_punctuation
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

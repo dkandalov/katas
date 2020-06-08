@@ -1,8 +1,8 @@
 package katas.kotlin.sort.mergesort
 
-import kotlincommon.listOfInts
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.listOfInts
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

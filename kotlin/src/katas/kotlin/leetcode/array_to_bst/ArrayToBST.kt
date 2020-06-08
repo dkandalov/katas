@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.array_to_bst
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

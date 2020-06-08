@@ -10,8 +10,8 @@ import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.Link
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import java.io.File
 import java.util.*

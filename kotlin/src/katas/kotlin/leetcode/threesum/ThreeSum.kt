@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.threesum
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.random.nextInt

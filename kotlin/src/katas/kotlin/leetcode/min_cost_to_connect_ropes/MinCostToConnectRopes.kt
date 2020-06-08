@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.min_cost_to_connect_ropes
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 

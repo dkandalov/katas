@@ -1,6 +1,6 @@
 package katas.kotlin.adventofcode.day2
 
-import kotlincommon.*
+import nonstdlib.*
 import java.io.*
 
 fun main() {

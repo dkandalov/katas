@@ -3,8 +3,8 @@ package katas.kotlin.trigram
 import io.kotlintest.matchers.startWith
 import io.kotlintest.should
 import io.kotlintest.specs.StringSpec
-import kotlincommon.printed
-import kotlincommon.skip
+import nonstdlib.printed
+import nonstdlib.skip
 import java.io.File
 import java.util.*
 

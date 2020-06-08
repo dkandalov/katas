@@ -3,8 +3,8 @@
 package katas.kotlin.skiena.combinatorial_search
 
 import com.google.common.collect.*
-import kotlincommon.*
-import kotlincommon.test.shouldEqual
+import nonstdlib.*
+import datsok.shouldEqual
 import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Test

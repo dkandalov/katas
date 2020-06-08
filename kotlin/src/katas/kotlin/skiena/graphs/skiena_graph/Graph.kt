@@ -1,9 +1,9 @@
 package katas.kotlin.skiena.graphs.skiena_graph
 
-import kotlincommon.join
+import nonstdlib.join
 import org.junit.Test
 import katas.kotlin.skiena.graphs.skiena_graph.Colour.*
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 
 // ------------------------------
 // 5.2 Data Structures for Graphs

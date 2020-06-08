@@ -1,8 +1,8 @@
 package katas.kotlin.diamond
 
-import kotlincommon.tail
-import kotlincommon.test.shouldEqual
-import kotlincommon.times
+import nonstdlib.tail
+import datsok.shouldEqual
+import nonstdlib.times
 import org.junit.Test
 
 class Diamond4 {

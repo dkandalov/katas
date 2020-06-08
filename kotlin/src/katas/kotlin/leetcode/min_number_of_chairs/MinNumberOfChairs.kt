@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.min_number_of_chairs
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

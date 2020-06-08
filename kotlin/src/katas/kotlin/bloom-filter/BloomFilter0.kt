@@ -1,9 +1,9 @@
 package katas.kotlin.`bloom-filter`
 
-import kotlincommon.printed
-import kotlincommon.byteArray
-import kotlincommon.byteList
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import nonstdlib.byteArray
+import nonstdlib.byteList
+import datsok.shouldEqual
 import org.junit.Test
 import java.io.File
 import java.security.MessageDigest

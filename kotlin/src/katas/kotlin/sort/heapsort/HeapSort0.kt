@@ -1,10 +1,10 @@
 package katas.kotlin.sort.heapsort
 
-import kotlincommon.listOfInts
-import kotlincommon.permutations
-import kotlincommon.printed
-import kotlincommon.swap
-import kotlincommon.test.shouldEqual
+import nonstdlib.listOfInts
+import nonstdlib.permutations
+import nonstdlib.printed
+import nonstdlib.swap
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

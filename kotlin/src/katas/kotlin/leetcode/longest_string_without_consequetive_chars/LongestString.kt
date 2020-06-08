@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.longest_string_without_consequetive_chars
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 

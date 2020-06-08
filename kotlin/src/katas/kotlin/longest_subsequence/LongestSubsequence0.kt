@@ -1,7 +1,7 @@
 package katas.kotlin.longest_subsequence
 
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

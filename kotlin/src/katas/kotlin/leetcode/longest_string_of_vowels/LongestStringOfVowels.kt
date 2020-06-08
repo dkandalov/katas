@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.longest_string_of_vowels
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

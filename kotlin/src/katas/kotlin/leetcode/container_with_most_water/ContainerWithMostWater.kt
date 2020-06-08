@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.container_with_most_water
 
-import kotlincommon.listOfInts
-import kotlincommon.test.shouldEqual
+import nonstdlib.listOfInts
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.random.Random
 

@@ -8,7 +8,7 @@ import katas.kotlin.tapl.chapter9.TestUtil.evaluatesTo
 import katas.kotlin.tapl.chapter9.TestUtil.invoke
 import katas.kotlin.tapl.chapter9.TestUtil.v
 import katas.kotlin.tapl.chapter9.TestUtil.λ
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test

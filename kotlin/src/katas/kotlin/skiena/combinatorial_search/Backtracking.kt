@@ -6,12 +6,13 @@ import katas.kotlin.skiena.combinatorial_search.SudokuTests.Sudoku.Companion.squ
 import katas.kotlin.skiena.graphs.Edge
 import katas.kotlin.skiena.graphs.Graph
 import katas.kotlin.skiena.graphs.UnweightedGraphs
-import kotlincommon.doesNotContain
-import kotlincommon.join
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.doesNotContain
+import nonstdlib.join
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.ArrayList
+import kotlin.math.abs
 
 class SubsetsTests {
     @Test fun `find all subsets`() {
@@ -154,7 +155,7 @@ class EightQueenTests {
         private fun isValid(queen: Queen): Boolean {
             val notOnTheSameLine = value.none { it.row == queen.row || it.column == queen.column }
             val notOnTheSameDiagonal = value.none {
-                Math.abs(it.row - queen.row) == Math.abs(it.column - queen.column)
+                abs(it.row - queen.row) == abs(it.column - queen.column)
             }
             return notOnTheSameLine && notOnTheSameDiagonal
         }

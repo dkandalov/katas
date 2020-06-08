@@ -1,6 +1,6 @@
 package katas.kotlin.subsets
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 class Subsets1 : SubsetTests({ it.subsets() }) {

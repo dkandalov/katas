@@ -1,7 +1,7 @@
 package katas.kotlin.permutation
 
 import katas.kotlin.shouldHaveSameElementsAs
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 
 fun checkPermutationsFunction(permutationsOf: (List<Int>) -> List<List<Int>>) {
     permutationsOf(emptyList()) shouldEqual listOf(emptyList())

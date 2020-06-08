@@ -3,7 +3,7 @@
 package katas.kotlin.leetcode.max_depth_of_binary_tree
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 

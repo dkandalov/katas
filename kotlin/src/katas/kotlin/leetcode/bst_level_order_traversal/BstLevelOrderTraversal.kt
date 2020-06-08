@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.bst_level_order_traversal
 
 import katas.kotlin.leetcode.TreeNode
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList

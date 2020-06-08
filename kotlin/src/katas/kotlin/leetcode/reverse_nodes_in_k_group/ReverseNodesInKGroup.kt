@@ -2,7 +2,7 @@ package katas.kotlin.leetcode.reverse_nodes_in_k_group
 
 import katas.kotlin.leetcode.ListNode
 import katas.kotlin.leetcode.listNodes
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class ReverseNodesInKGroupTests {

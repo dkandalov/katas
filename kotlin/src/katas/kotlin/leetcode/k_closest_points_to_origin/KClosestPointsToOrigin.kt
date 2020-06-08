@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.k_closest_points_to_origin
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.math.sqrt
 

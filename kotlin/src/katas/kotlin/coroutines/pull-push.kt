@@ -6,7 +6,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import katas.kotlin.coroutines.PP.CoDataSource.Companion.build
 import katas.kotlin.coroutines.steps.step1.EmptyContinuation
-import kotlincommon.printed
+import nonstdlib.printed
 import org.junit.Ignore
 import org.junit.Test
 import java.util.concurrent.CompletableFuture

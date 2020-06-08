@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 // https://www.hackerrank.com/challenges/non-divisible-subset

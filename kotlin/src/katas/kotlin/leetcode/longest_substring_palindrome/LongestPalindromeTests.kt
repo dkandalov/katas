@@ -2,8 +2,8 @@
 
 package katas.kotlin.leetcode.longest_substring_palindrome
 
-import kotlincommon.measureDuration
-import kotlincommon.test.shouldEqual
+import nonstdlib.measureDuration
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

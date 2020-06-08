@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.odd_even_jump
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

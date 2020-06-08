@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.add_and_search_word
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

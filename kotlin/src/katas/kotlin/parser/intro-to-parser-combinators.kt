@@ -2,8 +2,8 @@
 
 package katas.kotlin.parser
 
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
@@ -235,7 +235,7 @@ data class Addition(val n1: Int, val n2: Int)
 
 @Suppress("UNCHECKED_CAST")
 object `ref combinator`: () -> Unit {
-    val whitespace = rep(str(" "))
+    private val whitespace = rep(str(" "))
 
     val number = rep(chr("[0-9]"), atLeast = 1).map { payload ->
         val s = payload.values.joinToString("") { it.s }
@@ -323,7 +323,7 @@ object `multiplication precedence`: () -> Unit {
         Mult(seqValues[0] as IntValue, seqValues[4] as Expression<Int>)
     }
 
-    val terminalExpr = alt(multiply, number)
+    private val terminalExpr = alt(multiply, number)
 
     val expression = alt(addition, terminalExpr)
 

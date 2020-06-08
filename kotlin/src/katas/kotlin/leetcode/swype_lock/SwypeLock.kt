@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.swype_lock
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 import kotlin.math.*
 

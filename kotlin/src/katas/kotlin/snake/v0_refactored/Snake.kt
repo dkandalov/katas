@@ -1,7 +1,7 @@
 package katas.kotlin.snake.v0_refactored
 
-import kotlincommon.test.shouldEqual
-import kotlincommon.test.shouldNotEqual
+import datsok.shouldEqual
+import datsok.shouldNotEqual
 import org.junit.Test
 
 

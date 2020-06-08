@@ -1,7 +1,7 @@
 package katas.kotlin.gameoflife
 
 import katas.kotlin.gameoflife.foo.Cell
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
 

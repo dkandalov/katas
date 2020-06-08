@@ -1,7 +1,7 @@
 package katas.kotlin.hackerrank.shortest_path
 
 import katas.kotlin.hackerrank.shortest_path.BinaryHeap.Companion.binaryHeapOf
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.ArrayList

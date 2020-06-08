@@ -4,8 +4,8 @@ import katas.kotlin.skiena.graphs.WeightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.exampleGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.triangleGraph
-import kotlincommon.doesNotContain
-import kotlincommon.test.shouldEqual
+import nonstdlib.doesNotContain
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import java.util.Comparator.comparingInt

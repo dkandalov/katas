@@ -1,7 +1,7 @@
 package katas.kotlin.subsets
 
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 
 // See https://www.mathsisfun.com/pascals-triangle.html

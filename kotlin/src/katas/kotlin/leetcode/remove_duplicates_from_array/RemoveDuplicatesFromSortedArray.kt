@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.remove_duplicates_from_array
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 data class ListNode(val value: Int, var next: ListNode? = null) {

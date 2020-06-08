@@ -1,6 +1,6 @@
 package katas.kotlin.hackerrank.contacts
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File

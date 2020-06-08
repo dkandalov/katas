@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.whac_a_mole
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

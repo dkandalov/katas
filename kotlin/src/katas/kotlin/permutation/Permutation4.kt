@@ -1,7 +1,7 @@
 package katas.kotlin.permutation
 
-import kotlincommon.printed
-import kotlincommon.swap
+import nonstdlib.printed
+import nonstdlib.swap
 import org.junit.Test
 
 class Permutation4 {

@@ -1,6 +1,6 @@
 package katas.kotlin.parser.v2
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 class ParserTests {

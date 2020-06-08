@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.maximum_area_serving_cake
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import kotlin.math.PI
 import kotlin.math.abs

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.fruit_into_baskets
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 /**

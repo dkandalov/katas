@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.unique_bsts
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class UniqueBSTsTests {

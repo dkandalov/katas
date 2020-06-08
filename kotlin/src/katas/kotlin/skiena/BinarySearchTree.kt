@@ -1,6 +1,6 @@
 package katas.kotlin.skiena
 
-import kotlincommon.printed
+import nonstdlib.printed
 
 data class Node<T: Comparable<T>>(
     val item: T,

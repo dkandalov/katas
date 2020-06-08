@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.traping_rain_water
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 import java.util.*
 

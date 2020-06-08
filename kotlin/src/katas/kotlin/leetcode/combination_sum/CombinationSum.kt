@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.combination_sum
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class CombinationSumTests {

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.clone_graph
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class CloneGraphTests {

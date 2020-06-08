@@ -1,7 +1,7 @@
 package katas.kotlin.graph
 
-import kotlincommon.join
-import kotlincommon.test.shouldEqual
+import nonstdlib.join
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
 import kotlin.collections.LinkedHashSet

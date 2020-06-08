@@ -2,7 +2,7 @@
 
 package katas.kotlin.leetcode.license_key_formatting
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

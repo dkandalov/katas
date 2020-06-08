@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.max_distance
 
-import kotlincommon.tail
-import kotlincommon.test.shouldEqual
+import nonstdlib.tail
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

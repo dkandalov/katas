@@ -3,7 +3,7 @@ package katas.kotlin.skiena.graphs
 import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 fun <T> Graph<T>.hasCycles(): Boolean {

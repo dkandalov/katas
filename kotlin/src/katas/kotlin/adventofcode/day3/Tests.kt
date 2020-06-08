@@ -1,6 +1,6 @@
 package katas.kotlin.adventofcode.day3
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.jupiter.api.*
 
 class Tests {

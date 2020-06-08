@@ -1,6 +1,6 @@
 package katas.kotlin.mukanren
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Ignore
 import org.junit.Test
 import java.util.*

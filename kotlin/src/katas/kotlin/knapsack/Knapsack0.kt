@@ -1,6 +1,6 @@
 package katas.kotlin.knapsack
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 import java.util.*
 import kotlin.collections.HashSet

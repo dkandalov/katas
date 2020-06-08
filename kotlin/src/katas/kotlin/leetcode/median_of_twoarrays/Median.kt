@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.median_of_twoarrays
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class Median {

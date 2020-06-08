@@ -1,6 +1,6 @@
 package katas.kotlin.adventofcode.day1
 
-import kotlincommon.*
+import nonstdlib.*
 import java.io.*
 import kotlin.math.*
 

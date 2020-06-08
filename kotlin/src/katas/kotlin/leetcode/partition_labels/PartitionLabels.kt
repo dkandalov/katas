@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.partition_labels
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 /**

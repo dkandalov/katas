@@ -4,8 +4,8 @@ import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.disconnectedGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
-import kotlincommon.doesNotContain
-import kotlincommon.test.shouldEqual
+import nonstdlib.doesNotContain
+import datsok.shouldEqual
 import org.junit.Test
 
 fun <T> Graph<T>.dfs(fromVertex: T, result: MutableList<T> = ArrayList()): List<T> {

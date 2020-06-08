@@ -2,8 +2,8 @@ package katas.kotlin.hackerrank.roads_and_libraries
 
 import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
-import kotlincommon.printed
-import kotlincommon.test.shouldEqual
+import nonstdlib.printed
+import datsok.shouldEqual
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.File

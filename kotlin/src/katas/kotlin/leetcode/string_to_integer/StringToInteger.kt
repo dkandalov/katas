@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.string_to_integer
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class StringToIntegerTests {

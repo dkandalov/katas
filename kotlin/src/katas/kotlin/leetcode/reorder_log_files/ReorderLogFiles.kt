@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.reorder_log_files
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

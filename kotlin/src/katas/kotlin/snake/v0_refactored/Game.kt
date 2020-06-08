@@ -1,7 +1,7 @@
 package katas.kotlin.snake.v0_refactored
 
 import katas.kotlin.snake.v0_refactored.Game.State.*
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.Random
 

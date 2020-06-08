@@ -1,7 +1,7 @@
 package katas.kotlin.hackerrank
 
-import kotlincommon.permutations
-import kotlincommon.printed
+import nonstdlib.permutations
+import nonstdlib.printed
 import java.util.*
 
 /**

@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.wildcard_matching
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

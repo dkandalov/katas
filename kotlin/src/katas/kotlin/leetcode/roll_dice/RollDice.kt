@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.roll_dice
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 /**

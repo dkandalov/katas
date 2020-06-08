@@ -2,7 +2,7 @@ package katas.kotlin.snake.v0
 
 import katas.kotlin.snake.v0.Direction.*
 import katas.kotlin.snake.v0.Game.State.*
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 import java.util.Random
 

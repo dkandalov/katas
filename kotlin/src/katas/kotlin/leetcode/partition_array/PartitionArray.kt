@@ -1,7 +1,7 @@
 package katas.kotlin.leetcode.partition_array
 
-import kotlincommon.swap
-import kotlincommon.test.shouldEqual
+import nonstdlib.swap
+import datsok.shouldEqual
 import org.junit.Test
 
 class PartitionArrayTests {

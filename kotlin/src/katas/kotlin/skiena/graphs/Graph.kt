@@ -2,8 +2,8 @@ package katas.kotlin.skiena.graphs
 
 import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
-import kotlincommon.join
-import kotlincommon.test.shouldEqual
+import nonstdlib.join
+import datsok.shouldEqual
 import org.junit.Test
 
 data class Edge<T>(val from: T, val to: T, val weight: Int? = null) {

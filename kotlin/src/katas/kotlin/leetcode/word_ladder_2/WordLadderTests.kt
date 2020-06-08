@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.word_ladder_2
 
-import kotlincommon.test.*
+import datsok.*
 import org.junit.*
 
 /**

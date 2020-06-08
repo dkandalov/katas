@@ -1,6 +1,6 @@
 package katas.kotlin.leetcode.optimal_utilisation
 
-import kotlincommon.test.shouldEqual
+import datsok.shouldEqual
 import org.junit.Test
 
 class OptimalUtilisationTests {
