@@ -4,7 +4,6 @@ import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.disconnectedGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
-import nonstdlib.doesNotContain
 import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
@@ -84,9 +83,9 @@ fun <T> Graph<T>.bfsEdges(fromVertex: T = vertices.first()): List<Edge<T>> {
         visited.add(vertex)
 
         edgesByVertex[vertex]?.forEach { edge ->
-            if (visited.doesNotContain(edge.to)) {
+            if (edge.to !in visited) {
                 result.add(edge)
-                if (queue.doesNotContain(edge.to)) queue.add(edge.to)
+                if (edge.to !in queue) queue.add(edge.to)
             }
         }
     }

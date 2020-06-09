@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import nonstdlib.printed
 import nonstdlib.join
+import nonstdlib.printedAs
 import org.junit.Test
 
 class BWT3 {
@@ -15,10 +16,10 @@ class BWT3 {
     }
 
     // Not using line start/end characters "^|" because they don't really sort the same way as in wikipedia example.
-    private fun String.encode(): String = ("{" + this + "}").run {
+    private fun String.encode(): String = ("{$this}").run {
         return indices
-                .map { drop(it) + take(it) }.printed{ it.join("\n") + "\n" }
-                .sorted().printed{ it.join("\n") + "\n" }
+                .map { drop(it) + take(it) }.printedAs { it.join("\n") + "\n" }
+                .sorted().printedAs{ it.join("\n") + "\n" }
                 .map { it.last() }.join("").printed()
     }
 
@@ -27,7 +28,7 @@ class BWT3 {
         repeat(length) {
             indices.forEach { i -> table[i] = this[i] + table[i] }
             table.sort()
-            table.printed{ it.join("\n") + "\n" }
+            table.printedAs { it.join("\n") + "\n" }
         }
         return table.find { it.startsWith("{") && it.endsWith("}") }!!.let {
             it.substring(1, it.length - 1)

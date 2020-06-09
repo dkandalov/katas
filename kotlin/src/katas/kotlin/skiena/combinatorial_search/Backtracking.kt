@@ -6,10 +6,10 @@ import katas.kotlin.skiena.combinatorial_search.SudokuTests.Sudoku.Companion.squ
 import katas.kotlin.skiena.graphs.Edge
 import katas.kotlin.skiena.graphs.Graph
 import katas.kotlin.skiena.graphs.UnweightedGraphs
-import nonstdlib.doesNotContain
 import nonstdlib.join
 import nonstdlib.printed
 import datsok.shouldEqual
+import nonstdlib.joinBy
 import org.junit.Test
 import java.util.ArrayList
 import kotlin.math.abs
@@ -59,7 +59,7 @@ class AllPathsTests {
         override val value: List<Int> = listOf(from),
         private val skipped: Set<Edge<Int>> = emptySet()
     ) : Solution<List<Int>> {
-        private val nextEdge = graph.edgesByVertex[value.last()]!!.find { value.doesNotContain(it.to) && skipped.doesNotContain(it) }
+        private val nextEdge = graph.edgesByVertex[value.last()]!!.find { it.to !in value && it !in skipped }
 
         override fun hasNext() = nextEdge != null && !isComplete()
         override fun skipNext() = copy(skipped = skipped + nextEdge!!)
@@ -166,8 +166,8 @@ class EightQueenTests {
     }
 
     private fun List<Queen>.toBoardString(boardSize: Int) =
-        0.until(boardSize).join("\n") { row ->
-            0.until(boardSize).join("") { column ->
+        0.until(boardSize).joinBy("\n") { row ->
+            0.until(boardSize).joinBy("") { column ->
                 if (contains(Queen(row, column))) "*" else "-"
             }
         }
@@ -277,7 +277,7 @@ class SudokuTests {
             return Sudoku(value = newValue, guess = 1)
         }
 
-        override fun isComplete() = isValid && value.doesNotContain(0)
+        override fun isComplete() = isValid && 0 !in value
 
         private fun isValid(): Boolean =
             0.until(guessIndex).all { index ->

@@ -4,14 +4,13 @@ import katas.kotlin.skiena.graphs.UnweightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.disconnectedGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.UnweightedGraphs.meshGraph
-import nonstdlib.doesNotContain
 import datsok.shouldEqual
 import org.junit.Test
 
 fun <T> Graph<T>.dfs(fromVertex: T, result: MutableList<T> = ArrayList()): List<T> {
     edgesByVertex[fromVertex]?.forEach {
-        if (result.doesNotContain(it.from)) result.add(it.from)
-        if (result.doesNotContain(it.to)) {
+        if (it.from !in result) result.add(it.from)
+        if (it.to !in result) {
             result.add(it.to)
             dfs(it.to, result)
         }
@@ -21,7 +20,7 @@ fun <T> Graph<T>.dfs(fromVertex: T, result: MutableList<T> = ArrayList()): List<
 
 fun <T> Graph<T>.dfsEdges(fromVertex: T, result: MutableList<Edge<T>> = ArrayList()): List<Edge<T>> {
     edgesByVertex[fromVertex]?.forEach { edge ->
-        if (result.doesNotContain(edge) && result.doesNotContain(edge.inverse)) {
+        if (edge !in result && edge.inverse !in result) {
             result.add(edge)
             dfsEdges(edge.to, result)
         }

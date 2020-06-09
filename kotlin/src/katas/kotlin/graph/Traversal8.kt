@@ -1,7 +1,6 @@
 package katas.kotlin.graph
 
 import katas.kotlin.graph.Graph.Node
-import nonstdlib.doesNotContain
 import nonstdlib.join
 import datsok.shouldEqual
 import org.junit.Test
@@ -75,7 +74,7 @@ class Traversal8 {
         stack.add(this)
         while (stack.isNotEmpty()) {
             val node = stack.removeLast()
-            if (result.doesNotContain(node.value)) {
+            if (node.value !in result) {
                 result.add(node.value)
                 node.neighbors().reversed().forEach { stack.addLast(it) }
             }
@@ -89,7 +88,7 @@ class Traversal8 {
         stack.add(this)
         while (stack.isNotEmpty()) {
             val node = stack.removeLast()
-            if (result.doesNotContain(node.value)) {
+            if (node.value !in result) {
                 result.add(node.value)
                 node.neighbors().forEach { stack.addFirst(it) }
             }

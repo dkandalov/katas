@@ -107,7 +107,7 @@ private data class AnagramFinder(
 
     init {
         val (i, word) = dictionary.findIndexed(dictionaryIndex) { word ->
-            skippedWords.doesNotContain(word) && remainingChars.containsAll(word.chars)
+            word !in skippedWords && remainingChars.containsAll(word.chars)
         }
         nextWord = word
         nextDictionaryIndex = i

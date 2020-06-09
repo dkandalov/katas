@@ -1,9 +1,7 @@
 package katas.kotlin.`bloom-filter`
 
-import nonstdlib.printed
-import nonstdlib.byteArray
-import nonstdlib.byteList
 import datsok.shouldEqual
+import nonstdlib.printedAs
 import org.junit.Test
 import java.io.File
 import java.security.MessageDigest
@@ -59,23 +57,23 @@ class BloomFilter0 {
     @Test fun `adding words from dictionary`() {
         val filter = Filter()
 
-        val words = File("src/katas/kotlin/words.txt").readLines().printed { "word amount: ${it.size}" }
+        val words = File("src/katas/kotlin/words.txt").readLines().printedAs { "word amount: ${it.size}" }
         var clashCount = 0
         words.forEach {
             val alreadyAdded = filter.add(it)
             if (alreadyAdded) clashCount++
         }
 
-        clashCount.printed{ "clash count: $it" } shouldEqual 1
+        clashCount.printedAs { "clash count: $it" } shouldEqual 1
     }
 
     @Test fun `slide byte array`() {
-        byteArray(1).slide(1) shouldEqual listOf(byteList(1))
-        byteArray(1).slide(2) shouldEqual listOf()
+        byteArrayOf(1).slide(1) shouldEqual listOf(listOf<Byte>(1))
+        byteArrayOf(1).slide(2) shouldEqual listOf()
 
-        byteArray(1, 2).slide(1) shouldEqual listOf(byteList(1), byteList(2))
-        byteArray(1, 2).slide(2) shouldEqual listOf(byteList(1, 2))
-        byteArray(1, 2, 3, 4).slide(2) shouldEqual listOf(byteList(1, 2), byteList(3, 4))
+        byteArrayOf(1, 2).slide(1) shouldEqual listOf(listOf<Byte>(1), listOf<Byte>(2))
+        byteArrayOf(1, 2).slide(2) shouldEqual listOf(listOf<Byte>(1, 2))
+        byteArrayOf(1, 2, 3, 4).slide(2) shouldEqual listOf(listOf<Byte>(1, 2), listOf<Byte>(3, 4))
     }
 }
 

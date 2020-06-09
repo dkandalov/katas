@@ -4,7 +4,6 @@ import katas.kotlin.skiena.graphs.WeightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.exampleGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.triangleGraph
-import nonstdlib.doesNotContain
 import datsok.shouldEqual
 import org.junit.Test
 import java.util.*
@@ -122,7 +121,7 @@ private fun <T> Graph<T>.primMST(): Graph<T> {
     while (!tree.vertices.containsAll(vertices)) {
         val minEdge = tree.vertices
             .flatMap { vertex -> edgesByVertex[vertex]!! }
-            .filter { edge -> tree.vertices.doesNotContain(edge.to) }
+            .filter { edge -> edge.to !in tree.vertices }
             .minBy { it.weight!! }!!
 
         tree.addEdge(minEdge)

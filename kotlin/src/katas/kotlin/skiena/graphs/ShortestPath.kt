@@ -3,7 +3,6 @@ package katas.kotlin.skiena.graphs
 import katas.kotlin.skiena.graphs.WeightedGraphs.diamondGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.linearGraph
 import katas.kotlin.skiena.graphs.WeightedGraphs.triangleGraph
-import nonstdlib.doesNotContain
 import datsok.shouldEqual
 import org.junit.Test
 
@@ -122,7 +121,7 @@ private fun <T> Graph<T>.dijkstraShortestPaths(): Graph<T> {
     while (!tree.vertices.containsAll(vertices)) {
         val minEdge = tree.vertices
             .flatMap { vertex -> edgesByVertex[vertex]!! }
-            .filter { edge -> tree.vertices.doesNotContain(edge.to) }
+            .filter { edge -> edge.to !in tree.vertices }
             .onEach { distance[it.to] = distance[it.from]!! + it.weight!! } // TODO is it possible that this update goes wrong?
             .minBy { distance[it.to]!! }!!
 
