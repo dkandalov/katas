@@ -4,6 +4,7 @@ import katas.kotlin.hackerrank.OutputRecorder
 import katas.kotlin.hackerrank.toReadLineFunction
 import nonstdlib.printed
 import datsok.shouldEqual
+import nonstdlib.sumByLong
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.File
@@ -124,14 +125,6 @@ class RoadsAndLibrariesTests {
             neighbourEdges?.forEach { (_, to) -> graphByVertex[to] = graph }
         }
         return result
-    }
-
-    private inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
-        var sum = 0L
-        for (element in this) {
-            sum += selector(element)
-        }
-        return sum
     }
 
     @Test fun `example from problem description`() {

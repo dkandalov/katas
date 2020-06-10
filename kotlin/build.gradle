@@ -33,7 +33,7 @@ dependencies {
 	implementation "org.http4k:http4k-core:3.207.0"
 	implementation "org.http4k:http4k-server-jetty:3.207.0"
 	implementation "org.http4k:http4k-client-apache:3.207.0"
-	implementation "nonstdlib:nonstdlib:0.2"
+	implementation "nonstdlib:nonstdlib:0.3"
 	implementation "datsok:datsok:0.2"
 	implementation "parser4k:parser4k:0.01"
 	implementation "io.kotlintest:kotlintest-runner-junit4:3.1.10"
