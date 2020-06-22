@@ -19,6 +19,7 @@ class AddTwoNumbers_2_Tests {
     @Test fun `it works`() {
         addTwoNumbers(0.toListNode(), 0.toListNode()) shouldEqual 0.toListNode()
         addTwoNumbers(1.toListNode(), 2.toListNode()) shouldEqual 3.toListNode()
+        addTwoNumbers(5.toListNode(), 5.toListNode()) shouldEqual 10.toListNode()
         addTwoNumbers(10.toListNode(), 30.toListNode()) shouldEqual 40.toListNode()
         addTwoNumbers(12.toListNode(), 3.toListNode()) shouldEqual 15.toListNode()
         addTwoNumbers(342.toListNode(), 465.toListNode()) shouldEqual 807.toListNode()
@@ -49,6 +50,7 @@ fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
         longest = longest.next
         shortest = shortest?.next
     } while (longest != null)
+    if (carry) tip?.next = ListNode(1)
     return head
 }
 
