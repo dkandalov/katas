@@ -42,6 +42,7 @@ class AddTwoNumbers {
         21.toLinkedList() + 43.toLinkedList() shouldEqual 64.toLinkedList()
         123.toLinkedList() + 456.toLinkedList() shouldEqual 579.toLinkedList()
         342.toLinkedList() + 465.toLinkedList() shouldEqual 807.toLinkedList()
+        1342.toLinkedList() + 465.toLinkedList() shouldEqual 1807.toLinkedList()
     }
 
     @Test fun `add random positive numbers`() {
@@ -63,13 +64,13 @@ private data class Node(val value: Int, val next: Node? = null) {
 
     operator fun plus(that: Node): Node {
         var nextSumNode =
-            if (next == null && that.next == null) null
-            else if (next == null) that.next
-            else if (that.next == null) next
-            else next + that.next
+            if (this.next == null && that.next == null) null
+            else if (this.next == null) that.next
+            else if (that.next == null) this.next
+            else this.next + that.next
 
-        val sum = value + that.value
-        if (sum >= 10) nextSumNode = if (nextSumNode == null) Node(1) else nextSumNode + Node(1)
+        val sum = this.value + that.value
+        if (sum >= 10) nextSumNode = (nextSumNode ?: Node(0)) + Node(1)
 
         return Node(sum % 10).linkedTo(nextSumNode)
     }
