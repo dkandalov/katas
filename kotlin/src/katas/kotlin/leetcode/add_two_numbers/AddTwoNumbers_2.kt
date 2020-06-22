@@ -39,13 +39,11 @@ fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
     do {
         val sum = longest?.value!! + (shortest?.value ?: 0) + if (carry) 1 else 0
         val newElement = ListNode(sum % 10)
-        if (head == null) {
-            head = newElement
-            tip = newElement
-        } else {
-            tip?.next = newElement
-            tip = newElement
-        }
+
+        if (head == null) head = newElement
+        tip?.next = newElement
+        tip = newElement
+
         carry = sum >= 10
         longest = longest.next
         shortest = shortest?.next
