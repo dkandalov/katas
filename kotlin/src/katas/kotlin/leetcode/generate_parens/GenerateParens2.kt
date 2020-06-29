@@ -1,10 +1,10 @@
 package katas.kotlin.leetcode.generate_parens
 
-import datsok.shouldEqual
+import katas.kotlin.softFail
 import org.junit.jupiter.api.Test
 
 class GenerateParens2 {
-    @Test fun `it works`() {
+    @Test fun `it works`() = softFail {
         parens(n = 1) shouldEqual listOf("()")
         parens(n = 2) shouldEqual listOf("()()", "(())")
         parens(n = 3) shouldEqual listOf(

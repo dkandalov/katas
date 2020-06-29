@@ -3,9 +3,31 @@ package katas.kotlin
 import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
+import datsok.shouldEqual as datsOkShouldEqual
 import org.junit.Assert
 import org.junit.Test
 
+interface SoftFailAssertions {
+    infix fun <T> T.shouldEqual(that: T): T
+}
+
+inline fun softFail(f: SoftFailAssertions.() -> Unit) {
+    val assertionErrors: ArrayList<AssertionError> = ArrayList()
+
+    f(object : SoftFailAssertions {
+        override infix fun <T> T.shouldEqual(that: T): T = try {
+            this.datsOkShouldEqual(that)
+        } catch (e: AssertionError) {
+            assertionErrors.add(e)
+            that
+        }
+    })
+
+    if (assertionErrors.isNotEmpty()) {
+        assertionErrors.dropLast(1).forEach { it.printStackTrace() }
+        throw assertionErrors.last()
+    }
+}
 
 infix fun <T> Iterable<T>.shouldHaveSameElementsAs(that: Iterable<T>) {
     assertThat(this, containsAll(that))
