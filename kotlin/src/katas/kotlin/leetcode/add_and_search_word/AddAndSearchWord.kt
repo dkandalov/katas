@@ -13,6 +13,8 @@ class AddAndSearchWordTests {
         dictionary.addWord("foz")
         dictionary.addWord("bar")
 
+        dictionary.search("f") shouldEqual false
+        dictionary.search("fo") shouldEqual false
         dictionary.search("foo") shouldEqual true
         dictionary.search("fooo") shouldEqual false
 
@@ -27,9 +29,11 @@ class AddAndSearchWordTests {
 }
 
 private class WordDictionary {
-    private data class Node(val char: Char, val children: MutableMap<Char, Node> = HashMap())
+    private data class Node(
+        val children: MutableMap<Char, Node> = HashMap()
+    )
 
-    private val root = Node(0.toChar())
+    private val root = Node()
 
     fun addWord(word: String) {
         root.add(word)
@@ -41,11 +45,14 @@ private class WordDictionary {
     fun search(pattern: String): Boolean = root.search(pattern)
 
     companion object {
+        private val sentinel = Node()
+
         private fun Node.add(word: String) {
             var node = this
             word.forEach { char ->
-                node = node.children.getOrPut(char, defaultValue = { Node(char) })
+                node = node.children.getOrPut(char, defaultValue = { Node() })
             }
+            node.children[word.last()] = sentinel
         }
 
         private fun Node.search(pattern: String): Boolean {
@@ -56,7 +63,7 @@ private class WordDictionary {
                     else -> node = node.children[char] ?: return false
                 }
             }
-            return true
+            return node.children.containsValue(sentinel)
         }
     }
 }
