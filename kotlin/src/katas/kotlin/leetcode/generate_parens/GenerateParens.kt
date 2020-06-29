@@ -3,7 +3,7 @@ package katas.kotlin.leetcode.generate_parens
 import datsok.shouldEqual
 import org.junit.Test
 
-class GenerateParensTests {
+class GenerateParens {
     @Test fun `generate all combinations of well-formed parentheses`() {
         generateParens(1) shouldEqual listOf("()")
         generateParens(2) shouldEqual listOf("()()", "(())")
