@@ -141,11 +141,7 @@ fun spiral(size: Int): List<List<Int>> {
     return board
 }
 
-fun spiral(
-    xs: IntRange,
-    ys: IntRange,
-    drawTopRightCorner: Boolean = true
-): Sequence<Pair<Int, Int>> = sequence {
+fun spiral(xs: IntRange, ys: IntRange, drawTopRightCorner: Boolean = true): Sequence<Pair<Int, Int>> = sequence {
     if (ys.last <= 0) yieldAll(emptyList())
     else if (drawTopRightCorner) {
         yieldAll(xs.map { ys.first to it }) // top-left to top-right
