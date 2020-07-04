@@ -135,14 +135,32 @@ private fun List<List<Int>>.toPrintableString() =
 
 fun spiral(size: Int): List<List<Int>> {
     require(size >= 0)
-    return spiral(
-        board = MutableList(size) { MutableList(size) { 0 } },
-        xs = 0..size - 1,
-        ys = 0..size - 1
-    )
+    val board = MutableList(size) { MutableList(size) { 0 } }
+    spiral(xs = 0..size - 1, ys = 0..size - 1)
+        .forEach { (x, y) -> board[x][y] = 1 }
+    return board
 }
 
 fun spiral(
+    xs: IntRange,
+    ys: IntRange,
+    drawTopRightCorner: Boolean = true
+): Sequence<Pair<Int, Int>> = sequence {
+    if (ys.last <= 0) yieldAll(emptyList())
+    else if (drawTopRightCorner) {
+        yieldAll(xs.map { ys.first to it }) // top-left to top-right
+        yieldAll(ys.map { it to xs.last }) // top-right to bottom-right
+        if (xs.size > 2) yield(ys.last to xs.last - 1)
+        yieldAll(spiral(xs.shiftEnd(-2), ys.shiftStart(2), !drawTopRightCorner))
+    } else {
+        yieldAll(xs.map { ys.last to it }) // bottom-left to bottom-right
+        yieldAll(ys.map { it to xs.first }) // top-left to bottom-left
+        if (xs.size > 2) yield(ys.first to xs.first + 1)
+        yieldAll(spiral(xs.shiftStart(2), ys.shiftEnd(-2), !drawTopRightCorner))
+    }
+}
+
+fun spiral_(
     board: MutableList<MutableList<Int>>,
     xs: IntRange,
     ys: IntRange,
@@ -153,12 +171,12 @@ fun spiral(
         xs.forEach { board[ys.first][it] = 1 } // top-left to top-right
         ys.forEach { board[it][xs.last] = 1 } // top-right to bottom-right
         if (xs.size > 2) board[ys.last][xs.last - 1] = 1
-        spiral(board, xs.shiftEnd(-2), ys.shiftStart(2), !drawTopRightCorner)
+        spiral_(board, xs.shiftEnd(-2), ys.shiftStart(2), !drawTopRightCorner)
     } else {
         xs.forEach { board[ys.last][it] = 1 } // bottom-left to bottom-right
         ys.forEach { board[it][xs.first] = 1 } // top-left to bottom-left
         if (xs.size > 2) board[ys.first][xs.first + 1] = 1
-        spiral(board, xs.shiftStart(2), ys.shiftEnd(-2), !drawTopRightCorner)
+        spiral_(board, xs.shiftStart(2), ys.shiftEnd(-2), !drawTopRightCorner)
     }
 }
 
