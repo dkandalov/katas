@@ -52,7 +52,7 @@ class Permutation1 {
         }
 
         private fun List<Index>.findLargestMovable(): Index? {
-            return filterIndexed { i, _ -> canMove(i) }.maxBy { it.value }
+            return filterIndexed { i, _ -> canMove(i) }.maxByOrNull { it.value }
         }
 
         private fun List<Index>.canMove(i: Int): Boolean {

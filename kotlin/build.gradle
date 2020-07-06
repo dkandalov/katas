@@ -1,5 +1,5 @@
 buildscript {
-	ext.kotlin_version = "1.4-M2"
+	ext.kotlin_version = "1.4-M3"
 
 	repositories {
 		maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
@@ -65,9 +65,12 @@ compileKotlin {
 		jvmTarget = "11"
 	}
 }
-// Fails to compile few files, e.g. Permutations1.kt
+
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-XXLanguage:+NewInference", "-Xopt-in=kotlin.ExperimentalStdlibApi"]
+        freeCompilerArgs = [
+            "-XXLanguage:+NewInference",
+            "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        ]
     }
 }

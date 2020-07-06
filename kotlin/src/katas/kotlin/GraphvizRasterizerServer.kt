@@ -15,6 +15,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import kotlin.system.exitProcess
 
 object GraphvizRasterizerServer {
     @JvmStatic fun main(args: Array<String>) {
@@ -41,8 +42,7 @@ object GraphvizRasterizerServer {
                 Response(OK).body("Running")
             },
             "exit" bind GET to {
-                System.exit(0)
-                error("")
+                exitProcess(0)
             }
         )
         val server = app.asServer(Jetty(10345))

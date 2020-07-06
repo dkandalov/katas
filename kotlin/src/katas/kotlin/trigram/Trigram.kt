@@ -1,3 +1,4 @@
+package katas.kotlin.trigram
 
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,7 +28,7 @@ class TrigramTest {
         val random = Random(123)
         val entryPoint = data.keys.drop(random.nextInt(data.size)).first()
 
-        val pairs = generateSequence(entryPoint) { it: Pair<String, String> ->
+        val pairs = generateSequence(entryPoint) {
             val nextWords = data[it]
             if (nextWords == null || nextWords.isEmpty()) null
             else Pair(it.second, nextWords[random.nextInt(nextWords.size)])
