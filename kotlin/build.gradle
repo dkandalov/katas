@@ -1,9 +1,9 @@
 buildscript {
-	ext.kotlin_version = "1.4-M3"
+	ext.kotlin_version = "1.4.0-rc"
 
 	repositories {
-		maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
-		maven { url "http://jcenter.bintray.com" }
+		maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
+		maven { url "https://jcenter.bintray.com" }
 		mavenCentral()
 	}
 	dependencies {
@@ -13,8 +13,8 @@ buildscript {
 }
 
 repositories {
-	maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
-	maven { url "http://jcenter.bintray.com" }
+	maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
+	maven { url "https://jcenter.bintray.com" }
 	maven { url "https://dl.bintray.com/dkandalov/maven" }
 	mavenCentral()
 }
