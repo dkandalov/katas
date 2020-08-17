@@ -4,7 +4,7 @@ import datsok.shouldEqual
 import org.junit.Test
 
 /**
- * https://leetcode.com/problems/wildcard-matching/
+ * https://leetcode.com/problems/wildcard-matching
  *
  * Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*'.
  * '?' Matches any single character.
