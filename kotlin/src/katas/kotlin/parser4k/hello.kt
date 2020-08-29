@@ -6,8 +6,9 @@ import parser4k.Input
 import parser4k.str
 
 class Tests {
+    private val hello = str("hello")
+
     @Test fun `hello parser4k`() {
-        val hello = str("hello")
         hello.parse(Input("foo"))?.payload shouldEqual null
         hello.parse(Input("hello foo"))?.payload shouldEqual "hello"
     }

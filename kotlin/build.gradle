@@ -16,6 +16,7 @@ repositories {
 	maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
 	maven { url "https://jcenter.bintray.com" }
 	maven { url "https://dl.bintray.com/dkandalov/maven" }
+	maven { url "https://dl.bintray.com/hotkeytlt/maven" }
 	mavenCentral()
 }
 group "katas"
@@ -44,6 +45,7 @@ dependencies {
 	implementation "org.jetbrains.kotlin:kotlin-script-runtime:1.4.0-rc"
 	implementation platform("dev.forkhandles:forkhandles-bom:0.17.0.0")
 	implementation "dev.forkhandles:parser4k"
+	implementation "com.github.h0tk3y.betterParse:better-parse:0.4.0"
 }
 
 sourceSets {
