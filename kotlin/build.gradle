@@ -73,7 +73,6 @@ compileKotlin {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = [
-            "-XXLanguage:+NewInference",
             "-Xopt-in=kotlin.ExperimentalStdlibApi"
         ]
     }
