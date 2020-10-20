@@ -122,7 +122,7 @@ private fun <T> Graph<T>.primMST(): Graph<T> {
         val minEdge = tree.vertices
             .flatMap { vertex -> edgesByVertex[vertex]!! }
             .filter { edge -> edge.to !in tree.vertices }
-            .minBy { it.weight!! }!!
+            .minByOrNull { it.weight!! }!!
 
         tree.addEdge(minEdge)
     }
