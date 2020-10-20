@@ -35,7 +35,7 @@ dependencies {
 	implementation "org.http4k:http4k-server-jetty:3.207.0"
 	implementation "org.http4k:http4k-client-apache:3.207.0"
 	implementation "nonstdlib:nonstdlib:0.3"
-	implementation "datsok:datsok:0.2"
+	implementation "datsok:datsok:0.4"
 	implementation "io.kotlintest:kotlintest-runner-junit4:3.1.10"
 	implementation "com.natpryce:hamkrest:1.4.0.0"
     implementation "guru.nidi:graphviz-java:0.8.0"
