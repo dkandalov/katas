@@ -5,9 +5,29 @@ import org.junit.Test
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-/**
- * https://leetcode.com/problems/3sum/
- */
+//
+// https://leetcode.com/problems/3sum
+//
+// Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0?
+// Find all unique triplets in the array which gives the sum of zero.
+// Notice that the solution set must not contain duplicate triplets.
+// Constraints:
+//    0 <= nums.length <= 3000
+//    -105 <= nums[i] <= 105
+//
+// Example 1:
+// Input: nums = [-1,0,1,2,-1,-4]
+// Output: [[-1,-1,2],[-1,0,1]]
+//
+// Example 2:
+// Input: nums = []
+// Output: []
+//
+// Example 3:
+// Input: nums = [0]
+// Output: []
+//
+
 class ThreeSumTests {
     @Test fun `find all unique triplets in the array which gives the sum of zero`() {
         intArrayOf(-1, 0, 1).threeSum() shouldEqual listOf(listOf(-1, 0, 1))
@@ -58,7 +78,7 @@ private fun IntArray.threeSum_loop(): List<List<Int>> {
 fun Random.intArray(
     size: Int = -1,
     sizeRange: IntRange = IntRange.EMPTY,
-    valuesRange: IntRange = IntRange(Int.MIN_VALUE, Int.MAX_VALUE)
+    valuesRange: IntRange = IntRange(Int.MIN_VALUE, Int.MAX_VALUE),
 ): IntArray {
     require(size != -1 || !sizeRange.isEmpty()) { "`size` or `sizeRange` must be specified (but not both)" }
     var i = if (size != -1) size else nextInt(sizeRange)

@@ -3,7 +3,8 @@ package katas.kotlin.leetcode.super_egg_drop
 import datsok.shouldEqual
 import org.junit.jupiter.api.Test
 
-// https://leetcode.com/problems/super-egg-drop
+// https://leetcode.com/problems/super-egg-drop ❌
+// https://www.youtube.com/watch?v=xsOCvSiSrSs
 //
 // You are given K eggs, and you have access to a building with N floors from 1 to N.
 // Each egg is identical in function, and if an egg breaks, you cannot drop it again.
@@ -91,6 +92,8 @@ class Tests {
 
         superEggDrop(eggs = 2, floors = 14) shouldEqual 7
         superEggDrop(eggs = 3, floors = 14) shouldEqual 4
+
+//        TODO superEggDrop(eggs = 3, floors = 25) shouldEqual 5
 
         superEggDrop(eggs = 100, floors = 10_000) shouldEqual 14
     }
