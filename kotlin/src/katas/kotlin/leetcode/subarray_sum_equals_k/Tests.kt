@@ -1,5 +1,7 @@
 package katas.kotlin.leetcode.subarray_sum_equals_k
 
+import java.util.*
+
 //
 // https://leetcode.com/problems/subarray-sum-equals-k
 //
@@ -14,14 +16,14 @@ package katas.kotlin.leetcode.subarray_sum_equals_k
 //
 
 // 5 2  3 -4 -1 1
-// 5 7 10  6  5 6
+// 5 7 10  6  5 6 <- prefix sum
 // f            t
 
 fun subarraySum(ints: IntArray, targetSum: Int): Int {
-    return subArrays(Ints(ints.toList()), targetSum).count()
+    return subArrays(ints, targetSum).count()
 }
 
-private fun subArrays(ints: Ints, targetSum: Int): Sequence<Pair<Int, Int>> = sequence {
+private fun subArrays(ints: IntArray, targetSum: Int): Sequence<Pair<Int, Int>> = sequence {
     (0..ints.lastIndex).forEach { from ->
         var sum = 0
         (from..ints.lastIndex).forEach { to ->
@@ -31,4 +33,16 @@ private fun subArrays(ints: Ints, targetSum: Int): Sequence<Pair<Int, Int>> = se
     }
 }
 
-class Ints(value: List<Int>) : List<Int> by value
+
+fun subarraySum_cleverHashMap(nums: IntArray, targetSum: Int): Int {
+    var count = 0
+    val countBySum = HashMap<Int, Int>()
+    countBySum[0] = 1
+    var sum = 0
+    nums.forEach {
+        sum += it
+        count += countBySum.getOrDefault(sum - targetSum, defaultValue = 0)
+        countBySum[sum] = countBySum.getOrDefault(sum, defaultValue = 0) + 1
+    }
+    return count
+}
