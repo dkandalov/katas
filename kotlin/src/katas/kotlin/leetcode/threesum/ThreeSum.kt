@@ -1,6 +1,9 @@
 package katas.kotlin.leetcode.threesum
 
+import com.google.common.collect.HashMultiset
+import com.google.common.collect.Multiset
 import datsok.shouldEqual
+import nonstdlib.listOfInts
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -29,52 +32,80 @@ import kotlin.random.nextInt
 // Output: []
 //
 
+//
+// naming :| (hard to search for it online)
+// why?
+// bad function name ->
+// IntArray is a bad idea
+// Set<Triple<Int>> as return type (although Triple is really a Multiset/Bag of size 3)
+// n^3 is just fine
+//
+// conclusions:
+//  - unbelievably bad naming
+//  - really specific constraints => devs expect precise requirements
+//    => reinforces solution-oriented "tasks" (instead of talking about the actual problem)
+//    =>
+//  - normalise software development
+//
+//
+
 class ThreeSumTests {
     @Test fun `find all unique triplets in the array which gives the sum of zero`() {
-        intArrayOf(-1, 0, 1).threeSum() shouldEqual listOf(listOf(-1, 0, 1))
-        intArrayOf(1, 2, 3).threeSum() shouldEqual listOf()
-        intArrayOf(-1, 0, 1, 2, -1, -4).threeSum() shouldEqual listOf(
-            listOf(-1, -1, 2),
-            listOf(-1, 0, 1)
+        listOf(-1, 0, 1).findZeroSumTriplets() shouldEqual setOf(Triplet(-1, 0, 1))
+        listOf(1, 2, 3).findZeroSumTriplets() shouldEqual emptySet()
+        listOf(-1, 0, 1, 2, -1, -4).findZeroSumTriplets() shouldEqual setOf(
+            Triplet(-1, -1, 2),
+            Triplet(-1, 0, 1)
         )
+        listOf<Int>().findZeroSumTriplets() shouldEqual emptySet()
+        listOf(0).findZeroSumTriplets() shouldEqual emptySet()
     }
 
+    //    @Ignore
     @Test fun `three sum of huge array`() {
-        Random(seed = 123).intArray(size = 4000, valuesRange = -100..100).threeSum()
+        Random(seed = 123).listOfInts(size = 4000, valuesRange = -100..100).findZeroSumTriplets().size shouldEqual 5101
     }
 }
 
-private fun IntArray.threeSum(): List<List<Int>> {
-    sort()
-    val result = ArrayList<List<Int>>()
-    (0..size - 3).forEach { i ->
-        var j = i + 1
-        var k = size - 1
-        while (j < k) {
-            val sum = this[i] + this[j] + this[k]
+private fun List<Int>.findZeroSumTriplets(): Set<Triplet> = sorted().let {
+    val result = LinkedHashSet<Triplet>()
+    (0..lastIndex - 2).forEach { i ->
+        var start = i + 1
+        var end = lastIndex
+        while (start < end) {
+            val sum = it[i] + it[start] + it[end]
             when {
-                sum < 0 -> j++
-                sum > 0 -> k--
-                else    -> result.add(listOf(this[i], this[j++], this[k--]))
+                sum < 0 -> start++
+                sum > 0 -> end--
+                else    -> result.add(Triplet(it[i], it[start++], it[end--]))
             }
         }
     }
-    return result.map { it.sorted() }.distinct()
+    return result
 }
 
-private fun IntArray.threeSum_loop(): List<List<Int>> {
-    val result = ArrayList<List<Int>>()
-    (0..size - 3).forEach { i ->
-        (i + 1..size - 2).forEach { j ->
-            (j + 1..size - 1).forEach { k ->
+private fun List<Int>.findZeroSumTriplets_(): Set<Triplet> {
+    val result = LinkedHashSet<Triplet>()
+    (0..lastIndex - 2).forEach { i ->
+        (i + 1..lastIndex - 1).forEach { j ->
+            (j + 1..lastIndex).forEach { k ->
                 if (this[i] + this[j] + this[k] == 0) {
-                    result.add(listOf(this[i], this[j], this[k]))
+                    result.add(Triplet(this[i], this[j], this[k]))
                 }
             }
         }
     }
-    return result.map { it.sorted() }.distinct()
+    return result
 }
+
+data class Triplet(private val values: List<Int>) {
+    constructor(val1: Int, val2: Int, val3: Int) : this(listOf(val1, val2, val3).sorted())
+
+    override fun toString() = values.toString()
+}
+
+private fun <T> multisetOf(vararg elements: T): Multiset<T> =
+    HashMultiset.create(elements.toList())
 
 fun Random.intArray(
     size: Int = -1,
