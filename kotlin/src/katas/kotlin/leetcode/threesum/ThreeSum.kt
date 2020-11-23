@@ -3,13 +3,12 @@ package katas.kotlin.leetcode.threesum
 import com.google.common.collect.HashMultiset
 import com.google.common.collect.Multiset
 import datsok.shouldEqual
-import nonstdlib.listOfInts
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 //
-// https://leetcode.com/problems/3sum
+// https://leetcode.com/problems/3sum ✅
 // https://en.wikipedia.org/wiki/3SUM
 //
 // Given an array nums of n integers, are there elements a, b, c in nums such that a + b + c = 0?
@@ -33,8 +32,8 @@ import kotlin.random.nextInt
 //
 
 //
-// naming :| (hard to search for it online)
 // why?
+// naming :| (hard to search for it online)
 // bad function name ->
 // IntArray is a bad idea
 // Set<Triple<Int>> as return type (although Triple is really a Multiset/Bag of size 3)
@@ -51,20 +50,32 @@ import kotlin.random.nextInt
 
 class ThreeSumTests {
     @Test fun `find all unique triplets in the array which gives the sum of zero`() {
+        listOf<Int>().findZeroSumTriplets() shouldEqual emptySet()
+        listOf(0).findZeroSumTriplets() shouldEqual emptySet()
+
         listOf(-1, 0, 1).findZeroSumTriplets() shouldEqual setOf(Triplet(-1, 0, 1))
+        listOf(-1, 0, 1, 1).findZeroSumTriplets() shouldEqual setOf(Triplet(-1, 0, 1))
+        listOf(0, 0, 0, 0).findZeroSumTriplets() shouldEqual setOf(Triplet(0, 0, 0))
         listOf(1, 2, 3).findZeroSumTriplets() shouldEqual emptySet()
+
         listOf(-1, 0, 1, 2, -1, -4).findZeroSumTriplets() shouldEqual setOf(
             Triplet(-1, -1, 2),
             Triplet(-1, 0, 1)
         )
-        listOf<Int>().findZeroSumTriplets() shouldEqual emptySet()
-        listOf(0).findZeroSumTriplets() shouldEqual emptySet()
     }
 
-    //    @Ignore
+//    @Ignore
     @Test fun `three sum of huge array`() {
-        Random(seed = 123).listOfInts(size = 4000, valuesRange = -100..100).findZeroSumTriplets().size shouldEqual 5101
+        val random = Random(seed = 123)
+        val largeList = generateSequence { random.nextInt(range = -100..100) }.take(3000).toList()
+        largeList.findZeroSumTriplets().size shouldEqual 5101
     }
+}
+
+fun threeSum(nums: IntArray): List<List<Int>> {
+    return nums.toList()
+        .findZeroSumTriplets()
+        .map { it.toList() }
 }
 
 private fun List<Int>.findZeroSumTriplets(): Set<Triplet> = sorted().let {
@@ -77,32 +88,49 @@ private fun List<Int>.findZeroSumTriplets(): Set<Triplet> = sorted().let {
             when {
                 sum < 0 -> start++
                 sum > 0 -> end--
-                else    -> result.add(Triplet(it[i], it[start++], it[end--]))
+                else    -> result.add(Triplet(it[i], it[start++], it[end--]).sorted())
             }
         }
     }
     return result
 }
+
+private typealias Triplet = Triple<Int, Int, Int>
+
+private fun Triplet.sorted(): Triplet =
+    when {
+        second < first -> Triple(second, first, third).sorted()
+        third < second -> Triple(first, third, second).sorted()
+        else           -> this
+    }
+
+private fun Triplet.sum(): Int =
+    first + second + third
 
 private fun List<Int>.findZeroSumTriplets_(): Set<Triplet> {
     val result = LinkedHashSet<Triplet>()
     (0..lastIndex - 2).forEach { i ->
         (i + 1..lastIndex - 1).forEach { j ->
             (j + 1..lastIndex).forEach { k ->
-                if (this[i] + this[j] + this[k] == 0) {
-                    result.add(Triplet(this[i], this[j], this[k]))
-                }
+                val triplet = Triplet(this[i], this[j], this[k])
+                if (triplet.sum() == 0) result.add(triplet.sorted())
             }
         }
     }
     return result
 }
 
-data class Triplet(private val values: List<Int>) {
-    constructor(val1: Int, val2: Int, val3: Int) : this(listOf(val1, val2, val3).sorted())
+/*
+class Triplet private constructor(value: Triple<Int, Int, Int>) :
+    Value<Triple<Int, Int, Int>>(value, validation = { it.first <= it.second && it.second <= it.third }) {
 
-    override fun toString() = values.toString()
+    val sum = value.first + value.second + value.third
+
+    constructor(val1: Int, val2: Int, val3: Int) : this(Triple(val1, val2, val3).sorted())
+
+    override fun toString() = value.toString()
 }
+*/
 
 private fun <T> multisetOf(vararg elements: T): Multiset<T> =
     HashMultiset.create(elements.toList())
