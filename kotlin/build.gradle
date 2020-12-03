@@ -40,13 +40,13 @@ dependencies {
 	implementation "io.kotlintest:kotlintest-runner-junit4:3.1.10"
 	implementation "com.natpryce:hamkrest:1.8.0.1"
     implementation "guru.nidi:graphviz-java:0.8.0"
-	implementation "org.junit.jupiter:junit-jupiter-api:5.3.1"
+	implementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
 	implementation "org.jetbrains.kotlin:kotlin-script-runtime:1.4.0-rc"
 	implementation platform("dev.forkhandles:forkhandles-bom:1.5.0.0")
 	implementation "dev.forkhandles:parser4k"
 	implementation "com.github.h0tk3y.betterParse:better-parse:0.4.0"
 	implementation "com.google.guava:guava:30.0-jre"
-	runtimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
+	runtimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.0"
 	runtimeOnly "org.junit.platform:junit-platform-launcher:1.3.1"
 }
 
