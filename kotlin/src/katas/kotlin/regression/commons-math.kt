@@ -2,7 +2,11 @@ package katas.kotlin.regression
 
 import datsok.shouldEqual
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression
+import org.jfree.data.time.FixedMillisecond
+import org.jfree.data.time.TimeSeries
+import org.jfree.data.time.TimeSeriesCollection
 import org.junit.jupiter.api.Test
+import kotlin.math.sin
 
 class RegressionExamples {
     private val inputExamples = arrayOf(
@@ -34,12 +38,55 @@ class RegressionExamples {
     }
 }
 
+class SinPrediction {
+    @Test fun `predict sin`() {
+        val window = 100
+
+        val learningData = (1..1000).map { sin(it.toDouble() / 100) * 100 + 100 }
+        val examData = (1001..2000).map { sin(it.toDouble() / 100) * 100 + 100 }
+
+        val examples = learningData.windowed(size = window + 1)
+            .map { Example(input = it.take(window), output = it.last()) }
+        val examplesForExam = examData.windowed(size = window + 1)
+            .map { Example(input = it.take(window), output = it.last()) }
+
+        val learner = Learner()
+        learner.learnFrom(examples)
+        val examOutputs = examplesForExam
+            .map { (input, _) -> learner.predict(input.toDoubleArray()) }
+
+        val chart = createChart(TimeSeriesCollection().apply {
+            addSeries(TimeSeries("learningData").apply {
+                learningData.indices.zip(learningData).map { (index, value) ->
+                    add(FixedMillisecond(index.toLong()), value)
+                }
+            })
+            addSeries(TimeSeries("examData").apply {
+                examData.indices.zip(examData).map { (index, value) ->
+                    add(FixedMillisecond((index + 1001).toLong()), value)
+                }
+            })
+            addSeries(TimeSeries("examOutputs").apply {
+                examOutputs.indices.zip(examOutputs).map { (index, value) ->
+                    add(FixedMillisecond((index + 1100).toLong()), value)
+                }
+            })
+        })
+        chart.saveToSvg("foo.svg")
+    }
+}
+
+data class Example(val input: List<Double>, val output: Double)
+
 class Learner {
     private val regression = OLSMultipleLinearRegression()
     private var beta = doubleArrayOf()
 
-    fun learnFrom(inputExamples: Array<DoubleArray>, outputExamples: DoubleArray) {
-        regression.newSampleData(outputExamples, inputExamples)
+    fun learnFrom(inputs: Array<DoubleArray>, outputs: DoubleArray) {
+        require(inputs.size == outputs.size) {
+            "Input size: ${inputs.size}; output size: ${outputs.size}"
+        }
+        regression.newSampleData(outputs, inputs)
         beta = regression.estimateRegressionParameters()
     }
 
@@ -51,4 +98,10 @@ class Learner {
         }
         return result
     }
+}
+
+fun Learner.learnFrom(examples: List<Example>) {
+    val learningInputs = examples.map { it.input.toDoubleArray() }.toTypedArray()
+    val learningOutputs = examples.map { it.output }.toDoubleArray()
+    learnFrom(learningInputs, learningOutputs)
 }

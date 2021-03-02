@@ -17,7 +17,7 @@ fun <T> Graph<T>.savedAsPng(graphName: String = "graph", height: Int = 500): Gra
 
     val graphVizNodeById = vertices
         .map { it.toString() }
-        .associate { Pair(it, Factory.mutNode(it)) }
+        .associateWith { Factory.mutNode(it) }
 
     graphVizNodeById.values.forEach {
         graphViz.add(it)
