@@ -30,7 +30,7 @@ class EightQueen23 {
 
     private fun Board.findQueenPositions(): Sequence<Board> {
         val nextMoves = sequence {
-            val x = (queens.map { it.x }.max() ?: -1) + 1
+            val x = (queens.map { it.x }.maxOrNull() ?: -1) + 1
             0.until(size)
                 .map { y -> Queen(x, y) }
                 .filter { isValidMove(it) }

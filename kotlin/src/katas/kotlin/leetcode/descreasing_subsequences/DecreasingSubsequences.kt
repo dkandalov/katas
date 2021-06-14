@@ -44,7 +44,7 @@ private fun binarySearch(nums: IntArray, size: Int, target: Int): Int {
 }
 
 private fun split(array: Array<Int>): List<List<Int>> {
-    return allSubsequences(Solution(array.toList())).minBy { it.seqs.size }!!.seqs
+    return allSubsequences(Solution(array.toList())).minByOrNull { it: Solution -> it.seqs.size }!!.seqs
 }
 
 private fun allSubsequences(solution: Solution): List<Solution> {

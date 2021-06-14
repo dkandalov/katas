@@ -17,7 +17,7 @@ class DataMunging15 {
                 .filter { it != null }
         assertThat(days.size, equalTo(30))
 
-        val minDay = days.minBy{ it!!.max - it.min }
+        val minDay = days.minByOrNull { it: Day? -> it!!.max - it.min }
         assertThat(minDay, equalTo(Day("14", 61, 59)))
     }
 
@@ -28,7 +28,7 @@ class DataMunging15 {
                 .filter { it != null }
         assertThat(teams.size, equalTo(20))
 
-        val team = teams.minBy{ Math.abs(it!!.goalsFor - it.goalsAgainst)}
+        val team = teams.minByOrNull { it: Team? -> Math.abs(it!!.goalsFor - it.goalsAgainst) }
         assertThat(team, equalTo(Team("Aston_Villa", 46, 47)))
     }
 

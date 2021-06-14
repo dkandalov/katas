@@ -46,6 +46,6 @@ private fun String.frequencyCompareTo(that: String): Int =
     this.minCharFrequency().compareTo(that.minCharFrequency())
 
 private fun String.minCharFrequency(): Int {
-    val min = min()
+    val min = minOrNull()
     return count { it == min }
 }

@@ -17,12 +17,12 @@ class MostCommonWordTests {
 }
 
 private fun mostCommonWord(paragraph: String, banned: Array<String>): String {
-    val words = paragraph.toLowerCase()
+    val words = paragraph.lowercase()
         .filter { it.isLetter() || it == ' ' }.split(" ")
         .filterNot { banned.contains(it) }
 
     val count = HashMap<String, Int>()
-    words.forEach { count[it] = count.getOrPut(it, { 0 }) + 1 }
+    words.forEach { count[it] = count.getOrPut(it) { 0 } + 1 }
 
-    return count.entries.maxBy { it.value }!!.key
+    return count.entries.maxByOrNull { it.value }!!.key
 }

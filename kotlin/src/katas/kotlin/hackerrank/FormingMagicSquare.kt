@@ -68,12 +68,12 @@ fun formingMagicSquare(square: Array<Array<Int>>): Int {
 
     return magicSquares
         .map { it.distanceTo(square) }
-        .min()!!
+        .minOrNull()!!
 }
 
 private fun Array<Array<Int>>.distanceTo(square: Array<Array<Int>>): Int {
-    return 0.until(3).sumBy { col ->
-        0.until(3).sumBy { row ->
+    return 0.until(3).sumOf { col ->
+        0.until(3).sumOf { row ->
             Math.abs(this[col][row] - square[col][row])
         }
     }

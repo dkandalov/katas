@@ -11,7 +11,7 @@ fun main() {
     println(positions2.size)
 
     val intersections = positions1.toSet().intersect(positions2.toSet()) - Position(0, 0)
-    val minPosition = intersections.minBy(::manhattanDistance)!!
+    val minPosition = intersections.minByOrNull { manhattanDistance(it) }!!
     println(manhattanDistance(minPosition))
 }
 

@@ -28,7 +28,7 @@ data class TrieNode(val value: Char, val children: HashMap<Char, TrieNode> = Has
     }
 
     private fun maxDepthChild(): Pair<Int, String> {
-        val max = children.values.map { it.maxDepthChild() }.maxBy { it.first } ?: Pair(-1, "")
+        val max = children.values.map { it.maxDepthChild() }.maxByOrNull { it.first } ?: Pair(-1, "")
         return Pair(max.first + 1, value.toString() + max.second)
     }
 }

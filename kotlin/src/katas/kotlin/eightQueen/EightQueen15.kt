@@ -40,7 +40,7 @@ class EightQueen15 {
             get() = boardSize == queens.size
 
         fun nextSteps(): Sequence<Solution> {
-            val column = (queens.map { it.column }.max() ?: -1) + 1
+            val column = (queens.map { it.column }.maxOrNull() ?: -1) + 1
             return 0.until(boardSize).asSequence()
                 .map { row -> Queen(column, row) }
                 .filter { isValidStep(it) }

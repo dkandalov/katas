@@ -7,7 +7,7 @@ class SelectSort0 : SortingTests({ sort(it.toMutableList()) })
 
 private fun <T : Comparable<T>> sort(list: MutableList<T>): List<T> {
     list.indices.forEach { i ->
-        val minIndex = IntRange(i, list.lastIndex).minBy { list[it] }!!
+        val minIndex = IntRange(i, list.lastIndex).minByOrNull { list[it] }!!
         list.swap(minIndex, i)
     }
     return list

@@ -11,7 +11,8 @@ d2 $ midinote "~ 5 ~ 5" # kick
 d3 $ midinote "54 55 55 c9" # base
 d4 $ midinote "53 ~ 51 ~" # keys
 
-d3 $ midinote "c8 e8" # base
+d3 $ midinote "c8 e8 a7 c1" # base
+d3 $ midinote "e8 e8" # base
 d3 $ midinote "41 a9" # base
 
 d5 $ ccv 50 # ccn 3 # xxx

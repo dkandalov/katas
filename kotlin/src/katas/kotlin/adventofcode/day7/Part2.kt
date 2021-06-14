@@ -22,7 +22,7 @@ fun main() {
             output5 = SequencingAmp(input = output4, phase = phase5).run(program)
             output5.last()
         }
-        .max()
+        .maxOrNull()
 
     println(maxOutput) // 76211147
 }

@@ -18,7 +18,7 @@ fun main() {
             val output5 = Amp(input = output4, phase = phase5).run(program)
             output5
         }
-        .max()
+        .maxOrNull()
 
     println(maxOutput)
 }

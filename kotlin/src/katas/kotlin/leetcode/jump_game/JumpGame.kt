@@ -36,7 +36,7 @@ class JumpGame {
             lastRangeEnd = range.last
             if (nums.lastIndex in range) break
 
-            val max = range.maxBy { it + nums[it] }!!
+            val max = range.maxByOrNull { it: Int -> it + nums[it] }!!
             jumps.add(max - i)
             i = max
         }

@@ -22,12 +22,12 @@ class DataMunging14 {
         return File(fileName).readLines()
             .map { parse(it, idIndex, valueIndex1, valueIndex2) }
             .filter { it != null }
-            .minBy { Math.abs(it!!.value1 - it.value2) }
+            .minByOrNull { it: Data? -> Math.abs(it!!.value1 - it.value2) }
     }
 
     private fun parse(line: String, idIndex: Int, valueIndex1: Int, valueIndex2: Int): Data? {
         val list = line.trim().replace("*", "").split(Regex("\\s+"))
-        if (listOf(idIndex, valueIndex1, valueIndex2).max()!! >= list.size) return null
+        if (listOf(idIndex, valueIndex1, valueIndex2).maxOrNull()!! >= list.size) return null
         try {
             return Data(list[idIndex], parseInt(list[valueIndex1]), parseInt(list[valueIndex2]))
         } catch(e: NumberFormatException) {

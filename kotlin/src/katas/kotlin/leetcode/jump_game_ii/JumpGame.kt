@@ -35,7 +35,7 @@ private fun findMinJumps(nums: List<Int>): List<Int> =
         if (i + nums[i] >= nums.lastIndex) null
         else {
             val nextIndices = (i + 1)..(i + nums[i])
-            nextIndices.maxBy { it + nums[it] }!!
+            nextIndices.maxByOrNull { it: Int -> it + nums[it] }!!
         }
     }.toList()
 

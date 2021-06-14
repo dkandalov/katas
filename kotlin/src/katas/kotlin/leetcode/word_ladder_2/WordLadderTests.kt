@@ -43,7 +43,7 @@ private typealias Solution = List<String>
 
 private fun findLadders(beginWord: String, endWord: String, wordList: List<String>): Set<Solution> {
     val ladders = findAllLadders(beginWord, endWord, wordList)
-    val minSize = ladders.minBy { it.size }?.size ?: return emptySet()
+    val minSize = ladders.minByOrNull { it: Solution -> it.size }?.size ?: return emptySet()
     return ladders.filterTo(HashSet()) { it.size == minSize }
 }
 

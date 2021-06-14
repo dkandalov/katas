@@ -2,10 +2,13 @@ package katas.kotlin.regression
 
 import datsok.shouldEqual
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression
+import org.jfree.chart.ChartUtils
 import org.jfree.data.time.FixedMillisecond
 import org.jfree.data.time.TimeSeries
 import org.jfree.data.time.TimeSeriesCollection
 import org.junit.jupiter.api.Test
+import java.io.File
+import kotlin.math.abs
 import kotlin.math.sin
 
 class RegressionExamples {
@@ -41,38 +44,46 @@ class RegressionExamples {
 class SinPrediction {
     @Test fun `predict sin`() {
         val window = 100
+        val step = 1
 
-        val learningData = (1..1000).map { sin(it.toDouble() / 100) * 100 + 100 }
-        val examData = (1001..2000).map { sin(it.toDouble() / 100) * 100 + 100 }
+        val data = (1..2000).map { sin(it.toDouble() / 100) * 100 * it + 100 }
+        val learningData = data.take(1000)
+        val examData = data.drop(1000)
 
-        val examples = learningData.windowed(size = window + 1)
+        val examples = learningData.windowed(size = window + 1, step = step)
             .map { Example(input = it.take(window), output = it.last()) }
-        val examplesForExam = examData.windowed(size = window + 1)
+        val examplesForExam = examData.windowed(size = window + 1, step = step)
             .map { Example(input = it.take(window), output = it.last()) }
 
         val learner = Learner()
         learner.learnFrom(examples)
         val examOutputs = examplesForExam
-            .map { (input, _) -> learner.predict(input.toDoubleArray()) }
+            .map { (input, output) ->
+                val predictedOutput = learner.predict(input.toDoubleArray())
+                println(abs(predictedOutput - output))
+                predictedOutput
+            }
 
-        val chart = createChart(TimeSeriesCollection().apply {
-            addSeries(TimeSeries("learningData").apply {
-                learningData.indices.zip(learningData).map { (index, value) ->
-                    add(FixedMillisecond(index.toLong()), value)
-                }
+        if (true) {
+            val chart = createChart(TimeSeriesCollection().apply {
+                addSeries(TimeSeries("learningData").apply {
+                    learningData.indices.zip(learningData).map { (index, value) ->
+                        add(FixedMillisecond(index.toLong()), value)
+                    }
+                })
+                addSeries(TimeSeries("examData").apply {
+                    examData.indices.zip(examData).map { (index, value) ->
+                        add(FixedMillisecond((index + 1001).toLong()), value)
+                    }
+                })
+                addSeries(TimeSeries("examOutputs").apply {
+                    examOutputs.indices.zip(examOutputs).map { (index, value) ->
+                        add(FixedMillisecond((index + 1100).toLong()), value)
+                    }
+                })
             })
-            addSeries(TimeSeries("examData").apply {
-                examData.indices.zip(examData).map { (index, value) ->
-                    add(FixedMillisecond((index + 1001).toLong()), value)
-                }
-            })
-            addSeries(TimeSeries("examOutputs").apply {
-                examOutputs.indices.zip(examOutputs).map { (index, value) ->
-                    add(FixedMillisecond((index + 1100).toLong()), value)
-                }
-            })
-        })
-        chart.saveToSvg("foo.svg")
+            ChartUtils.saveChartAsJPEG(File("foo.jpeg"), chart, 600, 400)
+        }
     }
 }
 

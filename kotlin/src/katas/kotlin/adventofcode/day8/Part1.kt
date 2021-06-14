@@ -9,7 +9,7 @@ fun main() {
     val layerSize = width * height
 
     val layer = digits.chunked(layerSize)
-        .minBy { layer -> layer.count { it == 0 } }!!
+        .minByOrNull { layer: List<Int> -> layer.count { it == 0 } }!!
 
     println(layer)
     println(layer.count { it == 1 } * layer.count { it == 2 })

@@ -62,7 +62,7 @@ private fun findMaxLengthString_(a: Int, b: Int, c: Int): String {
     }
 
     return findMaxLengthString(Solution(List(a) { 'a' }, List(b) { 'b' }, List(c) { 'c' }))
-        .maxBy { it.value.length }!!.value
+        .maxByOrNull { it.value.length }!!.value
 }
 
 private data class Solution(val a: List<Char>, val b: List<Char>, val c: List<Char>, val value: String = "") {

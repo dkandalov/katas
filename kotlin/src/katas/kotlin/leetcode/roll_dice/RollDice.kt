@@ -17,7 +17,7 @@ class RollDiceTests {
 private fun rollDice(vararg dice: Int): Int {
     return (1..6).map { target ->
         dice.sumBy { numberOfMoves(it, target) }
-    }.min()!!
+    }.minOrNull()!!
 }
 
 private fun numberOfMoves(die: Int, target: Int) =

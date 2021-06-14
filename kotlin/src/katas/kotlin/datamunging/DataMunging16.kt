@@ -8,17 +8,17 @@ import java.io.File
 class DataMungingTest16 {
     @Test fun `weather`() {
         val key = File("src/katas/kotlin/datamunging/weather.dat").readLines()
-                .map{ parse(it, 0, 1, 2) }
-                .filterNotNull()
-                .minBy{ Math.abs(it.max - it.min) }!!.key
+            .map{ parse(it, 0, 1, 2) }
+            .filterNotNull()
+            .minByOrNull { it: Entry -> Math.abs(it.max - it.min) }!!.key
         assertThat(key, equalTo<Any>("14"))
     }
     
     @Test fun `football`() {
         val key = File("src/katas/kotlin/datamunging/football.dat").readLines()
-                .map{ parse(it, 1, 6, 8) }
-                .filterNotNull()
-                .minBy{ Math.abs(it.max - it.min) }!!.key
+            .map{ parse(it, 1, 6, 8) }
+            .filterNotNull()
+            .minByOrNull { it: Entry -> Math.abs(it.max - it.min) }!!.key
         assertThat(key, equalTo<Any>("Aston_Villa"))
     }
 

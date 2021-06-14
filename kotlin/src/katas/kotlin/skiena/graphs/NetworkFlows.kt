@@ -61,7 +61,7 @@ private fun <T> DirectedGraph<T, FlowEdge<T>>.maximumFlow(source: T, sink: T, is
         val path = if (isBfs) findPathBFS(source, sink) else findPathDFS(source, sink)
         if (path.isEmpty()) break
 
-        val flow = path.map { it.capacity - it.flow }.min()!!
+        val flow = path.map { it.capacity - it.flow }.minOrNull()!!
         path.forEach { edge ->
             edge.flow += flow
             // TODO Not sure how reverse flow is supposed to actually work here. Seems to be unnecessary for the above examples.
