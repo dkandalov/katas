@@ -1,9 +1,6 @@
 buildscript {
 	ext.kotlin_version = "1.5.10"
-
 	repositories {
-		maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
-		maven { url "https://jcenter.bintray.com" }
 		mavenCentral()
 	}
 	dependencies {
@@ -13,12 +10,10 @@ buildscript {
 }
 
 repositories {
-	maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
-	maven { url "https://jcenter.bintray.com" }
+    mavenCentral()
 	ivy {
 		artifactPattern("https://raw.githubusercontent.com/dkandalov/[module]/master/jars/[artifact]-[revision](.[ext])")
 	}
-	mavenCentral()
 }
 group "katas"
 version "0.0"
@@ -37,11 +32,10 @@ dependencies {
 	implementation "org.http4k:http4k-server-jetty:3.207.0"
 	implementation "org.http4k:http4k-client-apache:3.207.0"
 	implementation "nonstdlib:nonstdlib:0.3"
-	implementation "datsok:datsok:0.4"
+	implementation "datsok:datsok:0.5"
 	implementation "io.kotlintest:kotlintest-runner-junit4:3.1.10"
 	implementation "com.natpryce:hamkrest:1.8.0.1"
 	implementation "guru.nidi:graphviz-java:0.8.0"
-	implementation "org.jetbrains.kotlin:kotlin-script-runtime:1.4.0-rc"
 	implementation platform("dev.forkhandles:forkhandles-bom:1.8.2.0")
 	implementation "dev.forkhandles:parser4k"
 	implementation "com.github.h0tk3y.betterParse:better-parse:0.4.2"
