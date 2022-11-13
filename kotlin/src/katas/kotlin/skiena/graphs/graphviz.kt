@@ -1,6 +1,7 @@
 package katas.kotlin.skiena.graphs
 
-import guru.nidi.graphviz.attribute.RankDir
+import guru.nidi.graphviz.attribute.Rank
+import guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT
 import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Link
@@ -13,7 +14,7 @@ import java.io.File
 
 fun <T> Graph<T>.savedAsPng(graphName: String = "graph", height: Int = 500): Graph<T> {
     val graphViz = Factory.mutGraph(graphName).setDirected(false)
-    graphViz.graphAttrs().add(RankDir.LEFT_TO_RIGHT)
+    graphViz.graphAttrs().add(Rank.dir(LEFT_TO_RIGHT))
 
     val graphVizNodeById = vertices
         .map { it.toString() }

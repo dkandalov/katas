@@ -1,7 +1,7 @@
 package katas.kotlin.hackerrank.shortest_path
 
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.attribute.RankDir
+import guru.nidi.graphviz.attribute.Rank
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Graphviz
 import guru.nidi.graphviz.engine.Renderer
@@ -112,7 +112,7 @@ private fun Graph.shortestPaths(fromNode: Int): Paths {
 
 private fun Graph.renderAsGraphViz(graphName: String = "graph", height: Int = 500): Renderer {
     val graphViz = mutGraph(graphName).setDirected(false)
-    graphViz.graphAttrs().add(RankDir.LEFT_TO_RIGHT)
+    graphViz.graphAttrs().add(Rank.dir(Rank.RankDir.LEFT_TO_RIGHT))
 
     val graphVizNodeById = nodes
         .map { it.toString() }

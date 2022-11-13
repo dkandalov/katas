@@ -58,7 +58,7 @@ fun saveAsPngViaHttp(height: Int, graphName: String, graphViz: MutableGraph, att
     val request = Request(POST, "http://localhost:10345/rasterize")
         .query("height", height.toString())
         .query("path", graphName)
-        .body(Serializer(graphViz).serialize())
+        .body(Serializer().serialize(graphViz))
     val response = ApacheClient().invoke(request)
 
     if (response.status.code == SERVICE_UNAVAILABLE.code) {
