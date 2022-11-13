@@ -2,17 +2,17 @@ package katas.kotlin.regression
 
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartPanel
+import org.jfree.chart.ChartUtils
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.axis.DateAxis
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer
 import org.jfree.chart.ui.RectangleInsets
-import org.jfree.data.time.*
+import org.jfree.data.time.FixedMillisecond
+import org.jfree.data.time.TimeSeries
+import org.jfree.data.time.TimeSeriesCollection
 import org.jfree.data.xy.XYDataset
-import org.jfree.svg.SVGGraphics2D
-import org.jfree.svg.SVGUtils
 import java.awt.Color
-import java.awt.Rectangle
 import java.io.File
 import java.text.SimpleDateFormat
 import javax.swing.JFrame
@@ -27,15 +27,7 @@ fun main() {
         pack()
         isVisible = true
     }
-    chart.saveToSvg("SVGChart.svg")
-}
-
-fun JFreeChart.saveToSvg(fileName: String, width: Int = 600, height: Int = 400) {
-    SVGGraphics2D(width, height).apply {
-        setRenderingHint(JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true)
-        draw(this, Rectangle(0, 0, width, height))
-        SVGUtils.writeToSVG(File(fileName), svgElement)
-    }
+    ChartUtils.saveChartAsJPEG(File("foo.jpeg"), chart, 600, 400)
 }
 
 fun createDemoPanel(chart: JFreeChart): JPanel {
