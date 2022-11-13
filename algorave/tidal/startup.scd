@@ -1,4 +1,10 @@
-﻿MIDIClient.init;
+﻿// Midi setup on macos:
+// - open Audio MIDI Setup app
+// - double-click on IAC Driver
+// - make sure that IAC Drive
+// - add ports "IAC Bus 2" and "IAC Bus 3"
+
+MIDIClient.init;
 
 ~midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
 ~midiOut2 = MIDIOut.newByName("IAC Driver", "IAC Bus 2");
