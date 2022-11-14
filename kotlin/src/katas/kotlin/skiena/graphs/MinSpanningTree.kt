@@ -53,6 +53,7 @@ class DisjointSetTests {
     }
 }
 
+// https://en.wikipedia.org/wiki/Disjoint-set_data_structure
 class DisjointSet<T>() {
     private class Node<T>(val value: T) {
         var parent: Node<T> = this
@@ -122,10 +123,9 @@ private fun <T> Graph<T>.primMST(): Graph<T> {
         val minEdge = tree.vertices
             .flatMap { vertex -> edgesByVertex[vertex]!! }
             .filter { edge -> edge.to !in tree.vertices }
-            .minByOrNull { it.weight!! }!!
+            .minBy { edge -> edge.weight!! }
 
         tree.addEdge(minEdge)
     }
-
     return tree
 }
